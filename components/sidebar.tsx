@@ -152,9 +152,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         (user && hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"])) &&
         { icon: Receipt, label: "الأقسام", href: "/dashboard/categories" },
         (user && hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"])) &&
-        { icon: Warehouse, label: "المستودعات", href: "/dashboard/inventories" },
-        (user && hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"])) &&
-        { icon: Building2, label: "المدن", href: "/dashboard/cities" },
+        { icon: Warehouse, label: "الدول والمستودعات", href: "/dashboard/inventories" },
         (user && hasAnyPermission(user, ["viewProducts", "addProducts", "editProducts", "deleteProducts"])) &&
         { icon: Box, label: "المنتجات", href: "/dashboard/products" },
         (user && hasAnyPermission(user, ["viewCustomers", "addCustomers", "editCustomers", "deleteCustomers"])) &&

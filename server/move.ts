@@ -57,57 +57,78 @@ export async function getInventoryData() {
 
 export async function createMovementAction(data: any) {
   try {
-    await prisma.$transaction(async (tx) => {
-      const qty = Number(data.quantity);
+    const items = Array.isArray(data.items) && data.items.length > 0
+      ? data.items
+      : data.productId
+        ? [{
+            productId: Number(data.productId),
+            quantity: Number(data.quantity),
+          }]
+        : [];
 
-      // --- حالة الجرد (ADJUSTMENT) ---
-      if (data.type === 'ADJUSTMENT') {
-        await tx.productStock.upsert({
-          where: { productId_warehouseId: { productId: data.productId, warehouseId: data.warehouseId } },
-          update: { quantity: qty },
-          create: { productId: data.productId, warehouseId: data.warehouseId, quantity: qty }
-        });
-      } 
-      // --- حالة التحويل (TRANSFER) ---
-      else if (data.type === 'TRANSFER' && data.targetWarehouseId) {
-        // 1. خصم من المصدر
-        await tx.productStock.upsert({
-          where: { productId_warehouseId: { productId: data.productId, warehouseId: data.warehouseId } },
-          update: { quantity: { decrement: qty } },
-          create: { productId: data.productId, warehouseId: data.warehouseId, quantity: -qty }
-        });
-        // 2. إضافة للوجهة
-        await tx.productStock.upsert({
-          where: { productId_warehouseId: { productId: data.productId, warehouseId: data.targetWarehouseId } },
-          update: { quantity: { increment: qty } },
-          create: { productId: data.productId, warehouseId: data.targetWarehouseId, quantity: qty }
-        });
-      } 
-      // --- حالة توريد (IN) أو صرف (OUT) ---
-      else {
-        const adjustment = data.type === 'OUT' ? -qty : qty;
-        await tx.productStock.upsert({
-          where: { productId_warehouseId: { productId: data.productId, warehouseId: data.warehouseId } },
-          update: { quantity: { increment: adjustment } },
-          create: { productId: data.productId, warehouseId: data.warehouseId, quantity: adjustment }
+    if (items.length === 0) {
+      return { success: false, error: "يرجى إضافة منتج واحد على الأقل" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      for (const item of items) {
+        const productId = Number(item.productId);
+        const qty = Number(item.quantity);
+
+        if (!Number.isInteger(productId) || productId <= 0 || !Number.isFinite(qty) || qty <= 0) {
+          throw new Error("بيانات المنتج أو الكمية غير صالحة");
+        }
+
+        // --- حالة الجرد (ADJUSTMENT) ---
+        if (data.type === 'ADJUSTMENT') {
+          await tx.productStock.upsert({
+            where: { productId_warehouseId: { productId, warehouseId: data.warehouseId } },
+            update: { quantity: qty },
+            create: { productId, warehouseId: data.warehouseId, quantity: qty }
+          });
+        } 
+        // --- حالة التحويل (TRANSFER) ---
+        else if (data.type === 'TRANSFER' && data.targetWarehouseId) {
+          // 1. خصم من المصدر
+          await tx.productStock.upsert({
+            where: { productId_warehouseId: { productId, warehouseId: data.warehouseId } },
+            update: { quantity: { decrement: qty } },
+            create: { productId, warehouseId: data.warehouseId, quantity: -qty }
+          });
+          // 2. إضافة للوجهة
+          await tx.productStock.upsert({
+            where: { productId_warehouseId: { productId, warehouseId: data.targetWarehouseId } },
+            update: { quantity: { increment: qty } },
+            create: { productId, warehouseId: data.targetWarehouseId, quantity: qty }
+          });
+        } 
+        // --- حالة توريد (IN) أو صرف (OUT) ---
+        else {
+          const adjustment = data.type === 'OUT' ? -qty : qty;
+          await tx.productStock.upsert({
+            where: { productId_warehouseId: { productId, warehouseId: data.warehouseId } },
+            update: { quantity: { increment: adjustment } },
+            create: { productId, warehouseId: data.warehouseId, quantity: adjustment }
+          });
+        }
+
+        // سجل الحركة التاريخي
+        await tx.stockMovement.create({
+          data: {
+            productId,
+            warehouseId: data.warehouseId,
+            quantity: qty,
+            type: data.type,
+            reason: data.reason || "",
+          }
         });
       }
-
-      // سجل الحركة التاريخي
-      await tx.stockMovement.create({
-        data: {
-          productId: data.productId,
-          warehouseId: data.warehouseId,
-          quantity: qty,
-          type: data.type,
-          reason: data.reason || "",
-        }
-      });
     });
 
-    revalidatePath('/dashboard/inventory');
+    revalidatePath('/dashboard/inventories');
     return { success: true };
-  } catch (error) {
-    return { success: false, error: "فشلت العملية" };
+  } catch (error: any) {
+    console.error("Movement error:", error);
+    return { success: false, error: error?.message || "فشلت العملية" };
   }
 }

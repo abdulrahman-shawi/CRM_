@@ -7,11 +7,11 @@ import { FormSelect } from '@/components/ui/select-form';
 import { useAuth } from '@/context/AuthContext';
 import { hasPermission, isAdmin } from '@/lib/utils';
 import { createCountry, deleteCountry, getCountries, updateCountry } from '@/server/country';
-import { createCity, deleteCity, getCities } from '@/server/city';
+import { createCity, deleteCity, getCities, updateCity } from '@/server/city';
 import { createWarehouse, deleteWarehouse, getWarehouse, getWarehouseDetails, updateWarehouse } from '@/server/warehouse';
 import { createMovementAction, getInventoryData } from '@/server/move';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2, ShieldCheck, Search } from 'lucide-react';
+import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2, ShieldCheck, Search, Building2, Trash } from 'lucide-react';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import z from 'zod';
@@ -28,12 +28,24 @@ const countrySchema = z.object({
     name: z.string().min(2, "اسم البلد مطلوب"),
 });
 
+const citySchema = z.object({
+    name: z.string().min(2, 'اسم المدينة مطلوب'),
+    countryId: z.string().min(1, 'بلد المدينة مطلوب'),
+});
+
 const movementTabs = [
     { key: 'IN', label: 'توريد (IN)' },
     { key: 'OUT', label: 'صرف (OUT)' },
     { key: 'TRANSFER', label: 'تحويل' },
     { key: 'ADJUSTMENT', label: 'جرد / تسوية' },
 ];
+
+type MovementItem = {
+    id: string;
+    productId: string;
+    productName: string;
+    quantity: string;
+};
 
 const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props) => {
     const [isWarehouseOpen, setIsWarehouseOpen] = React.useState(false);
@@ -45,6 +57,11 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const [isCountryOpen, setIsCountryOpen] = React.useState(false);
     const [countryEditId, setCountryEditId] = React.useState<string | null>(null);
     const [countryFormData, setCountryFormData] = React.useState<any>(null);
+    // ===== المدن =====
+    const [isCityOpen, setIsCityOpen] = React.useState(false);
+    const [cityEditId, setCityEditId] = React.useState<string | null>(null);
+    const [cityFormData, setCityFormData] = React.useState<any>(null);
+
     const { user } = useAuth()
     const isAdminUser = user?.accountType === 'ADMIN';
     const countryOptions = countries.map((country) => ({
@@ -71,10 +88,10 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const [movementType, setMovementType] = React.useState<string>('IN');
     const [inventoryData, setInventoryData] = React.useState<any>(null);
     const [sourceWarehouseId, setSourceWarehouseId] = React.useState<string>('');
-    const [movementFormKey, setMovementFormKey] = React.useState(0);
-    const [productSearch, setProductSearch] = React.useState('');
-    const [selectedProductId, setSelectedProductId] = React.useState<string>('');
-    const [productDropdownOpen, setProductDropdownOpen] = React.useState(false);
+    const [movementItems, setMovementItems] = React.useState<MovementItem[]>([{ id: '1', productId: '', productName: '', quantity: '' }]);
+    const [productSearch, setProductSearch] = React.useState<Record<string, string>>({});
+    const [productDropdownOpen, setProductDropdownOpen] = React.useState<Record<string, boolean>>({});
+    const [movementReason, setMovementReason] = React.useState('');
 
     const handleWarehouseClose = () => {
         setIsWarehouseOpen(false);
@@ -86,6 +103,12 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         setIsCountryOpen(false);
         setCountryEditId(null);
         setCountryFormData(null);
+    };
+
+    const handleCityClose = () => {
+        setIsCityOpen(false);
+        setCityEditId(null);
+        setCityFormData(null);
     };
 
     const handleEdit = (data: any) => {
@@ -104,6 +127,15 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
             name: data.name,
         });
         setIsCountryOpen(true);
+    };
+
+    const handleCityEdit = (data: any) => {
+        setCityEditId(String(data.id));
+        setCityFormData({
+            name: data.name,
+            countryId: data.countryId ? String(data.countryId) : '',
+        });
+        setIsCityOpen(true);
     };
 
     const handledelete = async (data: any) => {
@@ -145,6 +177,29 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
             }
         } else {
             toast.dismiss(loadingToast);
+        }
+    };
+
+    const handleCityDelete = async (data: any) => {
+        const loadingToast = toast.loading('جاري حذف المدينة...');
+        const confirmed = confirm('هل أنت متأكد من حذف هذه المدينة؟');
+        if (!confirmed) {
+            toast.dismiss(loadingToast);
+            return;
+        }
+        try {
+            const result = await deleteCity(String(data.id));
+            if (result.success) {
+                toast.success('تم حذف المدينة بنجاح');
+            } else {
+                toast.error(result.error || 'تعذر حذف المدينة');
+            }
+        } catch (error: any) {
+            toast.error('حدث خطأ أثناء حذف المدينة');
+            console.error(error);
+        } finally {
+            toast.dismiss(loadingToast);
+            getData();
         }
     };
 
@@ -206,6 +261,25 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         }
     };
 
+    const onCitySubmit = async (data: z.infer<typeof citySchema>) => {
+        const loadingToast = toast.loading(cityEditId ? 'جاري تحديث المدينة...' : 'جاري إنشاء المدينة...');
+        try {
+            const result = cityEditId ? await updateCity(cityEditId, data) : await createCity(data);
+            if (result.success) {
+                toast.success(cityEditId ? 'تم تحديث المدينة بنجاح' : 'تم إنشاء المدينة بنجاح');
+                handleCityClose();
+            } else {
+                toast.error(result.error || 'فشل في حفظ المدينة');
+            }
+        } catch (error) {
+            toast.error('حدث خطأ غير متوقع');
+            console.error(error);
+        } finally {
+            toast.dismiss(loadingToast);
+            getData();
+        }
+    };
+
     const getData = async () => {
         const [warehouseRows, countryRows, cityRows] = await Promise.all([
             getWarehouse(),
@@ -252,7 +326,10 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         setMovementOpen(true);
         setMovementType('IN');
         setSourceWarehouseId(warehouse ? String(warehouse.id) : '');
-        setMovementFormKey((k) => k + 1);
+        setMovementItems([{ id: '1', productId: '', productName: '', quantity: '' }]);
+        setProductSearch({});
+        setProductDropdownOpen({});
+        setMovementReason('');
         if (!inventoryData) {
             try {
                 const data = await getInventoryData();
@@ -266,22 +343,43 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const closeMovement = () => {
         setMovementOpen(false);
         setSourceWarehouseId('');
-        setProductSearch('');
-        setSelectedProductId('');
-        setProductDropdownOpen(false);
+        setMovementItems([{ id: '1', productId: '', productName: '', quantity: '' }]);
+        setProductSearch({});
+        setProductDropdownOpen({});
+        setMovementReason('');
     };
 
     const handleMovementSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!sourceWarehouseId) {
+            toast.error('يرجى اختيار المستودع');
+            return;
+        }
+        const validItems = movementItems
+            .filter(item => item.productId && Number(item.quantity) > 0)
+            .map(item => ({ productId: Number(item.productId), quantity: Number(item.quantity) }));
+
+        if (validItems.length === 0) {
+            toast.error('يرجى إضافة منتج واحد على الأقل بكمية صحيحة');
+            return;
+        }
+
+        if (movementType === 'TRANSFER') {
+            const targetId = (e.currentTarget.elements.namedItem('targetWarehouseId') as HTMLSelectElement)?.value;
+            if (!targetId) {
+                toast.error('يرجى اختيار مستودع الوجهة');
+                return;
+            }
+        }
+
         setMovementLoading(true);
         const formData = new FormData(e.currentTarget);
         const res = await createMovementAction({
-            productId: Number(formData.get("productId")),
-            warehouseId: Number(formData.get("warehouseId")),
+            items: validItems,
+            warehouseId: Number(sourceWarehouseId),
             targetWarehouseId: formData.get("targetWarehouseId") ? Number(formData.get("targetWarehouseId")) : null,
-            quantity: Number(formData.get("quantity")),
             type: movementType,
-            reason: formData.get("reason"),
+            reason: movementReason,
         });
         if (res.success) {
             toast.success('تم تسجيل الحركة بنجاح');
@@ -296,11 +394,6 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         setMovementLoading(false);
     };
 
-    const countryOptionsForMovement = inventoryData?.countries?.map((country: any) => ({
-        value: String(country.id),
-        label: country.name,
-    })) || [];
-
     const availableWarehousesForMovement = (inventoryData?.warehouses || []).filter((w: any) => w.id !== Number(sourceWarehouseId));
 
     const movementProductOptions = React.useMemo(() => {
@@ -308,13 +401,32 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         if (movementType === 'IN') {
             return inventoryData.products || [];
         }
-        // لباقي العمليات نعرض فقط المنتجات التي لها رصيد في المستودع المصدر
         return Array.from(new Map(
             (inventoryData.stocks || [])
                 .filter((s: any) => Number(s.warehouseId) === Number(sourceWarehouseId) && (Number(s.quantity) > 0 || movementType === 'ADJUSTMENT'))
                 .map((s: any) => [s.product.id, s.product])
         ).values());
     }, [inventoryData, movementType, sourceWarehouseId]);
+
+    const addMovementItem = () => {
+        const newId = String(Date.now() + Math.random());
+        setMovementItems((prev) => [...prev, { id: newId, productId: '', productName: '', quantity: '' }]);
+    };
+
+    const removeMovementItem = (id: string) => {
+        setMovementItems((prev) => prev.filter((item) => item.id !== id));
+    };
+
+    const updateMovementItem = (id: string, updates: Partial<MovementItem>) => {
+        setMovementItems((prev) => prev.map((item) => item.id === id ? { ...item, ...updates } : item));
+    };
+
+    const filteredProductOptions = (term: string) => {
+        const normalized = term.trim().toLowerCase();
+        return normalized
+            ? movementProductOptions.filter((p: any) => String(p.name || '').toLowerCase().includes(normalized))
+            : movementProductOptions;
+    };
 
     return (
         <div className="p-4">
@@ -371,6 +483,78 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                     ))}
                 </div>
             </AnimatePresence>
+
+            <div className="flex justify-between items-center mb-6">
+                <div className="text-xl font-bold">إدارة المدن</div>
+                {isAdminUser && (
+                    <Button
+                        onClick={() => {
+                            if (countries.length === 0) {
+                                toast.error('أضف بلدًا واحدًا على الأقل قبل إنشاء مدينة');
+                                return;
+                            }
+                            setCityEditId(null);
+                            setCityFormData(null);
+                            setIsCityOpen(true);
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                    >
+                        إضافة مدينة جديدة
+                    </Button>
+                )}
+            </div>
+
+            <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 mb-10">
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[720px] text-right">
+                        <thead className="bg-slate-50 text-xs text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
+                            <tr>
+                                <th className="px-6 py-4">اسم المدينة</th>
+                                <th className="px-6 py-4">البلد</th>
+                                <th className="px-6 py-4">تاريخ الإنشاء</th>
+                                <th className="px-6 py-4">إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            <AnimatePresence initial={false}>
+                                {cities.map((city) => (
+                                    <motion.tr
+                                        key={city.id}
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -8 }}
+                                        className="hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                                    >
+                                        <td className="px-6 py-5 font-bold text-slate-900 dark:text-white">{city.name}</td>
+                                        <td className="px-6 py-5 text-slate-600 dark:text-slate-300">{city.country?.name || '—'}</td>
+                                        <td className="px-6 py-5 text-slate-500 dark:text-slate-400">{new Date(city.createdAt).toLocaleDateString('ar-EG')}</td>
+                                        <td className="px-6 py-5">
+                                            <div className="flex gap-2">
+                                                {isAdminUser && (
+                                                    <button
+                                                        onClick={() => handleCityEdit(city)}
+                                                        className="rounded-xl bg-slate-50 p-2.5 text-blue-600 transition-all hover:bg-blue-600 hover:text-white dark:bg-slate-800"
+                                                    >
+                                                        <Edit size={16} />
+                                                    </button>
+                                                )}
+                                                {isAdminUser && (
+                                                    <button
+                                                        onClick={() => handleCityDelete(city)}
+                                                        className="rounded-xl bg-slate-50 p-2.5 text-red-500 transition-all hover:bg-red-500 hover:text-white dark:bg-slate-800"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </AnimatePresence>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <div className="flex justify-between items-center mb-6">
                 <div className="text-xl font-bold">إدارة المستودعات
@@ -673,13 +857,13 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
             {movementOpen && inventoryData && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[90] overflow-y-auto p-4">
                     <div className="flex min-h-full items-start justify-center py-4 sm:items-center">
-                        <div className="bg-white dark:bg-slate-900 w-full max-w-xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[2.5rem] shadow-2xl border dark:border-slate-800 animate-in zoom-in duration-200">
+                        <div className="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[2.5rem] shadow-2xl border dark:border-slate-800 animate-in zoom-in duration-200">
                             <div className="p-6 bg-slate-50 dark:bg-slate-800/50 border-b dark:border-slate-800 flex justify-between items-center sticky top-0 z-10">
                                 <h3 className="font-black text-xl dark:text-white">إضافة حركة مخزون</h3>
                                 <button onClick={closeMovement} className="dark:text-white hover:text-red-500 transition"><X size={22} /></button>
                             </div>
 
-                            <form key={movementFormKey} onSubmit={handleMovementSubmit} className="p-8 space-y-6">
+                            <form onSubmit={handleMovementSubmit} className="p-8 space-y-6">
                                 <div className="flex flex-wrap bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl gap-1">
                                     {movementTabs.map((tab) => (
                                         <button
@@ -727,72 +911,104 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                     )}
                                 </div>
 
-                                <div className="space-y-2 relative">
-                                    <label className="text-xs font-bold dark:text-slate-500 uppercase mr-2">المنتج</label>
-                                    <div className="relative">
-                                        <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                                        <input
-                                            type="text"
-                                            placeholder="ابحث عن منتج..."
-                                            value={productSearch}
-                                            onChange={(e) => {
-                                                setProductSearch(e.target.value);
-                                                setProductDropdownOpen(true);
-                                                if (selectedProductId) setSelectedProductId('');
-                                            }}
-                                            onFocus={() => setProductDropdownOpen(true)}
-                                            onBlur={() => setTimeout(() => setProductDropdownOpen(false), 200)}
-                                            className="w-full p-4 pr-10 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500"
-                                        />
-                                        {selectedProductId && (
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                                تم الاختيار
-                                            </span>
-                                        )}
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-xs font-bold dark:text-slate-500 uppercase">المنتجات</label>
+                                        <button
+                                            type="button"
+                                            onClick={addMovementItem}
+                                            className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:text-blue-700 transition"
+                                        >
+                                            <Plus size={16} />
+                                            إضافة منتج
+                                        </button>
                                     </div>
-                                    <input type="hidden" name="productId" value={selectedProductId} />
-                                    {productDropdownOpen && (
-                                        <div className="absolute z-20 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-2xl shadow-xl">
-                                            {(() => {
-                                                const term = productSearch.trim().toLowerCase();
-                                                const filtered = term
-                                                    ? movementProductOptions.filter((p: any) => String(p.name || '').toLowerCase().includes(term))
-                                                    : movementProductOptions;
-                                                if (filtered.length === 0) {
-                                                    return <div className="p-4 text-sm text-center text-slate-500 dark:text-slate-400">لا يوجد منتجات مطابقة</div>;
-                                                }
-                                                return filtered.map((p: any) => (
-                                                    <button
-                                                        key={p.id}
-                                                        type="button"
-                                                        onMouseDown={(e) => e.preventDefault()}
-                                                        onClick={() => {
-                                                            setSelectedProductId(String(p.id));
-                                                            setProductSearch(p.name);
-                                                            setProductDropdownOpen(false);
+
+                                    {movementItems.map((item, index) => (
+                                        <div key={item.id} className="relative p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border dark:border-slate-800 space-y-3">
+                                            {movementItems.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeMovementItem(item.id)}
+                                                    className="absolute left-3 top-3 p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
+                                                >
+                                                    <Trash size={16} />
+                                                </button>
+                                            )}
+                                            <div className="space-y-2 relative">
+                                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400">المنتج {index + 1}</label>
+                                                <div className="relative">
+                                                    <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="ابحث عن منتج..."
+                                                        value={productSearch[item.id] || ''}
+                                                        onChange={(e) => {
+                                                            setProductSearch((prev) => ({ ...prev, [item.id]: e.target.value }));
+                                                            setProductDropdownOpen((prev) => ({ ...prev, [item.id]: true }));
+                                                            if (item.productId) updateMovementItem(item.id, { productId: '', productName: '' });
                                                         }}
-                                                        className={`w-full text-right px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition ${selectedProductId === String(p.id) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'}`}
-                                                    >
-                                                        {p.name}
-                                                    </button>
-                                                ));
-                                            })()}
+                                                        onFocus={() => setProductDropdownOpen((prev) => ({ ...prev, [item.id]: true }))}
+                                                        onBlur={() => setTimeout(() => setProductDropdownOpen((prev) => ({ ...prev, [item.id]: false })), 200)}
+                                                        className="w-full p-4 pr-10 bg-white dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500"
+                                                    />
+                                                    {item.productId && (
+                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                                            تم الاختيار
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {productDropdownOpen[item.id] && (
+                                                    <div className="absolute z-20 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-2xl shadow-xl">
+                                                        {(() => {
+                                                            const filtered = filteredProductOptions(productSearch[item.id] || '');
+                                                            if (filtered.length === 0) {
+                                                                return <div className="p-4 text-sm text-center text-slate-500 dark:text-slate-400">لا يوجد منتجات مطابقة</div>;
+                                                            }
+                                                            return filtered.map((p: any) => (
+                                                                <button
+                                                                    key={p.id}
+                                                                    type="button"
+                                                                    onMouseDown={(e) => e.preventDefault()}
+                                                                    onClick={() => {
+                                                                        updateMovementItem(item.id, { productId: String(p.id), productName: p.name });
+                                                                        setProductSearch((prev) => ({ ...prev, [item.id]: p.name }));
+                                                                        setProductDropdownOpen((prev) => ({ ...prev, [item.id]: false }));
+                                                                    }}
+                                                                    className={`w-full text-right px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition ${item.productId === String(p.id) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'}`}
+                                                                >
+                                                                    {p.name}
+                                                                </button>
+                                                            ));
+                                                        })()}
+                                                    </div>
+                                                )}
+                                                {movementProductOptions.length === 0 && sourceWarehouseId && movementType !== 'IN' && (
+                                                    <p className="text-xs text-red-500 mt-1">لا يوجد منتجات متاحة في هذا المستودع</p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400">{movementType === 'ADJUSTMENT' ? 'الكمية الفعلية' : 'الكمية'}</label>
+                                                <input
+                                                    type="number"
+                                                    step="any"
+                                                    value={item.quantity}
+                                                    onChange={(e) => updateMovementItem(item.id, { quantity: e.target.value })}
+                                                    className="w-full p-4 bg-white dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
-                                    )}
-                                    {movementProductOptions.length === 0 && sourceWarehouseId && movementType !== 'IN' && (
-                                        <p className="text-xs text-red-500 mt-1">لا يوجد منتجات متاحة في هذا المستودع</p>
-                                    )}
+                                    ))}
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold dark:text-slate-500 uppercase mr-2">{movementType === 'ADJUSTMENT' ? 'الكمية الفعلية' : 'الكمية'}</label>
-                                        <input name="quantity" type="number" step="any" className="w-full p-4 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500" required />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold dark:text-slate-500 uppercase mr-2">ملاحظات</label>
-                                        <input name="reason" className="w-full p-4 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500" />
-                                    </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold dark:text-slate-500 uppercase mr-2">ملاحظات</label>
+                                    <input
+                                        value={movementReason}
+                                        onChange={(e) => setMovementReason(e.target.value)}
+                                        className="w-full p-4 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500"
+                                    />
                                 </div>
 
                                 <button disabled={movementLoading} className="w-full bg-blue-600 dark:bg-blue-500 text-white py-5 rounded-3xl font-black text-xl shadow-xl hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50">
@@ -870,6 +1086,39 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                     label="اسم البلد"
                                     {...register('name')}
                                     error={errors.name?.message as string}
+                                />
+                            </div>
+                        )}
+                    </DynamicForm>
+                </div>
+            </AppModal>
+            <AppModal
+                title={cityEditId ? 'تعديل المدينة' : 'إضافة مدينة جديدة'}
+                isOpen={isCityOpen}
+                onClose={handleCityClose}
+            >
+                <div className="p-2 max-h-[80vh]">
+                    <DynamicForm
+                        schema={citySchema}
+                        onSubmit={onCitySubmit}
+                        defaultValues={cityFormData}
+                        key={cityEditId || 'city-create'}
+                        submitLabel={cityEditId ? 'تحديث المدينة' : 'إرسال البيانات'}
+                    >
+                        {({ register, formState: { errors } }) => (
+                            <div className="grid gap-4">
+                                <FormInput
+                                    className='text-gray-800 dark:text-white'
+                                    label="اسم المدينة"
+                                    {...register('name')}
+                                    error={errors.name?.message as string}
+                                />
+                                <FormSelect
+                                    options={countryOptions}
+                                    className='text-gray-800 dark:text-white'
+                                    label="بلد المدينة"
+                                    {...register('countryId')}
+                                    error={errors.countryId?.message as string}
                                 />
                             </div>
                         )}
