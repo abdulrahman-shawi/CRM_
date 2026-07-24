@@ -145,3 +145,93 @@ export const deleteWarehouse = async (id: string) => {
         return { success: false, error: "فشل في حذف المستودع، قد يكون مرتبطًا بسجلات أخرى" };
     }   
 }
+
+export const getWarehouseDetails = async (id: string) => {
+    try {
+        const warehouseId = Number(id);
+        if (!Number.isInteger(warehouseId) || warehouseId <= 0) {
+            return { success: false, error: "معرف المستودع غير صالح" };
+        }
+
+        const [warehouse, stocks, orders, movements] = await prisma.$transaction(async (tx) => {
+            const warehouse = await tx.warehouse.findUnique({
+                where: { id: warehouseId },
+                include: {
+                    country: true,
+                    city: true,
+                    _count: {
+                        select: { stocks: true, orders: true, movements: true },
+                    },
+                },
+            });
+
+            if (!warehouse) return [null, null, null, null];
+
+            const stocks = await tx.productStock.findMany({
+                where: { warehouseId },
+                include: {
+                    product: { select: { id: true, name: true, modelNumber: true, sku: true } },
+                },
+                orderBy: { quantity: "desc" },
+            });
+
+            const orders = await tx.order.findMany({
+                where: { warehouseId },
+                orderBy: { createdAt: "desc" },
+                select: {
+                    id: true,
+                    status: true,
+                    finalAmount: true,
+                    receiverName: true,
+                    receiverPhone: true,
+                    createdAt: true,
+                    manualCreatedAt: true,
+                    customer: { select: { id: true, name: true, phone: true } },
+                    user: { select: { id: true, username: true } },
+                    items: { select: { quantity: true, price: true, product: { select: { name: true } } } },
+                },
+                take: 200,
+            });
+
+            const movements = await tx.stockMovement.findMany({
+                where: { warehouseId },
+                orderBy: { createdAt: "desc" },
+                include: {
+                    product: { select: { id: true, name: true, modelNumber: true } },
+                    user: { select: { id: true, username: true } },
+                },
+                take: 200,
+            });
+
+            return [warehouse, stocks, orders, movements];
+        });
+
+        if (!warehouse) {
+            return { success: false, error: "المستودع غير موجود" };
+        }
+
+        return {
+            success: true,
+            data: {
+                warehouse: mapWarehouse(warehouse),
+                stocks: JSON.parse(JSON.stringify(stocks)),
+                orders: JSON.parse(JSON.stringify(sortOrdersByDisplayDateDesc(orders))),
+                movements: JSON.parse(JSON.stringify(movements)),
+            },
+        };
+    } catch (error: any) {
+        console.error("Prisma Error:", error);
+        return { success: false, error: "فشل في جلب تفاصيل المستودع" };
+    }
+}
+
+const getOrderSortTimestamp = (orderLike: any) => {
+    const dateValue = orderLike?.manualCreatedAt || orderLike?.createdAt;
+    const parsed = new Date(dateValue);
+    if (Number.isNaN(parsed.getTime())) return 0;
+    return parsed.getTime();
+};
+
+const sortOrdersByDisplayDateDesc = <T extends { manualCreatedAt?: Date | null; createdAt?: Date | null }>(orders: T[]) => {
+    return [...orders].sort((a, b) => getOrderSortTimestamp(b) - getOrderSortTimestamp(a));
+};
