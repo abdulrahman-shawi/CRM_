@@ -10,6 +10,7 @@ import {
   FilePlus2,
   MapPin,
   MessageCircle,
+  Mail,
   Pencil,
   Phone,
   Plus,
@@ -33,6 +34,7 @@ import {
   updateWholesaleCustomer,
 } from "@/server/wholesale-customer";
 import { getCampaigns } from "@/server/marketing";
+import { sendEmailToRecipient } from "@/server/email";
 
 type SalesRep = {
   id: string;
@@ -540,6 +542,12 @@ export default function WholesaleCustomersPage() {
   const [selectedWhatsAppCampaignId, setSelectedWhatsAppCampaignId] = React.useState<number | null>(null);
   const [isLoadingWhatsAppCampaigns, setIsLoadingWhatsAppCampaigns] = React.useState(false);
   const [editingCustomerId, setEditingCustomerId] = React.useState<string | null>(null);
+  // Email modal
+  const [isEmailModalOpen, setIsEmailModalOpen] = React.useState(false);
+  const [emailCustomer, setEmailCustomer] = React.useState<WholesaleCustomer | null>(null);
+  const [emailSubject, setEmailSubject] = React.useState("");
+  const [emailBody, setEmailBody] = React.useState("");
+  const [isSendingEmail, setIsSendingEmail] = React.useState(false);
   const [customerForm, setCustomerForm] = React.useState<CustomerFormState>(createEmptyCustomerForm());
   const [visitForm, setVisitForm] = React.useState<VisitFormState>(createEmptyVisitForm());
   const [isPending, startTransition] = React.useTransition();
@@ -641,6 +649,48 @@ export default function WholesaleCustomersPage() {
     const message = buildWhatsAppMessageFromCampaign(campaign);
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
     setIsWhatsAppModalOpen(false);
+  }
+
+  function openEmailModal(customer: WholesaleCustomer) {
+    if (!customer?.email) {
+      toast.error("العميل لا يملك بريد إلكتروني مسجل");
+      return;
+    }
+    setEmailCustomer(customer);
+    setEmailSubject("");
+    setEmailBody("");
+    setIsEmailModalOpen(true);
+  }
+
+  async function handleSendEmail() {
+    if (!emailCustomer || !emailSubject.trim() || !emailBody.trim()) {
+      toast.error("يرجى ملء عنوان الرسالة والمحتوى");
+      return;
+    }
+    setIsSendingEmail(true);
+    const loadingToast = toast.loading("جاري إرسال الإيميل...");
+    try {
+      const html = emailBody
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/\n/g, "<br/>");
+      const res = await sendEmailToRecipient({
+        to: emailCustomer.email,
+        subject: emailSubject,
+        html: `<div dir="rtl" style="text-align:right;font-family:Arial,sans-serif;line-height:1.6;">${html}</div>`,
+      });
+      if (res.success) {
+        toast.success("تم إرسال الإيميل بنجاح");
+        setIsEmailModalOpen(false);
+      } else {
+        toast.error(res.error || "فشل إرسال الإيميل");
+      }
+    } catch (error) {
+      toast.error("حدث خطأ أثناء إرسال الإيميل");
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsSendingEmail(false);
+    }
   }
 
   React.useEffect(() => {
@@ -1256,6 +1306,12 @@ export default function WholesaleCustomersPage() {
       onClick: (customer) => openCustomerWhatsAppModal(customer),
     });
 
+    actions.push({
+      label: "إيميل",
+      icon: <Mail className="h-4 w-4" />,
+      onClick: (customer) => openEmailModal(customer),
+    });
+
     if (canDeleteWholesale) {
       actions.push({
         label: "حذف",
@@ -1266,7 +1322,7 @@ export default function WholesaleCustomersPage() {
     }
 
     return actions;
-  }, [canCreateWholesaleOrder, canDeleteWholesale, canEditWholesale, canRegisterVisit, handleDeleteCustomer, openCustomerWhatsAppModal, openEditCustomerModal, openVisitModal]);
+  }, [canCreateWholesaleOrder, canDeleteWholesale, canEditWholesale, canRegisterVisit, handleDeleteCustomer, openCustomerWhatsAppModal, openEditCustomerModal, openEmailModal, openVisitModal]);
 
   if (loading || isLoading) {
     return (
@@ -1923,6 +1979,65 @@ export default function WholesaleCustomersPage() {
               ))}
             </div>
           )}
+        </div>
+      </AppModal>
+
+      <AppModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        title={`إرسال إيميل إلى: ${emailCustomer?.name || ""}`}
+        size="md"
+        footer={
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setIsEmailModalOpen(false)}
+              className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
+            >
+              إلغاء
+            </button>
+            <button
+              type="button"
+              disabled={isSendingEmail || !emailSubject.trim() || !emailBody.trim()}
+              onClick={handleSendEmail}
+              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
+            >
+              <Mail className="h-4 w-4" />
+              {isSendingEmail ? "جاري الإرسال..." : "إرسال"}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4" dir="rtl">
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">إلى</label>
+            <input
+              type="email"
+              value={emailCustomer?.email || ""}
+              disabled
+              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">الموضوع</label>
+            <input
+              type="text"
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+              placeholder="عنوان الرسالة"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">المحتوى</label>
+            <textarea
+              value={emailBody}
+              onChange={(e) => setEmailBody(e.target.value)}
+              rows={6}
+              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+              placeholder="نص الرسالة..."
+            />
+          </div>
         </div>
       </AppModal>
 

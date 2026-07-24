@@ -910,24 +910,27 @@ model TrakingCompany {
 // ============================================
 
 model GeneralSetting {
-  id             Int      @id @default(autoincrement())
-  siteName       String?
-  companyEmail   String?
-  companyPhone   String?
-  siteCurrency   String?  @default("USD")
-  usdToTryRate   Float?   @default(0)
-  usdToSypRate   Float?   @default(0)
-  cashboxSyp     Float?   @default(0)
-  cashboxTry     Float?   @default(0)
-  cashboxUsd     Float?   @default(0)
-  logo           String?
-  facebookUrl    String?
-  instagramUrl   String?
-  topBannerText  String?
-  primaryColor   String?  @default("#10b981")
-  secondaryColor String?  @default("#0f766e")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  siteName         String?
+  companyEmail     String?
+  companyPhone     String?
+  siteCurrency     String?  @default("USD")
+  usdToTryRate     Float?   @default(0)
+  usdToSypRate     Float?   @default(0)
+  cashboxSyp       Float?   @default(0)
+  cashboxTry       Float?   @default(0)
+  cashboxUsd       Float?   @default(0)
+  logo             String?
+  facebookUrl      String?
+  instagramUrl     String?
+  topBannerText    String?
+  primaryColor     String?  @default("#10b981")
+  secondaryColor   String?  @default("#0f766e")
+  resendFromEmail  String?
+  resendApiKey     String?
+  nextPublicAppUrl String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 // ============================================

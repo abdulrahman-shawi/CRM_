@@ -17,6 +17,9 @@ type GeneralSettingsInput = {
   topBannerText?: string;
   primaryColor?: string;
   secondaryColor?: string;
+  resendFromEmail?: string;
+  resendApiKey?: string;
+  nextPublicAppUrl?: string;
 };
 
 function sanitizeFileName(fileName: string) {
@@ -31,6 +34,38 @@ async function uploadSingleFile(file: File, folder: string) {
     access: 'public',
   });
   return blob.url;
+}
+
+export async function getEmailSettings() {
+  try {
+    const data = await prisma.generalSetting.findFirst({
+      orderBy: { id: "asc" },
+      select: {
+        resendFromEmail: true,
+        resendApiKey: true,
+        nextPublicAppUrl: true,
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        resendFromEmail: data?.resendFromEmail || process.env.RESEND_FROM_EMAIL || "",
+        resendApiKey: data?.resendApiKey || process.env.RESEND_API_KEY || "",
+        nextPublicAppUrl: data?.nextPublicAppUrl || process.env.NEXT_PUBLIC_APP_URL || "",
+      },
+    };
+  } catch (error) {
+    console.error("getEmailSettings error:", error);
+    return {
+      success: true,
+      data: {
+        resendFromEmail: process.env.RESEND_FROM_EMAIL || "",
+        resendApiKey: process.env.RESEND_API_KEY || "",
+        nextPublicAppUrl: process.env.NEXT_PUBLIC_APP_URL || "",
+      },
+    };
+  }
 }
 
 export async function getGeneralSettings() {
@@ -64,6 +99,9 @@ export async function upsertGeneralSettings(formData: FormData) {
     const topBannerText = String(formData.get('topBannerText') || '').trim() || null;
     const primaryColor = String(formData.get('primaryColor') || '#10b981').trim() || '#10b981';
     const secondaryColor = String(formData.get('secondaryColor') || '#0f766e').trim() || '#0f766e';
+    const resendFromEmail = String(formData.get('resendFromEmail') || '').trim() || null;
+    const resendApiKey = String(formData.get('resendApiKey') || '').trim() || null;
+    const nextPublicAppUrl = String(formData.get('nextPublicAppUrl') || '').trim() || null;
 
     let logoUrl: string | undefined;
     const logoFile = formData.get('logo');
@@ -92,6 +130,9 @@ export async function upsertGeneralSettings(formData: FormData) {
       topBannerText,
       primaryColor,
       secondaryColor,
+      resendFromEmail,
+      resendApiKey,
+      nextPublicAppUrl,
       ...(logoUrl ? { logo: logoUrl } : {}),
     };
 

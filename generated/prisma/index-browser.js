@@ -601,6 +601,9 @@ exports.Prisma.GeneralSettingScalarFieldEnum = {
   topBannerText: 'topBannerText',
   primaryColor: 'primaryColor',
   secondaryColor: 'secondaryColor',
+  resendFromEmail: 'resendFromEmail',
+  resendApiKey: 'resendApiKey',
+  nextPublicAppUrl: 'nextPublicAppUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

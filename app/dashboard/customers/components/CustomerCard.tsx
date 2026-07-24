@@ -1,6 +1,6 @@
 import * as React from "react";
 import { hasPermission, isAdmin } from "@/lib/utils";
-import { Eye, MessageCircle, Pencil, ShoppingBag, Trash2 } from "lucide-react";
+import { Eye, MessageCircle, Pencil, ShoppingBag, Trash2, Mail } from "lucide-react";
 
 type StatusOption = { label: string; value: string };
 
@@ -19,6 +19,7 @@ type CustomerCardProps = {
   onOpenOrder: (customerId: any) => void;
   onViewOrders: (customerId: string) => void;
   onOpenAssign: (customer: any) => void;
+  onOpenEmail?: (customer: any) => void;
 };
 
 export const CustomerCard: React.FC<CustomerCardProps> = ({
@@ -34,6 +35,7 @@ export const CustomerCard: React.FC<CustomerCardProps> = ({
   onOpenOrder,
   onViewOrders,
   onOpenAssign,
+  onOpenEmail,
 }) => {
   const ordersCount = Number(customer?.ordersCount || 0);
   const latestMessage = Array.isArray(customer?.message) && customer.message.length > 0
@@ -201,6 +203,19 @@ ${customer.status === "فرصة جديدة"
               }}
             >
               <Eye size={20} />
+            </button>
+          )}
+
+          {customer.email && onOpenEmail && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenEmail(customer);
+              }}
+              className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all"
+              title="إرسال إيميل"
+            >
+              <Mail size={20} />
             </button>
           )}
 

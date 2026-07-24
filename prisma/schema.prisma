@@ -929,6 +929,9 @@ model GeneralSetting {
   topBannerText   String?
   primaryColor    String?  @default("#10b981")
   secondaryColor  String?  @default("#0f766e")
+  resendFromEmail String?
+  resendApiKey    String?
+  nextPublicAppUrl String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

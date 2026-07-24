@@ -42102,6 +42102,9 @@ export namespace Prisma {
     topBannerText: string | null
     primaryColor: string | null
     secondaryColor: string | null
+    resendFromEmail: string | null
+    resendApiKey: string | null
+    nextPublicAppUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -42123,6 +42126,9 @@ export namespace Prisma {
     topBannerText: string | null
     primaryColor: string | null
     secondaryColor: string | null
+    resendFromEmail: string | null
+    resendApiKey: string | null
+    nextPublicAppUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -42144,6 +42150,9 @@ export namespace Prisma {
     topBannerText: number
     primaryColor: number
     secondaryColor: number
+    resendFromEmail: number
+    resendApiKey: number
+    nextPublicAppUrl: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -42185,6 +42194,9 @@ export namespace Prisma {
     topBannerText?: true
     primaryColor?: true
     secondaryColor?: true
+    resendFromEmail?: true
+    resendApiKey?: true
+    nextPublicAppUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -42206,6 +42218,9 @@ export namespace Prisma {
     topBannerText?: true
     primaryColor?: true
     secondaryColor?: true
+    resendFromEmail?: true
+    resendApiKey?: true
+    nextPublicAppUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -42227,6 +42242,9 @@ export namespace Prisma {
     topBannerText?: true
     primaryColor?: true
     secondaryColor?: true
+    resendFromEmail?: true
+    resendApiKey?: true
+    nextPublicAppUrl?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -42335,6 +42353,9 @@ export namespace Prisma {
     topBannerText: string | null
     primaryColor: string | null
     secondaryColor: string | null
+    resendFromEmail: string | null
+    resendApiKey: string | null
+    nextPublicAppUrl: string | null
     createdAt: Date
     updatedAt: Date
     _count: GeneralSettingCountAggregateOutputType | null
@@ -42375,6 +42396,9 @@ export namespace Prisma {
     topBannerText?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
+    resendFromEmail?: boolean
+    resendApiKey?: boolean
+    nextPublicAppUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -42396,6 +42420,9 @@ export namespace Prisma {
     topBannerText?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
+    resendFromEmail?: boolean
+    resendApiKey?: boolean
+    nextPublicAppUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -42417,6 +42444,9 @@ export namespace Prisma {
     topBannerText?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
+    resendFromEmail?: boolean
+    resendApiKey?: boolean
+    nextPublicAppUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -42438,11 +42468,14 @@ export namespace Prisma {
     topBannerText?: boolean
     primaryColor?: boolean
     secondaryColor?: boolean
+    resendFromEmail?: boolean
+    resendApiKey?: boolean
+    nextPublicAppUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
+  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
 
   export type $GeneralSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GeneralSetting"
@@ -42464,6 +42497,9 @@ export namespace Prisma {
       topBannerText: string | null
       primaryColor: string | null
       secondaryColor: string | null
+      resendFromEmail: string | null
+      resendApiKey: string | null
+      nextPublicAppUrl: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["generalSetting"]>
@@ -42905,6 +42941,9 @@ export namespace Prisma {
     readonly topBannerText: FieldRef<"GeneralSetting", 'String'>
     readonly primaryColor: FieldRef<"GeneralSetting", 'String'>
     readonly secondaryColor: FieldRef<"GeneralSetting", 'String'>
+    readonly resendFromEmail: FieldRef<"GeneralSetting", 'String'>
+    readonly resendApiKey: FieldRef<"GeneralSetting", 'String'>
+    readonly nextPublicAppUrl: FieldRef<"GeneralSetting", 'String'>
     readonly createdAt: FieldRef<"GeneralSetting", 'DateTime'>
     readonly updatedAt: FieldRef<"GeneralSetting", 'DateTime'>
   }
@@ -54341,6 +54380,9 @@ export namespace Prisma {
     topBannerText: 'topBannerText',
     primaryColor: 'primaryColor',
     secondaryColor: 'secondaryColor',
+    resendFromEmail: 'resendFromEmail',
+    resendApiKey: 'resendApiKey',
+    nextPublicAppUrl: 'nextPublicAppUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -57892,6 +57934,9 @@ export namespace Prisma {
     topBannerText?: StringNullableFilter<"GeneralSetting"> | string | null
     primaryColor?: StringNullableFilter<"GeneralSetting"> | string | null
     secondaryColor?: StringNullableFilter<"GeneralSetting"> | string | null
+    resendFromEmail?: StringNullableFilter<"GeneralSetting"> | string | null
+    resendApiKey?: StringNullableFilter<"GeneralSetting"> | string | null
+    nextPublicAppUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeFilter<"GeneralSetting"> | Date | string
   }
@@ -57913,6 +57958,9 @@ export namespace Prisma {
     topBannerText?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
+    resendFromEmail?: SortOrderInput | SortOrder
+    resendApiKey?: SortOrderInput | SortOrder
+    nextPublicAppUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -57937,6 +57985,9 @@ export namespace Prisma {
     topBannerText?: StringNullableFilter<"GeneralSetting"> | string | null
     primaryColor?: StringNullableFilter<"GeneralSetting"> | string | null
     secondaryColor?: StringNullableFilter<"GeneralSetting"> | string | null
+    resendFromEmail?: StringNullableFilter<"GeneralSetting"> | string | null
+    resendApiKey?: StringNullableFilter<"GeneralSetting"> | string | null
+    nextPublicAppUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeFilter<"GeneralSetting"> | Date | string
   }, "id">
@@ -57958,6 +58009,9 @@ export namespace Prisma {
     topBannerText?: SortOrderInput | SortOrder
     primaryColor?: SortOrderInput | SortOrder
     secondaryColor?: SortOrderInput | SortOrder
+    resendFromEmail?: SortOrderInput | SortOrder
+    resendApiKey?: SortOrderInput | SortOrder
+    nextPublicAppUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: GeneralSettingCountOrderByAggregateInput
@@ -57987,6 +58041,9 @@ export namespace Prisma {
     topBannerText?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     primaryColor?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     secondaryColor?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    resendFromEmail?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    resendApiKey?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    nextPublicAppUrl?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GeneralSetting"> | Date | string
   }
@@ -62155,6 +62212,9 @@ export namespace Prisma {
     topBannerText?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
+    resendFromEmail?: string | null
+    resendApiKey?: string | null
+    nextPublicAppUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -62176,6 +62236,9 @@ export namespace Prisma {
     topBannerText?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
+    resendFromEmail?: string | null
+    resendApiKey?: string | null
+    nextPublicAppUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -62196,6 +62259,9 @@ export namespace Prisma {
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -62217,6 +62283,9 @@ export namespace Prisma {
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -62238,6 +62307,9 @@ export namespace Prisma {
     topBannerText?: string | null
     primaryColor?: string | null
     secondaryColor?: string | null
+    resendFromEmail?: string | null
+    resendApiKey?: string | null
+    nextPublicAppUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -62258,6 +62330,9 @@ export namespace Prisma {
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -62279,6 +62354,9 @@ export namespace Prisma {
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
     secondaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65777,6 +65855,9 @@ export namespace Prisma {
     topBannerText?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
+    resendFromEmail?: SortOrder
+    resendApiKey?: SortOrder
+    nextPublicAppUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -65807,6 +65888,9 @@ export namespace Prisma {
     topBannerText?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
+    resendFromEmail?: SortOrder
+    resendApiKey?: SortOrder
+    nextPublicAppUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -65828,6 +65912,9 @@ export namespace Prisma {
     topBannerText?: SortOrder
     primaryColor?: SortOrder
     secondaryColor?: SortOrder
+    resendFromEmail?: SortOrder
+    resendApiKey?: SortOrder
+    nextPublicAppUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }

@@ -19,6 +19,9 @@ type FormState = {
   topBannerText: string;
   primaryColor: string;
   secondaryColor: string;
+  resendFromEmail: string;
+  resendApiKey: string;
+  nextPublicAppUrl: string;
 };
 
 const initialForm: FormState = {
@@ -34,6 +37,9 @@ const initialForm: FormState = {
   topBannerText: "",
   primaryColor: "#10b981",
   secondaryColor: "#0f766e",
+  resendFromEmail: "",
+  resendApiKey: "",
+  nextPublicAppUrl: "",
 };
 
 const CURRENCIES = [
@@ -234,6 +240,9 @@ export default function GeneralSettingsPage() {
         topBannerText: data.topBannerText || "",
         primaryColor: data.primaryColor || "#10b981",
         secondaryColor: data.secondaryColor || "#0f766e",
+        resendFromEmail: data.resendFromEmail || "",
+        resendApiKey: data.resendApiKey || "",
+        nextPublicAppUrl: data.nextPublicAppUrl || "",
       });
 
       if (data.logo) {
@@ -265,6 +274,9 @@ export default function GeneralSettingsPage() {
       formData.append("topBannerText", form.topBannerText);
       formData.append("primaryColor", form.primaryColor);
       formData.append("secondaryColor", form.secondaryColor);
+      formData.append("resendFromEmail", form.resendFromEmail);
+      formData.append("resendApiKey", form.resendApiKey);
+      formData.append("nextPublicAppUrl", form.nextPublicAppUrl);
 
       const logoFile = logoFiles[0]?.rawFile;
       if (logoFile instanceof File && logoFile.size > 0) {
@@ -491,6 +503,48 @@ export default function GeneralSettingsPage() {
             placeholder="https://instagram.com/..."
             disabled={loading}
           />
+        </div>
+
+        <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="mb-4">
+            <h2 className="text-base font-black text-slate-900 dark:text-white">إعدادات البريد (Resend)</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">اترك الحقول فارغة لاستخدام قيم ملف <code>.env</code> تلقائيًا.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Resend From Email</label>
+              <input
+                type="email"
+                value={form.resendFromEmail}
+                onChange={(e) => handleChange("resendFromEmail", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.RESEND_FROM_EMAIL || "noreply@example.com"}
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Resend API Key</label>
+              <input
+                type="password"
+                value={form.resendApiKey}
+                onChange={(e) => handleChange("resendApiKey", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.RESEND_API_KEY ? "••••••••••••••••••••••••" : "re_xxxxxxxx"}
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">NEXT_PUBLIC_APP_URL</label>
+              <input
+                type="url"
+                value={form.nextPublicAppUrl}
+                onChange={(e) => handleChange("nextPublicAppUrl", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.NEXT_PUBLIC_APP_URL || "https://example.com"}
+                disabled={loading}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="space-y-2">
