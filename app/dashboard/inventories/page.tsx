@@ -11,7 +11,7 @@ import { createCity, deleteCity, getCities } from '@/server/city';
 import { createWarehouse, deleteWarehouse, getWarehouse, getWarehouseDetails, updateWarehouse } from '@/server/warehouse';
 import { createMovementAction, getInventoryData } from '@/server/move';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2 } from 'lucide-react';
+import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2, ShieldCheck, Search } from 'lucide-react';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import z from 'zod';
@@ -62,7 +62,7 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const [detailsOpen, setDetailsOpen] = React.useState(false);
     const [selectedWarehouse, setSelectedWarehouse] = React.useState<any>(null);
     const [warehouseDetails, setWarehouseDetails] = React.useState<any>(null);
-    const [detailsTab, setDetailsTab] = React.useState<'products' | 'orders' | 'movements'>('products');
+    const [detailsTab, setDetailsTab] = React.useState<'products' | 'orders' | 'movements' | 'warranties'>('products');
     const [detailsLoading, setDetailsLoading] = React.useState(false);
 
     // ===== حركة المخزون =====
@@ -72,6 +72,9 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const [inventoryData, setInventoryData] = React.useState<any>(null);
     const [sourceWarehouseId, setSourceWarehouseId] = React.useState<string>('');
     const [movementFormKey, setMovementFormKey] = React.useState(0);
+    const [productSearch, setProductSearch] = React.useState('');
+    const [selectedProductId, setSelectedProductId] = React.useState<string>('');
+    const [productDropdownOpen, setProductDropdownOpen] = React.useState(false);
 
     const handleWarehouseClose = () => {
         setIsWarehouseOpen(false);
@@ -263,6 +266,9 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const closeMovement = () => {
         setMovementOpen(false);
         setSourceWarehouseId('');
+        setProductSearch('');
+        setSelectedProductId('');
+        setProductDropdownOpen(false);
     };
 
     const handleMovementSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -483,6 +489,7 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                     { key: 'products', label: 'المنتجات', icon: Package },
                                     { key: 'orders', label: 'الطلبات', icon: FileText },
                                     { key: 'movements', label: 'حركات المخزون', icon: ArrowRightLeft },
+                                    { key: 'warranties', label: 'الكفالات', icon: ShieldCheck },
                                 ].map((tab) => (
                                     <button
                                         key={tab.key}
@@ -611,6 +618,49 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                                 </table>
                                             </div>
                                         )}
+
+                                        {detailsTab === 'warranties' && (
+                                            <div className="overflow-x-auto rounded-[1.5rem] border dark:border-slate-800">
+                                                <table className="w-full min-w-[700px]">
+                                                    <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs text-center">
+                                                        <tr>
+                                                            <th className="p-4 text-right">المنتج</th>
+                                                            <th className="p-4">النوع</th>
+                                                            <th className="p-4">الكمية</th>
+                                                            <th className="p-4">العميل</th>
+                                                            <th className="p-4">التاريخ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y dark:divide-slate-800">
+                                                        {(warehouseDetails.warranties || []).length === 0 ? (
+                                                            <tr><td colSpan={5} className="p-8 text-center text-slate-500 dark:text-slate-400">لا يوجد كفالات مرتبطة بهذا المستودع</td></tr>
+                                                        ) : (
+                                                            warehouseDetails.warranties.map((warranty: any) => (
+                                                                <tr key={warranty.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition text-center">
+                                                                    <td className="p-4 text-right font-bold dark:text-slate-200">{warranty.product?.name}</td>
+                                                                    <td className="p-4">
+                                                                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black ${
+                                                                            warranty.type === 'REPLACEMENT' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                                                            warranty.type === 'MAINTENANCE' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                                                                            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                                                        }`}>
+                                                                            {warranty.type === 'REPLACEMENT' && 'تبديل'}
+                                                                            {warranty.type === 'MAINTENANCE' && 'صيانة'}
+                                                                            {warranty.type === 'DAMAGED' && 'تالف'}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className="p-4 text-lg font-mono font-bold text-slate-700 dark:text-slate-200">{warranty.quantity}</td>
+                                                                    <td className="p-4 text-sm text-slate-500 dark:text-slate-300">{warranty.customer?.name || '—'}</td>
+                                                                    <td className="p-4 text-sm text-slate-500 dark:text-slate-400">
+                                                                        {new Date(warranty.createdAt).toLocaleDateString('ar-EG')}
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -677,18 +727,58 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                     )}
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-2 relative">
                                     <label className="text-xs font-bold dark:text-slate-500 uppercase mr-2">المنتج</label>
-                                    <select
-                                        name="productId"
-                                        className="w-full p-4 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none"
-                                        required
-                                    >
-                                        <option value="">اختر المنتج...</option>
-                                        {movementProductOptions.map((p: any) => (
-                                            <option key={p.id} value={p.id}>{p.name}</option>
-                                        ))}
-                                    </select>
+                                    <div className="relative">
+                                        <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input
+                                            type="text"
+                                            placeholder="ابحث عن منتج..."
+                                            value={productSearch}
+                                            onChange={(e) => {
+                                                setProductSearch(e.target.value);
+                                                setProductDropdownOpen(true);
+                                                if (selectedProductId) setSelectedProductId('');
+                                            }}
+                                            onFocus={() => setProductDropdownOpen(true)}
+                                            onBlur={() => setTimeout(() => setProductDropdownOpen(false), 200)}
+                                            className="w-full p-4 pr-10 bg-slate-50 dark:bg-slate-950 dark:text-white border dark:border-slate-800 rounded-2xl outline-none focus:ring-2 ring-blue-500"
+                                        />
+                                        {selectedProductId && (
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                                تم الاختيار
+                                            </span>
+                                        )}
+                                    </div>
+                                    <input type="hidden" name="productId" value={selectedProductId} />
+                                    {productDropdownOpen && (
+                                        <div className="absolute z-20 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-2xl shadow-xl">
+                                            {(() => {
+                                                const term = productSearch.trim().toLowerCase();
+                                                const filtered = term
+                                                    ? movementProductOptions.filter((p: any) => String(p.name || '').toLowerCase().includes(term))
+                                                    : movementProductOptions;
+                                                if (filtered.length === 0) {
+                                                    return <div className="p-4 text-sm text-center text-slate-500 dark:text-slate-400">لا يوجد منتجات مطابقة</div>;
+                                                }
+                                                return filtered.map((p: any) => (
+                                                    <button
+                                                        key={p.id}
+                                                        type="button"
+                                                        onMouseDown={(e) => e.preventDefault()}
+                                                        onClick={() => {
+                                                            setSelectedProductId(String(p.id));
+                                                            setProductSearch(p.name);
+                                                            setProductDropdownOpen(false);
+                                                        }}
+                                                        className={`w-full text-right px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition ${selectedProductId === String(p.id) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'}`}
+                                                    >
+                                                        {p.name}
+                                                    </button>
+                                                ));
+                                            })()}
+                                        </div>
+                                    )}
                                     {movementProductOptions.length === 0 && sourceWarehouseId && movementType !== 'IN' && (
                                         <p className="text-xs text-red-500 mt-1">لا يوجد منتجات متاحة في هذا المستودع</p>
                                     )}

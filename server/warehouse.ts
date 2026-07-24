@@ -153,7 +153,7 @@ export const getWarehouseDetails = async (id: string) => {
             return { success: false, error: "معرف المستودع غير صالح" };
         }
 
-        const [warehouse, stocks, orders, movements] = await prisma.$transaction(async (tx) => {
+        const [warehouse, stocks, orders, movements, warranties] = await prisma.$transaction(async (tx) => {
             const warehouse = await tx.warehouse.findUnique({
                 where: { id: warehouseId },
                 include: {
@@ -203,7 +203,18 @@ export const getWarehouseDetails = async (id: string) => {
                 take: 200,
             });
 
-            return [warehouse, stocks, orders, movements];
+            const warranties = await tx.warranty.findMany({
+                where: { warehouseId },
+                orderBy: { createdAt: "desc" },
+                include: {
+                    product: { select: { id: true, name: true, modelNumber: true } },
+                    customer: { select: { id: true, name: true, phone: true } },
+                    order: { select: { id: true, orderNumber: true } },
+                },
+                take: 200,
+            });
+
+            return [warehouse, stocks, orders, movements, warranties];
         });
 
         if (!warehouse) {
@@ -217,6 +228,7 @@ export const getWarehouseDetails = async (id: string) => {
                 stocks: JSON.parse(JSON.stringify(stocks)),
                 orders: JSON.parse(JSON.stringify(sortOrdersByDisplayDateDesc(orders))),
                 movements: JSON.parse(JSON.stringify(movements)),
+                warranties: JSON.parse(JSON.stringify(warranties)),
             },
         };
     } catch (error: any) {
