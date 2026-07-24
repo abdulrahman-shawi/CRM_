@@ -173,13 +173,12 @@ async function getCampaignRecipients(audience: CampaignAudience, targetIds: any)
   if (audience === "ALL_REPS") {
     const reps = await prisma.user.findMany({
       where: {
-        email: { not: null },
         accountType: { in: ["STAFF", "MANAGER"] },
       },
       select: { id: true, email: true, username: true },
     });
     return reps
-      .filter((u): u is typeof u & { email: string } => u.email !== null && isValidEmail(u.email))
+      .filter((u) => isValidEmail(u.email))
       .map((u) => ({ id: u.id, email: u.email, name: u.username, type: "rep" as const }));
   }
 
