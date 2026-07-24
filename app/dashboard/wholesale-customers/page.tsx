@@ -663,7 +663,7 @@ export default function WholesaleCustomersPage() {
   }
 
   async function handleSendEmail() {
-    if (!emailCustomer || !emailSubject.trim() || !emailBody.trim()) {
+    if (!emailCustomer || !emailCustomer.email || !emailSubject.trim() || !emailBody.trim()) {
       toast.error("يرجى ملء عنوان الرسالة والمحتوى");
       return;
     }
