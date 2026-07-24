@@ -170,7 +170,7 @@ export const getWarehouseDetails = async (id: string) => {
             const stocks = await tx.productStock.findMany({
                 where: { warehouseId },
                 include: {
-                    product: { select: { id: true, name: true, modelNumber: true, sku: true } },
+                    product: { select: { id: true, name: true, modelNumber: true } },
                 },
                 orderBy: { quantity: "desc" },
             });
