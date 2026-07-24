@@ -8,7 +8,7 @@ export type CampaignRecipient = {
   id: string;
   email: string;
   name: string | null;
-  type: "customer" | "wholesale";
+  type: "customer" | "wholesale" | "rep";
 };
 
 export type CampaignEmailInput = {

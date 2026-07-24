@@ -22,6 +22,7 @@ import {
   createCampaign,
   deleteCampaign,
   getCampaignById,
+  getCampaignRecipientsForPicker,
   getCampaigns,
   launchCampaign,
   recordCampaignMetric,
@@ -47,6 +48,7 @@ const CAMPAIGN_STATUSES = [
 const CAMPAIGN_AUDIENCES = [
   { value: "ALL_CUSTOMERS", label: "كل العملاء" },
   { value: "ALL_WHOLESALE", label: "عملاء الجملة" },
+  { value: "ALL_REPS", label: "المندوبين" },
   { value: "CUSTOM", label: "قائمة مخصصة" },
 ];
 
@@ -78,14 +80,25 @@ type Campaign = {
   createdBy?: { id: string; username: string } | null;
 };
 
-const emptyForm = () => ({
+type CampaignForm = {
+  title: string;
+  type: string;
+  status: string;
+  subject: string;
+  content: string;
+  audience: string;
+  targetIds: string[];
+  scheduledAt: string;
+};
+
+const emptyForm = (): CampaignForm => ({
   title: "",
   type: "EMAIL",
   status: "DRAFT",
   subject: "",
   content: "",
   audience: "ALL_CUSTOMERS",
-  targetIds: "",
+  targetIds: [],
   scheduledAt: "",
 });
 
@@ -114,7 +127,7 @@ function CampaignsPageContent() {
   const [isMetricsOpen, setIsMetricsOpen] = React.useState(false);
   const [editingId, setEditingId] = React.useState<number | null>(null);
   const [selectedCampaign, setSelectedCampaign] = React.useState<Campaign | null>(null);
-  const [form, setForm] = React.useState(emptyForm());
+  const [form, setForm] = React.useState<CampaignForm>(emptyForm());
   const [metricForm, setMetricForm] = React.useState<Record<string, number>>({
     sent: 0,
     opened: 0,
@@ -122,6 +135,13 @@ function CampaignsPageContent() {
     converted: 0,
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const [pickerRecipients, setPickerRecipients] = React.useState<{
+    customers: { id: string; email: string | null; name: string | null; type: string }[];
+    wholesale: { id: string; email: string | null; name: string | null; type: string }[];
+  }>({ customers: [], wholesale: [] });
+  const [pickerLoading, setPickerLoading] = React.useState(false);
+  const [customTargetSearch, setCustomTargetSearch] = React.useState("");
 
   const canView = React.useMemo(() => {
     if (!user) return false;
@@ -205,7 +225,7 @@ function CampaignsPageContent() {
         subject: data.subject || "",
         content: data.content || "",
         audience: data.audience || "ALL_CUSTOMERS",
-        targetIds: Array.isArray(data.targetIds) ? data.targetIds.join(", ") : "",
+        targetIds: Array.isArray(data.targetIds) ? data.targetIds.map(String) : [],
         scheduledAt: formatDateTimeLocal(data.scheduledAt),
       });
       setIsFormOpen(true);
@@ -227,13 +247,17 @@ function CampaignsPageContent() {
       toast.error("يرجى إدخال موضوع البريد الإلكتروني");
       return;
     }
+    if (form.audience === "CUSTOM" && form.targetIds.length === 0) {
+      toast.error("يرجى اختيار عميل واحد على الأقل من القائمة المخصصة");
+      return;
+    }
 
     setIsSubmitting(true);
     const loading = toast.loading(editingId ? "جاري تحديث الحملة..." : "جاري إنشاء الحملة...");
     try {
       const payload = {
         ...form,
-        targetIds: form.audience === "CUSTOM" ? form.targetIds : "",
+        targetIds: form.audience === "CUSTOM" ? form.targetIds : [],
         scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null,
       };
       const response = editingId
@@ -251,6 +275,76 @@ function CampaignsPageContent() {
       toast.dismiss(loading);
     }
   };
+
+  const loadPickerRecipients = React.useCallback(async () => {
+    setPickerLoading(true);
+    try {
+      const response = await getCampaignRecipientsForPicker();
+      if (response.success && response.data) {
+        setPickerRecipients(response.data as typeof pickerRecipients);
+      } else {
+        toast.error(response.error || "فشل في تحميل قائمة المستلمين");
+      }
+    } catch (error) {
+      console.error("Load picker recipients error:", error);
+      toast.error("حدث خطأ أثناء تحميل قائمة المستلمين");
+    } finally {
+      setPickerLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (isFormOpen && form.audience === "CUSTOM" && pickerRecipients.customers.length === 0 && pickerRecipients.wholesale.length === 0) {
+      void loadPickerRecipients();
+    }
+  }, [isFormOpen, form.audience, pickerRecipients, loadPickerRecipients]);
+
+  const toggleTargetId = (id: string) => {
+    setForm((f) => {
+      const selected = new Set(f.targetIds);
+      if (selected.has(id)) {
+        selected.delete(id);
+      } else {
+        selected.add(id);
+      }
+      return { ...f, targetIds: Array.from(selected) };
+    });
+  };
+
+  const selectAllTargets = (ids: string[]) => {
+    setForm((f) => {
+      const selected = new Set(f.targetIds);
+      ids.forEach((id) => selected.add(id));
+      return { ...f, targetIds: Array.from(selected) };
+    });
+  };
+
+  const deselectAllTargets = (ids: string[]) => {
+    setForm((f) => {
+      const toRemove = new Set(ids);
+      return { ...f, targetIds: f.targetIds.filter((id) => !toRemove.has(id)) };
+    });
+  };
+
+  const filteredPickerCustomers = React.useMemo(() => {
+    const query = customTargetSearch.trim().toLowerCase();
+    if (!query) return pickerRecipients.customers;
+    return pickerRecipients.customers.filter(
+      (c) =>
+        String(c.name || "").toLowerCase().includes(query) ||
+        String(c.email || "").toLowerCase().includes(query)
+    );
+  }, [pickerRecipients.customers, customTargetSearch]);
+
+  const filteredPickerWholesale = React.useMemo(() => {
+    const query = customTargetSearch.trim().toLowerCase();
+    if (!query) return pickerRecipients.wholesale;
+    return pickerRecipients.wholesale.filter(
+      (c) =>
+        String(c.name || "").toLowerCase().includes(query) ||
+        String(c.email || "").toLowerCase().includes(query)
+    );
+  }, [pickerRecipients.wholesale, customTargetSearch]);
 
   const handleDelete = React.useCallback(async (id: number) => {
     if (!window.confirm("هل أنت متأكد من حذف هذه الحملة؟")) return;
@@ -606,16 +700,130 @@ function CampaignsPageContent() {
           </label>
 
           {form.audience === "CUSTOM" && (
-            <label className="space-y-2 md:col-span-2">
-              <span className="text-xs font-black text-slate-600 dark:text-slate-300">معرّفات الجمهور المخصص (مفصولة بفاصلة)</span>
+            <div className="space-y-3 md:col-span-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-xs font-black text-slate-600 dark:text-slate-300">اختيار العملاء (قائمة مخصصة)</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  تم اختيار {form.targetIds.length} مستلم
+                </span>
+              </div>
+
               <input
                 type="text"
-                value={form.targetIds}
-                onChange={(e) => setForm((f) => ({ ...f, targetIds: e.target.value }))}
+                value={customTargetSearch}
+                onChange={(e) => setCustomTargetSearch(e.target.value)}
                 className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                placeholder="1, 2, 3"
+                placeholder="بحث بالاسم أو البريد الإلكتروني..."
               />
-            </label>
+
+              {pickerLoading ? (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-900">
+                  جاري تحميل قائمة العملاء...
+                </div>
+              ) : (
+                <div className="max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-950">
+                  {filteredPickerCustomers.length === 0 && filteredPickerWholesale.length === 0 && (
+                    <div className="p-4 text-center text-sm font-bold text-slate-500 dark:text-slate-400">
+                      لا يوجد عملاء متاحين
+                    </div>
+                  )}
+
+                  {pickerRecipients.customers.length > 0 && (
+                    <div className="mb-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-700 dark:text-slate-200">العملاء</span>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => selectAllTargets(pickerRecipients.customers.map((c) => c.id))}
+                            className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                          >
+                            تحديد الكل
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deselectAllTargets(pickerRecipients.customers.map((c) => c.id))}
+                            className="text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400"
+                          >
+                            إلغاء
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        {filteredPickerCustomers.map((customer) => (
+                          <label
+                            key={customer.id}
+                            className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={form.targetIds.includes(customer.id)}
+                              onChange={() => toggleTargetId(customer.id)}
+                              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                                {customer.name || "—"}
+                              </div>
+                              <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                {customer.email || "لا يوجد بريد"}
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {pickerRecipients.wholesale.length > 0 && (
+                    <div>
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-700 dark:text-slate-200">عملاء الجملة</span>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => selectAllTargets(pickerRecipients.wholesale.map((c) => c.id))}
+                            className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                          >
+                            تحديد الكل
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deselectAllTargets(pickerRecipients.wholesale.map((c) => c.id))}
+                            className="text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400"
+                          >
+                            إلغاء
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        {filteredPickerWholesale.map((customer) => (
+                          <label
+                            key={customer.id}
+                            className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={form.targetIds.includes(customer.id)}
+                              onChange={() => toggleTargetId(customer.id)}
+                              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                                {customer.name || "—"}
+                              </div>
+                              <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                {customer.email || "لا يوجد بريد"}
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </AppModal>

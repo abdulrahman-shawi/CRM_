@@ -132,6 +132,7 @@ enum CampaignStatus {
 enum CampaignAudience {
   ALL_CUSTOMERS
   ALL_WHOLESALE
+  ALL_REPS
   CUSTOM
 }
 

@@ -381,6 +381,7 @@ export type CampaignStatus = (typeof CampaignStatus)[keyof typeof CampaignStatus
 export const CampaignAudience: {
   ALL_CUSTOMERS: 'ALL_CUSTOMERS',
   ALL_WHOLESALE: 'ALL_WHOLESALE',
+  ALL_REPS: 'ALL_REPS',
   CUSTOM: 'CUSTOM'
 };
 

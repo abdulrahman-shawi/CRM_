@@ -866,6 +866,7 @@ exports.CampaignStatus = exports.$Enums.CampaignStatus = {
 exports.CampaignAudience = exports.$Enums.CampaignAudience = {
   ALL_CUSTOMERS: 'ALL_CUSTOMERS',
   ALL_WHOLESALE: 'ALL_WHOLESALE',
+  ALL_REPS: 'ALL_REPS',
   CUSTOM: 'CUSTOM'
 };
 

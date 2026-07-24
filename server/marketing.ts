@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 
 const CAMPAIGN_TYPES = ["EMAIL", "SOCIAL", "SMS", "CONTENT", "WHATSAPP"] as const;
 const CAMPAIGN_STATUSES = ["DRAFT", "SCHEDULED", "RUNNING", "COMPLETED", "CANCELLED"] as const;
-const CAMPAIGN_AUDIENCES = ["ALL_CUSTOMERS", "ALL_WHOLESALE", "CUSTOM"] as const;
+const CAMPAIGN_AUDIENCES = ["ALL_CUSTOMERS", "ALL_WHOLESALE", "ALL_REPS", "CUSTOM"] as const;
 const METRIC_KEYS = ["sent", "opened", "clicked", "converted"] as const;
 
 type CampaignType = (typeof CAMPAIGN_TYPES)[number];
@@ -131,6 +131,24 @@ async function resolveCustomRecipients(ids: string[]) {
   return recipients;
 }
 
+async function getCampaignRecipientsForPickerInternal() {
+  const [customers, wholesale] = await Promise.all([
+    prisma.customer.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, email: true, name: true },
+    }),
+    prisma.wholesaleCustomer.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, email: true, name: true },
+    }),
+  ]);
+
+  return {
+    customers: customers.map((c) => ({ id: c.id, email: c.email, name: c.name, type: "customer" as const })),
+    wholesale: wholesale.map((c) => ({ id: c.id, email: c.email, name: c.name, type: "wholesale" as const })),
+  };
+}
+
 async function getCampaignRecipients(audience: CampaignAudience, targetIds: any) {
   if (audience === "ALL_CUSTOMERS") {
     const customers = await prisma.customer.findMany({
@@ -150,6 +168,19 @@ async function getCampaignRecipients(audience: CampaignAudience, targetIds: any)
     return wholesale
       .filter((c): c is typeof c & { email: string } => c.email !== null && isValidEmail(c.email))
       .map((c) => ({ id: c.id, email: c.email, name: c.name, type: "wholesale" as const }));
+  }
+
+  if (audience === "ALL_REPS") {
+    const reps = await prisma.user.findMany({
+      where: {
+        email: { not: null },
+        accountType: { in: ["STAFF", "MANAGER"] },
+      },
+      select: { id: true, email: true, username: true },
+    });
+    return reps
+      .filter((u): u is typeof u & { email: string } => u.email !== null && isValidEmail(u.email))
+      .map((u) => ({ id: u.id, email: u.email, name: u.username, type: "rep" as const }));
   }
 
   return resolveCustomRecipients(parseTargetIds(targetIds));
@@ -557,3 +588,19 @@ export async function getMarketingAnalytics() {
 export async function getMarketingCampaignsByType(type: CampaignType) {
   return getCampaigns();
 }
+
+export async function getCampaignRecipientsForPicker() {
+  try {
+    const currentUser = await getCurrentSessionUser();
+    if (!canViewMarketing(currentUser)) {
+      return { success: false, error: "غير مصرح لك بعرض الحملات التسويقية" };
+    }
+
+    const data = await getCampaignRecipientsForPickerInternal();
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("Get campaign recipients for picker error:", error);
+    return { success: false, error: "فشل في جلب قائمة المستلمين" };
+  }
+}
+
