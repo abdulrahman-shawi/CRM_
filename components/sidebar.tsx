@@ -228,6 +228,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: Users2, label: "المندوبين", href: "/dashboard/wholesale-customers" },
         (user && hasAnyPermission(user, ["viewTasks", "addTasks", "editTasks", "deleteTasks"])) &&
         { icon: ClipboardList, label: "المهام والمواعيد", href: "/dashboard/tasks" },
+        (user && hasAnyPermission(user, ["viewOrders", "viewWholesaleCustomers", "viewReturns", "addReturns"])) &&
+        { icon: ArrowRightLeft, label: "مرتجعات المندوبين", href: "/dashboard/rep-returns" },
       ].filter(Boolean) as MenuItem[]
     },
     {

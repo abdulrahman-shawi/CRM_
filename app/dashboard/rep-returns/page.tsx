@@ -1,15 +1,14 @@
 'use client';
+
+import * as React from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { hasPermission, isAdmin } from '@/lib/utils';
+import { getRepOrders, getRepReturns, createRepReturn } from '@/server/rep-return';
 import { DataTable } from '@/components/shared/DataTable';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
-import { useAuth } from '@/context/AuthContext';
-import { hasPermission } from '@/lib/utils';
-import { createOrderReturn, deleteOrderReturn, getOrderReturns } from '@/server/return';
-import { getOrders } from '@/server/order';
-import { getWarehouse } from '@/server/warehouse';
-import { Trash2 } from 'lucide-react';
-import * as React from 'react';
+import { Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const REASON_LABELS: Record<string, string> = {
@@ -20,29 +19,32 @@ const REASON_LABELS: Record<string, string> = {
     OTHER: 'أخرى',
 };
 
-export default function ReturnsPage() {
+export default function RepReturnsPage() {
     const { user } = useAuth();
     const [returns, setReturns] = React.useState<any[]>([]);
     const [orders, setOrders] = React.useState<any[]>([]);
-    const [warehouses, setWarehouses] = React.useState<any[]>([]);
+    const [search, setSearch] = React.useState('');
     const [isOpen, setIsOpen] = React.useState(false);
     const [selectedOrder, setSelectedOrder] = React.useState<any>(null);
     const [selectedItems, setSelectedItems] = React.useState<Record<number, number>>({});
     const [reason, setReason] = React.useState('CUSTOMER_RETURN');
     const [reasonNotes, setReasonNotes] = React.useState('');
-    const [warehouseId, setWarehouseId] = React.useState('');
-    const [search, setSearch] = React.useState('');
 
-    const getData = React.useCallback(async () => {
-        const [retRes, ordRes, whRes] = await Promise.all([getOrderReturns(), getOrders(), getWarehouse()]);
+    const canView = user && (isAdmin(user) || hasPermission(user, 'viewOrders') || hasPermission(user, 'viewWholesaleCustomers') || hasPermission(user, 'viewReturns'));
+    const canCreate = user && (isAdmin(user) || hasPermission(user, 'addReturns') || hasPermission(user, 'viewWholesaleCustomers'));
+
+    const load = React.useCallback(async () => {
+        const [retRes, ordRes] = await Promise.all([getRepReturns(search), getRepOrders(search)]);
         if (retRes.success) setReturns(retRes.data || []);
         else toast.error((retRes as any).error || 'تعذر تحميل المرتجعات');
         if (ordRes.success) setOrders(ordRes.data || []);
         else toast.error((ordRes as any).error || 'تعذر تحميل الطلبات');
-        setWarehouses(whRes || []);
-    }, []);
+    }, [search]);
 
-    React.useEffect(() => { getData(); }, [getData]);
+    React.useEffect(() => {
+        if (!canView) return;
+        load();
+    }, [canView, load]);
 
     const handleSave = async () => {
         if (!selectedOrder) return;
@@ -53,51 +55,43 @@ export default function ReturnsPage() {
 
         const loading = toast.loading('جاري إنشاء المرتجع...');
         try {
-            const res = await createOrderReturn({
+            const res = await createRepReturn({
                 orderId: selectedOrder.id,
                 reason: reason as any,
                 reasonNotes,
-                warehouseId: warehouseId ? Number(warehouseId) : undefined,
                 items,
             });
-            if (res.success) { toast.success('تم إنشاء المرتجع'); setIsOpen(false); getData(); }
+            if (res.success) { toast.success('تم إنشاء المرتجع'); setIsOpen(false); resetForm(); load(); }
             else toast.error((res as any).error || 'تعذر إنشاء المرتجع');
         } catch { toast.error('حدث خطأ'); } finally { toast.dismiss(loading); }
     };
 
-    const handleDelete = async (data: any) => {
-        if (!window.confirm('هل أنت متأكد من حذف المرتجع؟')) return;
-        const loading = toast.loading('جاري الحذف...');
-        try {
-            const res = await deleteOrderReturn(data.id);
-            if (res.success) { toast.success('تم الحذف'); getData(); }
-            else toast.error((res as any).error || 'تعذر الحذف');
-        } catch { toast.error('حدث خطأ'); } finally { toast.dismiss(loading); }
+    const resetForm = () => {
+        setSelectedOrder(null);
+        setSelectedItems({});
+        setReason('CUSTOMER_RETURN');
+        setReasonNotes('');
     };
 
     const columns = [
         { header: 'رقم الطلب', accessor: (row: any) => row.order?.orderNumber },
+        { header: 'العميل', accessor: (row: any) => row.order?.customer?.name },
         { header: 'السبب', accessor: (row: any) => REASON_LABELS[row.reason] || row.reason },
-        { header: 'المبلغ المسترد', accessor: (row: any) => row.refundAmount.toLocaleString() },
+        { header: 'المبلغ المسترد', accessor: (row: any) => Number(row.refundAmount || 0).toLocaleString() },
         { header: 'التاريخ', accessor: (row: any) => new Date(row.createdAt).toLocaleDateString('ar-EG') },
     ];
-
-    const actions = user && hasPermission(user, 'deleteReturns') ? [{ label: 'حذف', icon: <Trash2 size={14} />, variant: 'danger' as const, onClick: handleDelete }] : [];
-
-    const filteredReturns = returns.filter((row) =>
-        row.order?.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
-        row.order?.customer?.name?.toLowerCase().includes(search.toLowerCase())
-    );
 
     const filteredOrders = orders.filter((o) =>
         o.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
         o.customer?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
+    if (!canView) return <div className="p-4 text-red-500">غير مصرح لك بعرض هذه الصفحة</div>;
+
     return (
         <div className="p-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                <div className="text-xl font-bold">إدارة المرتجعات</div>
+                <div className="text-xl font-bold">مرتجعات المندوبين</div>
                 <div className="flex gap-2">
                     <FormInput
                         label="بحث"
@@ -106,25 +100,40 @@ export default function ReturnsPage() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    {user && hasPermission(user, 'addReturns') && (
-                        <Button onClick={() => { setSelectedOrder(null); setSelectedItems({}); setReason('CUSTOMER_RETURN'); setReasonNotes(''); setWarehouseId(''); setIsOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white px-6">إنشاء مرتجع</Button>
+                    {canCreate && (
+                        <Button onClick={() => { resetForm(); setIsOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Plus size={16} className="ml-1" /> مرتجع جديد
+                        </Button>
                     )}
                 </div>
             </div>
             <DataTable
-                data={filteredReturns}
+                data={returns}
                 columns={columns}
-                actions={actions}
-                totalCount={filteredReturns.length}
+                totalCount={returns.length}
                 pageSize={10}
                 currentPage={1}
                 onPageChange={() => {}}
             />
+
             <AppModal title="إنشاء مرتجع" isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
                 <div className="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
-                    <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" onChange={(e) => { setSelectedOrder(orders.find((o) => o.id === Number(e.target.value)) || null); setSelectedItems({}); }}>
+                    <FormInput
+                        label="بحث بالطلب/العميل"
+                        className="text-gray-800 dark:text-white"
+                        placeholder="ابدأ الكتابة للبحث..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <select
+                        className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm"
+                        onChange={(e) => { setSelectedOrder(orders.find((o) => o.id === Number(e.target.value)) || null); setSelectedItems({}); }}
+                        value={selectedOrder?.id || ''}
+                    >
                         <option value="">اختر طلباً</option>
-                        {filteredOrders.map((o) => <option key={o.id} value={o.id}>{o.orderNumber} - {o.customer?.name}</option>)}
+                        {filteredOrders.map((o) => (
+                            <option key={o.id} value={o.id}>{o.orderNumber} - {o.customer?.name} ({o.status})</option>
+                        ))}
                     </select>
 
                     {selectedOrder && (
@@ -146,17 +155,13 @@ export default function ReturnsPage() {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         <select className="rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" value={reason} onChange={(e) => setReason(e.target.value)}>
                             <option value="CUSTOMER_RETURN">مرتجع عميل</option>
                             <option value="DAMAGED">تالف</option>
                             <option value="WRONG_PRODUCT">منتج خاطئ</option>
                             <option value="EXPIRED">منتهي الصلاحية</option>
                             <option value="OTHER">أخرى</option>
-                        </select>
-                        <select className="rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)}>
-                            <option value="">المستودع (افتراضي)</option>
-                            {warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
                         </select>
                     </div>
                     <FormInput className="text-gray-800 dark:text-white" label="ملاحظات السبب" value={reasonNotes} onChange={(e) => setReasonNotes(e.target.value)} />
