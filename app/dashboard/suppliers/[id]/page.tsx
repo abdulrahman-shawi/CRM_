@@ -33,7 +33,7 @@ export default function SupplierDetailsPage() {
         if (spRes.success) setSupplierProducts(spRes.data || []);
     };
 
-    React.useEffect(() => { if (supplierId) getData(); }, [supplierId]);
+    React.useEffect(() => { if (supplierId) getData(); }, [supplierId, getData]);
 
     const handleSave = async () => {
         if (!selectedProduct) return;
