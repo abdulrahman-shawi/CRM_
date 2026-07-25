@@ -3,6 +3,7 @@
 import { decrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers";
+import { validateCoupon } from "@/server/coupon";
 
 const AFFILIATE_COOKIE_NAME = 'affiliate-code';
 
@@ -357,6 +358,9 @@ const orderBaseSelect = {
     userId: true,
     customerId: true,
     shippingId: true,
+    couponId: true,
+    paidAmount: true,
+    remainingAmount: true,
     shippingPrice: true,
     moneyTransferCommission: true,
     otherCommissions: true,
@@ -407,6 +411,34 @@ const orderDetailsSelect = {
     ...orderBaseSelect,
     items: {
         select: orderItemSelect,
+    },
+    returns: {
+        select: {
+            id: true,
+            reason: true,
+            refundAmount: true,
+            createdAt: true,
+            items: {
+                select: {
+                    id: true,
+                    quantity: true,
+                    price: true,
+                    product: { select: { id: true, name: true } },
+                },
+            },
+        },
+    },
+    payments: {
+        select: {
+            id: true,
+            amount: true,
+            paymentType: true,
+            paymentDate: true,
+        },
+        orderBy: { paymentDate: 'desc' },
+    },
+    coupon: {
+        select: { id: true, code: true, discountType: true, discountValue: true },
     },
 } as const;
 
@@ -618,15 +650,45 @@ export async function createOrder(data: any, items: any[], user: any) {
             const selectedShipping = shippingId > 0
                 ? await tx.shipping.findUnique({ where: { id: shippingId }, select: { price: true } })
                 : null;
-            
+
+            // ─── Coupon logic ───
+            let couponId: string | null = null;
+            let couponDiscount = 0;
+            const couponCode = String(data.couponCode || '').trim();
+            if (couponCode) {
+                const couponValidation = await validateCoupon({
+                    code: couponCode,
+                    customerId: data.customerId,
+                    subTotal: Number(data.grandTotal || 0) + Number(data.overallDiscount || 0),
+                });
+                if (!couponValidation.success || !couponValidation.data) {
+                    throw new Error(couponValidation.error || 'الكوبون غير صالح');
+                }
+                couponId = couponValidation.data.couponId;
+                couponDiscount = Number(couponValidation.data.discount || 0);
+                await tx.coupon.update({
+                    where: { id: couponId },
+                    data: { usedCount: { increment: 1 } },
+                });
+            }
+
+            const baseFinalAmount = Number(data.grandTotal || 0);
+            const finalAfterCoupon = Math.max(0, roundToTwoDecimals(baseFinalAmount - couponDiscount));
+            const isPaidNow = data.paymentMethod === "مدفوعة" || data.paymentMethod === "Paid";
+            const paidAmount = isPaidNow ? finalAfterCoupon : (Number(data.amount || 0) || 0);
+            const remainingAmount = roundToTwoDecimals(finalAfterCoupon - paidAmount);
+
             // 1. إنشاء الطلب
             const newOrder = await tx.order.create({
                 data: {
                     orderNumber,
                     usdToTryRateAtOrder,
-                    totalAmount: data.grandTotal + data.overallDiscount,
-                    discount: data.overallDiscount,
-                    finalAmount: data.grandTotal,
+                    totalAmount: baseFinalAmount + Number(data.overallDiscount || 0),
+                    discount: Number(data.overallDiscount || 0) + couponDiscount,
+                    finalAmount: finalAfterCoupon,
+                    paidAmount,
+                    remainingAmount,
+                    ...(couponId ? { coupon: { connect: { id: couponId } } } : {}),
                     status: data.status,
                     paymentMethod: data.paymentMethod || "عند الاستلام",
                     receiverName: data.receiverName,
@@ -732,14 +794,22 @@ export async function updateOrder(data: any, id: any, items: any) {
 
             await applyOrderStockChange(tx, oldOrder, "restore");
 
+            const baseFinalAmount = Number(data.grandTotal || 0);
+            const oldPaidAmount = Number(oldOrder.paidAmount || 0);
+            const oldCouponDiscount = Number(oldOrder.discount || 0) - Number(data.overallDiscount || 0);
+            const totalDiscount = Number(data.overallDiscount || 0) + Math.max(0, oldCouponDiscount);
+            const remainingAmount = roundToTwoDecimals(Math.max(0, baseFinalAmount - oldPaidAmount));
+
             // ب - تحديث بيانات الطلب الرئيسية والعناصر (حذف وإضافة)
             const updatedOrder = await tx.order.update({
                 where: { id },
                 data: {
                     usdToTryRateAtOrder,
-                    totalAmount: data.grandTotal + data.overallDiscount,
-                    discount: data.overallDiscount,
-                    finalAmount: data.grandTotal,
+                    totalAmount: baseFinalAmount + Number(data.overallDiscount || 0),
+                    discount: totalDiscount,
+                    finalAmount: baseFinalAmount,
+                    paidAmount: oldPaidAmount,
+                    remainingAmount,
                     status: data.status,
                     paymentMethod: data.paymentMethod || "عند الاستلام",
                     receiverName: data.receiverName,

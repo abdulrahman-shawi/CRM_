@@ -198,7 +198,26 @@ exports.Prisma.PermissionScalarFieldEnum = {
   viewMarketing: 'viewMarketing',
   addMarketing: 'addMarketing',
   editMarketing: 'editMarketing',
-  deleteMarketing: 'deleteMarketing'
+  deleteMarketing: 'deleteMarketing',
+  viewSuppliers: 'viewSuppliers',
+  addSuppliers: 'addSuppliers',
+  editSuppliers: 'editSuppliers',
+  deleteSuppliers: 'deleteSuppliers',
+  viewPurchaseInvoices: 'viewPurchaseInvoices',
+  addPurchaseInvoices: 'addPurchaseInvoices',
+  editPurchaseInvoices: 'editPurchaseInvoices',
+  deletePurchaseInvoices: 'deletePurchaseInvoices',
+  viewCoupons: 'viewCoupons',
+  addCoupons: 'addCoupons',
+  editCoupons: 'editCoupons',
+  deleteCoupons: 'deleteCoupons',
+  viewReturns: 'viewReturns',
+  addReturns: 'addReturns',
+  editReturns: 'editReturns',
+  deleteReturns: 'deleteReturns',
+  viewCustomerPayments: 'viewCustomerPayments',
+  addCustomerPayments: 'addCustomerPayments',
+  deleteCustomerPayments: 'deleteCustomerPayments'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -226,7 +245,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   showInAds: 'showInAds',
   affiliatePrice: 'affiliatePrice',
   affiliateCommissionRate: 'affiliateCommissionRate',
-  wholesalePrice: 'wholesalePrice'
+  wholesalePrice: 'wholesalePrice',
+  costPrice: 'costPrice'
 };
 
 exports.Prisma.AdPageVisitScalarFieldEnum = {
@@ -307,6 +327,7 @@ exports.Prisma.ProductStockScalarFieldEnum = {
   quantity: 'quantity',
   price: 'price',
   wholesalePrice: 'wholesalePrice',
+  costPrice: 'costPrice',
   discount: 'discount'
 };
 
@@ -379,6 +400,7 @@ exports.Prisma.CustomerScalarFieldEnum = {
   city: 'city',
   rating: 'rating',
   status: 'status',
+  loyaltyPoints: 'loyaltyPoints',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -536,6 +558,9 @@ exports.Prisma.OrderScalarFieldEnum = {
   userId: 'userId',
   warehouseId: 'warehouseId',
   shippingId: 'shippingId',
+  couponId: 'couponId',
+  paidAmount: 'paidAmount',
+  remainingAmount: 'remainingAmount',
   manualCreatedAt: 'manualCreatedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -730,6 +755,109 @@ exports.Prisma.CampaignScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SupplierScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductSupplierScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  supplierId: 'supplierId',
+  costPrice: 'costPrice',
+  sku: 'sku',
+  notes: 'notes',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PurchaseInvoiceScalarFieldEnum = {
+  id: 'id',
+  invoiceNumber: 'invoiceNumber',
+  supplierId: 'supplierId',
+  totalAmount: 'totalAmount',
+  paidAmount: 'paidAmount',
+  remainingAmount: 'remainingAmount',
+  invoiceDate: 'invoiceDate',
+  notes: 'notes',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PurchaseInvoiceItemScalarFieldEnum = {
+  id: 'id',
+  purchaseInvoiceId: 'purchaseInvoiceId',
+  productId: 'productId',
+  quantity: 'quantity',
+  costPrice: 'costPrice',
+  totalPrice: 'totalPrice',
+  warehouseId: 'warehouseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CouponScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  title: 'title',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  maxDiscountValue: 'maxDiscountValue',
+  minOrderAmount: 'minOrderAmount',
+  usageLimit: 'usageLimit',
+  usedCount: 'usedCount',
+  perCustomerLimit: 'perCustomerLimit',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  isActive: 'isActive',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderReturnScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  reason: 'reason',
+  reasonNotes: 'reasonNotes',
+  refundAmount: 'refundAmount',
+  warehouseId: 'warehouseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderReturnItemScalarFieldEnum = {
+  id: 'id',
+  orderReturnId: 'orderReturnId',
+  orderItemId: 'orderItemId',
+  productId: 'productId',
+  quantity: 'quantity',
+  price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CustomerPaymentScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  orderId: 'orderId',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  paymentDate: 'paymentDate',
+  notes: 'notes',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -870,6 +998,28 @@ exports.CampaignAudience = exports.$Enums.CampaignAudience = {
   CUSTOM: 'CUSTOM'
 };
 
+exports.CouponStatus = exports.$Enums.CouponStatus = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  DISABLED: 'DISABLED'
+};
+
+exports.ReturnReason = exports.$Enums.ReturnReason = {
+  DAMAGED: 'DAMAGED',
+  WRONG_PRODUCT: 'WRONG_PRODUCT',
+  CUSTOMER_RETURN: 'CUSTOMER_RETURN',
+  EXPIRED: 'EXPIRED',
+  OTHER: 'OTHER'
+};
+
+exports.PaymentType = exports.$Enums.PaymentType = {
+  CASH: 'CASH',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  INSTALLMENT: 'INSTALLMENT',
+  CHECK: 'CHECK',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Permission: 'Permission',
@@ -909,7 +1059,15 @@ exports.Prisma.ModelName = {
   OfferDiscount: 'OfferDiscount',
   Commission: 'Commission',
   AffiliateWalletTransfer: 'AffiliateWalletTransfer',
-  Campaign: 'Campaign'
+  Campaign: 'Campaign',
+  Supplier: 'Supplier',
+  ProductSupplier: 'ProductSupplier',
+  PurchaseInvoice: 'PurchaseInvoice',
+  PurchaseInvoiceItem: 'PurchaseInvoiceItem',
+  Coupon: 'Coupon',
+  OrderReturn: 'OrderReturn',
+  OrderReturnItem: 'OrderReturnItem',
+  CustomerPayment: 'CustomerPayment'
 };
 
 /**

@@ -190,6 +190,24 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       ].filter(Boolean) as MenuItem[]
     },
     {
+      group: "المبيعات والمالية المتقدمة",
+      icon: CircleDollarSign,
+      colorClass: "text-rose-600",
+      collapsible: true,
+      items: [
+        (user && hasAnyPermission(user, ["viewSuppliers", "addSuppliers", "editSuppliers", "deleteSuppliers"])) &&
+        { icon: Store, label: "الموردين", href: "/dashboard/suppliers" },
+        (user && hasAnyPermission(user, ["viewPurchaseInvoices", "addPurchaseInvoices", "editPurchaseInvoices", "deletePurchaseInvoices"])) &&
+        { icon: Receipt, label: "فواتير الشراء", href: "/dashboard/purchase-invoices" },
+        (user && hasAnyPermission(user, ["viewCoupons", "addCoupons", "editCoupons", "deleteCoupons"])) &&
+        { icon: BadgePercent, label: "الكوبونات", href: "/dashboard/coupons" },
+        (user && hasAnyPermission(user, ["viewReturns", "addReturns", "editReturns", "deleteReturns"])) &&
+        { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
+        (user && hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"])) &&
+        { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
+      ].filter(Boolean) as MenuItem[]
+    },
+    {
       group: "العملاء والمندوبين",
       icon: Users,
       colorClass: "text-purple-600",
@@ -377,7 +395,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
 
                         {!isCollapsed && isExpanded && (
                           <div className="mr-4 space-y-1 border-r-2 border-blue-100 dark:border-blue-900/30 pr-3">
-                            {item.children.map((child: MenuItem) => {
+                            {item.children?.map((child: MenuItem) => {
                               const isChildActive = isItemActive(child);
                               return (
                                 <Link

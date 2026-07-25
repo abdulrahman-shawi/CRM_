@@ -116,6 +116,8 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
     const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
     const [overallDiscount, setOverallDiscount] = React.useState(0);
+    const [couponCode, setCouponCode] = React.useState("");
+    const [couponDiscount, setCouponDiscount] = React.useState(0);
 
     // بيانات العميل والمبالغ
     const [customerId, setCustomerId] = React.useState("");
@@ -153,7 +155,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     });
     const importInputRef = React.useRef<HTMLInputElement | null>(null);
     const subTotal = items.reduce((sum, i) => sum + i.total, 0);
-    const grandTotal = subTotal - overallDiscount;
+    const grandTotal = subTotal - overallDiscount - couponDiscount;
     const remainingAmount = Math.max(0, Number(grandTotal) - Number(amount || 0));
 
     const updateItem = (index: number, field: string, value: any, products: any[]) => {
@@ -701,7 +703,8 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             additionalNotes,
             grandTotal: Number(grandTotal),
             overallDiscount: Number(overallDiscount),
-            subTotal: Number(subTotal)
+            subTotal: Number(subTotal),
+            couponCode: couponCode.trim(),
         };
 
         try {
