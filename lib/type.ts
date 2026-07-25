@@ -88,6 +88,19 @@ export interface Permission {
   addCustomerPayments: boolean;
   deleteCustomerPayments: boolean;
 
+  // Phase 2+3 permissions
+  viewLoyalty: boolean;
+  editLoyalty: boolean;
+  viewNotifications: boolean;
+  viewTasks: boolean;
+  addTasks: boolean;
+  editTasks: boolean;
+  deleteTasks: boolean;
+  viewTracking: boolean;
+  editTracking: boolean;
+  viewBackups: boolean;
+  manageBackups: boolean;
+
   users?: User[]; // optional to avoid circular reference issues
 }
 

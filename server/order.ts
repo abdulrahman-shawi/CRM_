@@ -4,6 +4,9 @@ import { decrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers";
 import { validateCoupon } from "@/server/coupon";
+import { earnLoyaltyPointsForOrder } from "@/server/loyalty";
+import { createOrderStatusChangeNotification } from "@/server/notification";
+import { syncTrackingStatusFromOrderStatus } from "@/server/tracking";
 
 const AFFILIATE_COOKIE_NAME = 'affiliate-code';
 
@@ -738,6 +741,8 @@ export async function createOrder(data: any, items: any[], user: any) {
             return newOrder;
         });
 
+        await earnLoyaltyPointsForOrder(result.id);
+
         return { success: true, order: result };
     } catch (error: any) {
         console.error("Error creating order:", error);
@@ -755,7 +760,7 @@ export async function updateOrder(data: any, id: any, items: any) {
 
         if (!oldOrder) return { success: false, error: "الطلب غير موجود" };
 
-        return await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx) => {
             const warehouseId = parseWarehouseId(data.warehouseId) ?? oldOrder.warehouseId ?? null;
             if (!warehouseId) {
                 throw new Error("يرجى اختيار المستودع");
@@ -857,9 +862,16 @@ export async function updateOrder(data: any, id: any, items: any) {
 
             return { success: true, data: updatedOrder };
         }, {
-            maxWait: 5000, // الوقت الأقصى لانتظار بريزما للحصول على اتصال
-            timeout: 20000 // وقت تنفيذ العملية بالكامل (20 ثانية)
+            maxWait: 5000,
+            timeout: 20000
         });
+
+        if (result.success && oldOrder && data.status !== oldOrder.status) {
+            await syncTrackingStatusFromOrderStatus(id, data.status);
+            await createOrderStatusChangeNotification(id, data.status);
+        }
+
+        return result;
 
     } catch (error: any) {
         console.error("Critical Update Error:", error);

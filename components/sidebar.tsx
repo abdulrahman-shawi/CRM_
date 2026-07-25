@@ -34,6 +34,11 @@ import {
   PanelsTopLeft,
   Sparkles,
   Download,
+  Award,
+  Bell,
+  MapPin,
+  ClipboardList,
+  Database,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -187,6 +192,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: ShieldCheck, label: "الكفالة", href: "/dashboard/warranty" },
         (user && isAdmin(user)) &&
         { icon: Truck, label: "شركات الشحن", href: "/dashboard/shipping" },
+        (user && hasAnyPermission(user, ["viewTracking", "editTracking"])) &&
+        { icon: MapPin, label: "تتبع الشحنات", href: "/dashboard/tracking" },
       ].filter(Boolean) as MenuItem[]
     },
     {
@@ -205,6 +212,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
         (user && hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"])) &&
         { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
+        (user && hasAnyPermission(user, ["viewLoyalty", "editLoyalty"])) &&
+        { icon: Award, label: "نقاط الولاء", href: "/dashboard/loyalty" },
       ].filter(Boolean) as MenuItem[]
     },
     {
@@ -217,6 +226,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: Users, label: "العملاء", href: "/dashboard/customers" },
         (user && hasAnyPermission(user, ["viewWholesaleCustomers", "addWholesaleCustomers", "editWholesaleCustomers", "deleteWholesaleCustomers"])) &&
         { icon: Users2, label: "المندوبين", href: "/dashboard/wholesale-customers" },
+        (user && hasAnyPermission(user, ["viewTasks", "addTasks", "editTasks", "deleteTasks"])) &&
+        { icon: ClipboardList, label: "المهام والمواعيد", href: "/dashboard/tasks" },
       ].filter(Boolean) as MenuItem[]
     },
     {
@@ -251,6 +262,10 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       colorClass: "text-slate-600",
       collapsible: true,
       items: [
+        (user && hasAnyPermission(user, ["viewNotifications"])) &&
+        { icon: Bell, label: "الإشعارات", href: "/dashboard/notifications" },
+        (user && hasAnyPermission(user, ["viewBackups", "manageBackups"])) &&
+        { icon: Database, label: "النسخ الاحتياطي", href: "/dashboard/backups" },
         {
           icon: Settings2,
           label: "الإعدادات",

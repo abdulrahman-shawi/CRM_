@@ -248,6 +248,31 @@ export type OrderReturnItem = $Result.DefaultSelection<Prisma.$OrderReturnItemPa
  * 
  */
 export type CustomerPayment = $Result.DefaultSelection<Prisma.$CustomerPaymentPayload>
+/**
+ * Model LoyaltyRule
+ * 
+ */
+export type LoyaltyRule = $Result.DefaultSelection<Prisma.$LoyaltyRulePayload>
+/**
+ * Model LoyaltyTransaction
+ * 
+ */
+export type LoyaltyTransaction = $Result.DefaultSelection<Prisma.$LoyaltyTransactionPayload>
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
+/**
+ * Model Task
+ * 
+ */
+export type Task = $Result.DefaultSelection<Prisma.$TaskPayload>
+/**
+ * Model BackupLog
+ * 
+ */
+export type BackupLog = $Result.DefaultSelection<Prisma.$BackupLogPayload>
 
 /**
  * Enums
@@ -458,6 +483,79 @@ export const PaymentType: {
 
 export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType]
 
+
+export const LoyaltyTransactionType: {
+  EARN: 'EARN',
+  REDEEM: 'REDEEM',
+  BONUS: 'BONUS',
+  EXPIRE: 'EXPIRE'
+};
+
+export type LoyaltyTransactionType = (typeof LoyaltyTransactionType)[keyof typeof LoyaltyTransactionType]
+
+
+export const NotificationType: {
+  LOW_STOCK: 'LOW_STOCK',
+  ORDER_STATUS_CHANGE: 'ORDER_STATUS_CHANGE',
+  WHOLESALE_FOLLOW_UP: 'WHOLESALE_FOLLOW_UP',
+  TASK_REMINDER: 'TASK_REMINDER',
+  SYSTEM: 'SYSTEM'
+};
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const NotificationChannel: {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP'
+};
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
+
+
+export const TaskType: {
+  VISIT: 'VISIT',
+  CALL: 'CALL',
+  FOLLOW_UP: 'FOLLOW_UP',
+  DELIVERY: 'DELIVERY',
+  MEETING: 'MEETING',
+  OTHER: 'OTHER'
+};
+
+export type TaskType = (typeof TaskType)[keyof typeof TaskType]
+
+
+export const TaskStatus: {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+
+
+export const TrackingStatus: {
+  PENDING: 'PENDING',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  RETURNED: 'RETURNED'
+};
+
+export type TrackingStatus = (typeof TrackingStatus)[keyof typeof TrackingStatus]
+
+
+export const BackupStatus: {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
+
+export type BackupStatus = (typeof BackupStatus)[keyof typeof BackupStatus]
+
 }
 
 export type ActivityTargetCycle = $Enums.ActivityTargetCycle
@@ -543,6 +641,34 @@ export const CouponStatus: typeof $Enums.CouponStatus
 export type PaymentType = $Enums.PaymentType
 
 export const PaymentType: typeof $Enums.PaymentType
+
+export type LoyaltyTransactionType = $Enums.LoyaltyTransactionType
+
+export const LoyaltyTransactionType: typeof $Enums.LoyaltyTransactionType
+
+export type NotificationType = $Enums.NotificationType
+
+export const NotificationType: typeof $Enums.NotificationType
+
+export type NotificationChannel = $Enums.NotificationChannel
+
+export const NotificationChannel: typeof $Enums.NotificationChannel
+
+export type TaskType = $Enums.TaskType
+
+export const TaskType: typeof $Enums.TaskType
+
+export type TaskStatus = $Enums.TaskStatus
+
+export const TaskStatus: typeof $Enums.TaskStatus
+
+export type TrackingStatus = $Enums.TrackingStatus
+
+export const TrackingStatus: typeof $Enums.TrackingStatus
+
+export type BackupStatus = $Enums.BackupStatus
+
+export const BackupStatus: typeof $Enums.BackupStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1130,6 +1256,56 @@ export class PrismaClient<
     * ```
     */
   get customerPayment(): Prisma.CustomerPaymentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.loyaltyRule`: Exposes CRUD operations for the **LoyaltyRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LoyaltyRules
+    * const loyaltyRules = await prisma.loyaltyRule.findMany()
+    * ```
+    */
+  get loyaltyRule(): Prisma.LoyaltyRuleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.loyaltyTransaction`: Exposes CRUD operations for the **LoyaltyTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LoyaltyTransactions
+    * const loyaltyTransactions = await prisma.loyaltyTransaction.findMany()
+    * ```
+    */
+  get loyaltyTransaction(): Prisma.LoyaltyTransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Notifications
+    * const notifications = await prisma.notification.findMany()
+    * ```
+    */
+  get notification(): Prisma.NotificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.task`: Exposes CRUD operations for the **Task** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tasks
+    * const tasks = await prisma.task.findMany()
+    * ```
+    */
+  get task(): Prisma.TaskDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.backupLog`: Exposes CRUD operations for the **BackupLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BackupLogs
+    * const backupLogs = await prisma.backupLog.findMany()
+    * ```
+    */
+  get backupLog(): Prisma.BackupLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1610,7 +1786,12 @@ export namespace Prisma {
     Coupon: 'Coupon',
     OrderReturn: 'OrderReturn',
     OrderReturnItem: 'OrderReturnItem',
-    CustomerPayment: 'CustomerPayment'
+    CustomerPayment: 'CustomerPayment',
+    LoyaltyRule: 'LoyaltyRule',
+    LoyaltyTransaction: 'LoyaltyTransaction',
+    Notification: 'Notification',
+    Task: 'Task',
+    BackupLog: 'BackupLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1626,7 +1807,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "permission" | "category" | "product" | "adPageVisit" | "productLandingPage" | "review" | "country" | "city" | "warehouse" | "productStock" | "stockMovement" | "userTarget" | "userActivityTarget" | "targetProduct" | "productImage" | "customer" | "wholesaleCustomer" | "wholesaleVisit" | "productWholesalePriceTier" | "wholesaleOrder" | "wholesaleOrderItem" | "warranty" | "message" | "order" | "expense" | "shipping" | "orderItem" | "trakingCompany" | "generalSetting" | "employeeSalaryAdjustment" | "page" | "heroSlide" | "affiliateLink" | "offer" | "offerDiscount" | "commission" | "affiliateWalletTransfer" | "campaign" | "supplier" | "productSupplier" | "purchaseInvoice" | "purchaseInvoiceItem" | "coupon" | "orderReturn" | "orderReturnItem" | "customerPayment"
+      modelProps: "user" | "permission" | "category" | "product" | "adPageVisit" | "productLandingPage" | "review" | "country" | "city" | "warehouse" | "productStock" | "stockMovement" | "userTarget" | "userActivityTarget" | "targetProduct" | "productImage" | "customer" | "wholesaleCustomer" | "wholesaleVisit" | "productWholesalePriceTier" | "wholesaleOrder" | "wholesaleOrderItem" | "warranty" | "message" | "order" | "expense" | "shipping" | "orderItem" | "trakingCompany" | "generalSetting" | "employeeSalaryAdjustment" | "page" | "heroSlide" | "affiliateLink" | "offer" | "offerDiscount" | "commission" | "affiliateWalletTransfer" | "campaign" | "supplier" | "productSupplier" | "purchaseInvoice" | "purchaseInvoiceItem" | "coupon" | "orderReturn" | "orderReturnItem" | "customerPayment" | "loyaltyRule" | "loyaltyTransaction" | "notification" | "task" | "backupLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -5108,6 +5289,376 @@ export namespace Prisma {
           }
         }
       }
+      LoyaltyRule: {
+        payload: Prisma.$LoyaltyRulePayload<ExtArgs>
+        fields: Prisma.LoyaltyRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LoyaltyRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LoyaltyRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          findFirst: {
+            args: Prisma.LoyaltyRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LoyaltyRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          findMany: {
+            args: Prisma.LoyaltyRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>[]
+          }
+          create: {
+            args: Prisma.LoyaltyRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          createMany: {
+            args: Prisma.LoyaltyRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LoyaltyRuleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>[]
+          }
+          delete: {
+            args: Prisma.LoyaltyRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          update: {
+            args: Prisma.LoyaltyRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.LoyaltyRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LoyaltyRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LoyaltyRuleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>[]
+          }
+          upsert: {
+            args: Prisma.LoyaltyRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyRulePayload>
+          }
+          aggregate: {
+            args: Prisma.LoyaltyRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLoyaltyRule>
+          }
+          groupBy: {
+            args: Prisma.LoyaltyRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LoyaltyRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LoyaltyRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<LoyaltyRuleCountAggregateOutputType> | number
+          }
+        }
+      }
+      LoyaltyTransaction: {
+        payload: Prisma.$LoyaltyTransactionPayload<ExtArgs>
+        fields: Prisma.LoyaltyTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LoyaltyTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LoyaltyTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.LoyaltyTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LoyaltyTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.LoyaltyTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.LoyaltyTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.LoyaltyTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LoyaltyTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.LoyaltyTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          update: {
+            args: Prisma.LoyaltyTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.LoyaltyTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LoyaltyTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LoyaltyTransactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.LoyaltyTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LoyaltyTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.LoyaltyTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLoyaltyTransaction>
+          }
+          groupBy: {
+            args: Prisma.LoyaltyTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LoyaltyTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LoyaltyTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<LoyaltyTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
+      Notification: {
+        payload: Prisma.$NotificationPayload<ExtArgs>
+        fields: Prisma.NotificationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findMany: {
+            args: Prisma.NotificationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          create: {
+            args: Prisma.NotificationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          createMany: {
+            args: Prisma.NotificationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NotificationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          delete: {
+            args: Prisma.NotificationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          update: {
+            args: Prisma.NotificationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NotificationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          upsert: {
+            args: Prisma.NotificationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotification>
+          }
+          groupBy: {
+            args: Prisma.NotificationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Task: {
+        payload: Prisma.$TaskPayload<ExtArgs>
+        fields: Prisma.TaskFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TaskFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TaskFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          findFirst: {
+            args: Prisma.TaskFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TaskFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          findMany: {
+            args: Prisma.TaskFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          create: {
+            args: Prisma.TaskCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          createMany: {
+            args: Prisma.TaskCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TaskCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          delete: {
+            args: Prisma.TaskDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          update: {
+            args: Prisma.TaskUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          deleteMany: {
+            args: Prisma.TaskDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TaskUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TaskUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          upsert: {
+            args: Prisma.TaskUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          aggregate: {
+            args: Prisma.TaskAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTask>
+          }
+          groupBy: {
+            args: Prisma.TaskGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TaskGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TaskCountArgs<ExtArgs>
+            result: $Utils.Optional<TaskCountAggregateOutputType> | number
+          }
+        }
+      }
+      BackupLog: {
+        payload: Prisma.$BackupLogPayload<ExtArgs>
+        fields: Prisma.BackupLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BackupLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BackupLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          findFirst: {
+            args: Prisma.BackupLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BackupLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          findMany: {
+            args: Prisma.BackupLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>[]
+          }
+          create: {
+            args: Prisma.BackupLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          createMany: {
+            args: Prisma.BackupLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BackupLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>[]
+          }
+          delete: {
+            args: Prisma.BackupLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          update: {
+            args: Prisma.BackupLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.BackupLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BackupLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BackupLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.BackupLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BackupLogPayload>
+          }
+          aggregate: {
+            args: Prisma.BackupLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBackupLog>
+          }
+          groupBy: {
+            args: Prisma.BackupLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BackupLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BackupLogCountArgs<ExtArgs>
+            result: $Utils.Optional<BackupLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -5263,6 +5814,11 @@ export namespace Prisma {
     orderReturn?: OrderReturnOmit
     orderReturnItem?: OrderReturnItemOmit
     customerPayment?: CustomerPaymentOmit
+    loyaltyRule?: LoyaltyRuleOmit
+    loyaltyTransaction?: LoyaltyTransactionOmit
+    notification?: NotificationOmit
+    task?: TaskOmit
+    backupLog?: BackupLogOmit
   }
 
   /* Types for Logging */
@@ -5361,6 +5917,10 @@ export namespace Prisma {
     wholesaleVisits: number
     wholesaleOrders: number
     campaigns: number
+    notifications: number
+    assignedTasks: number
+    createdTasks: number
+    backupLogs: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5382,6 +5942,10 @@ export namespace Prisma {
     wholesaleVisits?: boolean | UserCountOutputTypeCountWholesaleVisitsArgs
     wholesaleOrders?: boolean | UserCountOutputTypeCountWholesaleOrdersArgs
     campaigns?: boolean | UserCountOutputTypeCountCampaignsArgs
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    assignedTasks?: boolean | UserCountOutputTypeCountAssignedTasksArgs
+    createdTasks?: boolean | UserCountOutputTypeCountCreatedTasksArgs
+    backupLogs?: boolean | UserCountOutputTypeCountBackupLogsArgs
   }
 
   // Custom InputTypes
@@ -5519,6 +6083,34 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCampaignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CampaignWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAssignedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBackupLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupLogWhereInput
   }
 
 
@@ -5947,6 +6539,9 @@ export namespace Prisma {
     message: number
     warranties: number
     payments: number
+    loyaltyTransactions: number
+    notifications: number
+    tasks: number
   }
 
   export type CustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5955,6 +6550,9 @@ export namespace Prisma {
     message?: boolean | CustomerCountOutputTypeCountMessageArgs
     warranties?: boolean | CustomerCountOutputTypeCountWarrantiesArgs
     payments?: boolean | CustomerCountOutputTypeCountPaymentsArgs
+    loyaltyTransactions?: boolean | CustomerCountOutputTypeCountLoyaltyTransactionsArgs
+    notifications?: boolean | CustomerCountOutputTypeCountNotificationsArgs
+    tasks?: boolean | CustomerCountOutputTypeCountTasksArgs
   }
 
   // Custom InputTypes
@@ -6003,6 +6601,27 @@ export namespace Prisma {
     where?: CustomerPaymentWhereInput
   }
 
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountLoyaltyTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoyaltyTransactionWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+  }
+
 
   /**
    * Count Type WholesaleCustomerCountOutputType
@@ -6011,11 +6630,13 @@ export namespace Prisma {
   export type WholesaleCustomerCountOutputType = {
     visits: number
     orders: number
+    tasks: number
   }
 
   export type WholesaleCustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     visits?: boolean | WholesaleCustomerCountOutputTypeCountVisitsArgs
     orders?: boolean | WholesaleCustomerCountOutputTypeCountOrdersArgs
+    tasks?: boolean | WholesaleCustomerCountOutputTypeCountTasksArgs
   }
 
   // Custom InputTypes
@@ -6041,6 +6662,13 @@ export namespace Prisma {
    */
   export type WholesaleCustomerCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WholesaleOrderWhereInput
+  }
+
+  /**
+   * WholesaleCustomerCountOutputType without action
+   */
+  export type WholesaleCustomerCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
   }
 
 
@@ -6084,6 +6712,7 @@ export namespace Prisma {
     warranties: number
     returns: number
     payments: number
+    loyaltyTransactions: number
     commissions: number
   }
 
@@ -6092,6 +6721,7 @@ export namespace Prisma {
     warranties?: boolean | OrderCountOutputTypeCountWarrantiesArgs
     returns?: boolean | OrderCountOutputTypeCountReturnsArgs
     payments?: boolean | OrderCountOutputTypeCountPaymentsArgs
+    loyaltyTransactions?: boolean | OrderCountOutputTypeCountLoyaltyTransactionsArgs
     commissions?: boolean | OrderCountOutputTypeCountCommissionsArgs
   }
 
@@ -6132,6 +6762,13 @@ export namespace Prisma {
    */
   export type OrderCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CustomerPaymentWhereInput
+  }
+
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeCountLoyaltyTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoyaltyTransactionWhereInput
   }
 
   /**
@@ -6754,6 +7391,10 @@ export namespace Prisma {
     wholesaleVisits?: boolean | User$wholesaleVisitsArgs<ExtArgs>
     wholesaleOrders?: boolean | User$wholesaleOrdersArgs<ExtArgs>
     campaigns?: boolean | User$campaignsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
+    createdTasks?: boolean | User$createdTasksArgs<ExtArgs>
+    backupLogs?: boolean | User$backupLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -6852,6 +7493,10 @@ export namespace Prisma {
     wholesaleVisits?: boolean | User$wholesaleVisitsArgs<ExtArgs>
     wholesaleOrders?: boolean | User$wholesaleOrdersArgs<ExtArgs>
     campaigns?: boolean | User$campaignsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
+    createdTasks?: boolean | User$createdTasksArgs<ExtArgs>
+    backupLogs?: boolean | User$backupLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6886,6 +7531,10 @@ export namespace Prisma {
       wholesaleVisits: Prisma.$WholesaleVisitPayload<ExtArgs>[]
       wholesaleOrders: Prisma.$WholesaleOrderPayload<ExtArgs>[]
       campaigns: Prisma.$CampaignPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      assignedTasks: Prisma.$TaskPayload<ExtArgs>[]
+      createdTasks: Prisma.$TaskPayload<ExtArgs>[]
+      backupLogs: Prisma.$BackupLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7322,6 +7971,10 @@ export namespace Prisma {
     wholesaleVisits<T extends User$wholesaleVisitsArgs<ExtArgs> = {}>(args?: Subset<T, User$wholesaleVisitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleVisitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     wholesaleOrders<T extends User$wholesaleOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$wholesaleOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     campaigns<T extends User$campaignsArgs<ExtArgs> = {}>(args?: Subset<T, User$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assignedTasks<T extends User$assignedTasksArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdTasks<T extends User$createdTasksArgs<ExtArgs> = {}>(args?: Subset<T, User$createdTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    backupLogs<T extends User$backupLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$backupLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8237,6 +8890,102 @@ export namespace Prisma {
   }
 
   /**
+   * User.notifications
+   */
+  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.assignedTasks
+   */
+  export type User$assignedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * User.createdTasks
+   */
+  export type User$createdTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * User.backupLogs
+   */
+  export type User$backupLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    where?: BackupLogWhereInput
+    orderBy?: BackupLogOrderByWithRelationInput | BackupLogOrderByWithRelationInput[]
+    cursor?: BackupLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BackupLogScalarFieldEnum | BackupLogScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8340,6 +9089,17 @@ export namespace Prisma {
     viewCustomerPayments: boolean | null
     addCustomerPayments: boolean | null
     deleteCustomerPayments: boolean | null
+    viewLoyalty: boolean | null
+    editLoyalty: boolean | null
+    viewNotifications: boolean | null
+    viewTasks: boolean | null
+    addTasks: boolean | null
+    editTasks: boolean | null
+    deleteTasks: boolean | null
+    viewTracking: boolean | null
+    editTracking: boolean | null
+    viewBackups: boolean | null
+    manageBackups: boolean | null
   }
 
   export type PermissionMaxAggregateOutputType = {
@@ -8417,6 +9177,17 @@ export namespace Prisma {
     viewCustomerPayments: boolean | null
     addCustomerPayments: boolean | null
     deleteCustomerPayments: boolean | null
+    viewLoyalty: boolean | null
+    editLoyalty: boolean | null
+    viewNotifications: boolean | null
+    viewTasks: boolean | null
+    addTasks: boolean | null
+    editTasks: boolean | null
+    deleteTasks: boolean | null
+    viewTracking: boolean | null
+    editTracking: boolean | null
+    viewBackups: boolean | null
+    manageBackups: boolean | null
   }
 
   export type PermissionCountAggregateOutputType = {
@@ -8494,6 +9265,17 @@ export namespace Prisma {
     viewCustomerPayments: number
     addCustomerPayments: number
     deleteCustomerPayments: number
+    viewLoyalty: number
+    editLoyalty: number
+    viewNotifications: number
+    viewTasks: number
+    addTasks: number
+    editTasks: number
+    deleteTasks: number
+    viewTracking: number
+    editTracking: number
+    viewBackups: number
+    manageBackups: number
     _all: number
   }
 
@@ -8573,6 +9355,17 @@ export namespace Prisma {
     viewCustomerPayments?: true
     addCustomerPayments?: true
     deleteCustomerPayments?: true
+    viewLoyalty?: true
+    editLoyalty?: true
+    viewNotifications?: true
+    viewTasks?: true
+    addTasks?: true
+    editTasks?: true
+    deleteTasks?: true
+    viewTracking?: true
+    editTracking?: true
+    viewBackups?: true
+    manageBackups?: true
   }
 
   export type PermissionMaxAggregateInputType = {
@@ -8650,6 +9443,17 @@ export namespace Prisma {
     viewCustomerPayments?: true
     addCustomerPayments?: true
     deleteCustomerPayments?: true
+    viewLoyalty?: true
+    editLoyalty?: true
+    viewNotifications?: true
+    viewTasks?: true
+    addTasks?: true
+    editTasks?: true
+    deleteTasks?: true
+    viewTracking?: true
+    editTracking?: true
+    viewBackups?: true
+    manageBackups?: true
   }
 
   export type PermissionCountAggregateInputType = {
@@ -8727,6 +9531,17 @@ export namespace Prisma {
     viewCustomerPayments?: true
     addCustomerPayments?: true
     deleteCustomerPayments?: true
+    viewLoyalty?: true
+    editLoyalty?: true
+    viewNotifications?: true
+    viewTasks?: true
+    addTasks?: true
+    editTasks?: true
+    deleteTasks?: true
+    viewTracking?: true
+    editTracking?: true
+    viewBackups?: true
+    manageBackups?: true
     _all?: true
   }
 
@@ -8877,6 +9692,17 @@ export namespace Prisma {
     viewCustomerPayments: boolean
     addCustomerPayments: boolean
     deleteCustomerPayments: boolean
+    viewLoyalty: boolean
+    editLoyalty: boolean
+    viewNotifications: boolean
+    viewTasks: boolean
+    addTasks: boolean
+    editTasks: boolean
+    deleteTasks: boolean
+    viewTracking: boolean
+    editTracking: boolean
+    viewBackups: boolean
+    manageBackups: boolean
     _count: PermissionCountAggregateOutputType | null
     _min: PermissionMinAggregateOutputType | null
     _max: PermissionMaxAggregateOutputType | null
@@ -8971,6 +9797,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
     users?: boolean | Permission$usersArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["permission"]>
@@ -9050,6 +9887,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }, ExtArgs["result"]["permission"]>
 
   export type PermissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9127,6 +9975,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }, ExtArgs["result"]["permission"]>
 
   export type PermissionSelectScalar = {
@@ -9204,9 +10063,20 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }
 
-  export type PermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roleName" | "viewProducts" | "addProducts" | "editProducts" | "deleteProducts" | "viewReports" | "addReports" | "editReports" | "deleteReports" | "viewOrders" | "addOrders" | "editOrders" | "deleteOrders" | "viewWarranty" | "addWarranty" | "editWarranty" | "deleteWarranty" | "viewCustomers" | "addCustomers" | "editCustomers" | "deleteCustomers" | "viewWholesaleCustomers" | "addWholesaleCustomers" | "editWholesaleCustomers" | "deleteWholesaleCustomers" | "viewWholesaleOrders" | "addWholesaleOrders" | "editWholesaleOrders" | "deleteWholesaleOrders" | "viewEmployees" | "addEmployees" | "editEmployees" | "deleteEmployees" | "viewExpenses" | "addExpenses" | "editExpenses" | "deleteExpenses" | "viewAnalytics" | "viewCategories" | "addCategories" | "editCategories" | "deleteCategories" | "viewPermissions" | "editPermissions" | "addPermissions" | "deletePermissions" | "viewPages" | "addPages" | "editPages" | "deletePages" | "viewMarketing" | "addMarketing" | "editMarketing" | "deleteMarketing" | "viewSuppliers" | "addSuppliers" | "editSuppliers" | "deleteSuppliers" | "viewPurchaseInvoices" | "addPurchaseInvoices" | "editPurchaseInvoices" | "deletePurchaseInvoices" | "viewCoupons" | "addCoupons" | "editCoupons" | "deleteCoupons" | "viewReturns" | "addReturns" | "editReturns" | "deleteReturns" | "viewCustomerPayments" | "addCustomerPayments" | "deleteCustomerPayments", ExtArgs["result"]["permission"]>
+  export type PermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roleName" | "viewProducts" | "addProducts" | "editProducts" | "deleteProducts" | "viewReports" | "addReports" | "editReports" | "deleteReports" | "viewOrders" | "addOrders" | "editOrders" | "deleteOrders" | "viewWarranty" | "addWarranty" | "editWarranty" | "deleteWarranty" | "viewCustomers" | "addCustomers" | "editCustomers" | "deleteCustomers" | "viewWholesaleCustomers" | "addWholesaleCustomers" | "editWholesaleCustomers" | "deleteWholesaleCustomers" | "viewWholesaleOrders" | "addWholesaleOrders" | "editWholesaleOrders" | "deleteWholesaleOrders" | "viewEmployees" | "addEmployees" | "editEmployees" | "deleteEmployees" | "viewExpenses" | "addExpenses" | "editExpenses" | "deleteExpenses" | "viewAnalytics" | "viewCategories" | "addCategories" | "editCategories" | "deleteCategories" | "viewPermissions" | "editPermissions" | "addPermissions" | "deletePermissions" | "viewPages" | "addPages" | "editPages" | "deletePages" | "viewMarketing" | "addMarketing" | "editMarketing" | "deleteMarketing" | "viewSuppliers" | "addSuppliers" | "editSuppliers" | "deleteSuppliers" | "viewPurchaseInvoices" | "addPurchaseInvoices" | "editPurchaseInvoices" | "deletePurchaseInvoices" | "viewCoupons" | "addCoupons" | "editCoupons" | "deleteCoupons" | "viewReturns" | "addReturns" | "editReturns" | "deleteReturns" | "viewCustomerPayments" | "addCustomerPayments" | "deleteCustomerPayments" | "viewLoyalty" | "editLoyalty" | "viewNotifications" | "viewTasks" | "addTasks" | "editTasks" | "deleteTasks" | "viewTracking" | "editTracking" | "viewBackups" | "manageBackups", ExtArgs["result"]["permission"]>
   export type PermissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Permission$usersArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
@@ -9294,6 +10164,17 @@ export namespace Prisma {
       viewCustomerPayments: boolean
       addCustomerPayments: boolean
       deleteCustomerPayments: boolean
+      viewLoyalty: boolean
+      editLoyalty: boolean
+      viewNotifications: boolean
+      viewTasks: boolean
+      addTasks: boolean
+      editTasks: boolean
+      deleteTasks: boolean
+      viewTracking: boolean
+      editTracking: boolean
+      viewBackups: boolean
+      manageBackups: boolean
     }, ExtArgs["result"]["permission"]>
     composites: {}
   }
@@ -9792,6 +10673,17 @@ export namespace Prisma {
     readonly viewCustomerPayments: FieldRef<"Permission", 'Boolean'>
     readonly addCustomerPayments: FieldRef<"Permission", 'Boolean'>
     readonly deleteCustomerPayments: FieldRef<"Permission", 'Boolean'>
+    readonly viewLoyalty: FieldRef<"Permission", 'Boolean'>
+    readonly editLoyalty: FieldRef<"Permission", 'Boolean'>
+    readonly viewNotifications: FieldRef<"Permission", 'Boolean'>
+    readonly viewTasks: FieldRef<"Permission", 'Boolean'>
+    readonly addTasks: FieldRef<"Permission", 'Boolean'>
+    readonly editTasks: FieldRef<"Permission", 'Boolean'>
+    readonly deleteTasks: FieldRef<"Permission", 'Boolean'>
+    readonly viewTracking: FieldRef<"Permission", 'Boolean'>
+    readonly editTracking: FieldRef<"Permission", 'Boolean'>
+    readonly viewBackups: FieldRef<"Permission", 'Boolean'>
+    readonly manageBackups: FieldRef<"Permission", 'Boolean'>
   }
     
 
@@ -27513,6 +28405,9 @@ export namespace Prisma {
     message?: boolean | Customer$messageArgs<ExtArgs>
     warranties?: boolean | Customer$warrantiesArgs<ExtArgs>
     payments?: boolean | Customer$paymentsArgs<ExtArgs>
+    loyaltyTransactions?: boolean | Customer$loyaltyTransactionsArgs<ExtArgs>
+    notifications?: boolean | Customer$notificationsArgs<ExtArgs>
+    tasks?: boolean | Customer$tasksArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customer"]>
 
@@ -27580,6 +28475,9 @@ export namespace Prisma {
     message?: boolean | Customer$messageArgs<ExtArgs>
     warranties?: boolean | Customer$warrantiesArgs<ExtArgs>
     payments?: boolean | Customer$paymentsArgs<ExtArgs>
+    loyaltyTransactions?: boolean | Customer$loyaltyTransactionsArgs<ExtArgs>
+    notifications?: boolean | Customer$notificationsArgs<ExtArgs>
+    tasks?: boolean | Customer$tasksArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -27593,6 +28491,9 @@ export namespace Prisma {
       message: Prisma.$MessagePayload<ExtArgs>[]
       warranties: Prisma.$WarrantyPayload<ExtArgs>[]
       payments: Prisma.$CustomerPaymentPayload<ExtArgs>[]
+      loyaltyTransactions: Prisma.$LoyaltyTransactionPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      tasks: Prisma.$TaskPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -28010,6 +28911,9 @@ export namespace Prisma {
     message<T extends Customer$messageArgs<ExtArgs> = {}>(args?: Subset<T, Customer$messageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     warranties<T extends Customer$warrantiesArgs<ExtArgs> = {}>(args?: Subset<T, Customer$warrantiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WarrantyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends Customer$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    loyaltyTransactions<T extends Customer$loyaltyTransactionsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$loyaltyTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends Customer$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tasks<T extends Customer$tasksArgs<ExtArgs> = {}>(args?: Subset<T, Customer$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -28563,6 +29467,78 @@ export namespace Prisma {
   }
 
   /**
+   * Customer.loyaltyTransactions
+   */
+  export type Customer$loyaltyTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    where?: LoyaltyTransactionWhereInput
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LoyaltyTransactionScalarFieldEnum | LoyaltyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.notifications
+   */
+  export type Customer$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.tasks
+   */
+  export type Customer$tasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
    * Customer without action
    */
   export type CustomerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -28950,6 +29926,7 @@ export namespace Prisma {
     assignedUser?: boolean | WholesaleCustomer$assignedUserArgs<ExtArgs>
     visits?: boolean | WholesaleCustomer$visitsArgs<ExtArgs>
     orders?: boolean | WholesaleCustomer$ordersArgs<ExtArgs>
+    tasks?: boolean | WholesaleCustomer$tasksArgs<ExtArgs>
     _count?: boolean | WholesaleCustomerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wholesaleCustomer"]>
 
@@ -29047,6 +30024,7 @@ export namespace Prisma {
     assignedUser?: boolean | WholesaleCustomer$assignedUserArgs<ExtArgs>
     visits?: boolean | WholesaleCustomer$visitsArgs<ExtArgs>
     orders?: boolean | WholesaleCustomer$ordersArgs<ExtArgs>
+    tasks?: boolean | WholesaleCustomer$tasksArgs<ExtArgs>
     _count?: boolean | WholesaleCustomerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WholesaleCustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -29062,6 +30040,7 @@ export namespace Prisma {
       assignedUser: Prisma.$UserPayload<ExtArgs> | null
       visits: Prisma.$WholesaleVisitPayload<ExtArgs>[]
       orders: Prisma.$WholesaleOrderPayload<ExtArgs>[]
+      tasks: Prisma.$TaskPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -29487,6 +30466,7 @@ export namespace Prisma {
     assignedUser<T extends WholesaleCustomer$assignedUserArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleCustomer$assignedUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     visits<T extends WholesaleCustomer$visitsArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleCustomer$visitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleVisitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orders<T extends WholesaleCustomer$ordersArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleCustomer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tasks<T extends WholesaleCustomer$tasksArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleCustomer$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -30002,6 +30982,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: WholesaleOrderScalarFieldEnum | WholesaleOrderScalarFieldEnum[]
+  }
+
+  /**
+   * WholesaleCustomer.tasks
+   */
+  export type WholesaleCustomer$tasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
   }
 
   /**
@@ -37451,6 +38455,9 @@ export namespace Prisma {
     couponId: string | null
     paidAmount: number | null
     remainingAmount: number | null
+    trackingNumber: string | null
+    trackingStatus: $Enums.TrackingStatus | null
+    trackingUrl: string | null
     manualCreatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -37491,6 +38498,9 @@ export namespace Prisma {
     couponId: string | null
     paidAmount: number | null
     remainingAmount: number | null
+    trackingNumber: string | null
+    trackingStatus: $Enums.TrackingStatus | null
+    trackingUrl: string | null
     manualCreatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -37532,6 +38542,9 @@ export namespace Prisma {
     couponId: number
     paidAmount: number
     remainingAmount: number
+    trackingNumber: number
+    trackingStatus: number
+    trackingUrl: number
     manualCreatedAt: number
     createdAt: number
     updatedAt: number
@@ -37606,6 +38619,9 @@ export namespace Prisma {
     couponId?: true
     paidAmount?: true
     remainingAmount?: true
+    trackingNumber?: true
+    trackingStatus?: true
+    trackingUrl?: true
     manualCreatedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -37646,6 +38662,9 @@ export namespace Prisma {
     couponId?: true
     paidAmount?: true
     remainingAmount?: true
+    trackingNumber?: true
+    trackingStatus?: true
+    trackingUrl?: true
     manualCreatedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -37687,6 +38706,9 @@ export namespace Prisma {
     couponId?: true
     paidAmount?: true
     remainingAmount?: true
+    trackingNumber?: true
+    trackingStatus?: true
+    trackingUrl?: true
     manualCreatedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -37815,6 +38837,9 @@ export namespace Prisma {
     couponId: string | null
     paidAmount: number
     remainingAmount: number
+    trackingNumber: string | null
+    trackingStatus: $Enums.TrackingStatus
+    trackingUrl: string | null
     manualCreatedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -37875,6 +38900,9 @@ export namespace Prisma {
     couponId?: boolean
     paidAmount?: boolean
     remainingAmount?: boolean
+    trackingNumber?: boolean
+    trackingStatus?: boolean
+    trackingUrl?: boolean
     manualCreatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -37887,6 +38915,7 @@ export namespace Prisma {
     coupon?: boolean | Order$couponArgs<ExtArgs>
     returns?: boolean | Order$returnsArgs<ExtArgs>
     payments?: boolean | Order$paymentsArgs<ExtArgs>
+    loyaltyTransactions?: boolean | Order$loyaltyTransactionsArgs<ExtArgs>
     commissions?: boolean | Order$commissionsArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
@@ -37927,6 +38956,9 @@ export namespace Prisma {
     couponId?: boolean
     paidAmount?: boolean
     remainingAmount?: boolean
+    trackingNumber?: boolean
+    trackingStatus?: boolean
+    trackingUrl?: boolean
     manualCreatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -37973,6 +39005,9 @@ export namespace Prisma {
     couponId?: boolean
     paidAmount?: boolean
     remainingAmount?: boolean
+    trackingNumber?: boolean
+    trackingStatus?: boolean
+    trackingUrl?: boolean
     manualCreatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -38019,12 +39054,15 @@ export namespace Prisma {
     couponId?: boolean
     paidAmount?: boolean
     remainingAmount?: boolean
+    trackingNumber?: boolean
+    trackingStatus?: boolean
+    trackingUrl?: boolean
     manualCreatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "usdToTryRateAtOrder" | "shippingPrice" | "moneyTransferCommission" | "otherCommissions" | "carrierCollectionReceivedAt" | "carrierCollectionReceivedAmount" | "carrierCollectionNotes" | "totalAmount" | "discount" | "finalAmount" | "paymentMethod" | "pay" | "receiverName" | "receiverPhone" | "country" | "city" | "invoiceImage" | "municipality" | "fullAddress" | "deliveryNotes" | "googleMapsLink" | "amount" | "amountBank" | "deliveryMethod" | "additionalNotes" | "status" | "customerId" | "userId" | "warehouseId" | "shippingId" | "couponId" | "paidAmount" | "remainingAmount" | "manualCreatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "usdToTryRateAtOrder" | "shippingPrice" | "moneyTransferCommission" | "otherCommissions" | "carrierCollectionReceivedAt" | "carrierCollectionReceivedAmount" | "carrierCollectionNotes" | "totalAmount" | "discount" | "finalAmount" | "paymentMethod" | "pay" | "receiverName" | "receiverPhone" | "country" | "city" | "invoiceImage" | "municipality" | "fullAddress" | "deliveryNotes" | "googleMapsLink" | "amount" | "amountBank" | "deliveryMethod" | "additionalNotes" | "status" | "customerId" | "userId" | "warehouseId" | "shippingId" | "couponId" | "paidAmount" | "remainingAmount" | "trackingNumber" | "trackingStatus" | "trackingUrl" | "manualCreatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     user?: boolean | Order$userArgs<ExtArgs>
@@ -38035,6 +39073,7 @@ export namespace Prisma {
     coupon?: boolean | Order$couponArgs<ExtArgs>
     returns?: boolean | Order$returnsArgs<ExtArgs>
     payments?: boolean | Order$paymentsArgs<ExtArgs>
+    loyaltyTransactions?: boolean | Order$loyaltyTransactionsArgs<ExtArgs>
     commissions?: boolean | Order$commissionsArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -38065,6 +39104,7 @@ export namespace Prisma {
       coupon: Prisma.$CouponPayload<ExtArgs> | null
       returns: Prisma.$OrderReturnPayload<ExtArgs>[]
       payments: Prisma.$CustomerPaymentPayload<ExtArgs>[]
+      loyaltyTransactions: Prisma.$LoyaltyTransactionPayload<ExtArgs>[]
       commissions: Prisma.$CommissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -38103,6 +39143,9 @@ export namespace Prisma {
       couponId: string | null
       paidAmount: number
       remainingAmount: number
+      trackingNumber: string | null
+      trackingStatus: $Enums.TrackingStatus
+      trackingUrl: string | null
       manualCreatedAt: Date | null
       createdAt: Date
       updatedAt: Date
@@ -38509,6 +39552,7 @@ export namespace Prisma {
     coupon<T extends Order$couponArgs<ExtArgs> = {}>(args?: Subset<T, Order$couponArgs<ExtArgs>>): Prisma__CouponClient<$Result.GetResult<Prisma.$CouponPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     returns<T extends Order$returnsArgs<ExtArgs> = {}>(args?: Subset<T, Order$returnsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderReturnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends Order$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Order$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    loyaltyTransactions<T extends Order$loyaltyTransactionsArgs<ExtArgs> = {}>(args?: Subset<T, Order$loyaltyTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     commissions<T extends Order$commissionsArgs<ExtArgs> = {}>(args?: Subset<T, Order$commissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -38574,6 +39618,9 @@ export namespace Prisma {
     readonly couponId: FieldRef<"Order", 'String'>
     readonly paidAmount: FieldRef<"Order", 'Float'>
     readonly remainingAmount: FieldRef<"Order", 'Float'>
+    readonly trackingNumber: FieldRef<"Order", 'String'>
+    readonly trackingStatus: FieldRef<"Order", 'TrackingStatus'>
+    readonly trackingUrl: FieldRef<"Order", 'String'>
     readonly manualCreatedAt: FieldRef<"Order", 'DateTime'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
@@ -39142,6 +40189,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CustomerPaymentScalarFieldEnum | CustomerPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Order.loyaltyTransactions
+   */
+  export type Order$loyaltyTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    where?: LoyaltyTransactionWhereInput
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LoyaltyTransactionScalarFieldEnum | LoyaltyTransactionScalarFieldEnum[]
   }
 
   /**
@@ -65067,6 +66138,5952 @@ export namespace Prisma {
 
 
   /**
+   * Model LoyaltyRule
+   */
+
+  export type AggregateLoyaltyRule = {
+    _count: LoyaltyRuleCountAggregateOutputType | null
+    _avg: LoyaltyRuleAvgAggregateOutputType | null
+    _sum: LoyaltyRuleSumAggregateOutputType | null
+    _min: LoyaltyRuleMinAggregateOutputType | null
+    _max: LoyaltyRuleMaxAggregateOutputType | null
+  }
+
+  export type LoyaltyRuleAvgAggregateOutputType = {
+    pointsPerCurrency: number | null
+    redeemValue: number | null
+    minPointsToRedeem: number | null
+  }
+
+  export type LoyaltyRuleSumAggregateOutputType = {
+    pointsPerCurrency: number | null
+    redeemValue: number | null
+    minPointsToRedeem: number | null
+  }
+
+  export type LoyaltyRuleMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    pointsPerCurrency: number | null
+    redeemValue: number | null
+    minPointsToRedeem: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LoyaltyRuleMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    pointsPerCurrency: number | null
+    redeemValue: number | null
+    minPointsToRedeem: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LoyaltyRuleCountAggregateOutputType = {
+    id: number
+    name: number
+    pointsPerCurrency: number
+    redeemValue: number
+    minPointsToRedeem: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type LoyaltyRuleAvgAggregateInputType = {
+    pointsPerCurrency?: true
+    redeemValue?: true
+    minPointsToRedeem?: true
+  }
+
+  export type LoyaltyRuleSumAggregateInputType = {
+    pointsPerCurrency?: true
+    redeemValue?: true
+    minPointsToRedeem?: true
+  }
+
+  export type LoyaltyRuleMinAggregateInputType = {
+    id?: true
+    name?: true
+    pointsPerCurrency?: true
+    redeemValue?: true
+    minPointsToRedeem?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LoyaltyRuleMaxAggregateInputType = {
+    id?: true
+    name?: true
+    pointsPerCurrency?: true
+    redeemValue?: true
+    minPointsToRedeem?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LoyaltyRuleCountAggregateInputType = {
+    id?: true
+    name?: true
+    pointsPerCurrency?: true
+    redeemValue?: true
+    minPointsToRedeem?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type LoyaltyRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoyaltyRule to aggregate.
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyRules to fetch.
+     */
+    orderBy?: LoyaltyRuleOrderByWithRelationInput | LoyaltyRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LoyaltyRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LoyaltyRules
+    **/
+    _count?: true | LoyaltyRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LoyaltyRuleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LoyaltyRuleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LoyaltyRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LoyaltyRuleMaxAggregateInputType
+  }
+
+  export type GetLoyaltyRuleAggregateType<T extends LoyaltyRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregateLoyaltyRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLoyaltyRule[P]>
+      : GetScalarType<T[P], AggregateLoyaltyRule[P]>
+  }
+
+
+
+
+  export type LoyaltyRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoyaltyRuleWhereInput
+    orderBy?: LoyaltyRuleOrderByWithAggregationInput | LoyaltyRuleOrderByWithAggregationInput[]
+    by: LoyaltyRuleScalarFieldEnum[] | LoyaltyRuleScalarFieldEnum
+    having?: LoyaltyRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LoyaltyRuleCountAggregateInputType | true
+    _avg?: LoyaltyRuleAvgAggregateInputType
+    _sum?: LoyaltyRuleSumAggregateInputType
+    _min?: LoyaltyRuleMinAggregateInputType
+    _max?: LoyaltyRuleMaxAggregateInputType
+  }
+
+  export type LoyaltyRuleGroupByOutputType = {
+    id: string
+    name: string | null
+    pointsPerCurrency: number
+    redeemValue: number
+    minPointsToRedeem: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: LoyaltyRuleCountAggregateOutputType | null
+    _avg: LoyaltyRuleAvgAggregateOutputType | null
+    _sum: LoyaltyRuleSumAggregateOutputType | null
+    _min: LoyaltyRuleMinAggregateOutputType | null
+    _max: LoyaltyRuleMaxAggregateOutputType | null
+  }
+
+  type GetLoyaltyRuleGroupByPayload<T extends LoyaltyRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LoyaltyRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LoyaltyRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LoyaltyRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], LoyaltyRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LoyaltyRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    pointsPerCurrency?: boolean
+    redeemValue?: boolean
+    minPointsToRedeem?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["loyaltyRule"]>
+
+  export type LoyaltyRuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    pointsPerCurrency?: boolean
+    redeemValue?: boolean
+    minPointsToRedeem?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["loyaltyRule"]>
+
+  export type LoyaltyRuleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    pointsPerCurrency?: boolean
+    redeemValue?: boolean
+    minPointsToRedeem?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["loyaltyRule"]>
+
+  export type LoyaltyRuleSelectScalar = {
+    id?: boolean
+    name?: boolean
+    pointsPerCurrency?: boolean
+    redeemValue?: boolean
+    minPointsToRedeem?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type LoyaltyRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "pointsPerCurrency" | "redeemValue" | "minPointsToRedeem" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["loyaltyRule"]>
+
+  export type $LoyaltyRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LoyaltyRule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string | null
+      pointsPerCurrency: number
+      redeemValue: number
+      minPointsToRedeem: number
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["loyaltyRule"]>
+    composites: {}
+  }
+
+  type LoyaltyRuleGetPayload<S extends boolean | null | undefined | LoyaltyRuleDefaultArgs> = $Result.GetResult<Prisma.$LoyaltyRulePayload, S>
+
+  type LoyaltyRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LoyaltyRuleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LoyaltyRuleCountAggregateInputType | true
+    }
+
+  export interface LoyaltyRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LoyaltyRule'], meta: { name: 'LoyaltyRule' } }
+    /**
+     * Find zero or one LoyaltyRule that matches the filter.
+     * @param {LoyaltyRuleFindUniqueArgs} args - Arguments to find a LoyaltyRule
+     * @example
+     * // Get one LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LoyaltyRuleFindUniqueArgs>(args: SelectSubset<T, LoyaltyRuleFindUniqueArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LoyaltyRule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LoyaltyRuleFindUniqueOrThrowArgs} args - Arguments to find a LoyaltyRule
+     * @example
+     * // Get one LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LoyaltyRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, LoyaltyRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoyaltyRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleFindFirstArgs} args - Arguments to find a LoyaltyRule
+     * @example
+     * // Get one LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LoyaltyRuleFindFirstArgs>(args?: SelectSubset<T, LoyaltyRuleFindFirstArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoyaltyRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleFindFirstOrThrowArgs} args - Arguments to find a LoyaltyRule
+     * @example
+     * // Get one LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LoyaltyRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, LoyaltyRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LoyaltyRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LoyaltyRules
+     * const loyaltyRules = await prisma.loyaltyRule.findMany()
+     * 
+     * // Get first 10 LoyaltyRules
+     * const loyaltyRules = await prisma.loyaltyRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const loyaltyRuleWithIdOnly = await prisma.loyaltyRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LoyaltyRuleFindManyArgs>(args?: SelectSubset<T, LoyaltyRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LoyaltyRule.
+     * @param {LoyaltyRuleCreateArgs} args - Arguments to create a LoyaltyRule.
+     * @example
+     * // Create one LoyaltyRule
+     * const LoyaltyRule = await prisma.loyaltyRule.create({
+     *   data: {
+     *     // ... data to create a LoyaltyRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends LoyaltyRuleCreateArgs>(args: SelectSubset<T, LoyaltyRuleCreateArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LoyaltyRules.
+     * @param {LoyaltyRuleCreateManyArgs} args - Arguments to create many LoyaltyRules.
+     * @example
+     * // Create many LoyaltyRules
+     * const loyaltyRule = await prisma.loyaltyRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LoyaltyRuleCreateManyArgs>(args?: SelectSubset<T, LoyaltyRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LoyaltyRules and returns the data saved in the database.
+     * @param {LoyaltyRuleCreateManyAndReturnArgs} args - Arguments to create many LoyaltyRules.
+     * @example
+     * // Create many LoyaltyRules
+     * const loyaltyRule = await prisma.loyaltyRule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LoyaltyRules and only return the `id`
+     * const loyaltyRuleWithIdOnly = await prisma.loyaltyRule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LoyaltyRuleCreateManyAndReturnArgs>(args?: SelectSubset<T, LoyaltyRuleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LoyaltyRule.
+     * @param {LoyaltyRuleDeleteArgs} args - Arguments to delete one LoyaltyRule.
+     * @example
+     * // Delete one LoyaltyRule
+     * const LoyaltyRule = await prisma.loyaltyRule.delete({
+     *   where: {
+     *     // ... filter to delete one LoyaltyRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LoyaltyRuleDeleteArgs>(args: SelectSubset<T, LoyaltyRuleDeleteArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LoyaltyRule.
+     * @param {LoyaltyRuleUpdateArgs} args - Arguments to update one LoyaltyRule.
+     * @example
+     * // Update one LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LoyaltyRuleUpdateArgs>(args: SelectSubset<T, LoyaltyRuleUpdateArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LoyaltyRules.
+     * @param {LoyaltyRuleDeleteManyArgs} args - Arguments to filter LoyaltyRules to delete.
+     * @example
+     * // Delete a few LoyaltyRules
+     * const { count } = await prisma.loyaltyRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LoyaltyRuleDeleteManyArgs>(args?: SelectSubset<T, LoyaltyRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoyaltyRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LoyaltyRules
+     * const loyaltyRule = await prisma.loyaltyRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LoyaltyRuleUpdateManyArgs>(args: SelectSubset<T, LoyaltyRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoyaltyRules and returns the data updated in the database.
+     * @param {LoyaltyRuleUpdateManyAndReturnArgs} args - Arguments to update many LoyaltyRules.
+     * @example
+     * // Update many LoyaltyRules
+     * const loyaltyRule = await prisma.loyaltyRule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LoyaltyRules and only return the `id`
+     * const loyaltyRuleWithIdOnly = await prisma.loyaltyRule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LoyaltyRuleUpdateManyAndReturnArgs>(args: SelectSubset<T, LoyaltyRuleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LoyaltyRule.
+     * @param {LoyaltyRuleUpsertArgs} args - Arguments to update or create a LoyaltyRule.
+     * @example
+     * // Update or create a LoyaltyRule
+     * const loyaltyRule = await prisma.loyaltyRule.upsert({
+     *   create: {
+     *     // ... data to create a LoyaltyRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LoyaltyRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LoyaltyRuleUpsertArgs>(args: SelectSubset<T, LoyaltyRuleUpsertArgs<ExtArgs>>): Prisma__LoyaltyRuleClient<$Result.GetResult<Prisma.$LoyaltyRulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LoyaltyRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleCountArgs} args - Arguments to filter LoyaltyRules to count.
+     * @example
+     * // Count the number of LoyaltyRules
+     * const count = await prisma.loyaltyRule.count({
+     *   where: {
+     *     // ... the filter for the LoyaltyRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends LoyaltyRuleCountArgs>(
+      args?: Subset<T, LoyaltyRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LoyaltyRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LoyaltyRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LoyaltyRuleAggregateArgs>(args: Subset<T, LoyaltyRuleAggregateArgs>): Prisma.PrismaPromise<GetLoyaltyRuleAggregateType<T>>
+
+    /**
+     * Group by LoyaltyRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LoyaltyRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LoyaltyRuleGroupByArgs['orderBy'] }
+        : { orderBy?: LoyaltyRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LoyaltyRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLoyaltyRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LoyaltyRule model
+   */
+  readonly fields: LoyaltyRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LoyaltyRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LoyaltyRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LoyaltyRule model
+   */
+  interface LoyaltyRuleFieldRefs {
+    readonly id: FieldRef<"LoyaltyRule", 'String'>
+    readonly name: FieldRef<"LoyaltyRule", 'String'>
+    readonly pointsPerCurrency: FieldRef<"LoyaltyRule", 'Float'>
+    readonly redeemValue: FieldRef<"LoyaltyRule", 'Float'>
+    readonly minPointsToRedeem: FieldRef<"LoyaltyRule", 'Int'>
+    readonly isActive: FieldRef<"LoyaltyRule", 'Boolean'>
+    readonly createdAt: FieldRef<"LoyaltyRule", 'DateTime'>
+    readonly updatedAt: FieldRef<"LoyaltyRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LoyaltyRule findUnique
+   */
+  export type LoyaltyRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyRule to fetch.
+     */
+    where: LoyaltyRuleWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyRule findUniqueOrThrow
+   */
+  export type LoyaltyRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyRule to fetch.
+     */
+    where: LoyaltyRuleWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyRule findFirst
+   */
+  export type LoyaltyRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyRule to fetch.
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyRules to fetch.
+     */
+    orderBy?: LoyaltyRuleOrderByWithRelationInput | LoyaltyRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoyaltyRules.
+     */
+    cursor?: LoyaltyRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoyaltyRules.
+     */
+    distinct?: LoyaltyRuleScalarFieldEnum | LoyaltyRuleScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyRule findFirstOrThrow
+   */
+  export type LoyaltyRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyRule to fetch.
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyRules to fetch.
+     */
+    orderBy?: LoyaltyRuleOrderByWithRelationInput | LoyaltyRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoyaltyRules.
+     */
+    cursor?: LoyaltyRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoyaltyRules.
+     */
+    distinct?: LoyaltyRuleScalarFieldEnum | LoyaltyRuleScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyRule findMany
+   */
+  export type LoyaltyRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyRules to fetch.
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyRules to fetch.
+     */
+    orderBy?: LoyaltyRuleOrderByWithRelationInput | LoyaltyRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LoyaltyRules.
+     */
+    cursor?: LoyaltyRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyRules.
+     */
+    skip?: number
+    distinct?: LoyaltyRuleScalarFieldEnum | LoyaltyRuleScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyRule create
+   */
+  export type LoyaltyRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to create a LoyaltyRule.
+     */
+    data: XOR<LoyaltyRuleCreateInput, LoyaltyRuleUncheckedCreateInput>
+  }
+
+  /**
+   * LoyaltyRule createMany
+   */
+  export type LoyaltyRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LoyaltyRules.
+     */
+    data: LoyaltyRuleCreateManyInput | LoyaltyRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LoyaltyRule createManyAndReturn
+   */
+  export type LoyaltyRuleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * The data used to create many LoyaltyRules.
+     */
+    data: LoyaltyRuleCreateManyInput | LoyaltyRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LoyaltyRule update
+   */
+  export type LoyaltyRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to update a LoyaltyRule.
+     */
+    data: XOR<LoyaltyRuleUpdateInput, LoyaltyRuleUncheckedUpdateInput>
+    /**
+     * Choose, which LoyaltyRule to update.
+     */
+    where: LoyaltyRuleWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyRule updateMany
+   */
+  export type LoyaltyRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LoyaltyRules.
+     */
+    data: XOR<LoyaltyRuleUpdateManyMutationInput, LoyaltyRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which LoyaltyRules to update
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * Limit how many LoyaltyRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoyaltyRule updateManyAndReturn
+   */
+  export type LoyaltyRuleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * The data used to update LoyaltyRules.
+     */
+    data: XOR<LoyaltyRuleUpdateManyMutationInput, LoyaltyRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which LoyaltyRules to update
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * Limit how many LoyaltyRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoyaltyRule upsert
+   */
+  export type LoyaltyRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * The filter to search for the LoyaltyRule to update in case it exists.
+     */
+    where: LoyaltyRuleWhereUniqueInput
+    /**
+     * In case the LoyaltyRule found by the `where` argument doesn't exist, create a new LoyaltyRule with this data.
+     */
+    create: XOR<LoyaltyRuleCreateInput, LoyaltyRuleUncheckedCreateInput>
+    /**
+     * In case the LoyaltyRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LoyaltyRuleUpdateInput, LoyaltyRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * LoyaltyRule delete
+   */
+  export type LoyaltyRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+    /**
+     * Filter which LoyaltyRule to delete.
+     */
+    where: LoyaltyRuleWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyRule deleteMany
+   */
+  export type LoyaltyRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoyaltyRules to delete
+     */
+    where?: LoyaltyRuleWhereInput
+    /**
+     * Limit how many LoyaltyRules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoyaltyRule without action
+   */
+  export type LoyaltyRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyRule
+     */
+    select?: LoyaltyRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyRule
+     */
+    omit?: LoyaltyRuleOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LoyaltyTransaction
+   */
+
+  export type AggregateLoyaltyTransaction = {
+    _count: LoyaltyTransactionCountAggregateOutputType | null
+    _avg: LoyaltyTransactionAvgAggregateOutputType | null
+    _sum: LoyaltyTransactionSumAggregateOutputType | null
+    _min: LoyaltyTransactionMinAggregateOutputType | null
+    _max: LoyaltyTransactionMaxAggregateOutputType | null
+  }
+
+  export type LoyaltyTransactionAvgAggregateOutputType = {
+    orderId: number | null
+    points: number | null
+    value: number | null
+  }
+
+  export type LoyaltyTransactionSumAggregateOutputType = {
+    orderId: number | null
+    points: number | null
+    value: number | null
+  }
+
+  export type LoyaltyTransactionMinAggregateOutputType = {
+    id: string | null
+    customerId: string | null
+    orderId: number | null
+    type: $Enums.LoyaltyTransactionType | null
+    points: number | null
+    value: number | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LoyaltyTransactionMaxAggregateOutputType = {
+    id: string | null
+    customerId: string | null
+    orderId: number | null
+    type: $Enums.LoyaltyTransactionType | null
+    points: number | null
+    value: number | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LoyaltyTransactionCountAggregateOutputType = {
+    id: number
+    customerId: number
+    orderId: number
+    type: number
+    points: number
+    value: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type LoyaltyTransactionAvgAggregateInputType = {
+    orderId?: true
+    points?: true
+    value?: true
+  }
+
+  export type LoyaltyTransactionSumAggregateInputType = {
+    orderId?: true
+    points?: true
+    value?: true
+  }
+
+  export type LoyaltyTransactionMinAggregateInputType = {
+    id?: true
+    customerId?: true
+    orderId?: true
+    type?: true
+    points?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LoyaltyTransactionMaxAggregateInputType = {
+    id?: true
+    customerId?: true
+    orderId?: true
+    type?: true
+    points?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LoyaltyTransactionCountAggregateInputType = {
+    id?: true
+    customerId?: true
+    orderId?: true
+    type?: true
+    points?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type LoyaltyTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoyaltyTransaction to aggregate.
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyTransactions to fetch.
+     */
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LoyaltyTransactions
+    **/
+    _count?: true | LoyaltyTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LoyaltyTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LoyaltyTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LoyaltyTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LoyaltyTransactionMaxAggregateInputType
+  }
+
+  export type GetLoyaltyTransactionAggregateType<T extends LoyaltyTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateLoyaltyTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLoyaltyTransaction[P]>
+      : GetScalarType<T[P], AggregateLoyaltyTransaction[P]>
+  }
+
+
+
+
+  export type LoyaltyTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LoyaltyTransactionWhereInput
+    orderBy?: LoyaltyTransactionOrderByWithAggregationInput | LoyaltyTransactionOrderByWithAggregationInput[]
+    by: LoyaltyTransactionScalarFieldEnum[] | LoyaltyTransactionScalarFieldEnum
+    having?: LoyaltyTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LoyaltyTransactionCountAggregateInputType | true
+    _avg?: LoyaltyTransactionAvgAggregateInputType
+    _sum?: LoyaltyTransactionSumAggregateInputType
+    _min?: LoyaltyTransactionMinAggregateInputType
+    _max?: LoyaltyTransactionMaxAggregateInputType
+  }
+
+  export type LoyaltyTransactionGroupByOutputType = {
+    id: string
+    customerId: string
+    orderId: number | null
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value: number
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: LoyaltyTransactionCountAggregateOutputType | null
+    _avg: LoyaltyTransactionAvgAggregateOutputType | null
+    _sum: LoyaltyTransactionSumAggregateOutputType | null
+    _min: LoyaltyTransactionMinAggregateOutputType | null
+    _max: LoyaltyTransactionMaxAggregateOutputType | null
+  }
+
+  type GetLoyaltyTransactionGroupByPayload<T extends LoyaltyTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LoyaltyTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LoyaltyTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LoyaltyTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], LoyaltyTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LoyaltyTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    orderId?: boolean
+    type?: boolean
+    points?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }, ExtArgs["result"]["loyaltyTransaction"]>
+
+  export type LoyaltyTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    orderId?: boolean
+    type?: boolean
+    points?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }, ExtArgs["result"]["loyaltyTransaction"]>
+
+  export type LoyaltyTransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    orderId?: boolean
+    type?: boolean
+    points?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }, ExtArgs["result"]["loyaltyTransaction"]>
+
+  export type LoyaltyTransactionSelectScalar = {
+    id?: boolean
+    customerId?: boolean
+    orderId?: boolean
+    type?: boolean
+    points?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type LoyaltyTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerId" | "orderId" | "type" | "points" | "value" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["loyaltyTransaction"]>
+  export type LoyaltyTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }
+  export type LoyaltyTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }
+  export type LoyaltyTransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CustomerDefaultArgs<ExtArgs>
+    order?: boolean | LoyaltyTransaction$orderArgs<ExtArgs>
+  }
+
+  export type $LoyaltyTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LoyaltyTransaction"
+    objects: {
+      customer: Prisma.$CustomerPayload<ExtArgs>
+      order: Prisma.$OrderPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      customerId: string
+      orderId: number | null
+      type: $Enums.LoyaltyTransactionType
+      points: number
+      value: number
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["loyaltyTransaction"]>
+    composites: {}
+  }
+
+  type LoyaltyTransactionGetPayload<S extends boolean | null | undefined | LoyaltyTransactionDefaultArgs> = $Result.GetResult<Prisma.$LoyaltyTransactionPayload, S>
+
+  type LoyaltyTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LoyaltyTransactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LoyaltyTransactionCountAggregateInputType | true
+    }
+
+  export interface LoyaltyTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LoyaltyTransaction'], meta: { name: 'LoyaltyTransaction' } }
+    /**
+     * Find zero or one LoyaltyTransaction that matches the filter.
+     * @param {LoyaltyTransactionFindUniqueArgs} args - Arguments to find a LoyaltyTransaction
+     * @example
+     * // Get one LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LoyaltyTransactionFindUniqueArgs>(args: SelectSubset<T, LoyaltyTransactionFindUniqueArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LoyaltyTransaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LoyaltyTransactionFindUniqueOrThrowArgs} args - Arguments to find a LoyaltyTransaction
+     * @example
+     * // Get one LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LoyaltyTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, LoyaltyTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoyaltyTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionFindFirstArgs} args - Arguments to find a LoyaltyTransaction
+     * @example
+     * // Get one LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LoyaltyTransactionFindFirstArgs>(args?: SelectSubset<T, LoyaltyTransactionFindFirstArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LoyaltyTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionFindFirstOrThrowArgs} args - Arguments to find a LoyaltyTransaction
+     * @example
+     * // Get one LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LoyaltyTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, LoyaltyTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LoyaltyTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LoyaltyTransactions
+     * const loyaltyTransactions = await prisma.loyaltyTransaction.findMany()
+     * 
+     * // Get first 10 LoyaltyTransactions
+     * const loyaltyTransactions = await prisma.loyaltyTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const loyaltyTransactionWithIdOnly = await prisma.loyaltyTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LoyaltyTransactionFindManyArgs>(args?: SelectSubset<T, LoyaltyTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LoyaltyTransaction.
+     * @param {LoyaltyTransactionCreateArgs} args - Arguments to create a LoyaltyTransaction.
+     * @example
+     * // Create one LoyaltyTransaction
+     * const LoyaltyTransaction = await prisma.loyaltyTransaction.create({
+     *   data: {
+     *     // ... data to create a LoyaltyTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends LoyaltyTransactionCreateArgs>(args: SelectSubset<T, LoyaltyTransactionCreateArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LoyaltyTransactions.
+     * @param {LoyaltyTransactionCreateManyArgs} args - Arguments to create many LoyaltyTransactions.
+     * @example
+     * // Create many LoyaltyTransactions
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LoyaltyTransactionCreateManyArgs>(args?: SelectSubset<T, LoyaltyTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LoyaltyTransactions and returns the data saved in the database.
+     * @param {LoyaltyTransactionCreateManyAndReturnArgs} args - Arguments to create many LoyaltyTransactions.
+     * @example
+     * // Create many LoyaltyTransactions
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LoyaltyTransactions and only return the `id`
+     * const loyaltyTransactionWithIdOnly = await prisma.loyaltyTransaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LoyaltyTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, LoyaltyTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LoyaltyTransaction.
+     * @param {LoyaltyTransactionDeleteArgs} args - Arguments to delete one LoyaltyTransaction.
+     * @example
+     * // Delete one LoyaltyTransaction
+     * const LoyaltyTransaction = await prisma.loyaltyTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one LoyaltyTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LoyaltyTransactionDeleteArgs>(args: SelectSubset<T, LoyaltyTransactionDeleteArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LoyaltyTransaction.
+     * @param {LoyaltyTransactionUpdateArgs} args - Arguments to update one LoyaltyTransaction.
+     * @example
+     * // Update one LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LoyaltyTransactionUpdateArgs>(args: SelectSubset<T, LoyaltyTransactionUpdateArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LoyaltyTransactions.
+     * @param {LoyaltyTransactionDeleteManyArgs} args - Arguments to filter LoyaltyTransactions to delete.
+     * @example
+     * // Delete a few LoyaltyTransactions
+     * const { count } = await prisma.loyaltyTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LoyaltyTransactionDeleteManyArgs>(args?: SelectSubset<T, LoyaltyTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoyaltyTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LoyaltyTransactions
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LoyaltyTransactionUpdateManyArgs>(args: SelectSubset<T, LoyaltyTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LoyaltyTransactions and returns the data updated in the database.
+     * @param {LoyaltyTransactionUpdateManyAndReturnArgs} args - Arguments to update many LoyaltyTransactions.
+     * @example
+     * // Update many LoyaltyTransactions
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LoyaltyTransactions and only return the `id`
+     * const loyaltyTransactionWithIdOnly = await prisma.loyaltyTransaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LoyaltyTransactionUpdateManyAndReturnArgs>(args: SelectSubset<T, LoyaltyTransactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LoyaltyTransaction.
+     * @param {LoyaltyTransactionUpsertArgs} args - Arguments to update or create a LoyaltyTransaction.
+     * @example
+     * // Update or create a LoyaltyTransaction
+     * const loyaltyTransaction = await prisma.loyaltyTransaction.upsert({
+     *   create: {
+     *     // ... data to create a LoyaltyTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LoyaltyTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LoyaltyTransactionUpsertArgs>(args: SelectSubset<T, LoyaltyTransactionUpsertArgs<ExtArgs>>): Prisma__LoyaltyTransactionClient<$Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LoyaltyTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionCountArgs} args - Arguments to filter LoyaltyTransactions to count.
+     * @example
+     * // Count the number of LoyaltyTransactions
+     * const count = await prisma.loyaltyTransaction.count({
+     *   where: {
+     *     // ... the filter for the LoyaltyTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends LoyaltyTransactionCountArgs>(
+      args?: Subset<T, LoyaltyTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LoyaltyTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LoyaltyTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LoyaltyTransactionAggregateArgs>(args: Subset<T, LoyaltyTransactionAggregateArgs>): Prisma.PrismaPromise<GetLoyaltyTransactionAggregateType<T>>
+
+    /**
+     * Group by LoyaltyTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LoyaltyTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LoyaltyTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LoyaltyTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: LoyaltyTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LoyaltyTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLoyaltyTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LoyaltyTransaction model
+   */
+  readonly fields: LoyaltyTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LoyaltyTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LoyaltyTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer<T extends CustomerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CustomerDefaultArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    order<T extends LoyaltyTransaction$orderArgs<ExtArgs> = {}>(args?: Subset<T, LoyaltyTransaction$orderArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LoyaltyTransaction model
+   */
+  interface LoyaltyTransactionFieldRefs {
+    readonly id: FieldRef<"LoyaltyTransaction", 'String'>
+    readonly customerId: FieldRef<"LoyaltyTransaction", 'String'>
+    readonly orderId: FieldRef<"LoyaltyTransaction", 'Int'>
+    readonly type: FieldRef<"LoyaltyTransaction", 'LoyaltyTransactionType'>
+    readonly points: FieldRef<"LoyaltyTransaction", 'Int'>
+    readonly value: FieldRef<"LoyaltyTransaction", 'Float'>
+    readonly notes: FieldRef<"LoyaltyTransaction", 'String'>
+    readonly createdAt: FieldRef<"LoyaltyTransaction", 'DateTime'>
+    readonly updatedAt: FieldRef<"LoyaltyTransaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LoyaltyTransaction findUnique
+   */
+  export type LoyaltyTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyTransaction to fetch.
+     */
+    where: LoyaltyTransactionWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyTransaction findUniqueOrThrow
+   */
+  export type LoyaltyTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyTransaction to fetch.
+     */
+    where: LoyaltyTransactionWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyTransaction findFirst
+   */
+  export type LoyaltyTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyTransaction to fetch.
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyTransactions to fetch.
+     */
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoyaltyTransactions.
+     */
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoyaltyTransactions.
+     */
+    distinct?: LoyaltyTransactionScalarFieldEnum | LoyaltyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyTransaction findFirstOrThrow
+   */
+  export type LoyaltyTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyTransaction to fetch.
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyTransactions to fetch.
+     */
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LoyaltyTransactions.
+     */
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LoyaltyTransactions.
+     */
+    distinct?: LoyaltyTransactionScalarFieldEnum | LoyaltyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyTransaction findMany
+   */
+  export type LoyaltyTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which LoyaltyTransactions to fetch.
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LoyaltyTransactions to fetch.
+     */
+    orderBy?: LoyaltyTransactionOrderByWithRelationInput | LoyaltyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LoyaltyTransactions.
+     */
+    cursor?: LoyaltyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LoyaltyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LoyaltyTransactions.
+     */
+    skip?: number
+    distinct?: LoyaltyTransactionScalarFieldEnum | LoyaltyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * LoyaltyTransaction create
+   */
+  export type LoyaltyTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LoyaltyTransaction.
+     */
+    data: XOR<LoyaltyTransactionCreateInput, LoyaltyTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * LoyaltyTransaction createMany
+   */
+  export type LoyaltyTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LoyaltyTransactions.
+     */
+    data: LoyaltyTransactionCreateManyInput | LoyaltyTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LoyaltyTransaction createManyAndReturn
+   */
+  export type LoyaltyTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many LoyaltyTransactions.
+     */
+    data: LoyaltyTransactionCreateManyInput | LoyaltyTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LoyaltyTransaction update
+   */
+  export type LoyaltyTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LoyaltyTransaction.
+     */
+    data: XOR<LoyaltyTransactionUpdateInput, LoyaltyTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which LoyaltyTransaction to update.
+     */
+    where: LoyaltyTransactionWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyTransaction updateMany
+   */
+  export type LoyaltyTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LoyaltyTransactions.
+     */
+    data: XOR<LoyaltyTransactionUpdateManyMutationInput, LoyaltyTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which LoyaltyTransactions to update
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * Limit how many LoyaltyTransactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoyaltyTransaction updateManyAndReturn
+   */
+  export type LoyaltyTransactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to update LoyaltyTransactions.
+     */
+    data: XOR<LoyaltyTransactionUpdateManyMutationInput, LoyaltyTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which LoyaltyTransactions to update
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * Limit how many LoyaltyTransactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LoyaltyTransaction upsert
+   */
+  export type LoyaltyTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LoyaltyTransaction to update in case it exists.
+     */
+    where: LoyaltyTransactionWhereUniqueInput
+    /**
+     * In case the LoyaltyTransaction found by the `where` argument doesn't exist, create a new LoyaltyTransaction with this data.
+     */
+    create: XOR<LoyaltyTransactionCreateInput, LoyaltyTransactionUncheckedCreateInput>
+    /**
+     * In case the LoyaltyTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LoyaltyTransactionUpdateInput, LoyaltyTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * LoyaltyTransaction delete
+   */
+  export type LoyaltyTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which LoyaltyTransaction to delete.
+     */
+    where: LoyaltyTransactionWhereUniqueInput
+  }
+
+  /**
+   * LoyaltyTransaction deleteMany
+   */
+  export type LoyaltyTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LoyaltyTransactions to delete
+     */
+    where?: LoyaltyTransactionWhereInput
+    /**
+     * Limit how many LoyaltyTransactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LoyaltyTransaction.order
+   */
+  export type LoyaltyTransaction$orderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    where?: OrderWhereInput
+  }
+
+  /**
+   * LoyaltyTransaction without action
+   */
+  export type LoyaltyTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoyaltyTransaction
+     */
+    select?: LoyaltyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoyaltyTransaction
+     */
+    omit?: LoyaltyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoyaltyTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Notification
+   */
+
+  export type AggregateNotification = {
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  export type NotificationMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.NotificationType | null
+    channel: $Enums.NotificationChannel | null
+    userId: string | null
+    customerId: string | null
+    title: string | null
+    message: string | null
+    entityType: string | null
+    entityId: string | null
+    readAt: Date | null
+    sentAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.NotificationType | null
+    channel: $Enums.NotificationChannel | null
+    userId: string | null
+    customerId: string | null
+    title: string | null
+    message: string | null
+    entityType: string | null
+    entityId: string | null
+    readAt: Date | null
+    sentAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationCountAggregateOutputType = {
+    id: number
+    type: number
+    channel: number
+    userId: number
+    customerId: number
+    title: number
+    message: number
+    entityType: number
+    entityId: number
+    readAt: number
+    sentAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type NotificationMinAggregateInputType = {
+    id?: true
+    type?: true
+    channel?: true
+    userId?: true
+    customerId?: true
+    title?: true
+    message?: true
+    entityType?: true
+    entityId?: true
+    readAt?: true
+    sentAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationMaxAggregateInputType = {
+    id?: true
+    type?: true
+    channel?: true
+    userId?: true
+    customerId?: true
+    title?: true
+    message?: true
+    entityType?: true
+    entityId?: true
+    readAt?: true
+    sentAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationCountAggregateInputType = {
+    id?: true
+    type?: true
+    channel?: true
+    userId?: true
+    customerId?: true
+    title?: true
+    message?: true
+    entityType?: true
+    entityId?: true
+    readAt?: true
+    sentAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type NotificationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notification to aggregate.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Notifications
+    **/
+    _count?: true | NotificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type GetNotificationAggregateType<T extends NotificationAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotification[P]>
+      : GetScalarType<T[P], AggregateNotification[P]>
+  }
+
+
+
+
+  export type NotificationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithAggregationInput | NotificationOrderByWithAggregationInput[]
+    by: NotificationScalarFieldEnum[] | NotificationScalarFieldEnum
+    having?: NotificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationCountAggregateInputType | true
+    _min?: NotificationMinAggregateInputType
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type NotificationGroupByOutputType = {
+    id: string
+    type: $Enums.NotificationType
+    channel: $Enums.NotificationChannel
+    userId: string | null
+    customerId: string | null
+    title: string
+    message: string
+    entityType: string | null
+    entityId: string | null
+    readAt: Date | null
+    sentAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  type GetNotificationGroupByPayload<T extends NotificationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    channel?: boolean
+    userId?: boolean
+    customerId?: boolean
+    title?: boolean
+    message?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    readAt?: boolean
+    sentAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+  export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    channel?: boolean
+    userId?: boolean
+    customerId?: boolean
+    title?: boolean
+    message?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    readAt?: boolean
+    sentAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+  export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    channel?: boolean
+    userId?: boolean
+    customerId?: boolean
+    title?: boolean
+    message?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    readAt?: boolean
+    sentAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+  export type NotificationSelectScalar = {
+    id?: boolean
+    type?: boolean
+    channel?: boolean
+    userId?: boolean
+    customerId?: boolean
+    title?: boolean
+    message?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    readAt?: boolean
+    sentAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "channel" | "userId" | "customerId" | "title" | "message" | "entityType" | "entityId" | "readAt" | "sentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["notification"]>
+  export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }
+  export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }
+  export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Notification$userArgs<ExtArgs>
+    customer?: boolean | Notification$customerArgs<ExtArgs>
+  }
+
+  export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Notification"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.NotificationType
+      channel: $Enums.NotificationChannel
+      userId: string | null
+      customerId: string | null
+      title: string
+      message: string
+      entityType: string | null
+      entityId: string | null
+      readAt: Date | null
+      sentAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["notification"]>
+    composites: {}
+  }
+
+  type NotificationGetPayload<S extends boolean | null | undefined | NotificationDefaultArgs> = $Result.GetResult<Prisma.$NotificationPayload, S>
+
+  type NotificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NotificationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NotificationCountAggregateInputType | true
+    }
+
+  export interface NotificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Notification'], meta: { name: 'Notification' } }
+    /**
+     * Find zero or one Notification that matches the filter.
+     * @param {NotificationFindUniqueArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationFindUniqueArgs>(args: SelectSubset<T, NotificationFindUniqueArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Notification that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NotificationFindUniqueOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Notification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationFindFirstArgs>(args?: SelectSubset<T, NotificationFindFirstArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Notification that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Notifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Notifications
+     * const notifications = await prisma.notification.findMany()
+     * 
+     * // Get first 10 Notifications
+     * const notifications = await prisma.notification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationWithIdOnly = await prisma.notification.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationFindManyArgs>(args?: SelectSubset<T, NotificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Notification.
+     * @param {NotificationCreateArgs} args - Arguments to create a Notification.
+     * @example
+     * // Create one Notification
+     * const Notification = await prisma.notification.create({
+     *   data: {
+     *     // ... data to create a Notification
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationCreateArgs>(args: SelectSubset<T, NotificationCreateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Notifications.
+     * @param {NotificationCreateManyArgs} args - Arguments to create many Notifications.
+     * @example
+     * // Create many Notifications
+     * const notification = await prisma.notification.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationCreateManyArgs>(args?: SelectSubset<T, NotificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Notifications and returns the data saved in the database.
+     * @param {NotificationCreateManyAndReturnArgs} args - Arguments to create many Notifications.
+     * @example
+     * // Create many Notifications
+     * const notification = await prisma.notification.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Notifications and only return the `id`
+     * const notificationWithIdOnly = await prisma.notification.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NotificationCreateManyAndReturnArgs>(args?: SelectSubset<T, NotificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Notification.
+     * @param {NotificationDeleteArgs} args - Arguments to delete one Notification.
+     * @example
+     * // Delete one Notification
+     * const Notification = await prisma.notification.delete({
+     *   where: {
+     *     // ... filter to delete one Notification
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationDeleteArgs>(args: SelectSubset<T, NotificationDeleteArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Notification.
+     * @param {NotificationUpdateArgs} args - Arguments to update one Notification.
+     * @example
+     * // Update one Notification
+     * const notification = await prisma.notification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationUpdateArgs>(args: SelectSubset<T, NotificationUpdateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Notifications.
+     * @param {NotificationDeleteManyArgs} args - Arguments to filter Notifications to delete.
+     * @example
+     * // Delete a few Notifications
+     * const { count } = await prisma.notification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationDeleteManyArgs>(args?: SelectSubset<T, NotificationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Notifications
+     * const notification = await prisma.notification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationUpdateManyArgs>(args: SelectSubset<T, NotificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Notifications and returns the data updated in the database.
+     * @param {NotificationUpdateManyAndReturnArgs} args - Arguments to update many Notifications.
+     * @example
+     * // Update many Notifications
+     * const notification = await prisma.notification.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Notifications and only return the `id`
+     * const notificationWithIdOnly = await prisma.notification.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NotificationUpdateManyAndReturnArgs>(args: SelectSubset<T, NotificationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Notification.
+     * @param {NotificationUpsertArgs} args - Arguments to update or create a Notification.
+     * @example
+     * // Update or create a Notification
+     * const notification = await prisma.notification.upsert({
+     *   create: {
+     *     // ... data to create a Notification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Notification we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationUpsertArgs>(args: SelectSubset<T, NotificationUpsertArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationCountArgs} args - Arguments to filter Notifications to count.
+     * @example
+     * // Count the number of Notifications
+     * const count = await prisma.notification.count({
+     *   where: {
+     *     // ... the filter for the Notifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationCountArgs>(
+      args?: Subset<T, NotificationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationAggregateArgs>(args: Subset<T, NotificationAggregateArgs>): Prisma.PrismaPromise<GetNotificationAggregateType<T>>
+
+    /**
+     * Group by Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Notification model
+   */
+  readonly fields: NotificationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Notification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends Notification$userArgs<ExtArgs> = {}>(args?: Subset<T, Notification$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    customer<T extends Notification$customerArgs<ExtArgs> = {}>(args?: Subset<T, Notification$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Notification model
+   */
+  interface NotificationFieldRefs {
+    readonly id: FieldRef<"Notification", 'String'>
+    readonly type: FieldRef<"Notification", 'NotificationType'>
+    readonly channel: FieldRef<"Notification", 'NotificationChannel'>
+    readonly userId: FieldRef<"Notification", 'String'>
+    readonly customerId: FieldRef<"Notification", 'String'>
+    readonly title: FieldRef<"Notification", 'String'>
+    readonly message: FieldRef<"Notification", 'String'>
+    readonly entityType: FieldRef<"Notification", 'String'>
+    readonly entityId: FieldRef<"Notification", 'String'>
+    readonly readAt: FieldRef<"Notification", 'DateTime'>
+    readonly sentAt: FieldRef<"Notification", 'DateTime'>
+    readonly createdAt: FieldRef<"Notification", 'DateTime'>
+    readonly updatedAt: FieldRef<"Notification", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Notification findUnique
+   */
+  export type NotificationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findUniqueOrThrow
+   */
+  export type NotificationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findFirst
+   */
+  export type NotificationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findFirstOrThrow
+   */
+  export type NotificationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findMany
+   */
+  export type NotificationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notifications to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification create
+   */
+  export type NotificationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Notification.
+     */
+    data: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+  }
+
+  /**
+   * Notification createMany
+   */
+  export type NotificationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Notifications.
+     */
+    data: NotificationCreateManyInput | NotificationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Notification createManyAndReturn
+   */
+  export type NotificationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Notifications.
+     */
+    data: NotificationCreateManyInput | NotificationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Notification update
+   */
+  export type NotificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Notification.
+     */
+    data: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+    /**
+     * Choose, which Notification to update.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification updateMany
+   */
+  export type NotificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Notifications.
+     */
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Notifications to update
+     */
+    where?: NotificationWhereInput
+    /**
+     * Limit how many Notifications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Notification updateManyAndReturn
+   */
+  export type NotificationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * The data used to update Notifications.
+     */
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Notifications to update
+     */
+    where?: NotificationWhereInput
+    /**
+     * Limit how many Notifications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Notification upsert
+   */
+  export type NotificationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Notification to update in case it exists.
+     */
+    where: NotificationWhereUniqueInput
+    /**
+     * In case the Notification found by the `where` argument doesn't exist, create a new Notification with this data.
+     */
+    create: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+    /**
+     * In case the Notification was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+  }
+
+  /**
+   * Notification delete
+   */
+  export type NotificationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter which Notification to delete.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification deleteMany
+   */
+  export type NotificationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notifications to delete
+     */
+    where?: NotificationWhereInput
+    /**
+     * Limit how many Notifications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Notification.user
+   */
+  export type Notification$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Notification.customer
+   */
+  export type Notification$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * Notification without action
+   */
+  export type NotificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Task
+   */
+
+  export type AggregateTask = {
+    _count: TaskCountAggregateOutputType | null
+    _avg: TaskAvgAggregateOutputType | null
+    _sum: TaskSumAggregateOutputType | null
+    _min: TaskMinAggregateOutputType | null
+    _max: TaskMaxAggregateOutputType | null
+  }
+
+  export type TaskAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type TaskSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type TaskMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    type: $Enums.TaskType | null
+    description: string | null
+    assignedUserId: string | null
+    customerId: string | null
+    wholesaleCustomerId: string | null
+    dueDate: Date | null
+    completedAt: Date | null
+    status: $Enums.TaskStatus | null
+    latitude: number | null
+    longitude: number | null
+    resultNotes: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TaskMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    type: $Enums.TaskType | null
+    description: string | null
+    assignedUserId: string | null
+    customerId: string | null
+    wholesaleCustomerId: string | null
+    dueDate: Date | null
+    completedAt: Date | null
+    status: $Enums.TaskStatus | null
+    latitude: number | null
+    longitude: number | null
+    resultNotes: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TaskCountAggregateOutputType = {
+    id: number
+    title: number
+    type: number
+    description: number
+    assignedUserId: number
+    customerId: number
+    wholesaleCustomerId: number
+    dueDate: number
+    completedAt: number
+    status: number
+    latitude: number
+    longitude: number
+    resultNotes: number
+    createdById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TaskAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type TaskSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type TaskMinAggregateInputType = {
+    id?: true
+    title?: true
+    type?: true
+    description?: true
+    assignedUserId?: true
+    customerId?: true
+    wholesaleCustomerId?: true
+    dueDate?: true
+    completedAt?: true
+    status?: true
+    latitude?: true
+    longitude?: true
+    resultNotes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TaskMaxAggregateInputType = {
+    id?: true
+    title?: true
+    type?: true
+    description?: true
+    assignedUserId?: true
+    customerId?: true
+    wholesaleCustomerId?: true
+    dueDate?: true
+    completedAt?: true
+    status?: true
+    latitude?: true
+    longitude?: true
+    resultNotes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TaskCountAggregateInputType = {
+    id?: true
+    title?: true
+    type?: true
+    description?: true
+    assignedUserId?: true
+    customerId?: true
+    wholesaleCustomerId?: true
+    dueDate?: true
+    completedAt?: true
+    status?: true
+    latitude?: true
+    longitude?: true
+    resultNotes?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TaskAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Task to aggregate.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tasks
+    **/
+    _count?: true | TaskCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TaskAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TaskSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TaskMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TaskMaxAggregateInputType
+  }
+
+  export type GetTaskAggregateType<T extends TaskAggregateArgs> = {
+        [P in keyof T & keyof AggregateTask]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTask[P]>
+      : GetScalarType<T[P], AggregateTask[P]>
+  }
+
+
+
+
+  export type TaskGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithAggregationInput | TaskOrderByWithAggregationInput[]
+    by: TaskScalarFieldEnum[] | TaskScalarFieldEnum
+    having?: TaskScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TaskCountAggregateInputType | true
+    _avg?: TaskAvgAggregateInputType
+    _sum?: TaskSumAggregateInputType
+    _min?: TaskMinAggregateInputType
+    _max?: TaskMaxAggregateInputType
+  }
+
+  export type TaskGroupByOutputType = {
+    id: string
+    title: string
+    type: $Enums.TaskType
+    description: string | null
+    assignedUserId: string
+    customerId: string | null
+    wholesaleCustomerId: string | null
+    dueDate: Date
+    completedAt: Date | null
+    status: $Enums.TaskStatus
+    latitude: number | null
+    longitude: number | null
+    resultNotes: string | null
+    createdById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TaskCountAggregateOutputType | null
+    _avg: TaskAvgAggregateOutputType | null
+    _sum: TaskSumAggregateOutputType | null
+    _min: TaskMinAggregateOutputType | null
+    _max: TaskMaxAggregateOutputType | null
+  }
+
+  type GetTaskGroupByPayload<T extends TaskGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TaskGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TaskGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TaskGroupByOutputType[P]>
+            : GetScalarType<T[P], TaskGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TaskSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    type?: boolean
+    description?: boolean
+    assignedUserId?: boolean
+    customerId?: boolean
+    wholesaleCustomerId?: boolean
+    dueDate?: boolean
+    completedAt?: boolean
+    status?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    resultNotes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    type?: boolean
+    description?: boolean
+    assignedUserId?: boolean
+    customerId?: boolean
+    wholesaleCustomerId?: boolean
+    dueDate?: boolean
+    completedAt?: boolean
+    status?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    resultNotes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    type?: boolean
+    description?: boolean
+    assignedUserId?: boolean
+    customerId?: boolean
+    wholesaleCustomerId?: boolean
+    dueDate?: boolean
+    completedAt?: boolean
+    status?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    resultNotes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectScalar = {
+    id?: boolean
+    title?: boolean
+    type?: boolean
+    description?: boolean
+    assignedUserId?: boolean
+    customerId?: boolean
+    wholesaleCustomerId?: boolean
+    dueDate?: boolean
+    completedAt?: boolean
+    status?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    resultNotes?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "type" | "description" | "assignedUserId" | "customerId" | "wholesaleCustomerId" | "dueDate" | "completedAt" | "status" | "latitude" | "longitude" | "resultNotes" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+  export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }
+  export type TaskIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }
+  export type TaskIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignedUser?: boolean | UserDefaultArgs<ExtArgs>
+    customer?: boolean | Task$customerArgs<ExtArgs>
+    wholesaleCustomer?: boolean | Task$wholesaleCustomerArgs<ExtArgs>
+    createdBy?: boolean | Task$createdByArgs<ExtArgs>
+  }
+
+  export type $TaskPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Task"
+    objects: {
+      assignedUser: Prisma.$UserPayload<ExtArgs>
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
+      wholesaleCustomer: Prisma.$WholesaleCustomerPayload<ExtArgs> | null
+      createdBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      type: $Enums.TaskType
+      description: string | null
+      assignedUserId: string
+      customerId: string | null
+      wholesaleCustomerId: string | null
+      dueDate: Date
+      completedAt: Date | null
+      status: $Enums.TaskStatus
+      latitude: number | null
+      longitude: number | null
+      resultNotes: string | null
+      createdById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["task"]>
+    composites: {}
+  }
+
+  type TaskGetPayload<S extends boolean | null | undefined | TaskDefaultArgs> = $Result.GetResult<Prisma.$TaskPayload, S>
+
+  type TaskCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TaskFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TaskCountAggregateInputType | true
+    }
+
+  export interface TaskDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Task'], meta: { name: 'Task' } }
+    /**
+     * Find zero or one Task that matches the filter.
+     * @param {TaskFindUniqueArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TaskFindUniqueArgs>(args: SelectSubset<T, TaskFindUniqueArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Task that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TaskFindUniqueOrThrowArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TaskFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Task that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindFirstArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TaskFindFirstArgs>(args?: SelectSubset<T, TaskFindFirstArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Task that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindFirstOrThrowArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TaskFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Tasks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tasks
+     * const tasks = await prisma.task.findMany()
+     * 
+     * // Get first 10 Tasks
+     * const tasks = await prisma.task.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const taskWithIdOnly = await prisma.task.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TaskFindManyArgs>(args?: SelectSubset<T, TaskFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Task.
+     * @param {TaskCreateArgs} args - Arguments to create a Task.
+     * @example
+     * // Create one Task
+     * const Task = await prisma.task.create({
+     *   data: {
+     *     // ... data to create a Task
+     *   }
+     * })
+     * 
+     */
+    create<T extends TaskCreateArgs>(args: SelectSubset<T, TaskCreateArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tasks.
+     * @param {TaskCreateManyArgs} args - Arguments to create many Tasks.
+     * @example
+     * // Create many Tasks
+     * const task = await prisma.task.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TaskCreateManyArgs>(args?: SelectSubset<T, TaskCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Tasks and returns the data saved in the database.
+     * @param {TaskCreateManyAndReturnArgs} args - Arguments to create many Tasks.
+     * @example
+     * // Create many Tasks
+     * const task = await prisma.task.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Tasks and only return the `id`
+     * const taskWithIdOnly = await prisma.task.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TaskCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Task.
+     * @param {TaskDeleteArgs} args - Arguments to delete one Task.
+     * @example
+     * // Delete one Task
+     * const Task = await prisma.task.delete({
+     *   where: {
+     *     // ... filter to delete one Task
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TaskDeleteArgs>(args: SelectSubset<T, TaskDeleteArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Task.
+     * @param {TaskUpdateArgs} args - Arguments to update one Task.
+     * @example
+     * // Update one Task
+     * const task = await prisma.task.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TaskUpdateArgs>(args: SelectSubset<T, TaskUpdateArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Tasks.
+     * @param {TaskDeleteManyArgs} args - Arguments to filter Tasks to delete.
+     * @example
+     * // Delete a few Tasks
+     * const { count } = await prisma.task.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TaskDeleteManyArgs>(args?: SelectSubset<T, TaskDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tasks
+     * const task = await prisma.task.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TaskUpdateManyArgs>(args: SelectSubset<T, TaskUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tasks and returns the data updated in the database.
+     * @param {TaskUpdateManyAndReturnArgs} args - Arguments to update many Tasks.
+     * @example
+     * // Update many Tasks
+     * const task = await prisma.task.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Tasks and only return the `id`
+     * const taskWithIdOnly = await prisma.task.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TaskUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Task.
+     * @param {TaskUpsertArgs} args - Arguments to update or create a Task.
+     * @example
+     * // Update or create a Task
+     * const task = await prisma.task.upsert({
+     *   create: {
+     *     // ... data to create a Task
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Task we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TaskUpsertArgs>(args: SelectSubset<T, TaskUpsertArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Tasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskCountArgs} args - Arguments to filter Tasks to count.
+     * @example
+     * // Count the number of Tasks
+     * const count = await prisma.task.count({
+     *   where: {
+     *     // ... the filter for the Tasks we want to count
+     *   }
+     * })
+    **/
+    count<T extends TaskCountArgs>(
+      args?: Subset<T, TaskCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TaskCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Task.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TaskAggregateArgs>(args: Subset<T, TaskAggregateArgs>): Prisma.PrismaPromise<GetTaskAggregateType<T>>
+
+    /**
+     * Group by Task.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TaskGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TaskGroupByArgs['orderBy'] }
+        : { orderBy?: TaskGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TaskGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Task model
+   */
+  readonly fields: TaskFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Task.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TaskClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    assignedUser<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    customer<T extends Task$customerArgs<ExtArgs> = {}>(args?: Subset<T, Task$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    wholesaleCustomer<T extends Task$wholesaleCustomerArgs<ExtArgs> = {}>(args?: Subset<T, Task$wholesaleCustomerArgs<ExtArgs>>): Prisma__WholesaleCustomerClient<$Result.GetResult<Prisma.$WholesaleCustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends Task$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Task$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Task model
+   */
+  interface TaskFieldRefs {
+    readonly id: FieldRef<"Task", 'String'>
+    readonly title: FieldRef<"Task", 'String'>
+    readonly type: FieldRef<"Task", 'TaskType'>
+    readonly description: FieldRef<"Task", 'String'>
+    readonly assignedUserId: FieldRef<"Task", 'String'>
+    readonly customerId: FieldRef<"Task", 'String'>
+    readonly wholesaleCustomerId: FieldRef<"Task", 'String'>
+    readonly dueDate: FieldRef<"Task", 'DateTime'>
+    readonly completedAt: FieldRef<"Task", 'DateTime'>
+    readonly status: FieldRef<"Task", 'TaskStatus'>
+    readonly latitude: FieldRef<"Task", 'Float'>
+    readonly longitude: FieldRef<"Task", 'Float'>
+    readonly resultNotes: FieldRef<"Task", 'String'>
+    readonly createdById: FieldRef<"Task", 'String'>
+    readonly createdAt: FieldRef<"Task", 'DateTime'>
+    readonly updatedAt: FieldRef<"Task", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Task findUnique
+   */
+  export type TaskFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task findUniqueOrThrow
+   */
+  export type TaskFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task findFirst
+   */
+  export type TaskFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tasks.
+     */
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task findFirstOrThrow
+   */
+  export type TaskFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tasks.
+     */
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task findMany
+   */
+  export type TaskFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Tasks to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task create
+   */
+  export type TaskCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Task.
+     */
+    data: XOR<TaskCreateInput, TaskUncheckedCreateInput>
+  }
+
+  /**
+   * Task createMany
+   */
+  export type TaskCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Tasks.
+     */
+    data: TaskCreateManyInput | TaskCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Task createManyAndReturn
+   */
+  export type TaskCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * The data used to create many Tasks.
+     */
+    data: TaskCreateManyInput | TaskCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Task update
+   */
+  export type TaskUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Task.
+     */
+    data: XOR<TaskUpdateInput, TaskUncheckedUpdateInput>
+    /**
+     * Choose, which Task to update.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task updateMany
+   */
+  export type TaskUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Tasks.
+     */
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyInput>
+    /**
+     * Filter which Tasks to update
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Task updateManyAndReturn
+   */
+  export type TaskUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * The data used to update Tasks.
+     */
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyInput>
+    /**
+     * Filter which Tasks to update
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Task upsert
+   */
+  export type TaskUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Task to update in case it exists.
+     */
+    where: TaskWhereUniqueInput
+    /**
+     * In case the Task found by the `where` argument doesn't exist, create a new Task with this data.
+     */
+    create: XOR<TaskCreateInput, TaskUncheckedCreateInput>
+    /**
+     * In case the Task was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TaskUpdateInput, TaskUncheckedUpdateInput>
+  }
+
+  /**
+   * Task delete
+   */
+  export type TaskDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter which Task to delete.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task deleteMany
+   */
+  export type TaskDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tasks to delete
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Task.customer
+   */
+  export type Task$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * Task.wholesaleCustomer
+   */
+  export type Task$wholesaleCustomerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WholesaleCustomer
+     */
+    select?: WholesaleCustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WholesaleCustomer
+     */
+    omit?: WholesaleCustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WholesaleCustomerInclude<ExtArgs> | null
+    where?: WholesaleCustomerWhereInput
+  }
+
+  /**
+   * Task.createdBy
+   */
+  export type Task$createdByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Task without action
+   */
+  export type TaskDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BackupLog
+   */
+
+  export type AggregateBackupLog = {
+    _count: BackupLogCountAggregateOutputType | null
+    _avg: BackupLogAvgAggregateOutputType | null
+    _sum: BackupLogSumAggregateOutputType | null
+    _min: BackupLogMinAggregateOutputType | null
+    _max: BackupLogMaxAggregateOutputType | null
+  }
+
+  export type BackupLogAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type BackupLogSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type BackupLogMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    status: $Enums.BackupStatus | null
+    errorMessage: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BackupLogMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    status: $Enums.BackupStatus | null
+    errorMessage: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BackupLogCountAggregateOutputType = {
+    id: number
+    name: number
+    fileUrl: number
+    fileSize: number
+    status: number
+    errorMessage: number
+    createdById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BackupLogAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type BackupLogSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type BackupLogMinAggregateInputType = {
+    id?: true
+    name?: true
+    fileUrl?: true
+    fileSize?: true
+    status?: true
+    errorMessage?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BackupLogMaxAggregateInputType = {
+    id?: true
+    name?: true
+    fileUrl?: true
+    fileSize?: true
+    status?: true
+    errorMessage?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BackupLogCountAggregateInputType = {
+    id?: true
+    name?: true
+    fileUrl?: true
+    fileSize?: true
+    status?: true
+    errorMessage?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BackupLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupLog to aggregate.
+     */
+    where?: BackupLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupLogs to fetch.
+     */
+    orderBy?: BackupLogOrderByWithRelationInput | BackupLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BackupLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BackupLogs
+    **/
+    _count?: true | BackupLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BackupLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BackupLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BackupLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BackupLogMaxAggregateInputType
+  }
+
+  export type GetBackupLogAggregateType<T extends BackupLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateBackupLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBackupLog[P]>
+      : GetScalarType<T[P], AggregateBackupLog[P]>
+  }
+
+
+
+
+  export type BackupLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BackupLogWhereInput
+    orderBy?: BackupLogOrderByWithAggregationInput | BackupLogOrderByWithAggregationInput[]
+    by: BackupLogScalarFieldEnum[] | BackupLogScalarFieldEnum
+    having?: BackupLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BackupLogCountAggregateInputType | true
+    _avg?: BackupLogAvgAggregateInputType
+    _sum?: BackupLogSumAggregateInputType
+    _min?: BackupLogMinAggregateInputType
+    _max?: BackupLogMaxAggregateInputType
+  }
+
+  export type BackupLogGroupByOutputType = {
+    id: string
+    name: string
+    fileUrl: string | null
+    fileSize: number | null
+    status: $Enums.BackupStatus
+    errorMessage: string | null
+    createdById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: BackupLogCountAggregateOutputType | null
+    _avg: BackupLogAvgAggregateOutputType | null
+    _sum: BackupLogSumAggregateOutputType | null
+    _min: BackupLogMinAggregateOutputType | null
+    _max: BackupLogMaxAggregateOutputType | null
+  }
+
+  type GetBackupLogGroupByPayload<T extends BackupLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BackupLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BackupLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BackupLogGroupByOutputType[P]>
+            : GetScalarType<T[P], BackupLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BackupLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    status?: boolean
+    errorMessage?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["backupLog"]>
+
+  export type BackupLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    status?: boolean
+    errorMessage?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["backupLog"]>
+
+  export type BackupLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    status?: boolean
+    errorMessage?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }, ExtArgs["result"]["backupLog"]>
+
+  export type BackupLogSelectScalar = {
+    id?: boolean
+    name?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    status?: boolean
+    errorMessage?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BackupLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "fileUrl" | "fileSize" | "status" | "errorMessage" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["backupLog"]>
+  export type BackupLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }
+  export type BackupLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }
+  export type BackupLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | BackupLog$createdByArgs<ExtArgs>
+  }
+
+  export type $BackupLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BackupLog"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      fileUrl: string | null
+      fileSize: number | null
+      status: $Enums.BackupStatus
+      errorMessage: string | null
+      createdById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["backupLog"]>
+    composites: {}
+  }
+
+  type BackupLogGetPayload<S extends boolean | null | undefined | BackupLogDefaultArgs> = $Result.GetResult<Prisma.$BackupLogPayload, S>
+
+  type BackupLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BackupLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BackupLogCountAggregateInputType | true
+    }
+
+  export interface BackupLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BackupLog'], meta: { name: 'BackupLog' } }
+    /**
+     * Find zero or one BackupLog that matches the filter.
+     * @param {BackupLogFindUniqueArgs} args - Arguments to find a BackupLog
+     * @example
+     * // Get one BackupLog
+     * const backupLog = await prisma.backupLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BackupLogFindUniqueArgs>(args: SelectSubset<T, BackupLogFindUniqueArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BackupLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BackupLogFindUniqueOrThrowArgs} args - Arguments to find a BackupLog
+     * @example
+     * // Get one BackupLog
+     * const backupLog = await prisma.backupLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BackupLogFindUniqueOrThrowArgs>(args: SelectSubset<T, BackupLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogFindFirstArgs} args - Arguments to find a BackupLog
+     * @example
+     * // Get one BackupLog
+     * const backupLog = await prisma.backupLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BackupLogFindFirstArgs>(args?: SelectSubset<T, BackupLogFindFirstArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BackupLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogFindFirstOrThrowArgs} args - Arguments to find a BackupLog
+     * @example
+     * // Get one BackupLog
+     * const backupLog = await prisma.backupLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BackupLogFindFirstOrThrowArgs>(args?: SelectSubset<T, BackupLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BackupLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BackupLogs
+     * const backupLogs = await prisma.backupLog.findMany()
+     * 
+     * // Get first 10 BackupLogs
+     * const backupLogs = await prisma.backupLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const backupLogWithIdOnly = await prisma.backupLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BackupLogFindManyArgs>(args?: SelectSubset<T, BackupLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BackupLog.
+     * @param {BackupLogCreateArgs} args - Arguments to create a BackupLog.
+     * @example
+     * // Create one BackupLog
+     * const BackupLog = await prisma.backupLog.create({
+     *   data: {
+     *     // ... data to create a BackupLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends BackupLogCreateArgs>(args: SelectSubset<T, BackupLogCreateArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BackupLogs.
+     * @param {BackupLogCreateManyArgs} args - Arguments to create many BackupLogs.
+     * @example
+     * // Create many BackupLogs
+     * const backupLog = await prisma.backupLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BackupLogCreateManyArgs>(args?: SelectSubset<T, BackupLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BackupLogs and returns the data saved in the database.
+     * @param {BackupLogCreateManyAndReturnArgs} args - Arguments to create many BackupLogs.
+     * @example
+     * // Create many BackupLogs
+     * const backupLog = await prisma.backupLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BackupLogs and only return the `id`
+     * const backupLogWithIdOnly = await prisma.backupLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BackupLogCreateManyAndReturnArgs>(args?: SelectSubset<T, BackupLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BackupLog.
+     * @param {BackupLogDeleteArgs} args - Arguments to delete one BackupLog.
+     * @example
+     * // Delete one BackupLog
+     * const BackupLog = await prisma.backupLog.delete({
+     *   where: {
+     *     // ... filter to delete one BackupLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BackupLogDeleteArgs>(args: SelectSubset<T, BackupLogDeleteArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BackupLog.
+     * @param {BackupLogUpdateArgs} args - Arguments to update one BackupLog.
+     * @example
+     * // Update one BackupLog
+     * const backupLog = await prisma.backupLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BackupLogUpdateArgs>(args: SelectSubset<T, BackupLogUpdateArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BackupLogs.
+     * @param {BackupLogDeleteManyArgs} args - Arguments to filter BackupLogs to delete.
+     * @example
+     * // Delete a few BackupLogs
+     * const { count } = await prisma.backupLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BackupLogDeleteManyArgs>(args?: SelectSubset<T, BackupLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BackupLogs
+     * const backupLog = await prisma.backupLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BackupLogUpdateManyArgs>(args: SelectSubset<T, BackupLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BackupLogs and returns the data updated in the database.
+     * @param {BackupLogUpdateManyAndReturnArgs} args - Arguments to update many BackupLogs.
+     * @example
+     * // Update many BackupLogs
+     * const backupLog = await prisma.backupLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BackupLogs and only return the `id`
+     * const backupLogWithIdOnly = await prisma.backupLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BackupLogUpdateManyAndReturnArgs>(args: SelectSubset<T, BackupLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BackupLog.
+     * @param {BackupLogUpsertArgs} args - Arguments to update or create a BackupLog.
+     * @example
+     * // Update or create a BackupLog
+     * const backupLog = await prisma.backupLog.upsert({
+     *   create: {
+     *     // ... data to create a BackupLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BackupLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BackupLogUpsertArgs>(args: SelectSubset<T, BackupLogUpsertArgs<ExtArgs>>): Prisma__BackupLogClient<$Result.GetResult<Prisma.$BackupLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BackupLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogCountArgs} args - Arguments to filter BackupLogs to count.
+     * @example
+     * // Count the number of BackupLogs
+     * const count = await prisma.backupLog.count({
+     *   where: {
+     *     // ... the filter for the BackupLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends BackupLogCountArgs>(
+      args?: Subset<T, BackupLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BackupLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BackupLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BackupLogAggregateArgs>(args: Subset<T, BackupLogAggregateArgs>): Prisma.PrismaPromise<GetBackupLogAggregateType<T>>
+
+    /**
+     * Group by BackupLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BackupLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BackupLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BackupLogGroupByArgs['orderBy'] }
+        : { orderBy?: BackupLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BackupLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBackupLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BackupLog model
+   */
+  readonly fields: BackupLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BackupLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BackupLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends BackupLog$createdByArgs<ExtArgs> = {}>(args?: Subset<T, BackupLog$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BackupLog model
+   */
+  interface BackupLogFieldRefs {
+    readonly id: FieldRef<"BackupLog", 'String'>
+    readonly name: FieldRef<"BackupLog", 'String'>
+    readonly fileUrl: FieldRef<"BackupLog", 'String'>
+    readonly fileSize: FieldRef<"BackupLog", 'Int'>
+    readonly status: FieldRef<"BackupLog", 'BackupStatus'>
+    readonly errorMessage: FieldRef<"BackupLog", 'String'>
+    readonly createdById: FieldRef<"BackupLog", 'String'>
+    readonly createdAt: FieldRef<"BackupLog", 'DateTime'>
+    readonly updatedAt: FieldRef<"BackupLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BackupLog findUnique
+   */
+  export type BackupLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupLog to fetch.
+     */
+    where: BackupLogWhereUniqueInput
+  }
+
+  /**
+   * BackupLog findUniqueOrThrow
+   */
+  export type BackupLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupLog to fetch.
+     */
+    where: BackupLogWhereUniqueInput
+  }
+
+  /**
+   * BackupLog findFirst
+   */
+  export type BackupLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupLog to fetch.
+     */
+    where?: BackupLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupLogs to fetch.
+     */
+    orderBy?: BackupLogOrderByWithRelationInput | BackupLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupLogs.
+     */
+    cursor?: BackupLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupLogs.
+     */
+    distinct?: BackupLogScalarFieldEnum | BackupLogScalarFieldEnum[]
+  }
+
+  /**
+   * BackupLog findFirstOrThrow
+   */
+  export type BackupLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupLog to fetch.
+     */
+    where?: BackupLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupLogs to fetch.
+     */
+    orderBy?: BackupLogOrderByWithRelationInput | BackupLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BackupLogs.
+     */
+    cursor?: BackupLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BackupLogs.
+     */
+    distinct?: BackupLogScalarFieldEnum | BackupLogScalarFieldEnum[]
+  }
+
+  /**
+   * BackupLog findMany
+   */
+  export type BackupLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter, which BackupLogs to fetch.
+     */
+    where?: BackupLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BackupLogs to fetch.
+     */
+    orderBy?: BackupLogOrderByWithRelationInput | BackupLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BackupLogs.
+     */
+    cursor?: BackupLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BackupLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BackupLogs.
+     */
+    skip?: number
+    distinct?: BackupLogScalarFieldEnum | BackupLogScalarFieldEnum[]
+  }
+
+  /**
+   * BackupLog create
+   */
+  export type BackupLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BackupLog.
+     */
+    data: XOR<BackupLogCreateInput, BackupLogUncheckedCreateInput>
+  }
+
+  /**
+   * BackupLog createMany
+   */
+  export type BackupLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BackupLogs.
+     */
+    data: BackupLogCreateManyInput | BackupLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BackupLog createManyAndReturn
+   */
+  export type BackupLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many BackupLogs.
+     */
+    data: BackupLogCreateManyInput | BackupLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupLog update
+   */
+  export type BackupLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BackupLog.
+     */
+    data: XOR<BackupLogUpdateInput, BackupLogUncheckedUpdateInput>
+    /**
+     * Choose, which BackupLog to update.
+     */
+    where: BackupLogWhereUniqueInput
+  }
+
+  /**
+   * BackupLog updateMany
+   */
+  export type BackupLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BackupLogs.
+     */
+    data: XOR<BackupLogUpdateManyMutationInput, BackupLogUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupLogs to update
+     */
+    where?: BackupLogWhereInput
+    /**
+     * Limit how many BackupLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupLog updateManyAndReturn
+   */
+  export type BackupLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * The data used to update BackupLogs.
+     */
+    data: XOR<BackupLogUpdateManyMutationInput, BackupLogUncheckedUpdateManyInput>
+    /**
+     * Filter which BackupLogs to update
+     */
+    where?: BackupLogWhereInput
+    /**
+     * Limit how many BackupLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BackupLog upsert
+   */
+  export type BackupLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BackupLog to update in case it exists.
+     */
+    where: BackupLogWhereUniqueInput
+    /**
+     * In case the BackupLog found by the `where` argument doesn't exist, create a new BackupLog with this data.
+     */
+    create: XOR<BackupLogCreateInput, BackupLogUncheckedCreateInput>
+    /**
+     * In case the BackupLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BackupLogUpdateInput, BackupLogUncheckedUpdateInput>
+  }
+
+  /**
+   * BackupLog delete
+   */
+  export type BackupLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+    /**
+     * Filter which BackupLog to delete.
+     */
+    where: BackupLogWhereUniqueInput
+  }
+
+  /**
+   * BackupLog deleteMany
+   */
+  export type BackupLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BackupLogs to delete
+     */
+    where?: BackupLogWhereInput
+    /**
+     * Limit how many BackupLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BackupLog.createdBy
+   */
+  export type BackupLog$createdByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * BackupLog without action
+   */
+  export type BackupLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BackupLog
+     */
+    select?: BackupLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BackupLog
+     */
+    omit?: BackupLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BackupLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -65180,7 +72197,18 @@ export namespace Prisma {
     deleteReturns: 'deleteReturns',
     viewCustomerPayments: 'viewCustomerPayments',
     addCustomerPayments: 'addCustomerPayments',
-    deleteCustomerPayments: 'deleteCustomerPayments'
+    deleteCustomerPayments: 'deleteCustomerPayments',
+    viewLoyalty: 'viewLoyalty',
+    editLoyalty: 'editLoyalty',
+    viewNotifications: 'viewNotifications',
+    viewTasks: 'viewTasks',
+    addTasks: 'addTasks',
+    editTasks: 'editTasks',
+    deleteTasks: 'deleteTasks',
+    viewTracking: 'viewTracking',
+    editTracking: 'editTracking',
+    viewBackups: 'viewBackups',
+    manageBackups: 'manageBackups'
   };
 
   export type PermissionScalarFieldEnum = (typeof PermissionScalarFieldEnum)[keyof typeof PermissionScalarFieldEnum]
@@ -65593,6 +72621,9 @@ export namespace Prisma {
     couponId: 'couponId',
     paidAmount: 'paidAmount',
     remainingAmount: 'remainingAmount',
+    trackingNumber: 'trackingNumber',
+    trackingStatus: 'trackingStatus',
+    trackingUrl: 'trackingUrl',
     manualCreatedAt: 'manualCreatedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -65959,6 +72990,91 @@ export namespace Prisma {
   export type CustomerPaymentScalarFieldEnum = (typeof CustomerPaymentScalarFieldEnum)[keyof typeof CustomerPaymentScalarFieldEnum]
 
 
+  export const LoyaltyRuleScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    pointsPerCurrency: 'pointsPerCurrency',
+    redeemValue: 'redeemValue',
+    minPointsToRedeem: 'minPointsToRedeem',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type LoyaltyRuleScalarFieldEnum = (typeof LoyaltyRuleScalarFieldEnum)[keyof typeof LoyaltyRuleScalarFieldEnum]
+
+
+  export const LoyaltyTransactionScalarFieldEnum: {
+    id: 'id',
+    customerId: 'customerId',
+    orderId: 'orderId',
+    type: 'type',
+    points: 'points',
+    value: 'value',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type LoyaltyTransactionScalarFieldEnum = (typeof LoyaltyTransactionScalarFieldEnum)[keyof typeof LoyaltyTransactionScalarFieldEnum]
+
+
+  export const NotificationScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    channel: 'channel',
+    userId: 'userId',
+    customerId: 'customerId',
+    title: 'title',
+    message: 'message',
+    entityType: 'entityType',
+    entityId: 'entityId',
+    readAt: 'readAt',
+    sentAt: 'sentAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+  export const TaskScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    type: 'type',
+    description: 'description',
+    assignedUserId: 'assignedUserId',
+    customerId: 'customerId',
+    wholesaleCustomerId: 'wholesaleCustomerId',
+    dueDate: 'dueDate',
+    completedAt: 'completedAt',
+    status: 'status',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    resultNotes: 'resultNotes',
+    createdById: 'createdById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+  export const BackupLogScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    fileUrl: 'fileUrl',
+    fileSize: 'fileSize',
+    status: 'status',
+    errorMessage: 'errorMessage',
+    createdById: 'createdById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BackupLogScalarFieldEnum = (typeof BackupLogScalarFieldEnum)[keyof typeof BackupLogScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -66195,6 +73311,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TrackingStatus'
+   */
+  export type EnumTrackingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrackingStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TrackingStatus[]'
+   */
+  export type ListEnumTrackingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrackingStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ExpenseType'
    */
   export type EnumExpenseTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExpenseType'>
@@ -66360,6 +73490,90 @@ export namespace Prisma {
    */
   export type ListEnumPaymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentType[]'>
     
+
+
+  /**
+   * Reference to a field of type 'LoyaltyTransactionType'
+   */
+  export type EnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LoyaltyTransactionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'LoyaltyTransactionType[]'
+   */
+  export type ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LoyaltyTransactionType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'NotificationType'
+   */
+  export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'NotificationType[]'
+   */
+  export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'NotificationChannel'
+   */
+  export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel'>
+    
+
+
+  /**
+   * Reference to a field of type 'NotificationChannel[]'
+   */
+  export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TaskType'
+   */
+  export type EnumTaskTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskType'>
+    
+
+
+  /**
+   * Reference to a field of type 'TaskType[]'
+   */
+  export type ListEnumTaskTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TaskStatus'
+   */
+  export type EnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TaskStatus[]'
+   */
+  export type ListEnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'BackupStatus'
+   */
+  export type EnumBackupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'BackupStatus[]'
+   */
+  export type ListEnumBackupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -66409,6 +73623,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitListRelationFilter
     wholesaleOrders?: WholesaleOrderListRelationFilter
     campaigns?: CampaignListRelationFilter
+    notifications?: NotificationListRelationFilter
+    assignedTasks?: TaskListRelationFilter
+    createdTasks?: TaskListRelationFilter
+    backupLogs?: BackupLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -66452,6 +73670,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitOrderByRelationAggregateInput
     wholesaleOrders?: WholesaleOrderOrderByRelationAggregateInput
     campaigns?: CampaignOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
+    assignedTasks?: TaskOrderByRelationAggregateInput
+    createdTasks?: TaskOrderByRelationAggregateInput
+    backupLogs?: BackupLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -66498,6 +73720,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitListRelationFilter
     wholesaleOrders?: WholesaleOrderListRelationFilter
     campaigns?: CampaignListRelationFilter
+    notifications?: NotificationListRelationFilter
+    assignedTasks?: TaskListRelationFilter
+    createdTasks?: TaskListRelationFilter
+    backupLogs?: BackupLogListRelationFilter
   }, "id" | "email" | "affiliateCode">
 
   export type UserOrderByWithAggregationInput = {
@@ -66632,6 +73858,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFilter<"Permission"> | boolean
     addCustomerPayments?: BoolFilter<"Permission"> | boolean
     deleteCustomerPayments?: BoolFilter<"Permission"> | boolean
+    viewLoyalty?: BoolFilter<"Permission"> | boolean
+    editLoyalty?: BoolFilter<"Permission"> | boolean
+    viewNotifications?: BoolFilter<"Permission"> | boolean
+    viewTasks?: BoolFilter<"Permission"> | boolean
+    addTasks?: BoolFilter<"Permission"> | boolean
+    editTasks?: BoolFilter<"Permission"> | boolean
+    deleteTasks?: BoolFilter<"Permission"> | boolean
+    viewTracking?: BoolFilter<"Permission"> | boolean
+    editTracking?: BoolFilter<"Permission"> | boolean
+    viewBackups?: BoolFilter<"Permission"> | boolean
+    manageBackups?: BoolFilter<"Permission"> | boolean
     users?: UserListRelationFilter
   }
 
@@ -66710,6 +73947,17 @@ export namespace Prisma {
     viewCustomerPayments?: SortOrder
     addCustomerPayments?: SortOrder
     deleteCustomerPayments?: SortOrder
+    viewLoyalty?: SortOrder
+    editLoyalty?: SortOrder
+    viewNotifications?: SortOrder
+    viewTasks?: SortOrder
+    addTasks?: SortOrder
+    editTasks?: SortOrder
+    deleteTasks?: SortOrder
+    viewTracking?: SortOrder
+    editTracking?: SortOrder
+    viewBackups?: SortOrder
+    manageBackups?: SortOrder
     users?: UserOrderByRelationAggregateInput
   }
 
@@ -66791,6 +74039,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFilter<"Permission"> | boolean
     addCustomerPayments?: BoolFilter<"Permission"> | boolean
     deleteCustomerPayments?: BoolFilter<"Permission"> | boolean
+    viewLoyalty?: BoolFilter<"Permission"> | boolean
+    editLoyalty?: BoolFilter<"Permission"> | boolean
+    viewNotifications?: BoolFilter<"Permission"> | boolean
+    viewTasks?: BoolFilter<"Permission"> | boolean
+    addTasks?: BoolFilter<"Permission"> | boolean
+    editTasks?: BoolFilter<"Permission"> | boolean
+    deleteTasks?: BoolFilter<"Permission"> | boolean
+    viewTracking?: BoolFilter<"Permission"> | boolean
+    editTracking?: BoolFilter<"Permission"> | boolean
+    viewBackups?: BoolFilter<"Permission"> | boolean
+    manageBackups?: BoolFilter<"Permission"> | boolean
     users?: UserListRelationFilter
   }, "id">
 
@@ -66869,6 +74128,17 @@ export namespace Prisma {
     viewCustomerPayments?: SortOrder
     addCustomerPayments?: SortOrder
     deleteCustomerPayments?: SortOrder
+    viewLoyalty?: SortOrder
+    editLoyalty?: SortOrder
+    viewNotifications?: SortOrder
+    viewTasks?: SortOrder
+    addTasks?: SortOrder
+    editTasks?: SortOrder
+    deleteTasks?: SortOrder
+    viewTracking?: SortOrder
+    editTracking?: SortOrder
+    viewBackups?: SortOrder
+    manageBackups?: SortOrder
     _count?: PermissionCountOrderByAggregateInput
     _max?: PermissionMaxOrderByAggregateInput
     _min?: PermissionMinOrderByAggregateInput
@@ -66952,6 +74222,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolWithAggregatesFilter<"Permission"> | boolean
     addCustomerPayments?: BoolWithAggregatesFilter<"Permission"> | boolean
     deleteCustomerPayments?: BoolWithAggregatesFilter<"Permission"> | boolean
+    viewLoyalty?: BoolWithAggregatesFilter<"Permission"> | boolean
+    editLoyalty?: BoolWithAggregatesFilter<"Permission"> | boolean
+    viewNotifications?: BoolWithAggregatesFilter<"Permission"> | boolean
+    viewTasks?: BoolWithAggregatesFilter<"Permission"> | boolean
+    addTasks?: BoolWithAggregatesFilter<"Permission"> | boolean
+    editTasks?: BoolWithAggregatesFilter<"Permission"> | boolean
+    deleteTasks?: BoolWithAggregatesFilter<"Permission"> | boolean
+    viewTracking?: BoolWithAggregatesFilter<"Permission"> | boolean
+    editTracking?: BoolWithAggregatesFilter<"Permission"> | boolean
+    viewBackups?: BoolWithAggregatesFilter<"Permission"> | boolean
+    manageBackups?: BoolWithAggregatesFilter<"Permission"> | boolean
   }
 
   export type CategoryWhereInput = {
@@ -68149,6 +75430,9 @@ export namespace Prisma {
     message?: MessageListRelationFilter
     warranties?: WarrantyListRelationFilter
     payments?: CustomerPaymentListRelationFilter
+    loyaltyTransactions?: LoyaltyTransactionListRelationFilter
+    notifications?: NotificationListRelationFilter
+    tasks?: TaskListRelationFilter
   }
 
   export type CustomerOrderByWithRelationInput = {
@@ -68173,6 +75457,9 @@ export namespace Prisma {
     message?: MessageOrderByRelationAggregateInput
     warranties?: WarrantyOrderByRelationAggregateInput
     payments?: CustomerPaymentOrderByRelationAggregateInput
+    loyaltyTransactions?: LoyaltyTransactionOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
+    tasks?: TaskOrderByRelationAggregateInput
   }
 
   export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -68200,6 +75487,9 @@ export namespace Prisma {
     message?: MessageListRelationFilter
     warranties?: WarrantyListRelationFilter
     payments?: CustomerPaymentListRelationFilter
+    loyaltyTransactions?: LoyaltyTransactionListRelationFilter
+    notifications?: NotificationListRelationFilter
+    tasks?: TaskListRelationFilter
   }, "id" | "name">
 
   export type CustomerOrderByWithAggregationInput = {
@@ -68281,6 +75571,7 @@ export namespace Prisma {
     assignedUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     visits?: WholesaleVisitListRelationFilter
     orders?: WholesaleOrderListRelationFilter
+    tasks?: TaskListRelationFilter
   }
 
   export type WholesaleCustomerOrderByWithRelationInput = {
@@ -68313,6 +75604,7 @@ export namespace Prisma {
     assignedUser?: UserOrderByWithRelationInput
     visits?: WholesaleVisitOrderByRelationAggregateInput
     orders?: WholesaleOrderOrderByRelationAggregateInput
+    tasks?: TaskOrderByRelationAggregateInput
   }
 
   export type WholesaleCustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -68348,6 +75640,7 @@ export namespace Prisma {
     assignedUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     visits?: WholesaleVisitListRelationFilter
     orders?: WholesaleOrderListRelationFilter
+    tasks?: TaskListRelationFilter
   }, "id">
 
   export type WholesaleCustomerOrderByWithAggregationInput = {
@@ -69038,6 +76331,9 @@ export namespace Prisma {
     couponId?: StringNullableFilter<"Order"> | string | null
     paidAmount?: FloatFilter<"Order"> | number
     remainingAmount?: FloatFilter<"Order"> | number
+    trackingNumber?: StringNullableFilter<"Order"> | string | null
+    trackingStatus?: EnumTrackingStatusFilter<"Order"> | $Enums.TrackingStatus
+    trackingUrl?: StringNullableFilter<"Order"> | string | null
     manualCreatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -69050,6 +76346,7 @@ export namespace Prisma {
     coupon?: XOR<CouponNullableScalarRelationFilter, CouponWhereInput> | null
     returns?: OrderReturnListRelationFilter
     payments?: CustomerPaymentListRelationFilter
+    loyaltyTransactions?: LoyaltyTransactionListRelationFilter
     commissions?: CommissionListRelationFilter
   }
 
@@ -69089,6 +76386,9 @@ export namespace Prisma {
     couponId?: SortOrderInput | SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+    trackingNumber?: SortOrderInput | SortOrder
+    trackingStatus?: SortOrder
+    trackingUrl?: SortOrderInput | SortOrder
     manualCreatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -69101,6 +76401,7 @@ export namespace Prisma {
     coupon?: CouponOrderByWithRelationInput
     returns?: OrderReturnOrderByRelationAggregateInput
     payments?: CustomerPaymentOrderByRelationAggregateInput
+    loyaltyTransactions?: LoyaltyTransactionOrderByRelationAggregateInput
     commissions?: CommissionOrderByRelationAggregateInput
   }
 
@@ -69143,6 +76444,9 @@ export namespace Prisma {
     couponId?: StringNullableFilter<"Order"> | string | null
     paidAmount?: FloatFilter<"Order"> | number
     remainingAmount?: FloatFilter<"Order"> | number
+    trackingNumber?: StringNullableFilter<"Order"> | string | null
+    trackingStatus?: EnumTrackingStatusFilter<"Order"> | $Enums.TrackingStatus
+    trackingUrl?: StringNullableFilter<"Order"> | string | null
     manualCreatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -69155,6 +76459,7 @@ export namespace Prisma {
     coupon?: XOR<CouponNullableScalarRelationFilter, CouponWhereInput> | null
     returns?: OrderReturnListRelationFilter
     payments?: CustomerPaymentListRelationFilter
+    loyaltyTransactions?: LoyaltyTransactionListRelationFilter
     commissions?: CommissionListRelationFilter
   }, "id" | "orderNumber">
 
@@ -69194,6 +76499,9 @@ export namespace Prisma {
     couponId?: SortOrderInput | SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+    trackingNumber?: SortOrderInput | SortOrder
+    trackingStatus?: SortOrder
+    trackingUrl?: SortOrderInput | SortOrder
     manualCreatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -69243,6 +76551,9 @@ export namespace Prisma {
     couponId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     paidAmount?: FloatWithAggregatesFilter<"Order"> | number
     remainingAmount?: FloatWithAggregatesFilter<"Order"> | number
+    trackingNumber?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    trackingStatus?: EnumTrackingStatusWithAggregatesFilter<"Order"> | $Enums.TrackingStatus
+    trackingUrl?: StringNullableWithAggregatesFilter<"Order"> | string | null
     manualCreatedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -71131,6 +78442,451 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"CustomerPayment"> | Date | string
   }
 
+  export type LoyaltyRuleWhereInput = {
+    AND?: LoyaltyRuleWhereInput | LoyaltyRuleWhereInput[]
+    OR?: LoyaltyRuleWhereInput[]
+    NOT?: LoyaltyRuleWhereInput | LoyaltyRuleWhereInput[]
+    id?: StringFilter<"LoyaltyRule"> | string
+    name?: StringNullableFilter<"LoyaltyRule"> | string | null
+    pointsPerCurrency?: FloatFilter<"LoyaltyRule"> | number
+    redeemValue?: FloatFilter<"LoyaltyRule"> | number
+    minPointsToRedeem?: IntFilter<"LoyaltyRule"> | number
+    isActive?: BoolFilter<"LoyaltyRule"> | boolean
+    createdAt?: DateTimeFilter<"LoyaltyRule"> | Date | string
+    updatedAt?: DateTimeFilter<"LoyaltyRule"> | Date | string
+  }
+
+  export type LoyaltyRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrderInput | SortOrder
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LoyaltyRuleWhereInput | LoyaltyRuleWhereInput[]
+    OR?: LoyaltyRuleWhereInput[]
+    NOT?: LoyaltyRuleWhereInput | LoyaltyRuleWhereInput[]
+    name?: StringNullableFilter<"LoyaltyRule"> | string | null
+    pointsPerCurrency?: FloatFilter<"LoyaltyRule"> | number
+    redeemValue?: FloatFilter<"LoyaltyRule"> | number
+    minPointsToRedeem?: IntFilter<"LoyaltyRule"> | number
+    isActive?: BoolFilter<"LoyaltyRule"> | boolean
+    createdAt?: DateTimeFilter<"LoyaltyRule"> | Date | string
+    updatedAt?: DateTimeFilter<"LoyaltyRule"> | Date | string
+  }, "id">
+
+  export type LoyaltyRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrderInput | SortOrder
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: LoyaltyRuleCountOrderByAggregateInput
+    _avg?: LoyaltyRuleAvgOrderByAggregateInput
+    _max?: LoyaltyRuleMaxOrderByAggregateInput
+    _min?: LoyaltyRuleMinOrderByAggregateInput
+    _sum?: LoyaltyRuleSumOrderByAggregateInput
+  }
+
+  export type LoyaltyRuleScalarWhereWithAggregatesInput = {
+    AND?: LoyaltyRuleScalarWhereWithAggregatesInput | LoyaltyRuleScalarWhereWithAggregatesInput[]
+    OR?: LoyaltyRuleScalarWhereWithAggregatesInput[]
+    NOT?: LoyaltyRuleScalarWhereWithAggregatesInput | LoyaltyRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LoyaltyRule"> | string
+    name?: StringNullableWithAggregatesFilter<"LoyaltyRule"> | string | null
+    pointsPerCurrency?: FloatWithAggregatesFilter<"LoyaltyRule"> | number
+    redeemValue?: FloatWithAggregatesFilter<"LoyaltyRule"> | number
+    minPointsToRedeem?: IntWithAggregatesFilter<"LoyaltyRule"> | number
+    isActive?: BoolWithAggregatesFilter<"LoyaltyRule"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"LoyaltyRule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"LoyaltyRule"> | Date | string
+  }
+
+  export type LoyaltyTransactionWhereInput = {
+    AND?: LoyaltyTransactionWhereInput | LoyaltyTransactionWhereInput[]
+    OR?: LoyaltyTransactionWhereInput[]
+    NOT?: LoyaltyTransactionWhereInput | LoyaltyTransactionWhereInput[]
+    id?: StringFilter<"LoyaltyTransaction"> | string
+    customerId?: StringFilter<"LoyaltyTransaction"> | string
+    orderId?: IntNullableFilter<"LoyaltyTransaction"> | number | null
+    type?: EnumLoyaltyTransactionTypeFilter<"LoyaltyTransaction"> | $Enums.LoyaltyTransactionType
+    points?: IntFilter<"LoyaltyTransaction"> | number
+    value?: FloatFilter<"LoyaltyTransaction"> | number
+    notes?: StringNullableFilter<"LoyaltyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+    customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
+    order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
+  }
+
+  export type LoyaltyTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    customer?: CustomerOrderByWithRelationInput
+    order?: OrderOrderByWithRelationInput
+  }
+
+  export type LoyaltyTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LoyaltyTransactionWhereInput | LoyaltyTransactionWhereInput[]
+    OR?: LoyaltyTransactionWhereInput[]
+    NOT?: LoyaltyTransactionWhereInput | LoyaltyTransactionWhereInput[]
+    customerId?: StringFilter<"LoyaltyTransaction"> | string
+    orderId?: IntNullableFilter<"LoyaltyTransaction"> | number | null
+    type?: EnumLoyaltyTransactionTypeFilter<"LoyaltyTransaction"> | $Enums.LoyaltyTransactionType
+    points?: IntFilter<"LoyaltyTransaction"> | number
+    value?: FloatFilter<"LoyaltyTransaction"> | number
+    notes?: StringNullableFilter<"LoyaltyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+    customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
+    order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
+  }, "id">
+
+  export type LoyaltyTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: LoyaltyTransactionCountOrderByAggregateInput
+    _avg?: LoyaltyTransactionAvgOrderByAggregateInput
+    _max?: LoyaltyTransactionMaxOrderByAggregateInput
+    _min?: LoyaltyTransactionMinOrderByAggregateInput
+    _sum?: LoyaltyTransactionSumOrderByAggregateInput
+  }
+
+  export type LoyaltyTransactionScalarWhereWithAggregatesInput = {
+    AND?: LoyaltyTransactionScalarWhereWithAggregatesInput | LoyaltyTransactionScalarWhereWithAggregatesInput[]
+    OR?: LoyaltyTransactionScalarWhereWithAggregatesInput[]
+    NOT?: LoyaltyTransactionScalarWhereWithAggregatesInput | LoyaltyTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LoyaltyTransaction"> | string
+    customerId?: StringWithAggregatesFilter<"LoyaltyTransaction"> | string
+    orderId?: IntNullableWithAggregatesFilter<"LoyaltyTransaction"> | number | null
+    type?: EnumLoyaltyTransactionTypeWithAggregatesFilter<"LoyaltyTransaction"> | $Enums.LoyaltyTransactionType
+    points?: IntWithAggregatesFilter<"LoyaltyTransaction"> | number
+    value?: FloatWithAggregatesFilter<"LoyaltyTransaction"> | number
+    notes?: StringNullableWithAggregatesFilter<"LoyaltyTransaction"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"LoyaltyTransaction"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"LoyaltyTransaction"> | Date | string
+  }
+
+  export type NotificationWhereInput = {
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    channel?: EnumNotificationChannelFilter<"Notification"> | $Enums.NotificationChannel
+    userId?: StringNullableFilter<"Notification"> | string | null
+    customerId?: StringNullableFilter<"Notification"> | string | null
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    entityType?: StringNullableFilter<"Notification"> | string | null
+    entityId?: StringNullableFilter<"Notification"> | string | null
+    readAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    updatedAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+  }
+
+  export type NotificationOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    channel?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    entityType?: SortOrderInput | SortOrder
+    entityId?: SortOrderInput | SortOrder
+    readAt?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    customer?: CustomerOrderByWithRelationInput
+  }
+
+  export type NotificationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    channel?: EnumNotificationChannelFilter<"Notification"> | $Enums.NotificationChannel
+    userId?: StringNullableFilter<"Notification"> | string | null
+    customerId?: StringNullableFilter<"Notification"> | string | null
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    entityType?: StringNullableFilter<"Notification"> | string | null
+    entityId?: StringNullableFilter<"Notification"> | string | null
+    readAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    updatedAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+  }, "id">
+
+  export type NotificationOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    channel?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    entityType?: SortOrderInput | SortOrder
+    entityId?: SortOrderInput | SortOrder
+    readAt?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: NotificationCountOrderByAggregateInput
+    _max?: NotificationMaxOrderByAggregateInput
+    _min?: NotificationMinOrderByAggregateInput
+  }
+
+  export type NotificationScalarWhereWithAggregatesInput = {
+    AND?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    OR?: NotificationScalarWhereWithAggregatesInput[]
+    NOT?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Notification"> | string
+    type?: EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
+    channel?: EnumNotificationChannelWithAggregatesFilter<"Notification"> | $Enums.NotificationChannel
+    userId?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    customerId?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    title?: StringWithAggregatesFilter<"Notification"> | string
+    message?: StringWithAggregatesFilter<"Notification"> | string
+    entityType?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    entityId?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    readAt?: DateTimeNullableWithAggregatesFilter<"Notification"> | Date | string | null
+    sentAt?: DateTimeNullableWithAggregatesFilter<"Notification"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+  }
+
+  export type TaskWhereInput = {
+    AND?: TaskWhereInput | TaskWhereInput[]
+    OR?: TaskWhereInput[]
+    NOT?: TaskWhereInput | TaskWhereInput[]
+    id?: StringFilter<"Task"> | string
+    title?: StringFilter<"Task"> | string
+    type?: EnumTaskTypeFilter<"Task"> | $Enums.TaskType
+    description?: StringNullableFilter<"Task"> | string | null
+    assignedUserId?: StringFilter<"Task"> | string
+    customerId?: StringNullableFilter<"Task"> | string | null
+    wholesaleCustomerId?: StringNullableFilter<"Task"> | string | null
+    dueDate?: DateTimeFilter<"Task"> | Date | string
+    completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    latitude?: FloatNullableFilter<"Task"> | number | null
+    longitude?: FloatNullableFilter<"Task"> | number | null
+    resultNotes?: StringNullableFilter<"Task"> | string | null
+    createdById?: StringNullableFilter<"Task"> | string | null
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+    assignedUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    wholesaleCustomer?: XOR<WholesaleCustomerNullableScalarRelationFilter, WholesaleCustomerWhereInput> | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type TaskOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    assignedUserId?: SortOrder
+    customerId?: SortOrderInput | SortOrder
+    wholesaleCustomerId?: SortOrderInput | SortOrder
+    dueDate?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    status?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    resultNotes?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    assignedUser?: UserOrderByWithRelationInput
+    customer?: CustomerOrderByWithRelationInput
+    wholesaleCustomer?: WholesaleCustomerOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type TaskWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TaskWhereInput | TaskWhereInput[]
+    OR?: TaskWhereInput[]
+    NOT?: TaskWhereInput | TaskWhereInput[]
+    title?: StringFilter<"Task"> | string
+    type?: EnumTaskTypeFilter<"Task"> | $Enums.TaskType
+    description?: StringNullableFilter<"Task"> | string | null
+    assignedUserId?: StringFilter<"Task"> | string
+    customerId?: StringNullableFilter<"Task"> | string | null
+    wholesaleCustomerId?: StringNullableFilter<"Task"> | string | null
+    dueDate?: DateTimeFilter<"Task"> | Date | string
+    completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    latitude?: FloatNullableFilter<"Task"> | number | null
+    longitude?: FloatNullableFilter<"Task"> | number | null
+    resultNotes?: StringNullableFilter<"Task"> | string | null
+    createdById?: StringNullableFilter<"Task"> | string | null
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+    assignedUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    wholesaleCustomer?: XOR<WholesaleCustomerNullableScalarRelationFilter, WholesaleCustomerWhereInput> | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type TaskOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    assignedUserId?: SortOrder
+    customerId?: SortOrderInput | SortOrder
+    wholesaleCustomerId?: SortOrderInput | SortOrder
+    dueDate?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    status?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    resultNotes?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TaskCountOrderByAggregateInput
+    _avg?: TaskAvgOrderByAggregateInput
+    _max?: TaskMaxOrderByAggregateInput
+    _min?: TaskMinOrderByAggregateInput
+    _sum?: TaskSumOrderByAggregateInput
+  }
+
+  export type TaskScalarWhereWithAggregatesInput = {
+    AND?: TaskScalarWhereWithAggregatesInput | TaskScalarWhereWithAggregatesInput[]
+    OR?: TaskScalarWhereWithAggregatesInput[]
+    NOT?: TaskScalarWhereWithAggregatesInput | TaskScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Task"> | string
+    title?: StringWithAggregatesFilter<"Task"> | string
+    type?: EnumTaskTypeWithAggregatesFilter<"Task"> | $Enums.TaskType
+    description?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    assignedUserId?: StringWithAggregatesFilter<"Task"> | string
+    customerId?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    wholesaleCustomerId?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    dueDate?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
+    status?: EnumTaskStatusWithAggregatesFilter<"Task"> | $Enums.TaskStatus
+    latitude?: FloatNullableWithAggregatesFilter<"Task"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"Task"> | number | null
+    resultNotes?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    createdById?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+  }
+
+  export type BackupLogWhereInput = {
+    AND?: BackupLogWhereInput | BackupLogWhereInput[]
+    OR?: BackupLogWhereInput[]
+    NOT?: BackupLogWhereInput | BackupLogWhereInput[]
+    id?: StringFilter<"BackupLog"> | string
+    name?: StringFilter<"BackupLog"> | string
+    fileUrl?: StringNullableFilter<"BackupLog"> | string | null
+    fileSize?: IntNullableFilter<"BackupLog"> | number | null
+    status?: EnumBackupStatusFilter<"BackupLog"> | $Enums.BackupStatus
+    errorMessage?: StringNullableFilter<"BackupLog"> | string | null
+    createdById?: StringNullableFilter<"BackupLog"> | string | null
+    createdAt?: DateTimeFilter<"BackupLog"> | Date | string
+    updatedAt?: DateTimeFilter<"BackupLog"> | Date | string
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type BackupLogOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type BackupLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BackupLogWhereInput | BackupLogWhereInput[]
+    OR?: BackupLogWhereInput[]
+    NOT?: BackupLogWhereInput | BackupLogWhereInput[]
+    name?: StringFilter<"BackupLog"> | string
+    fileUrl?: StringNullableFilter<"BackupLog"> | string | null
+    fileSize?: IntNullableFilter<"BackupLog"> | number | null
+    status?: EnumBackupStatusFilter<"BackupLog"> | $Enums.BackupStatus
+    errorMessage?: StringNullableFilter<"BackupLog"> | string | null
+    createdById?: StringNullableFilter<"BackupLog"> | string | null
+    createdAt?: DateTimeFilter<"BackupLog"> | Date | string
+    updatedAt?: DateTimeFilter<"BackupLog"> | Date | string
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type BackupLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    fileUrl?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: BackupLogCountOrderByAggregateInput
+    _avg?: BackupLogAvgOrderByAggregateInput
+    _max?: BackupLogMaxOrderByAggregateInput
+    _min?: BackupLogMinOrderByAggregateInput
+    _sum?: BackupLogSumOrderByAggregateInput
+  }
+
+  export type BackupLogScalarWhereWithAggregatesInput = {
+    AND?: BackupLogScalarWhereWithAggregatesInput | BackupLogScalarWhereWithAggregatesInput[]
+    OR?: BackupLogScalarWhereWithAggregatesInput[]
+    NOT?: BackupLogScalarWhereWithAggregatesInput | BackupLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BackupLog"> | string
+    name?: StringWithAggregatesFilter<"BackupLog"> | string
+    fileUrl?: StringNullableWithAggregatesFilter<"BackupLog"> | string | null
+    fileSize?: IntNullableWithAggregatesFilter<"BackupLog"> | number | null
+    status?: EnumBackupStatusWithAggregatesFilter<"BackupLog"> | $Enums.BackupStatus
+    errorMessage?: StringNullableWithAggregatesFilter<"BackupLog"> | string | null
+    createdById?: StringNullableWithAggregatesFilter<"BackupLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BackupLog"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"BackupLog"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -71170,6 +78926,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -71211,6 +78971,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -71252,6 +79016,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -71293,6 +79061,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -71437,6 +79209,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
     users?: UserCreateNestedManyWithoutPermissionInput
   }
 
@@ -71515,6 +79298,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
     users?: UserUncheckedCreateNestedManyWithoutPermissionInput
   }
 
@@ -71593,6 +79387,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUpdateManyWithoutPermissionNestedInput
   }
 
@@ -71671,6 +79476,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
@@ -71749,6 +79565,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }
 
   export type PermissionUpdateManyMutationInput = {
@@ -71826,6 +79653,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type PermissionUncheckedUpdateManyInput = {
@@ -71903,6 +79741,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CategoryCreateInput = {
@@ -73166,6 +81015,9 @@ export namespace Prisma {
     message?: MessageCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateInput = {
@@ -73190,6 +81042,9 @@ export namespace Prisma {
     message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUpdateInput = {
@@ -73214,6 +81069,9 @@ export namespace Prisma {
     message?: MessageUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateInput = {
@@ -73238,6 +81096,9 @@ export namespace Prisma {
     message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerCreateManyInput = {
@@ -73326,6 +81187,7 @@ export namespace Prisma {
     assignedUser?: UserCreateNestedOneWithoutAssignedWholesaleCustomersInput
     visits?: WholesaleVisitCreateNestedManyWithoutWholesaleCustomerInput
     orders?: WholesaleOrderCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerUncheckedCreateInput = {
@@ -73357,6 +81219,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     visits?: WholesaleVisitUncheckedCreateNestedManyWithoutWholesaleCustomerInput
     orders?: WholesaleOrderUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerUpdateInput = {
@@ -73388,6 +81251,7 @@ export namespace Prisma {
     assignedUser?: UserUpdateOneWithoutAssignedWholesaleCustomersNestedInput
     visits?: WholesaleVisitUpdateManyWithoutWholesaleCustomerNestedInput
     orders?: WholesaleOrderUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerUncheckedUpdateInput = {
@@ -73419,6 +81283,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visits?: WholesaleVisitUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
     orders?: WholesaleOrderUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerCreateManyInput = {
@@ -74158,6 +82023,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74170,6 +82038,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -74209,6 +82078,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74216,6 +82088,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -74249,6 +82122,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74261,6 +82137,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -74300,6 +82177,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74307,6 +82187,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -74346,6 +82227,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74381,6 +82265,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74422,6 +82309,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76467,6 +84357,487 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LoyaltyRuleCreateInput = {
+    id?: string
+    name?: string | null
+    pointsPerCurrency?: number
+    redeemValue?: number
+    minPointsToRedeem?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyRuleUncheckedCreateInput = {
+    id?: string
+    name?: string | null
+    pointsPerCurrency?: number
+    redeemValue?: number
+    minPointsToRedeem?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerCurrency?: FloatFieldUpdateOperationsInput | number
+    redeemValue?: FloatFieldUpdateOperationsInput | number
+    minPointsToRedeem?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerCurrency?: FloatFieldUpdateOperationsInput | number
+    redeemValue?: FloatFieldUpdateOperationsInput | number
+    minPointsToRedeem?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyRuleCreateManyInput = {
+    id?: string
+    name?: string | null
+    pointsPerCurrency?: number
+    redeemValue?: number
+    minPointsToRedeem?: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerCurrency?: FloatFieldUpdateOperationsInput | number
+    redeemValue?: FloatFieldUpdateOperationsInput | number
+    minPointsToRedeem?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerCurrency?: FloatFieldUpdateOperationsInput | number
+    redeemValue?: FloatFieldUpdateOperationsInput | number
+    minPointsToRedeem?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyTransactionCreateInput = {
+    id?: string
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer: CustomerCreateNestedOneWithoutLoyaltyTransactionsInput
+    order?: OrderCreateNestedOneWithoutLoyaltyTransactionsInput
+  }
+
+  export type LoyaltyTransactionUncheckedCreateInput = {
+    id?: string
+    customerId: string
+    orderId?: number | null
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneRequiredWithoutLoyaltyTransactionsNestedInput
+    order?: OrderUpdateOneWithoutLoyaltyTransactionsNestedInput
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyTransactionCreateManyInput = {
+    id?: string
+    customerId: string
+    orderId?: number | null
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationCreateInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutNotificationsInput
+    customer?: CustomerCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    userId?: string | null
+    customerId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutNotificationsNestedInput
+    customer?: CustomerUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationCreateManyInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    userId?: string | null
+    customerId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskCreateInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedUser: UserCreateNestedOneWithoutAssignedTasksInput
+    customer?: CustomerCreateNestedOneWithoutTasksInput
+    wholesaleCustomer?: WholesaleCustomerCreateNestedOneWithoutTasksInput
+    createdBy?: UserCreateNestedOneWithoutCreatedTasksInput
+  }
+
+  export type TaskUncheckedCreateInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedUser?: UserUpdateOneRequiredWithoutAssignedTasksNestedInput
+    customer?: CustomerUpdateOneWithoutTasksNestedInput
+    wholesaleCustomer?: WholesaleCustomerUpdateOneWithoutTasksNestedInput
+    createdBy?: UserUpdateOneWithoutCreatedTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskCreateManyInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogCreateInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutBackupLogsInput
+  }
+
+  export type BackupLogUncheckedCreateInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BackupLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutBackupLogsNestedInput
+  }
+
+  export type BackupLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogCreateManyInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BackupLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -76671,6 +85042,24 @@ export namespace Prisma {
     none?: CampaignWhereInput
   }
 
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
+  }
+
+  export type TaskListRelationFilter = {
+    every?: TaskWhereInput
+    some?: TaskWhereInput
+    none?: TaskWhereInput
+  }
+
+  export type BackupLogListRelationFilter = {
+    every?: BackupLogWhereInput
+    some?: BackupLogWhereInput
+    none?: BackupLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -76745,6 +85134,18 @@ export namespace Prisma {
   }
 
   export type CampaignOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TaskOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BackupLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -77016,6 +85417,17 @@ export namespace Prisma {
     viewCustomerPayments?: SortOrder
     addCustomerPayments?: SortOrder
     deleteCustomerPayments?: SortOrder
+    viewLoyalty?: SortOrder
+    editLoyalty?: SortOrder
+    viewNotifications?: SortOrder
+    viewTasks?: SortOrder
+    addTasks?: SortOrder
+    editTasks?: SortOrder
+    deleteTasks?: SortOrder
+    viewTracking?: SortOrder
+    editTracking?: SortOrder
+    viewBackups?: SortOrder
+    manageBackups?: SortOrder
   }
 
   export type PermissionMaxOrderByAggregateInput = {
@@ -77093,6 +85505,17 @@ export namespace Prisma {
     viewCustomerPayments?: SortOrder
     addCustomerPayments?: SortOrder
     deleteCustomerPayments?: SortOrder
+    viewLoyalty?: SortOrder
+    editLoyalty?: SortOrder
+    viewNotifications?: SortOrder
+    viewTasks?: SortOrder
+    addTasks?: SortOrder
+    editTasks?: SortOrder
+    deleteTasks?: SortOrder
+    viewTracking?: SortOrder
+    editTracking?: SortOrder
+    viewBackups?: SortOrder
+    manageBackups?: SortOrder
   }
 
   export type PermissionMinOrderByAggregateInput = {
@@ -77170,6 +85593,17 @@ export namespace Prisma {
     viewCustomerPayments?: SortOrder
     addCustomerPayments?: SortOrder
     deleteCustomerPayments?: SortOrder
+    viewLoyalty?: SortOrder
+    editLoyalty?: SortOrder
+    viewNotifications?: SortOrder
+    viewTasks?: SortOrder
+    addTasks?: SortOrder
+    editTasks?: SortOrder
+    deleteTasks?: SortOrder
+    viewTracking?: SortOrder
+    editTracking?: SortOrder
+    viewBackups?: SortOrder
+    manageBackups?: SortOrder
   }
 
   export type ProductListRelationFilter = {
@@ -78205,6 +86639,16 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type LoyaltyTransactionListRelationFilter = {
+    every?: LoyaltyTransactionWhereInput
+    some?: LoyaltyTransactionWhereInput
+    none?: LoyaltyTransactionWhereInput
+  }
+
+  export type LoyaltyTransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type CustomerCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -78830,6 +87274,13 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumTrackingStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrackingStatus | EnumTrackingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrackingStatusFilter<$PrismaModel> | $Enums.TrackingStatus
+  }
+
   export type ShippingNullableScalarRelationFilter = {
     is?: shippingWhereInput | null
     isNot?: shippingWhereInput | null
@@ -78886,6 +87337,9 @@ export namespace Prisma {
     couponId?: SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+    trackingNumber?: SortOrder
+    trackingStatus?: SortOrder
+    trackingUrl?: SortOrder
     manualCreatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -78942,6 +87396,9 @@ export namespace Prisma {
     couponId?: SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+    trackingNumber?: SortOrder
+    trackingStatus?: SortOrder
+    trackingUrl?: SortOrder
     manualCreatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -78982,6 +87439,9 @@ export namespace Prisma {
     couponId?: SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+    trackingNumber?: SortOrder
+    trackingStatus?: SortOrder
+    trackingUrl?: SortOrder
     manualCreatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -79001,6 +87461,16 @@ export namespace Prisma {
     shippingId?: SortOrder
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
+  }
+
+  export type EnumTrackingStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrackingStatus | EnumTrackingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrackingStatusWithAggregatesFilter<$PrismaModel> | $Enums.TrackingStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTrackingStatusFilter<$PrismaModel>
+    _max?: NestedEnumTrackingStatusFilter<$PrismaModel>
   }
 
   export type EnumExpenseTypeFilter<$PrismaModel = never> = {
@@ -80374,6 +88844,365 @@ export namespace Prisma {
     _max?: NestedEnumPaymentTypeFilter<$PrismaModel>
   }
 
+  export type LoyaltyRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyRuleAvgOrderByAggregateInput = {
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+  }
+
+  export type LoyaltyRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyRuleSumOrderByAggregateInput = {
+    pointsPerCurrency?: SortOrder
+    redeemValue?: SortOrder
+    minPointsToRedeem?: SortOrder
+  }
+
+  export type EnumLoyaltyTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.LoyaltyTransactionType | EnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel> | $Enums.LoyaltyTransactionType
+  }
+
+  export type LoyaltyTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    orderId?: SortOrder
+    type?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyTransactionAvgOrderByAggregateInput = {
+    orderId?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+  }
+
+  export type LoyaltyTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    orderId?: SortOrder
+    type?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    orderId?: SortOrder
+    type?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LoyaltyTransactionSumOrderByAggregateInput = {
+    orderId?: SortOrder
+    points?: SortOrder
+    value?: SortOrder
+  }
+
+  export type EnumLoyaltyTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LoyaltyTransactionType | EnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLoyaltyTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.LoyaltyTransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type EnumNotificationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
+  }
+
+  export type EnumNotificationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelFilter<$PrismaModel> | $Enums.NotificationChannel
+  }
+
+  export type NotificationCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    channel?: SortOrder
+    userId?: SortOrder
+    customerId?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    readAt?: SortOrder
+    sentAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    channel?: SortOrder
+    userId?: SortOrder
+    customerId?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    readAt?: SortOrder
+    sentAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    channel?: SortOrder
+    userId?: SortOrder
+    customerId?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    readAt?: SortOrder
+    sentAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
+    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
+  }
+
+  export type EnumNotificationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel> | $Enums.NotificationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationChannelFilter<$PrismaModel>
+    _max?: NestedEnumNotificationChannelFilter<$PrismaModel>
+  }
+
+  export type EnumTaskTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskType | EnumTaskTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskTypeFilter<$PrismaModel> | $Enums.TaskType
+  }
+
+  export type EnumTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
+  }
+
+  export type WholesaleCustomerNullableScalarRelationFilter = {
+    is?: WholesaleCustomerWhereInput | null
+    isNot?: WholesaleCustomerWhereInput | null
+  }
+
+  export type TaskCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    assignedUserId?: SortOrder
+    customerId?: SortOrder
+    wholesaleCustomerId?: SortOrder
+    dueDate?: SortOrder
+    completedAt?: SortOrder
+    status?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    resultNotes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TaskAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type TaskMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    assignedUserId?: SortOrder
+    customerId?: SortOrder
+    wholesaleCustomerId?: SortOrder
+    dueDate?: SortOrder
+    completedAt?: SortOrder
+    status?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    resultNotes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TaskMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    assignedUserId?: SortOrder
+    customerId?: SortOrder
+    wholesaleCustomerId?: SortOrder
+    dueDate?: SortOrder
+    completedAt?: SortOrder
+    status?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    resultNotes?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TaskSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type EnumTaskTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskType | EnumTaskTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskTypeWithAggregatesFilter<$PrismaModel> | $Enums.TaskType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskTypeFilter<$PrismaModel>
+    _max?: NestedEnumTaskTypeFilter<$PrismaModel>
+  }
+
+  export type EnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.TaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type EnumBackupStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BackupStatus | EnumBackupStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBackupStatusFilter<$PrismaModel> | $Enums.BackupStatus
+  }
+
+  export type BackupLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupLogAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type BackupLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BackupLogSumOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type EnumBackupStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BackupStatus | EnumBackupStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBackupStatusWithAggregatesFilter<$PrismaModel> | $Enums.BackupStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBackupStatusFilter<$PrismaModel>
+    _max?: NestedEnumBackupStatusFilter<$PrismaModel>
+  }
+
   export type UserCreateNestedOneWithoutSubordinatesInput = {
     create?: XOR<UserCreateWithoutSubordinatesInput, UserUncheckedCreateWithoutSubordinatesInput>
     connectOrCreate?: UserCreateOrConnectWithoutSubordinatesInput
@@ -80511,6 +89340,34 @@ export namespace Prisma {
     connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
   }
 
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type TaskCreateNestedManyWithoutAssignedUserInput = {
+    create?: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput> | TaskCreateWithoutAssignedUserInput[] | TaskUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedUserInput | TaskCreateOrConnectWithoutAssignedUserInput[]
+    createMany?: TaskCreateManyAssignedUserInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type TaskCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
+    createMany?: TaskCreateManyCreatedByInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type BackupLogCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput> | BackupLogCreateWithoutCreatedByInput[] | BackupLogUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: BackupLogCreateOrConnectWithoutCreatedByInput | BackupLogCreateOrConnectWithoutCreatedByInput[]
+    createMany?: BackupLogCreateManyCreatedByInputEnvelope
+    connect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<UserCreateWithoutParentInput, UserUncheckedCreateWithoutParentInput> | UserCreateWithoutParentInput[] | UserUncheckedCreateWithoutParentInput[]
     connectOrCreate?: UserCreateOrConnectWithoutParentInput | UserCreateOrConnectWithoutParentInput[]
@@ -80634,6 +89491,34 @@ export namespace Prisma {
     connectOrCreate?: CampaignCreateOrConnectWithoutCreatedByInput | CampaignCreateOrConnectWithoutCreatedByInput[]
     createMany?: CampaignCreateManyCreatedByInputEnvelope
     connect?: CampaignWhereUniqueInput | CampaignWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutAssignedUserInput = {
+    create?: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput> | TaskCreateWithoutAssignedUserInput[] | TaskUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedUserInput | TaskCreateOrConnectWithoutAssignedUserInput[]
+    createMany?: TaskCreateManyAssignedUserInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
+    createMany?: TaskCreateManyCreatedByInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type BackupLogUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput> | BackupLogCreateWithoutCreatedByInput[] | BackupLogUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: BackupLogCreateOrConnectWithoutCreatedByInput | BackupLogCreateOrConnectWithoutCreatedByInput[]
+    createMany?: BackupLogCreateManyCreatedByInputEnvelope
+    connect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -80947,6 +89832,62 @@ export namespace Prisma {
     deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
   }
 
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type TaskUpdateManyWithoutAssignedUserNestedInput = {
+    create?: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput> | TaskCreateWithoutAssignedUserInput[] | TaskUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedUserInput | TaskCreateOrConnectWithoutAssignedUserInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutAssignedUserInput | TaskUpsertWithWhereUniqueWithoutAssignedUserInput[]
+    createMany?: TaskCreateManyAssignedUserInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutAssignedUserInput | TaskUpdateWithWhereUniqueWithoutAssignedUserInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutAssignedUserInput | TaskUpdateManyWithWhereWithoutAssignedUserInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type TaskUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCreatedByInput | TaskUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: TaskCreateManyCreatedByInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCreatedByInput | TaskUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCreatedByInput | TaskUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type BackupLogUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput> | BackupLogCreateWithoutCreatedByInput[] | BackupLogUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: BackupLogCreateOrConnectWithoutCreatedByInput | BackupLogCreateOrConnectWithoutCreatedByInput[]
+    upsert?: BackupLogUpsertWithWhereUniqueWithoutCreatedByInput | BackupLogUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: BackupLogCreateManyCreatedByInputEnvelope
+    set?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    disconnect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    delete?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    connect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    update?: BackupLogUpdateWithWhereUniqueWithoutCreatedByInput | BackupLogUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: BackupLogUpdateManyWithWhereWithoutCreatedByInput | BackupLogUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: BackupLogScalarWhereInput | BackupLogScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<UserCreateWithoutParentInput, UserUncheckedCreateWithoutParentInput> | UserCreateWithoutParentInput[] | UserUncheckedCreateWithoutParentInput[]
     connectOrCreate?: UserCreateOrConnectWithoutParentInput | UserCreateOrConnectWithoutParentInput[]
@@ -81196,6 +90137,62 @@ export namespace Prisma {
     update?: CampaignUpdateWithWhereUniqueWithoutCreatedByInput | CampaignUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: CampaignUpdateManyWithWhereWithoutCreatedByInput | CampaignUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: CampaignScalarWhereInput | CampaignScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type TaskUncheckedUpdateManyWithoutAssignedUserNestedInput = {
+    create?: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput> | TaskCreateWithoutAssignedUserInput[] | TaskUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedUserInput | TaskCreateOrConnectWithoutAssignedUserInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutAssignedUserInput | TaskUpsertWithWhereUniqueWithoutAssignedUserInput[]
+    createMany?: TaskCreateManyAssignedUserInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutAssignedUserInput | TaskUpdateWithWhereUniqueWithoutAssignedUserInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutAssignedUserInput | TaskUpdateManyWithWhereWithoutAssignedUserInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCreatedByInput | TaskUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: TaskCreateManyCreatedByInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCreatedByInput | TaskUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCreatedByInput | TaskUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput> | BackupLogCreateWithoutCreatedByInput[] | BackupLogUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: BackupLogCreateOrConnectWithoutCreatedByInput | BackupLogCreateOrConnectWithoutCreatedByInput[]
+    upsert?: BackupLogUpsertWithWhereUniqueWithoutCreatedByInput | BackupLogUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: BackupLogCreateManyCreatedByInputEnvelope
+    set?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    disconnect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    delete?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    connect?: BackupLogWhereUniqueInput | BackupLogWhereUniqueInput[]
+    update?: BackupLogUpdateWithWhereUniqueWithoutCreatedByInput | BackupLogUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: BackupLogUpdateManyWithWhereWithoutCreatedByInput | BackupLogUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: BackupLogScalarWhereInput | BackupLogScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutPermissionInput = {
@@ -82817,6 +91814,27 @@ export namespace Prisma {
     connect?: CustomerPaymentWhereUniqueInput | CustomerPaymentWhereUniqueInput[]
   }
 
+  export type LoyaltyTransactionCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput> | LoyaltyTransactionCreateWithoutCustomerInput[] | LoyaltyTransactionUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutCustomerInput | LoyaltyTransactionCreateOrConnectWithoutCustomerInput[]
+    createMany?: LoyaltyTransactionCreateManyCustomerInputEnvelope
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+  }
+
+  export type NotificationCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput> | NotificationCreateWithoutCustomerInput[] | NotificationUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutCustomerInput | NotificationCreateOrConnectWithoutCustomerInput[]
+    createMany?: NotificationCreateManyCustomerInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type TaskCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput> | TaskCreateWithoutCustomerInput[] | TaskUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCustomerInput | TaskCreateOrConnectWithoutCustomerInput[]
+    createMany?: TaskCreateManyCustomerInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
   export type OrderUncheckedCreateNestedManyWithoutCustomerInput = {
     create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
@@ -82849,6 +91867,27 @@ export namespace Prisma {
     connectOrCreate?: CustomerPaymentCreateOrConnectWithoutCustomerInput | CustomerPaymentCreateOrConnectWithoutCustomerInput[]
     createMany?: CustomerPaymentCreateManyCustomerInputEnvelope
     connect?: CustomerPaymentWhereUniqueInput | CustomerPaymentWhereUniqueInput[]
+  }
+
+  export type LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput> | LoyaltyTransactionCreateWithoutCustomerInput[] | LoyaltyTransactionUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutCustomerInput | LoyaltyTransactionCreateOrConnectWithoutCustomerInput[]
+    createMany?: LoyaltyTransactionCreateManyCustomerInputEnvelope
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput> | NotificationCreateWithoutCustomerInput[] | NotificationUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutCustomerInput | NotificationCreateOrConnectWithoutCustomerInput[]
+    createMany?: NotificationCreateManyCustomerInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput> | TaskCreateWithoutCustomerInput[] | TaskUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCustomerInput | TaskCreateOrConnectWithoutCustomerInput[]
+    createMany?: TaskCreateManyCustomerInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
   }
 
   export type CustomerUpdatephoneInput = {
@@ -82925,6 +91964,48 @@ export namespace Prisma {
     deleteMany?: CustomerPaymentScalarWhereInput | CustomerPaymentScalarWhereInput[]
   }
 
+  export type LoyaltyTransactionUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput> | LoyaltyTransactionCreateWithoutCustomerInput[] | LoyaltyTransactionUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutCustomerInput | LoyaltyTransactionCreateOrConnectWithoutCustomerInput[]
+    upsert?: LoyaltyTransactionUpsertWithWhereUniqueWithoutCustomerInput | LoyaltyTransactionUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: LoyaltyTransactionCreateManyCustomerInputEnvelope
+    set?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    disconnect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    delete?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    update?: LoyaltyTransactionUpdateWithWhereUniqueWithoutCustomerInput | LoyaltyTransactionUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: LoyaltyTransactionUpdateManyWithWhereWithoutCustomerInput | LoyaltyTransactionUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
+  }
+
+  export type NotificationUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput> | NotificationCreateWithoutCustomerInput[] | NotificationUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutCustomerInput | NotificationCreateOrConnectWithoutCustomerInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutCustomerInput | NotificationUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: NotificationCreateManyCustomerInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutCustomerInput | NotificationUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutCustomerInput | NotificationUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type TaskUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput> | TaskCreateWithoutCustomerInput[] | TaskUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCustomerInput | TaskCreateOrConnectWithoutCustomerInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCustomerInput | TaskUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: TaskCreateManyCustomerInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCustomerInput | TaskUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCustomerInput | TaskUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
   export type OrderUncheckedUpdateManyWithoutCustomerNestedInput = {
     create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
@@ -82994,6 +92075,48 @@ export namespace Prisma {
     deleteMany?: CustomerPaymentScalarWhereInput | CustomerPaymentScalarWhereInput[]
   }
 
+  export type LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput> | LoyaltyTransactionCreateWithoutCustomerInput[] | LoyaltyTransactionUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutCustomerInput | LoyaltyTransactionCreateOrConnectWithoutCustomerInput[]
+    upsert?: LoyaltyTransactionUpsertWithWhereUniqueWithoutCustomerInput | LoyaltyTransactionUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: LoyaltyTransactionCreateManyCustomerInputEnvelope
+    set?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    disconnect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    delete?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    update?: LoyaltyTransactionUpdateWithWhereUniqueWithoutCustomerInput | LoyaltyTransactionUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: LoyaltyTransactionUpdateManyWithWhereWithoutCustomerInput | LoyaltyTransactionUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput> | NotificationCreateWithoutCustomerInput[] | NotificationUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutCustomerInput | NotificationCreateOrConnectWithoutCustomerInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutCustomerInput | NotificationUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: NotificationCreateManyCustomerInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutCustomerInput | NotificationUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutCustomerInput | NotificationUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput> | TaskCreateWithoutCustomerInput[] | TaskUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCustomerInput | TaskCreateOrConnectWithoutCustomerInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCustomerInput | TaskUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: TaskCreateManyCustomerInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCustomerInput | TaskUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCustomerInput | TaskUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
   export type WholesaleCustomerCreatephoneInput = {
     set: string[]
   }
@@ -83018,6 +92141,13 @@ export namespace Prisma {
     connect?: WholesaleOrderWhereUniqueInput | WholesaleOrderWhereUniqueInput[]
   }
 
+  export type TaskCreateNestedManyWithoutWholesaleCustomerInput = {
+    create?: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput> | TaskCreateWithoutWholesaleCustomerInput[] | TaskUncheckedCreateWithoutWholesaleCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutWholesaleCustomerInput | TaskCreateOrConnectWithoutWholesaleCustomerInput[]
+    createMany?: TaskCreateManyWholesaleCustomerInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
   export type WholesaleVisitUncheckedCreateNestedManyWithoutWholesaleCustomerInput = {
     create?: XOR<WholesaleVisitCreateWithoutWholesaleCustomerInput, WholesaleVisitUncheckedCreateWithoutWholesaleCustomerInput> | WholesaleVisitCreateWithoutWholesaleCustomerInput[] | WholesaleVisitUncheckedCreateWithoutWholesaleCustomerInput[]
     connectOrCreate?: WholesaleVisitCreateOrConnectWithoutWholesaleCustomerInput | WholesaleVisitCreateOrConnectWithoutWholesaleCustomerInput[]
@@ -83030,6 +92160,13 @@ export namespace Prisma {
     connectOrCreate?: WholesaleOrderCreateOrConnectWithoutWholesaleCustomerInput | WholesaleOrderCreateOrConnectWithoutWholesaleCustomerInput[]
     createMany?: WholesaleOrderCreateManyWholesaleCustomerInputEnvelope
     connect?: WholesaleOrderWhereUniqueInput | WholesaleOrderWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutWholesaleCustomerInput = {
+    create?: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput> | TaskCreateWithoutWholesaleCustomerInput[] | TaskUncheckedCreateWithoutWholesaleCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutWholesaleCustomerInput | TaskCreateOrConnectWithoutWholesaleCustomerInput[]
+    createMany?: TaskCreateManyWholesaleCustomerInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
   }
 
   export type EnumWholesaleCustomerCategoryFieldUpdateOperationsInput = {
@@ -83087,6 +92224,20 @@ export namespace Prisma {
     deleteMany?: WholesaleOrderScalarWhereInput | WholesaleOrderScalarWhereInput[]
   }
 
+  export type TaskUpdateManyWithoutWholesaleCustomerNestedInput = {
+    create?: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput> | TaskCreateWithoutWholesaleCustomerInput[] | TaskUncheckedCreateWithoutWholesaleCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutWholesaleCustomerInput | TaskCreateOrConnectWithoutWholesaleCustomerInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutWholesaleCustomerInput | TaskUpsertWithWhereUniqueWithoutWholesaleCustomerInput[]
+    createMany?: TaskCreateManyWholesaleCustomerInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutWholesaleCustomerInput | TaskUpdateWithWhereUniqueWithoutWholesaleCustomerInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutWholesaleCustomerInput | TaskUpdateManyWithWhereWithoutWholesaleCustomerInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
   export type WholesaleVisitUncheckedUpdateManyWithoutWholesaleCustomerNestedInput = {
     create?: XOR<WholesaleVisitCreateWithoutWholesaleCustomerInput, WholesaleVisitUncheckedCreateWithoutWholesaleCustomerInput> | WholesaleVisitCreateWithoutWholesaleCustomerInput[] | WholesaleVisitUncheckedCreateWithoutWholesaleCustomerInput[]
     connectOrCreate?: WholesaleVisitCreateOrConnectWithoutWholesaleCustomerInput | WholesaleVisitCreateOrConnectWithoutWholesaleCustomerInput[]
@@ -83113,6 +92264,20 @@ export namespace Prisma {
     update?: WholesaleOrderUpdateWithWhereUniqueWithoutWholesaleCustomerInput | WholesaleOrderUpdateWithWhereUniqueWithoutWholesaleCustomerInput[]
     updateMany?: WholesaleOrderUpdateManyWithWhereWithoutWholesaleCustomerInput | WholesaleOrderUpdateManyWithWhereWithoutWholesaleCustomerInput[]
     deleteMany?: WholesaleOrderScalarWhereInput | WholesaleOrderScalarWhereInput[]
+  }
+
+  export type TaskUncheckedUpdateManyWithoutWholesaleCustomerNestedInput = {
+    create?: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput> | TaskCreateWithoutWholesaleCustomerInput[] | TaskUncheckedCreateWithoutWholesaleCustomerInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutWholesaleCustomerInput | TaskCreateOrConnectWithoutWholesaleCustomerInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutWholesaleCustomerInput | TaskUpsertWithWhereUniqueWithoutWholesaleCustomerInput[]
+    createMany?: TaskCreateManyWholesaleCustomerInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutWholesaleCustomerInput | TaskUpdateWithWhereUniqueWithoutWholesaleCustomerInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutWholesaleCustomerInput | TaskUpdateManyWithWhereWithoutWholesaleCustomerInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
   }
 
   export type WholesaleVisitCreatephotoUrlsInput = {
@@ -83453,6 +92618,13 @@ export namespace Prisma {
     connect?: CustomerPaymentWhereUniqueInput | CustomerPaymentWhereUniqueInput[]
   }
 
+  export type LoyaltyTransactionCreateNestedManyWithoutOrderInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput> | LoyaltyTransactionCreateWithoutOrderInput[] | LoyaltyTransactionUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutOrderInput | LoyaltyTransactionCreateOrConnectWithoutOrderInput[]
+    createMany?: LoyaltyTransactionCreateManyOrderInputEnvelope
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+  }
+
   export type CommissionCreateNestedManyWithoutOrderInput = {
     create?: XOR<CommissionCreateWithoutOrderInput, CommissionUncheckedCreateWithoutOrderInput> | CommissionCreateWithoutOrderInput[] | CommissionUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: CommissionCreateOrConnectWithoutOrderInput | CommissionCreateOrConnectWithoutOrderInput[]
@@ -83488,6 +92660,13 @@ export namespace Prisma {
     connect?: CustomerPaymentWhereUniqueInput | CustomerPaymentWhereUniqueInput[]
   }
 
+  export type LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput> | LoyaltyTransactionCreateWithoutOrderInput[] | LoyaltyTransactionUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutOrderInput | LoyaltyTransactionCreateOrConnectWithoutOrderInput[]
+    createMany?: LoyaltyTransactionCreateManyOrderInputEnvelope
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+  }
+
   export type CommissionUncheckedCreateNestedManyWithoutOrderInput = {
     create?: XOR<CommissionCreateWithoutOrderInput, CommissionUncheckedCreateWithoutOrderInput> | CommissionCreateWithoutOrderInput[] | CommissionUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: CommissionCreateOrConnectWithoutOrderInput | CommissionCreateOrConnectWithoutOrderInput[]
@@ -83498,6 +92677,10 @@ export namespace Prisma {
   export type OrderUpdatereceiverPhoneInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type EnumTrackingStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TrackingStatus
   }
 
   export type CustomerUpdateOneRequiredWithoutOrdersNestedInput = {
@@ -83604,6 +92787,20 @@ export namespace Prisma {
     deleteMany?: CustomerPaymentScalarWhereInput | CustomerPaymentScalarWhereInput[]
   }
 
+  export type LoyaltyTransactionUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput> | LoyaltyTransactionCreateWithoutOrderInput[] | LoyaltyTransactionUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutOrderInput | LoyaltyTransactionCreateOrConnectWithoutOrderInput[]
+    upsert?: LoyaltyTransactionUpsertWithWhereUniqueWithoutOrderInput | LoyaltyTransactionUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: LoyaltyTransactionCreateManyOrderInputEnvelope
+    set?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    disconnect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    delete?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    update?: LoyaltyTransactionUpdateWithWhereUniqueWithoutOrderInput | LoyaltyTransactionUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: LoyaltyTransactionUpdateManyWithWhereWithoutOrderInput | LoyaltyTransactionUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
+  }
+
   export type CommissionUpdateManyWithoutOrderNestedInput = {
     create?: XOR<CommissionCreateWithoutOrderInput, CommissionUncheckedCreateWithoutOrderInput> | CommissionCreateWithoutOrderInput[] | CommissionUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: CommissionCreateOrConnectWithoutOrderInput | CommissionCreateOrConnectWithoutOrderInput[]
@@ -83672,6 +92869,20 @@ export namespace Prisma {
     update?: CustomerPaymentUpdateWithWhereUniqueWithoutOrderInput | CustomerPaymentUpdateWithWhereUniqueWithoutOrderInput[]
     updateMany?: CustomerPaymentUpdateManyWithWhereWithoutOrderInput | CustomerPaymentUpdateManyWithWhereWithoutOrderInput[]
     deleteMany?: CustomerPaymentScalarWhereInput | CustomerPaymentScalarWhereInput[]
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput> | LoyaltyTransactionCreateWithoutOrderInput[] | LoyaltyTransactionUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: LoyaltyTransactionCreateOrConnectWithoutOrderInput | LoyaltyTransactionCreateOrConnectWithoutOrderInput[]
+    upsert?: LoyaltyTransactionUpsertWithWhereUniqueWithoutOrderInput | LoyaltyTransactionUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: LoyaltyTransactionCreateManyOrderInputEnvelope
+    set?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    disconnect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    delete?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    connect?: LoyaltyTransactionWhereUniqueInput | LoyaltyTransactionWhereUniqueInput[]
+    update?: LoyaltyTransactionUpdateWithWhereUniqueWithoutOrderInput | LoyaltyTransactionUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: LoyaltyTransactionUpdateManyWithWhereWithoutOrderInput | LoyaltyTransactionUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
   }
 
   export type CommissionUncheckedUpdateManyWithoutOrderNestedInput = {
@@ -84580,6 +93791,170 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCustomerPaymentsInput, UserUpdateWithoutCustomerPaymentsInput>, UserUncheckedUpdateWithoutCustomerPaymentsInput>
   }
 
+  export type CustomerCreateNestedOneWithoutLoyaltyTransactionsInput = {
+    create?: XOR<CustomerCreateWithoutLoyaltyTransactionsInput, CustomerUncheckedCreateWithoutLoyaltyTransactionsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutLoyaltyTransactionsInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type OrderCreateNestedOneWithoutLoyaltyTransactionsInput = {
+    create?: XOR<OrderCreateWithoutLoyaltyTransactionsInput, OrderUncheckedCreateWithoutLoyaltyTransactionsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutLoyaltyTransactionsInput
+    connect?: OrderWhereUniqueInput
+  }
+
+  export type EnumLoyaltyTransactionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.LoyaltyTransactionType
+  }
+
+  export type CustomerUpdateOneRequiredWithoutLoyaltyTransactionsNestedInput = {
+    create?: XOR<CustomerCreateWithoutLoyaltyTransactionsInput, CustomerUncheckedCreateWithoutLoyaltyTransactionsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutLoyaltyTransactionsInput
+    upsert?: CustomerUpsertWithoutLoyaltyTransactionsInput
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutLoyaltyTransactionsInput, CustomerUpdateWithoutLoyaltyTransactionsInput>, CustomerUncheckedUpdateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type OrderUpdateOneWithoutLoyaltyTransactionsNestedInput = {
+    create?: XOR<OrderCreateWithoutLoyaltyTransactionsInput, OrderUncheckedCreateWithoutLoyaltyTransactionsInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutLoyaltyTransactionsInput
+    upsert?: OrderUpsertWithoutLoyaltyTransactionsInput
+    disconnect?: OrderWhereInput | boolean
+    delete?: OrderWhereInput | boolean
+    connect?: OrderWhereUniqueInput
+    update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutLoyaltyTransactionsInput, OrderUpdateWithoutLoyaltyTransactionsInput>, OrderUncheckedUpdateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CustomerCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<CustomerCreateWithoutNotificationsInput, CustomerUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutNotificationsInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type EnumNotificationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.NotificationType
+  }
+
+  export type EnumNotificationChannelFieldUpdateOperationsInput = {
+    set?: $Enums.NotificationChannel
+  }
+
+  export type UserUpdateOneWithoutNotificationsNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type CustomerUpdateOneWithoutNotificationsNestedInput = {
+    create?: XOR<CustomerCreateWithoutNotificationsInput, CustomerUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutNotificationsInput
+    upsert?: CustomerUpsertWithoutNotificationsInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutNotificationsInput, CustomerUpdateWithoutNotificationsInput>, CustomerUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserCreateNestedOneWithoutAssignedTasksInput = {
+    create?: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedTasksInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CustomerCreateNestedOneWithoutTasksInput = {
+    create?: XOR<CustomerCreateWithoutTasksInput, CustomerUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutTasksInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type WholesaleCustomerCreateNestedOneWithoutTasksInput = {
+    create?: XOR<WholesaleCustomerCreateWithoutTasksInput, WholesaleCustomerUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: WholesaleCustomerCreateOrConnectWithoutTasksInput
+    connect?: WholesaleCustomerWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCreatedTasksInput = {
+    create?: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedTasksInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumTaskTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TaskType
+  }
+
+  export type EnumTaskStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TaskStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutAssignedTasksNestedInput = {
+    create?: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedTasksInput
+    upsert?: UserUpsertWithoutAssignedTasksInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAssignedTasksInput, UserUpdateWithoutAssignedTasksInput>, UserUncheckedUpdateWithoutAssignedTasksInput>
+  }
+
+  export type CustomerUpdateOneWithoutTasksNestedInput = {
+    create?: XOR<CustomerCreateWithoutTasksInput, CustomerUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutTasksInput
+    upsert?: CustomerUpsertWithoutTasksInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutTasksInput, CustomerUpdateWithoutTasksInput>, CustomerUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type WholesaleCustomerUpdateOneWithoutTasksNestedInput = {
+    create?: XOR<WholesaleCustomerCreateWithoutTasksInput, WholesaleCustomerUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: WholesaleCustomerCreateOrConnectWithoutTasksInput
+    upsert?: WholesaleCustomerUpsertWithoutTasksInput
+    disconnect?: WholesaleCustomerWhereInput | boolean
+    delete?: WholesaleCustomerWhereInput | boolean
+    connect?: WholesaleCustomerWhereUniqueInput
+    update?: XOR<XOR<WholesaleCustomerUpdateToOneWithWhereWithoutTasksInput, WholesaleCustomerUpdateWithoutTasksInput>, WholesaleCustomerUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type UserUpdateOneWithoutCreatedTasksNestedInput = {
+    create?: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedTasksInput
+    upsert?: UserUpsertWithoutCreatedTasksInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedTasksInput, UserUpdateWithoutCreatedTasksInput>, UserUncheckedUpdateWithoutCreatedTasksInput>
+  }
+
+  export type UserCreateNestedOneWithoutBackupLogsInput = {
+    create?: XOR<UserCreateWithoutBackupLogsInput, UserUncheckedCreateWithoutBackupLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumBackupStatusFieldUpdateOperationsInput = {
+    set?: $Enums.BackupStatus
+  }
+
+  export type UserUpdateOneWithoutBackupLogsNestedInput = {
+    create?: XOR<UserCreateWithoutBackupLogsInput, UserUncheckedCreateWithoutBackupLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBackupLogsInput
+    upsert?: UserUpsertWithoutBackupLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBackupLogsInput, UserUpdateWithoutBackupLogsInput>, UserUncheckedUpdateWithoutBackupLogsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -84972,6 +94347,23 @@ export namespace Prisma {
     _max?: NestedEnumWarrantyTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumTrackingStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrackingStatus | EnumTrackingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrackingStatusFilter<$PrismaModel> | $Enums.TrackingStatus
+  }
+
+  export type NestedEnumTrackingStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrackingStatus | EnumTrackingStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrackingStatus[] | ListEnumTrackingStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrackingStatusWithAggregatesFilter<$PrismaModel> | $Enums.TrackingStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTrackingStatusFilter<$PrismaModel>
+    _max?: NestedEnumTrackingStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumExpenseTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ExpenseType | EnumExpenseTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ExpenseType[] | ListEnumExpenseTypeFieldRefInput<$PrismaModel>
@@ -85176,6 +94568,108 @@ export namespace Prisma {
     _max?: NestedEnumPaymentTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.LoyaltyTransactionType | EnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel> | $Enums.LoyaltyTransactionType
+  }
+
+  export type NestedEnumLoyaltyTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LoyaltyTransactionType | EnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.LoyaltyTransactionType[] | ListEnumLoyaltyTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumLoyaltyTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.LoyaltyTransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumLoyaltyTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumNotificationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
+  }
+
+  export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelFilter<$PrismaModel> | $Enums.NotificationChannel
+  }
+
+  export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
+    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel> | $Enums.NotificationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationChannelFilter<$PrismaModel>
+    _max?: NestedEnumNotificationChannelFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTaskTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskType | EnumTaskTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskTypeFilter<$PrismaModel> | $Enums.TaskType
+  }
+
+  export type NestedEnumTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
+  }
+
+  export type NestedEnumTaskTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskType | EnumTaskTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskTypeWithAggregatesFilter<$PrismaModel> | $Enums.TaskType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskTypeFilter<$PrismaModel>
+    _max?: NestedEnumTaskTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.TaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBackupStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BackupStatus | EnumBackupStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBackupStatusFilter<$PrismaModel> | $Enums.BackupStatus
+  }
+
+  export type NestedEnumBackupStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BackupStatus | EnumBackupStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BackupStatus[] | ListEnumBackupStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBackupStatusWithAggregatesFilter<$PrismaModel> | $Enums.BackupStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBackupStatusFilter<$PrismaModel>
+    _max?: NestedEnumBackupStatusFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutSubordinatesInput = {
     id?: string
     username: string
@@ -85214,6 +94708,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSubordinatesInput = {
@@ -85254,6 +94752,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSubordinatesInput = {
@@ -85299,6 +94801,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutParentInput = {
@@ -85339,6 +94845,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutParentInput = {
@@ -85381,6 +94891,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -85392,6 +94905,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -85430,6 +94944,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -85437,6 +94954,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -85559,6 +95077,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }
 
   export type PermissionUncheckedCreateWithoutUsersInput = {
@@ -85636,6 +95165,17 @@ export namespace Prisma {
     viewCustomerPayments?: boolean
     addCustomerPayments?: boolean
     deleteCustomerPayments?: boolean
+    viewLoyalty?: boolean
+    editLoyalty?: boolean
+    viewNotifications?: boolean
+    viewTasks?: boolean
+    addTasks?: boolean
+    editTasks?: boolean
+    deleteTasks?: boolean
+    viewTracking?: boolean
+    editTracking?: boolean
+    viewBackups?: boolean
+    manageBackups?: boolean
   }
 
   export type PermissionCreateOrConnectWithoutUsersInput = {
@@ -85664,6 +95204,9 @@ export namespace Prisma {
     message?: MessageCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutUsersInput = {
@@ -85687,6 +95230,9 @@ export namespace Prisma {
     message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutUsersInput = {
@@ -86055,6 +95601,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     visits?: WholesaleVisitCreateNestedManyWithoutWholesaleCustomerInput
     orders?: WholesaleOrderCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerUncheckedCreateWithoutAssignedUserInput = {
@@ -86085,6 +95632,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     visits?: WholesaleVisitUncheckedCreateNestedManyWithoutWholesaleCustomerInput
     orders?: WholesaleOrderUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerCreateOrConnectWithoutAssignedUserInput = {
@@ -86253,6 +95801,170 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type NotificationCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer?: CustomerCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    customerId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationCreateOrConnectWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationCreateManyUserInputEnvelope = {
+    data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TaskCreateWithoutAssignedUserInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer?: CustomerCreateNestedOneWithoutTasksInput
+    wholesaleCustomer?: WholesaleCustomerCreateNestedOneWithoutTasksInput
+    createdBy?: UserCreateNestedOneWithoutCreatedTasksInput
+  }
+
+  export type TaskUncheckedCreateWithoutAssignedUserInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateOrConnectWithoutAssignedUserInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput>
+  }
+
+  export type TaskCreateManyAssignedUserInputEnvelope = {
+    data: TaskCreateManyAssignedUserInput | TaskCreateManyAssignedUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TaskCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedUser: UserCreateNestedOneWithoutAssignedTasksInput
+    customer?: CustomerCreateNestedOneWithoutTasksInput
+    wholesaleCustomer?: WholesaleCustomerCreateNestedOneWithoutTasksInput
+  }
+
+  export type TaskUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateOrConnectWithoutCreatedByInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type TaskCreateManyCreatedByInputEnvelope = {
+    data: TaskCreateManyCreatedByInput | TaskCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BackupLogCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BackupLogUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BackupLogCreateOrConnectWithoutCreatedByInput = {
+    where: BackupLogWhereUniqueInput
+    create: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type BackupLogCreateManyCreatedByInputEnvelope = {
+    data: BackupLogCreateManyCreatedByInput | BackupLogCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutSubordinatesInput = {
     update: XOR<UserUpdateWithoutSubordinatesInput, UserUncheckedUpdateWithoutSubordinatesInput>
     create: XOR<UserCreateWithoutSubordinatesInput, UserUncheckedCreateWithoutSubordinatesInput>
@@ -86302,6 +96014,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubordinatesInput = {
@@ -86342,6 +96058,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutParentInput = {
@@ -86441,6 +96161,9 @@ export namespace Prisma {
     couponId?: StringNullableFilter<"Order"> | string | null
     paidAmount?: FloatFilter<"Order"> | number
     remainingAmount?: FloatFilter<"Order"> | number
+    trackingNumber?: StringNullableFilter<"Order"> | string | null
+    trackingStatus?: EnumTrackingStatusFilter<"Order"> | $Enums.TrackingStatus
+    trackingUrl?: StringNullableFilter<"Order"> | string | null
     manualCreatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -86564,6 +96287,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type PermissionUncheckedUpdateWithoutUsersInput = {
@@ -86641,6 +96375,17 @@ export namespace Prisma {
     viewCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     addCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
     deleteCustomerPayments?: BoolFieldUpdateOperationsInput | boolean
+    viewLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    editLoyalty?: BoolFieldUpdateOperationsInput | boolean
+    viewNotifications?: BoolFieldUpdateOperationsInput | boolean
+    viewTasks?: BoolFieldUpdateOperationsInput | boolean
+    addTasks?: BoolFieldUpdateOperationsInput | boolean
+    editTasks?: BoolFieldUpdateOperationsInput | boolean
+    deleteTasks?: BoolFieldUpdateOperationsInput | boolean
+    viewTracking?: BoolFieldUpdateOperationsInput | boolean
+    editTracking?: BoolFieldUpdateOperationsInput | boolean
+    viewBackups?: BoolFieldUpdateOperationsInput | boolean
+    manageBackups?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CustomerUpsertWithWhereUniqueWithoutUsersInput = {
@@ -87165,6 +96910,126 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Campaign"> | Date | string
   }
 
+  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    channel?: EnumNotificationChannelFilter<"Notification"> | $Enums.NotificationChannel
+    userId?: StringNullableFilter<"Notification"> | string | null
+    customerId?: StringNullableFilter<"Notification"> | string | null
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    entityType?: StringNullableFilter<"Notification"> | string | null
+    entityId?: StringNullableFilter<"Notification"> | string | null
+    readAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    sentAt?: DateTimeNullableFilter<"Notification"> | Date | string | null
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    updatedAt?: DateTimeFilter<"Notification"> | Date | string
+  }
+
+  export type TaskUpsertWithWhereUniqueWithoutAssignedUserInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutAssignedUserInput, TaskUncheckedUpdateWithoutAssignedUserInput>
+    create: XOR<TaskCreateWithoutAssignedUserInput, TaskUncheckedCreateWithoutAssignedUserInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutAssignedUserInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutAssignedUserInput, TaskUncheckedUpdateWithoutAssignedUserInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutAssignedUserInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutAssignedUserInput>
+  }
+
+  export type TaskScalarWhereInput = {
+    AND?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    OR?: TaskScalarWhereInput[]
+    NOT?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    id?: StringFilter<"Task"> | string
+    title?: StringFilter<"Task"> | string
+    type?: EnumTaskTypeFilter<"Task"> | $Enums.TaskType
+    description?: StringNullableFilter<"Task"> | string | null
+    assignedUserId?: StringFilter<"Task"> | string
+    customerId?: StringNullableFilter<"Task"> | string | null
+    wholesaleCustomerId?: StringNullableFilter<"Task"> | string | null
+    dueDate?: DateTimeFilter<"Task"> | Date | string
+    completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    latitude?: FloatNullableFilter<"Task"> | number | null
+    longitude?: FloatNullableFilter<"Task"> | number | null
+    resultNotes?: StringNullableFilter<"Task"> | string | null
+    createdById?: StringNullableFilter<"Task"> | string | null
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+  }
+
+  export type TaskUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutCreatedByInput, TaskUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutCreatedByInput, TaskUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutCreatedByInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type BackupLogUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: BackupLogWhereUniqueInput
+    update: XOR<BackupLogUpdateWithoutCreatedByInput, BackupLogUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<BackupLogCreateWithoutCreatedByInput, BackupLogUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type BackupLogUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: BackupLogWhereUniqueInput
+    data: XOR<BackupLogUpdateWithoutCreatedByInput, BackupLogUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type BackupLogUpdateManyWithWhereWithoutCreatedByInput = {
+    where: BackupLogScalarWhereInput
+    data: XOR<BackupLogUpdateManyMutationInput, BackupLogUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type BackupLogScalarWhereInput = {
+    AND?: BackupLogScalarWhereInput | BackupLogScalarWhereInput[]
+    OR?: BackupLogScalarWhereInput[]
+    NOT?: BackupLogScalarWhereInput | BackupLogScalarWhereInput[]
+    id?: StringFilter<"BackupLog"> | string
+    name?: StringFilter<"BackupLog"> | string
+    fileUrl?: StringNullableFilter<"BackupLog"> | string | null
+    fileSize?: IntNullableFilter<"BackupLog"> | number | null
+    status?: EnumBackupStatusFilter<"BackupLog"> | $Enums.BackupStatus
+    errorMessage?: StringNullableFilter<"BackupLog"> | string | null
+    createdById?: StringNullableFilter<"BackupLog"> | string | null
+    createdAt?: DateTimeFilter<"BackupLog"> | Date | string
+    updatedAt?: DateTimeFilter<"BackupLog"> | Date | string
+  }
+
   export type UserCreateWithoutPermissionInput = {
     id?: string
     username: string
@@ -87203,6 +97068,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPermissionInput = {
@@ -87243,6 +97112,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPermissionInput = {
@@ -88892,6 +98765,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -88932,6 +98809,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -89068,6 +98949,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -89108,6 +98993,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CityCreateWithoutCountryInput = {
@@ -89434,6 +99323,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -89445,6 +99337,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -89483,6 +99376,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -89490,6 +99386,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -90256,6 +100153,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutStockMovementsInput = {
@@ -90296,6 +100197,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutStockMovementsInput = {
@@ -90474,6 +100379,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStockMovementsInput = {
@@ -90514,6 +100423,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTargetsInput = {
@@ -90554,6 +100467,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTargetsInput = {
@@ -90594,6 +100511,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTargetsInput = {
@@ -90674,6 +100595,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTargetsInput = {
@@ -90714,6 +100639,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TargetProductUpsertWithWhereUniqueWithoutTargetInput = {
@@ -90770,6 +100699,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutActivityTargetsInput = {
@@ -90810,6 +100743,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutActivityTargetsInput = {
@@ -90866,6 +100803,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivityTargetsInput = {
@@ -90906,6 +100847,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserTargetCreateWithoutProductsInput = {
@@ -91306,6 +101251,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -91317,6 +101265,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -91355,6 +101304,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -91362,6 +101314,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -91413,6 +101366,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCustomersInput = {
@@ -91453,6 +101410,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCustomersInput = {
@@ -91558,6 +101519,124 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LoyaltyTransactionCreateWithoutCustomerInput = {
+    id?: string
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    order?: OrderCreateNestedOneWithoutLoyaltyTransactionsInput
+  }
+
+  export type LoyaltyTransactionUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    orderId?: number | null
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyTransactionCreateOrConnectWithoutCustomerInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    create: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type LoyaltyTransactionCreateManyCustomerInputEnvelope = {
+    data: LoyaltyTransactionCreateManyCustomerInput | LoyaltyTransactionCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationCreateWithoutCustomerInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    userId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationCreateOrConnectWithoutCustomerInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type NotificationCreateManyCustomerInputEnvelope = {
+    data: NotificationCreateManyCustomerInput | NotificationCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TaskCreateWithoutCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedUser: UserCreateNestedOneWithoutAssignedTasksInput
+    wholesaleCustomer?: WholesaleCustomerCreateNestedOneWithoutTasksInput
+    createdBy?: UserCreateNestedOneWithoutCreatedTasksInput
+  }
+
+  export type TaskUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateOrConnectWithoutCustomerInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type TaskCreateManyCustomerInputEnvelope = {
+    data: TaskCreateManyCustomerInput | TaskCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrderUpsertWithWhereUniqueWithoutCustomerInput = {
     where: OrderWhereUniqueInput
     update: XOR<OrderUpdateWithoutCustomerInput, OrderUncheckedUpdateWithoutCustomerInput>
@@ -91638,6 +101717,69 @@ export namespace Prisma {
     data: XOR<CustomerPaymentUpdateManyMutationInput, CustomerPaymentUncheckedUpdateManyWithoutCustomerInput>
   }
 
+  export type LoyaltyTransactionUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    update: XOR<LoyaltyTransactionUpdateWithoutCustomerInput, LoyaltyTransactionUncheckedUpdateWithoutCustomerInput>
+    create: XOR<LoyaltyTransactionCreateWithoutCustomerInput, LoyaltyTransactionUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type LoyaltyTransactionUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    data: XOR<LoyaltyTransactionUpdateWithoutCustomerInput, LoyaltyTransactionUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type LoyaltyTransactionUpdateManyWithWhereWithoutCustomerInput = {
+    where: LoyaltyTransactionScalarWhereInput
+    data: XOR<LoyaltyTransactionUpdateManyMutationInput, LoyaltyTransactionUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type LoyaltyTransactionScalarWhereInput = {
+    AND?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
+    OR?: LoyaltyTransactionScalarWhereInput[]
+    NOT?: LoyaltyTransactionScalarWhereInput | LoyaltyTransactionScalarWhereInput[]
+    id?: StringFilter<"LoyaltyTransaction"> | string
+    customerId?: StringFilter<"LoyaltyTransaction"> | string
+    orderId?: IntNullableFilter<"LoyaltyTransaction"> | number | null
+    type?: EnumLoyaltyTransactionTypeFilter<"LoyaltyTransaction"> | $Enums.LoyaltyTransactionType
+    points?: IntFilter<"LoyaltyTransaction"> | number
+    value?: FloatFilter<"LoyaltyTransaction"> | number
+    notes?: StringNullableFilter<"LoyaltyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"LoyaltyTransaction"> | Date | string
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutCustomerInput, NotificationUncheckedUpdateWithoutCustomerInput>
+    create: XOR<NotificationCreateWithoutCustomerInput, NotificationUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutCustomerInput, NotificationUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutCustomerInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type TaskUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutCustomerInput, TaskUncheckedUpdateWithoutCustomerInput>
+    create: XOR<TaskCreateWithoutCustomerInput, TaskUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutCustomerInput, TaskUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutCustomerInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutCustomerInput>
+  }
+
   export type UserCreateWithoutAssignedWholesaleCustomersInput = {
     id?: string
     username: string
@@ -91676,6 +101818,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedWholesaleCustomersInput = {
@@ -91716,6 +101862,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedWholesaleCustomersInput = {
@@ -91836,6 +101986,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TaskCreateWithoutWholesaleCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedUser: UserCreateNestedOneWithoutAssignedTasksInput
+    customer?: CustomerCreateNestedOneWithoutTasksInput
+    createdBy?: UserCreateNestedOneWithoutCreatedTasksInput
+  }
+
+  export type TaskUncheckedCreateWithoutWholesaleCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateOrConnectWithoutWholesaleCustomerInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput>
+  }
+
+  export type TaskCreateManyWholesaleCustomerInputEnvelope = {
+    data: TaskCreateManyWholesaleCustomerInput | TaskCreateManyWholesaleCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutAssignedWholesaleCustomersInput = {
     update: XOR<UserUpdateWithoutAssignedWholesaleCustomersInput, UserUncheckedUpdateWithoutAssignedWholesaleCustomersInput>
     create: XOR<UserCreateWithoutAssignedWholesaleCustomersInput, UserUncheckedCreateWithoutAssignedWholesaleCustomersInput>
@@ -91885,6 +102081,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedWholesaleCustomersInput = {
@@ -91925,6 +102125,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WholesaleVisitUpsertWithWhereUniqueWithoutWholesaleCustomerInput = {
@@ -91959,6 +102163,22 @@ export namespace Prisma {
     data: XOR<WholesaleOrderUpdateManyMutationInput, WholesaleOrderUncheckedUpdateManyWithoutWholesaleCustomerInput>
   }
 
+  export type TaskUpsertWithWhereUniqueWithoutWholesaleCustomerInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutWholesaleCustomerInput, TaskUncheckedUpdateWithoutWholesaleCustomerInput>
+    create: XOR<TaskCreateWithoutWholesaleCustomerInput, TaskUncheckedCreateWithoutWholesaleCustomerInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutWholesaleCustomerInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutWholesaleCustomerInput, TaskUncheckedUpdateWithoutWholesaleCustomerInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutWholesaleCustomerInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutWholesaleCustomerInput>
+  }
+
   export type WholesaleCustomerCreateWithoutVisitsInput = {
     id?: string
     name: string
@@ -91987,6 +102207,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     assignedUser?: UserCreateNestedOneWithoutAssignedWholesaleCustomersInput
     orders?: WholesaleOrderCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerUncheckedCreateWithoutVisitsInput = {
@@ -92017,6 +102238,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: WholesaleOrderUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerCreateOrConnectWithoutVisitsInput = {
@@ -92062,6 +102284,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWholesaleVisitsInput = {
@@ -92102,6 +102328,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWholesaleVisitsInput = {
@@ -92148,6 +102378,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignedUser?: UserUpdateOneWithoutAssignedWholesaleCustomersNestedInput
     orders?: WholesaleOrderUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerUncheckedUpdateWithoutVisitsInput = {
@@ -92178,6 +102409,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: WholesaleOrderUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type UserUpsertWithoutWholesaleVisitsInput = {
@@ -92229,6 +102461,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWholesaleVisitsInput = {
@@ -92269,6 +102505,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProductCreateWithoutWholesalePricingTiersInput = {
@@ -92453,6 +102693,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     assignedUser?: UserCreateNestedOneWithoutAssignedWholesaleCustomersInput
     visits?: WholesaleVisitCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerUncheckedCreateWithoutOrdersInput = {
@@ -92483,6 +102724,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     visits?: WholesaleVisitUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutWholesaleCustomerInput
   }
 
   export type WholesaleCustomerCreateOrConnectWithoutOrdersInput = {
@@ -92528,6 +102770,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWholesaleOrdersInput = {
@@ -92568,6 +102814,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWholesaleOrdersInput = {
@@ -92675,6 +102925,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignedUser?: UserUpdateOneWithoutAssignedWholesaleCustomersNestedInput
     visits?: WholesaleVisitUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerUncheckedUpdateWithoutOrdersInput = {
@@ -92705,6 +102956,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visits?: WholesaleVisitUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type UserUpsertWithoutWholesaleOrdersInput = {
@@ -92756,6 +103008,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWholesaleOrdersInput = {
@@ -92796,6 +103052,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WarehouseUpsertWithoutWholesaleOrdersInput = {
@@ -93227,6 +103487,9 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutCustomersInput
     message?: MessageCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutWarrantiesInput = {
@@ -93250,6 +103513,9 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutCustomersInput
     message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutWarrantiesInput = {
@@ -93323,6 +103589,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -93334,6 +103603,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -93373,12 +103643,16 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -93499,6 +103773,9 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutCustomersNestedInput
     message?: MessageUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutWarrantiesInput = {
@@ -93522,6 +103799,9 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
     message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type WarehouseUpsertWithoutWarrantiesInput = {
@@ -93607,6 +103887,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93618,6 +103901,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -93657,12 +103941,16 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -93687,6 +103975,9 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutCustomersInput
     warranties?: WarrantyCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutMessageInput = {
@@ -93710,6 +104001,9 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutCustomersInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutMessageInput = {
@@ -93755,6 +104049,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutMessageInput = {
@@ -93795,6 +104093,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutMessageInput = {
@@ -93834,6 +104136,9 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutCustomersNestedInput
     warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutMessageInput = {
@@ -93857,6 +104162,9 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type UserUpsertWithoutMessageInput = {
@@ -93908,6 +104216,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMessageInput = {
@@ -93948,6 +104260,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CustomerCreateWithoutOrdersInput = {
@@ -93971,6 +104287,9 @@ export namespace Prisma {
     message?: MessageCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutOrdersInput = {
@@ -93994,6 +104313,9 @@ export namespace Prisma {
     message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutOrdersInput = {
@@ -94039,6 +104361,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -94079,6 +104405,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -94318,6 +104648,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LoyaltyTransactionCreateWithoutOrderInput = {
+    id?: string
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer: CustomerCreateNestedOneWithoutLoyaltyTransactionsInput
+  }
+
+  export type LoyaltyTransactionUncheckedCreateWithoutOrderInput = {
+    id?: string
+    customerId: string
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyTransactionCreateOrConnectWithoutOrderInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    create: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput>
+  }
+
+  export type LoyaltyTransactionCreateManyOrderInputEnvelope = {
+    data: LoyaltyTransactionCreateManyOrderInput | LoyaltyTransactionCreateManyOrderInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CommissionCreateWithoutOrderInput = {
     id?: string
     amount: number
@@ -94378,6 +104740,9 @@ export namespace Prisma {
     message?: MessageUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutOrdersInput = {
@@ -94401,6 +104766,9 @@ export namespace Prisma {
     message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type UserUpsertWithoutOrdersInput = {
@@ -94452,6 +104820,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -94492,6 +104864,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
@@ -94675,6 +105051,22 @@ export namespace Prisma {
     data: XOR<CustomerPaymentUpdateManyMutationInput, CustomerPaymentUncheckedUpdateManyWithoutOrderInput>
   }
 
+  export type LoyaltyTransactionUpsertWithWhereUniqueWithoutOrderInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    update: XOR<LoyaltyTransactionUpdateWithoutOrderInput, LoyaltyTransactionUncheckedUpdateWithoutOrderInput>
+    create: XOR<LoyaltyTransactionCreateWithoutOrderInput, LoyaltyTransactionUncheckedCreateWithoutOrderInput>
+  }
+
+  export type LoyaltyTransactionUpdateWithWhereUniqueWithoutOrderInput = {
+    where: LoyaltyTransactionWhereUniqueInput
+    data: XOR<LoyaltyTransactionUpdateWithoutOrderInput, LoyaltyTransactionUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type LoyaltyTransactionUpdateManyWithWhereWithoutOrderInput = {
+    where: LoyaltyTransactionScalarWhereInput
+    data: XOR<LoyaltyTransactionUpdateManyMutationInput, LoyaltyTransactionUncheckedUpdateManyWithoutOrderInput>
+  }
+
   export type CommissionUpsertWithWhereUniqueWithoutOrderInput = {
     where: CommissionWhereUniqueInput
     update: XOR<CommissionUpdateWithoutOrderInput, CommissionUncheckedUpdateWithoutOrderInput>
@@ -94742,6 +105134,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutExpensesInput = {
@@ -94782,6 +105178,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutExpensesInput = {
@@ -94838,6 +105238,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutExpensesInput = {
@@ -94878,6 +105282,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type OrderCreateWithoutShippingInput = {
@@ -94910,6 +105318,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -94921,6 +105332,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -94959,6 +105371,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -94966,6 +105381,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -95025,6 +105441,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -95036,6 +105455,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -95075,12 +105495,16 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -95263,6 +105687,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -95274,6 +105701,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -95313,12 +105741,16 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -95491,6 +105923,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSalaryAdjustmentsInput = {
@@ -95531,6 +105967,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSalaryAdjustmentsInput = {
@@ -95587,6 +106027,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSalaryAdjustmentsInput = {
@@ -95627,6 +106071,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutAffiliateLinksInput = {
@@ -95667,6 +106115,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAffiliateLinksInput = {
@@ -95707,6 +106159,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAffiliateLinksInput = {
@@ -95894,6 +106350,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAffiliateLinksInput = {
@@ -95934,6 +106394,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProductUpsertWithoutAffiliateLinksInput = {
@@ -96463,6 +106927,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -96475,6 +106942,7 @@ export namespace Prisma {
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUncheckedCreateWithoutCommissionsInput = {
@@ -96513,6 +106981,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -96520,6 +106991,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutCommissionsInput = {
@@ -96603,6 +107075,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -96615,6 +107090,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutCommissionsInput = {
@@ -96653,6 +107129,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -96660,6 +107139,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type UserCreateWithoutWalletTransfersInput = {
@@ -96700,6 +107180,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWalletTransfersInput = {
@@ -96740,6 +107224,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWalletTransfersInput = {
@@ -96796,6 +107284,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWalletTransfersInput = {
@@ -96836,6 +107328,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutCampaignsInput = {
@@ -96876,6 +107372,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCampaignsInput = {
@@ -96916,6 +107416,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCampaignsInput = {
@@ -96972,6 +107476,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCampaignsInput = {
@@ -97012,6 +107520,10 @@ export namespace Prisma {
     assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProductSupplierCreateWithoutSupplierInput = {
@@ -97401,6 +107913,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPurchaseInvoicesInput = {
@@ -97441,6 +107957,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPurchaseInvoicesInput = {
@@ -97564,6 +108084,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPurchaseInvoicesInput = {
@@ -97604,6 +108128,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PurchaseInvoiceItemUpsertWithWhereUniqueWithoutPurchaseInvoiceInput = {
@@ -97956,6 +108484,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -97967,6 +108498,7 @@ export namespace Prisma {
     warranties?: WarrantyCreateNestedManyWithoutOrderInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -98005,6 +108537,9 @@ export namespace Prisma {
     shippingId?: number | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -98012,6 +108547,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -98071,6 +108607,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -98082,6 +108621,7 @@ export namespace Prisma {
     warranties?: WarrantyCreateNestedManyWithoutOrderInput
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -98121,12 +108661,16 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -98242,6 +108786,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98253,6 +108800,7 @@ export namespace Prisma {
     warranties?: WarrantyUpdateManyWithoutOrderNestedInput
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -98292,12 +108840,16 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -98648,6 +109200,9 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutCustomersInput
     message?: MessageCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutPaymentsInput = {
@@ -98671,6 +109226,9 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutCustomersInput
     message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutPaymentsInput = {
@@ -98708,6 +109266,9 @@ export namespace Prisma {
     status?: string
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -98719,6 +109280,7 @@ export namespace Prisma {
     warranties?: WarrantyCreateNestedManyWithoutOrderInput
     coupon?: CouponCreateNestedOneWithoutOrdersInput
     returns?: OrderReturnCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutOrderInput
     commissions?: CommissionCreateNestedManyWithoutOrderInput
   }
 
@@ -98758,12 +109320,16 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
     returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutOrderInput
     commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -98810,6 +109376,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
     campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCustomerPaymentsInput = {
@@ -98850,6 +109420,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
     wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
     campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCustomerPaymentsInput = {
@@ -98889,6 +109463,9 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutCustomersNestedInput
     message?: MessageUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutPaymentsInput = {
@@ -98912,6 +109489,9 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
     message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type OrderUpsertWithoutPaymentsInput = {
@@ -98955,6 +109535,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98966,6 +109549,7 @@ export namespace Prisma {
     warranties?: WarrantyUpdateManyWithoutOrderNestedInput
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -99005,12 +109589,16 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -99063,6 +109651,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCustomerPaymentsInput = {
@@ -99103,6 +109695,1488 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type CustomerCreateWithoutLoyaltyTransactionsInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+    users?: UserCreateNestedManyWithoutCustomersInput
+    message?: MessageCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutLoyaltyTransactionsInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+    users?: UserUncheckedCreateNestedManyWithoutCustomersInput
+    message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutLoyaltyTransactionsInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutLoyaltyTransactionsInput, CustomerUncheckedCreateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type OrderCreateWithoutLoyaltyTransactionsInput = {
+    orderNumber: string
+    usdToTryRateAtOrder?: number | null
+    shippingPrice?: number | null
+    moneyTransferCommission?: number | null
+    otherCommissions?: number | null
+    carrierCollectionReceivedAt?: Date | string | null
+    carrierCollectionReceivedAmount?: number | null
+    carrierCollectionNotes?: string | null
+    totalAmount: number
+    discount?: number
+    finalAmount: number
+    paymentMethod: string
+    pay?: string | null
+    receiverName?: string | null
+    receiverPhone?: OrderCreatereceiverPhoneInput | string[]
+    country?: string | null
+    city?: string | null
+    invoiceImage?: string | null
+    municipality?: string | null
+    fullAddress?: string | null
+    deliveryNotes?: string | null
+    googleMapsLink?: string | null
+    amount?: string | null
+    amountBank?: string | null
+    deliveryMethod?: string | null
+    additionalNotes?: string | null
+    status?: string
+    paidAmount?: number
+    remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
+    manualCreatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer: CustomerCreateNestedOneWithoutOrdersInput
+    user?: UserCreateNestedOneWithoutOrdersInput
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    warehouse?: WarehouseCreateNestedOneWithoutOrdersInput
+    shipping?: shippingCreateNestedOneWithoutOrdersInput
+    warranties?: WarrantyCreateNestedManyWithoutOrderInput
+    coupon?: CouponCreateNestedOneWithoutOrdersInput
+    returns?: OrderReturnCreateNestedManyWithoutOrderInput
+    payments?: CustomerPaymentCreateNestedManyWithoutOrderInput
+    commissions?: CommissionCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutLoyaltyTransactionsInput = {
+    id?: number
+    orderNumber: string
+    usdToTryRateAtOrder?: number | null
+    shippingPrice?: number | null
+    moneyTransferCommission?: number | null
+    otherCommissions?: number | null
+    carrierCollectionReceivedAt?: Date | string | null
+    carrierCollectionReceivedAmount?: number | null
+    carrierCollectionNotes?: string | null
+    totalAmount: number
+    discount?: number
+    finalAmount: number
+    paymentMethod: string
+    pay?: string | null
+    receiverName?: string | null
+    receiverPhone?: OrderCreatereceiverPhoneInput | string[]
+    country?: string | null
+    city?: string | null
+    invoiceImage?: string | null
+    municipality?: string | null
+    fullAddress?: string | null
+    deliveryNotes?: string | null
+    googleMapsLink?: string | null
+    amount?: string | null
+    amountBank?: string | null
+    deliveryMethod?: string | null
+    additionalNotes?: string | null
+    status?: string
+    customerId: string
+    userId?: string | null
+    warehouseId?: number | null
+    shippingId?: number | null
+    couponId?: string | null
+    paidAmount?: number
+    remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
+    manualCreatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    warranties?: WarrantyUncheckedCreateNestedManyWithoutOrderInput
+    returns?: OrderReturnUncheckedCreateNestedManyWithoutOrderInput
+    payments?: CustomerPaymentUncheckedCreateNestedManyWithoutOrderInput
+    commissions?: CommissionUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutLoyaltyTransactionsInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutLoyaltyTransactionsInput, OrderUncheckedCreateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type CustomerUpsertWithoutLoyaltyTransactionsInput = {
+    update: XOR<CustomerUpdateWithoutLoyaltyTransactionsInput, CustomerUncheckedUpdateWithoutLoyaltyTransactionsInput>
+    create: XOR<CustomerCreateWithoutLoyaltyTransactionsInput, CustomerUncheckedCreateWithoutLoyaltyTransactionsInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutLoyaltyTransactionsInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutLoyaltyTransactionsInput, CustomerUncheckedUpdateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type CustomerUpdateWithoutLoyaltyTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+    users?: UserUpdateManyWithoutCustomersNestedInput
+    message?: MessageUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutLoyaltyTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+    users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type OrderUpsertWithoutLoyaltyTransactionsInput = {
+    update: XOR<OrderUpdateWithoutLoyaltyTransactionsInput, OrderUncheckedUpdateWithoutLoyaltyTransactionsInput>
+    create: XOR<OrderCreateWithoutLoyaltyTransactionsInput, OrderUncheckedCreateWithoutLoyaltyTransactionsInput>
+    where?: OrderWhereInput
+  }
+
+  export type OrderUpdateToOneWithWhereWithoutLoyaltyTransactionsInput = {
+    where?: OrderWhereInput
+    data: XOR<OrderUpdateWithoutLoyaltyTransactionsInput, OrderUncheckedUpdateWithoutLoyaltyTransactionsInput>
+  }
+
+  export type OrderUpdateWithoutLoyaltyTransactionsInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
+    shippingPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
+    carrierCollectionReceivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrierCollectionReceivedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    carrierCollectionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    finalAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    pay?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverName?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
+    municipality?: NullableStringFieldUpdateOperationsInput | string | null
+    fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableStringFieldUpdateOperationsInput | string | null
+    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidAmount?: FloatFieldUpdateOperationsInput | number
+    remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneRequiredWithoutOrdersNestedInput
+    user?: UserUpdateOneWithoutOrdersNestedInput
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    warehouse?: WarehouseUpdateOneWithoutOrdersNestedInput
+    shipping?: shippingUpdateOneWithoutOrdersNestedInput
+    warranties?: WarrantyUpdateManyWithoutOrderNestedInput
+    coupon?: CouponUpdateOneWithoutOrdersNestedInput
+    returns?: OrderReturnUpdateManyWithoutOrderNestedInput
+    payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    commissions?: CommissionUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutLoyaltyTransactionsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
+    shippingPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
+    carrierCollectionReceivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    carrierCollectionReceivedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    carrierCollectionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    finalAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    pay?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverName?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
+    municipality?: NullableStringFieldUpdateOperationsInput | string | null
+    fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableStringFieldUpdateOperationsInput | string | null
+    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    warehouseId?: NullableIntFieldUpdateOperationsInput | number | null
+    shippingId?: NullableIntFieldUpdateOperationsInput | number | null
+    couponId?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAmount?: FloatFieldUpdateOperationsInput | number
+    remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
+    returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
+    payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type UserCreateWithoutNotificationsInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    parent?: UserCreateNestedOneWithoutSubordinatesInput
+    subordinates?: UserCreateNestedManyWithoutParentInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
+    permission?: PermissionCreateNestedOneWithoutUsersInput
+    customers?: CustomerCreateNestedManyWithoutUsersInput
+    message?: MessageCreateNestedManyWithoutUserInput
+    targets?: UserTargetCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentCreateNestedManyWithoutUserInput
+    expenses?: ExpenseCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissionId?: string | null
+    parentId?: string | null
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
+    message?: MessageUncheckedCreateNestedManyWithoutUserInput
+    targets?: UserTargetUncheckedCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetUncheckedCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedCreateNestedManyWithoutUserInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementUncheckedCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentUncheckedCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type CustomerCreateWithoutNotificationsInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+    users?: UserCreateNestedManyWithoutCustomersInput
+    message?: MessageCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    tasks?: TaskCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutNotificationsInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+    users?: UserUncheckedCreateNestedManyWithoutCustomersInput
+    message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutNotificationsInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutNotificationsInput, CustomerUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    parent?: UserUpdateOneWithoutSubordinatesNestedInput
+    subordinates?: UserUpdateManyWithoutParentNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
+    permission?: PermissionUpdateOneWithoutUsersNestedInput
+    customers?: CustomerUpdateManyWithoutUsersNestedInput
+    message?: MessageUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUncheckedUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUncheckedUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUncheckedUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUncheckedUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type CustomerUpsertWithoutNotificationsInput = {
+    update: XOR<CustomerUpdateWithoutNotificationsInput, CustomerUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<CustomerCreateWithoutNotificationsInput, CustomerUncheckedCreateWithoutNotificationsInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutNotificationsInput, CustomerUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type CustomerUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+    users?: UserUpdateManyWithoutCustomersNestedInput
+    message?: MessageUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+    users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type UserCreateWithoutAssignedTasksInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    parent?: UserCreateNestedOneWithoutSubordinatesInput
+    subordinates?: UserCreateNestedManyWithoutParentInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
+    permission?: PermissionCreateNestedOneWithoutUsersInput
+    customers?: CustomerCreateNestedManyWithoutUsersInput
+    message?: MessageCreateNestedManyWithoutUserInput
+    targets?: UserTargetCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentCreateNestedManyWithoutUserInput
+    expenses?: ExpenseCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAssignedTasksInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissionId?: string | null
+    parentId?: string | null
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
+    message?: MessageUncheckedCreateNestedManyWithoutUserInput
+    targets?: UserTargetUncheckedCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetUncheckedCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedCreateNestedManyWithoutUserInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementUncheckedCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentUncheckedCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAssignedTasksInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+  }
+
+  export type CustomerCreateWithoutTasksInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+    users?: UserCreateNestedManyWithoutCustomersInput
+    message?: MessageCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutTasksInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: CustomerCreatephoneInput | string[]
+    countryCode?: string | null
+    phonestatus?: string | null
+    country?: string | null
+    gender?: string | null
+    age?: string | null
+    source?: string | null
+    city?: string | null
+    rating?: number | null
+    status?: string | null
+    loyaltyPoints?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+    users?: UserUncheckedCreateNestedManyWithoutCustomersInput
+    message?: MessageUncheckedCreateNestedManyWithoutCustomerInput
+    warranties?: WarrantyUncheckedCreateNestedManyWithoutCustomerInput
+    payments?: CustomerPaymentUncheckedCreateNestedManyWithoutCustomerInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedCreateNestedManyWithoutCustomerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutTasksInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutTasksInput, CustomerUncheckedCreateWithoutTasksInput>
+  }
+
+  export type WholesaleCustomerCreateWithoutTasksInput = {
+    id?: string
+    name: string
+    category?: $Enums.WholesaleCustomerCategory
+    contactName?: string | null
+    contactRole?: string | null
+    contactRoleOther?: string | null
+    phone?: WholesaleCustomerCreatephoneInput | string[]
+    email?: string | null
+    whatsappPhone?: string | null
+    country?: string | null
+    city?: string | null
+    area?: string | null
+    address?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    googleMapsLink?: string | null
+    notes?: string | null
+    preferredVisitAt?: Date | string | null
+    lastVisitAt?: Date | string | null
+    nextFollowUpAt?: Date | string | null
+    lastVisitResult?: $Enums.WholesaleVisitResult | null
+    visitStatus?: $Enums.WholesaleVisitStatus
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedUser?: UserCreateNestedOneWithoutAssignedWholesaleCustomersInput
+    visits?: WholesaleVisitCreateNestedManyWithoutWholesaleCustomerInput
+    orders?: WholesaleOrderCreateNestedManyWithoutWholesaleCustomerInput
+  }
+
+  export type WholesaleCustomerUncheckedCreateWithoutTasksInput = {
+    id?: string
+    name: string
+    category?: $Enums.WholesaleCustomerCategory
+    contactName?: string | null
+    contactRole?: string | null
+    contactRoleOther?: string | null
+    phone?: WholesaleCustomerCreatephoneInput | string[]
+    email?: string | null
+    whatsappPhone?: string | null
+    country?: string | null
+    city?: string | null
+    area?: string | null
+    address?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    googleMapsLink?: string | null
+    assignedUserId?: string | null
+    notes?: string | null
+    preferredVisitAt?: Date | string | null
+    lastVisitAt?: Date | string | null
+    nextFollowUpAt?: Date | string | null
+    lastVisitResult?: $Enums.WholesaleVisitResult | null
+    visitStatus?: $Enums.WholesaleVisitStatus
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    visits?: WholesaleVisitUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+    orders?: WholesaleOrderUncheckedCreateNestedManyWithoutWholesaleCustomerInput
+  }
+
+  export type WholesaleCustomerCreateOrConnectWithoutTasksInput = {
+    where: WholesaleCustomerWhereUniqueInput
+    create: XOR<WholesaleCustomerCreateWithoutTasksInput, WholesaleCustomerUncheckedCreateWithoutTasksInput>
+  }
+
+  export type UserCreateWithoutCreatedTasksInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    parent?: UserCreateNestedOneWithoutSubordinatesInput
+    subordinates?: UserCreateNestedManyWithoutParentInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
+    permission?: PermissionCreateNestedOneWithoutUsersInput
+    customers?: CustomerCreateNestedManyWithoutUsersInput
+    message?: MessageCreateNestedManyWithoutUserInput
+    targets?: UserTargetCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentCreateNestedManyWithoutUserInput
+    expenses?: ExpenseCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    backupLogs?: BackupLogCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatedTasksInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissionId?: string | null
+    parentId?: string | null
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
+    message?: MessageUncheckedCreateNestedManyWithoutUserInput
+    targets?: UserTargetUncheckedCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetUncheckedCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedCreateNestedManyWithoutUserInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementUncheckedCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentUncheckedCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    backupLogs?: BackupLogUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatedTasksInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+  }
+
+  export type UserUpsertWithoutAssignedTasksInput = {
+    update: XOR<UserUpdateWithoutAssignedTasksInput, UserUncheckedUpdateWithoutAssignedTasksInput>
+    create: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAssignedTasksInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAssignedTasksInput, UserUncheckedUpdateWithoutAssignedTasksInput>
+  }
+
+  export type UserUpdateWithoutAssignedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    parent?: UserUpdateOneWithoutSubordinatesNestedInput
+    subordinates?: UserUpdateManyWithoutParentNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
+    permission?: PermissionUpdateOneWithoutUsersNestedInput
+    customers?: CustomerUpdateManyWithoutUsersNestedInput
+    message?: MessageUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUncheckedUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUncheckedUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUncheckedUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUncheckedUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type CustomerUpsertWithoutTasksInput = {
+    update: XOR<CustomerUpdateWithoutTasksInput, CustomerUncheckedUpdateWithoutTasksInput>
+    create: XOR<CustomerCreateWithoutTasksInput, CustomerUncheckedCreateWithoutTasksInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutTasksInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutTasksInput, CustomerUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type CustomerUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+    users?: UserUpdateManyWithoutCustomersNestedInput
+    message?: MessageUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: CustomerUpdatephoneInput | string[]
+    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
+    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    age?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    loyaltyPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+    users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
+    warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
+    payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type WholesaleCustomerUpsertWithoutTasksInput = {
+    update: XOR<WholesaleCustomerUpdateWithoutTasksInput, WholesaleCustomerUncheckedUpdateWithoutTasksInput>
+    create: XOR<WholesaleCustomerCreateWithoutTasksInput, WholesaleCustomerUncheckedCreateWithoutTasksInput>
+    where?: WholesaleCustomerWhereInput
+  }
+
+  export type WholesaleCustomerUpdateToOneWithWhereWithoutTasksInput = {
+    where?: WholesaleCustomerWhereInput
+    data: XOR<WholesaleCustomerUpdateWithoutTasksInput, WholesaleCustomerUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type WholesaleCustomerUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumWholesaleCustomerCategoryFieldUpdateOperationsInput | $Enums.WholesaleCustomerCategory
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactRole?: NullableStringFieldUpdateOperationsInput | string | null
+    contactRoleOther?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: WholesaleCustomerUpdatephoneInput | string[]
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    area?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredVisitAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastVisitAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextFollowUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastVisitResult?: NullableEnumWholesaleVisitResultFieldUpdateOperationsInput | $Enums.WholesaleVisitResult | null
+    visitStatus?: EnumWholesaleVisitStatusFieldUpdateOperationsInput | $Enums.WholesaleVisitStatus
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedUser?: UserUpdateOneWithoutAssignedWholesaleCustomersNestedInput
+    visits?: WholesaleVisitUpdateManyWithoutWholesaleCustomerNestedInput
+    orders?: WholesaleOrderUpdateManyWithoutWholesaleCustomerNestedInput
+  }
+
+  export type WholesaleCustomerUncheckedUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumWholesaleCustomerCategoryFieldUpdateOperationsInput | $Enums.WholesaleCustomerCategory
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactRole?: NullableStringFieldUpdateOperationsInput | string | null
+    contactRoleOther?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: WholesaleCustomerUpdatephoneInput | string[]
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    area?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredVisitAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastVisitAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextFollowUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastVisitResult?: NullableEnumWholesaleVisitResultFieldUpdateOperationsInput | $Enums.WholesaleVisitResult | null
+    visitStatus?: EnumWholesaleVisitStatusFieldUpdateOperationsInput | $Enums.WholesaleVisitStatus
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    visits?: WholesaleVisitUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+    orders?: WholesaleOrderUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+  }
+
+  export type UserUpsertWithoutCreatedTasksInput = {
+    update: XOR<UserUpdateWithoutCreatedTasksInput, UserUncheckedUpdateWithoutCreatedTasksInput>
+    create: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatedTasksInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatedTasksInput, UserUncheckedUpdateWithoutCreatedTasksInput>
+  }
+
+  export type UserUpdateWithoutCreatedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    parent?: UserUpdateOneWithoutSubordinatesNestedInput
+    subordinates?: UserUpdateManyWithoutParentNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
+    permission?: PermissionUpdateOneWithoutUsersNestedInput
+    customers?: CustomerUpdateManyWithoutUsersNestedInput
+    message?: MessageUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUncheckedUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUncheckedUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUncheckedUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUncheckedUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutBackupLogsInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    parent?: UserCreateNestedOneWithoutSubordinatesInput
+    subordinates?: UserCreateNestedManyWithoutParentInput
+    orders?: OrderCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
+    permission?: PermissionCreateNestedOneWithoutUsersInput
+    customers?: CustomerCreateNestedManyWithoutUsersInput
+    message?: MessageCreateNestedManyWithoutUserInput
+    targets?: UserTargetCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentCreateNestedManyWithoutUserInput
+    expenses?: ExpenseCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderCreateNestedManyWithoutUserInput
+    campaigns?: CampaignCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutBackupLogsInput = {
+    id?: string
+    username: string
+    email: string
+    phone?: string | null
+    notes?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    accountType?: $Enums.AccountType
+    password: string
+    salesCommissionPercent?: number
+    wage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    permissionId?: string | null
+    parentId?: string | null
+    isAffiliate?: boolean
+    affiliateApproved?: boolean
+    affiliateCode?: string | null
+    affiliateRequestedAt?: Date | string | null
+    affiliateApprovedAt?: Date | string | null
+    subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
+    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
+    walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
+    message?: MessageUncheckedCreateNestedManyWithoutUserInput
+    targets?: UserTargetUncheckedCreateNestedManyWithoutUserInput
+    activityTargets?: UserActivityTargetUncheckedCreateNestedManyWithoutUserInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedCreateNestedManyWithoutUserInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
+    stockMovements?: StockMovementUncheckedCreateNestedManyWithoutUserInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedCreateNestedManyWithoutCreatedByInput
+    customerPayments?: CustomerPaymentUncheckedCreateNestedManyWithoutCreatedByInput
+    affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedCreateNestedManyWithoutAssignedUserInput
+    wholesaleVisits?: WholesaleVisitUncheckedCreateNestedManyWithoutUserInput
+    wholesaleOrders?: WholesaleOrderUncheckedCreateNestedManyWithoutUserInput
+    campaigns?: CampaignUncheckedCreateNestedManyWithoutCreatedByInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutBackupLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBackupLogsInput, UserUncheckedCreateWithoutBackupLogsInput>
+  }
+
+  export type UserUpsertWithoutBackupLogsInput = {
+    update: XOR<UserUpdateWithoutBackupLogsInput, UserUncheckedUpdateWithoutBackupLogsInput>
+    create: XOR<UserCreateWithoutBackupLogsInput, UserUncheckedCreateWithoutBackupLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBackupLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBackupLogsInput, UserUncheckedUpdateWithoutBackupLogsInput>
+  }
+
+  export type UserUpdateWithoutBackupLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    parent?: UserUpdateOneWithoutSubordinatesNestedInput
+    subordinates?: UserUpdateManyWithoutParentNestedInput
+    orders?: OrderUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
+    permission?: PermissionUpdateOneWithoutUsersNestedInput
+    customers?: CustomerUpdateManyWithoutUsersNestedInput
+    message?: MessageUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBackupLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+    password?: StringFieldUpdateOperationsInput | string
+    salesCommissionPercent?: FloatFieldUpdateOperationsInput | number
+    wage?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
+    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
+    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
+    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
+    walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
+    message?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    targets?: UserTargetUncheckedUpdateManyWithoutUserNestedInput
+    activityTargets?: UserActivityTargetUncheckedUpdateManyWithoutUserNestedInput
+    salaryAdjustments?: EmployeeSalaryAdjustmentUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
+    stockMovements?: StockMovementUncheckedUpdateManyWithoutUserNestedInput
+    purchaseInvoices?: PurchaseInvoiceUncheckedUpdateManyWithoutCreatedByNestedInput
+    customerPayments?: CustomerPaymentUncheckedUpdateManyWithoutCreatedByNestedInput
+    affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    assignedWholesaleCustomers?: WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserNestedInput
+    wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
+    wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
+    campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyParentInput = {
@@ -99162,6 +111236,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -99383,6 +111460,68 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type NotificationCreateManyUserInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    customerId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateManyAssignedUserInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateManyCreatedByInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BackupLogCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    fileUrl?: string | null
+    fileSize?: number | null
+    status?: $Enums.BackupStatus
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -99421,6 +111560,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutParentInput = {
@@ -99461,6 +111604,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutParentInput = {
@@ -99515,6 +111662,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -99526,6 +111676,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -99564,6 +111715,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -99571,6 +111725,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -99609,6 +111764,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -99671,6 +111829,9 @@ export namespace Prisma {
     message?: MessageUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutUsersInput = {
@@ -99694,6 +111855,9 @@ export namespace Prisma {
     message?: MessageUncheckedUpdateManyWithoutCustomerNestedInput
     warranties?: WarrantyUncheckedUpdateManyWithoutCustomerNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutCustomerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateManyWithoutUsersInput = {
@@ -100089,6 +112253,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visits?: WholesaleVisitUpdateManyWithoutWholesaleCustomerNestedInput
     orders?: WholesaleOrderUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerUncheckedUpdateWithoutAssignedUserInput = {
@@ -100119,6 +112284,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     visits?: WholesaleVisitUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
     orders?: WholesaleOrderUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutWholesaleCustomerNestedInput
   }
 
   export type WholesaleCustomerUncheckedUpdateManyWithoutAssignedUserInput = {
@@ -100338,6 +112504,192 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type NotificationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUpdateWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneWithoutTasksNestedInput
+    wholesaleCustomer?: WholesaleCustomerUpdateOneWithoutTasksNestedInput
+    createdBy?: UserUpdateOneWithoutCreatedTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedUser?: UserUpdateOneRequiredWithoutAssignedTasksNestedInput
+    customer?: CustomerUpdateOneWithoutTasksNestedInput
+    wholesaleCustomer?: WholesaleCustomerUpdateOneWithoutTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BackupLogUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: EnumBackupStatusFieldUpdateOperationsInput | $Enums.BackupStatus
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateManyPermissionInput = {
     id?: string
     username: string
@@ -100398,6 +112750,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPermissionInput = {
@@ -100438,6 +112794,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutPermissionInput = {
@@ -101435,6 +113795,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -101570,6 +113933,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101581,6 +113947,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -101619,6 +113986,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101626,6 +113996,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -101664,6 +114035,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -101948,6 +114322,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -101987,6 +114364,50 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type LoyaltyTransactionCreateManyCustomerInput = {
+    id?: string
+    orderId?: number | null
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationCreateManyCustomerInput = {
+    id?: string
+    type: $Enums.NotificationType
+    channel?: $Enums.NotificationChannel
+    userId?: string | null
+    title: string
+    message: string
+    entityType?: string | null
+    entityId?: string | null
+    readAt?: Date | string | null
+    sentAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateManyCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    wholesaleCustomerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type OrderUpdateWithoutCustomerInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -102017,6 +114438,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102028,6 +114452,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -102066,6 +114491,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102073,6 +114501,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -102111,6 +114540,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102154,6 +114586,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCustomersInput = {
@@ -102194,6 +114630,10 @@ export namespace Prisma {
     wholesaleVisits?: WholesaleVisitUncheckedUpdateManyWithoutUserNestedInput
     wholesaleOrders?: WholesaleOrderUncheckedUpdateManyWithoutUserNestedInput
     campaigns?: CampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    backupLogs?: BackupLogUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutCustomersInput = {
@@ -102321,6 +114761,138 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LoyaltyTransactionUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    order?: OrderUpdateOneWithoutLoyaltyTransactionsNestedInput
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedUser?: UserUpdateOneRequiredWithoutAssignedTasksNestedInput
+    wholesaleCustomer?: WholesaleCustomerUpdateOneWithoutTasksNestedInput
+    createdBy?: UserUpdateOneWithoutCreatedTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    wholesaleCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type WholesaleVisitCreateManyWholesaleCustomerInput = {
     id?: string
     userId?: string | null
@@ -102363,6 +114935,24 @@ export namespace Prisma {
     userId?: string | null
     warehouseId?: number | null
     manualCreatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateManyWholesaleCustomerInput = {
+    id?: string
+    title: string
+    type?: $Enums.TaskType
+    description?: string | null
+    assignedUserId: string
+    customerId?: string | null
+    dueDate: Date | string
+    completedAt?: Date | string | null
+    status?: $Enums.TaskStatus
+    latitude?: number | null
+    longitude?: number | null
+    resultNotes?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -102506,6 +115096,60 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TaskUpdateWithoutWholesaleCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedUser?: UserUpdateOneRequiredWithoutAssignedTasksNestedInput
+    customer?: CustomerUpdateOneWithoutTasksNestedInput
+    createdBy?: UserUpdateOneWithoutCreatedTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutWholesaleCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyWithoutWholesaleCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedUserId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    resultNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type WholesaleOrderItemCreateManyOrderInput = {
     id?: number
     quantity?: number
@@ -102578,6 +115222,17 @@ export namespace Prisma {
     paymentDate?: Date | string
     notes?: string | null
     createdById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LoyaltyTransactionCreateManyOrderInput = {
+    id?: string
+    customerId: string
+    type: $Enums.LoyaltyTransactionType
+    points: number
+    value?: number
+    notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -102729,6 +115384,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LoyaltyTransactionUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneRequiredWithoutLoyaltyTransactionsNestedInput
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LoyaltyTransactionUncheckedUpdateManyWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    type?: EnumLoyaltyTransactionTypeFieldUpdateOperationsInput | $Enums.LoyaltyTransactionType
+    points?: IntFieldUpdateOperationsInput | number
+    value?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CommissionUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
@@ -102791,6 +115479,9 @@ export namespace Prisma {
     couponId?: string | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -102826,6 +115517,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102837,6 +115531,7 @@ export namespace Prisma {
     coupon?: CouponUpdateOneWithoutOrdersNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -102875,6 +115570,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102882,6 +115580,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -102920,6 +115619,9 @@ export namespace Prisma {
     couponId?: NullableStringFieldUpdateOperationsInput | string | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103283,6 +115985,9 @@ export namespace Prisma {
     shippingId?: number | null
     paidAmount?: number
     remainingAmount?: number
+    trackingNumber?: string | null
+    trackingStatus?: $Enums.TrackingStatus
+    trackingUrl?: string | null
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -103318,6 +116023,9 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103329,6 +116037,7 @@ export namespace Prisma {
     warranties?: WarrantyUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUpdateManyWithoutOrderNestedInput
   }
 
@@ -103367,6 +116076,9 @@ export namespace Prisma {
     shippingId?: NullableIntFieldUpdateOperationsInput | number | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103374,6 +116086,7 @@ export namespace Prisma {
     warranties?: WarrantyUncheckedUpdateManyWithoutOrderNestedInput
     returns?: OrderReturnUncheckedUpdateManyWithoutOrderNestedInput
     payments?: CustomerPaymentUncheckedUpdateManyWithoutOrderNestedInput
+    loyaltyTransactions?: LoyaltyTransactionUncheckedUpdateManyWithoutOrderNestedInput
     commissions?: CommissionUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -103412,6 +116125,9 @@ export namespace Prisma {
     shippingId?: NullableIntFieldUpdateOperationsInput | number | null
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
+    trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    trackingStatus?: EnumTrackingStatusFieldUpdateOperationsInput | $Enums.TrackingStatus
+    trackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

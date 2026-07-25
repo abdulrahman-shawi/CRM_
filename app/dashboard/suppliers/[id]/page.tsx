@@ -22,7 +22,7 @@ export default function SupplierDetailsPage() {
     const [costPrice, setCostPrice] = React.useState('');
     const [sku, setSku] = React.useState('');
 
-    const getData = async () => {
+    const getData = React.useCallback(async () => {
         const [supRes, proRes, spRes] = await Promise.all([
             getSupplier(supplierId),
             getProductCatalog(),
@@ -31,7 +31,7 @@ export default function SupplierDetailsPage() {
         if (supRes.success) setSupplier(supRes.data);
         if (proRes.success) setProducts(proRes.data || []);
         if (spRes.success) setSupplierProducts(spRes.data || []);
-    };
+    }, [supplierId]);
 
     React.useEffect(() => { if (supplierId) getData(); }, [supplierId, getData]);
 

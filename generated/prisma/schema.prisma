@@ -163,6 +163,62 @@ enum PaymentType {
 }
 
 // ============================================
+// Phase 2+3 Enums: Loyalty, Notifications, Tasks, Backup
+// ============================================
+
+enum LoyaltyTransactionType {
+  EARN
+  REDEEM
+  BONUS
+  EXPIRE
+}
+
+enum NotificationType {
+  LOW_STOCK
+  ORDER_STATUS_CHANGE
+  WHOLESALE_FOLLOW_UP
+  TASK_REMINDER
+  SYSTEM
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  WHATSAPP
+}
+
+enum TaskType {
+  VISIT
+  CALL
+  FOLLOW_UP
+  DELIVERY
+  MEETING
+  OTHER
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TrackingStatus {
+  PENDING
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  RETURNED
+}
+
+enum BackupStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// ============================================
 // User (Existing + New columns)
 // ============================================
 
@@ -213,6 +269,10 @@ model User {
   wholesaleVisits            WholesaleVisit[]    @relation("WholesaleVisitUser")
   wholesaleOrders            WholesaleOrder[]    @relation("WholesaleOrderUser")
   campaigns                  Campaign[]
+  notifications              Notification[]
+  assignedTasks              Task[]
+  createdTasks               Task[]              @relation("TaskCreatedBy")
+  backupLogs                 BackupLog[]
 }
 
 // ============================================
@@ -314,6 +374,19 @@ model Permission {
   viewCustomerPayments   Boolean @default(false)
   addCustomerPayments    Boolean @default(false)
   deleteCustomerPayments Boolean @default(false)
+
+  // ─── Phase 2+3 Permissions ───
+  viewLoyalty       Boolean @default(false)
+  editLoyalty       Boolean @default(false)
+  viewNotifications Boolean @default(false)
+  viewTasks         Boolean @default(false)
+  addTasks          Boolean @default(false)
+  editTasks         Boolean @default(false)
+  deleteTasks       Boolean @default(false)
+  viewTracking      Boolean @default(false)
+  editTracking      Boolean @default(false)
+  viewBackups       Boolean @default(false)
+  manageBackups     Boolean @default(false)
 
   users User[]
 }
@@ -636,27 +709,30 @@ model ProductImage {
 // ============================================
 
 model Customer {
-  id            String            @id @default(uuid())
-  name          String            @unique
-  email         String?
-  phone         String[]
-  countryCode   String?
-  phonestatus   String?
-  country       String?
-  gender        String?
-  age           String?
-  source        String?
-  city          String?
-  rating        Int?
-  status        String?
-  loyaltyPoints Int               @default(0)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  orders        Order[]
-  users         User[]            @relation("CustomerToUser")
-  message       Message[]
-  warranties    Warranty[]
-  payments      CustomerPayment[]
+  id                  String               @id @default(uuid())
+  name                String               @unique
+  email               String?
+  phone               String[]
+  countryCode         String?
+  phonestatus         String?
+  country             String?
+  gender              String?
+  age                 String?
+  source              String?
+  city                String?
+  rating              Int?
+  status              String?
+  loyaltyPoints       Int                  @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  orders              Order[]
+  users               User[]               @relation("CustomerToUser")
+  message             Message[]
+  warranties          Warranty[]
+  payments            CustomerPayment[]
+  loyaltyTransactions LoyaltyTransaction[]
+  notifications       Notification[]
+  tasks               Task[]
 }
 
 model WholesaleCustomer {
@@ -690,6 +766,7 @@ model WholesaleCustomer {
   assignedUser User?            @relation("WholesaleCustomerAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
   visits       WholesaleVisit[]
   orders       WholesaleOrder[]
+  tasks        Task[]
 
   @@index([assignedUserId])
   @@index([city, area])
@@ -845,17 +922,17 @@ model Message {
 // ============================================
 
 model Order {
-  id                              Int       @id @default(autoincrement())
-  orderNumber                     String    @unique
+  id                              Int            @id @default(autoincrement())
+  orderNumber                     String         @unique
   usdToTryRateAtOrder             Float?
   shippingPrice                   Float?
-  moneyTransferCommission         Float?    @default(0)
-  otherCommissions                Float?    @default(0)
+  moneyTransferCommission         Float?         @default(0)
+  otherCommissions                Float?         @default(0)
   carrierCollectionReceivedAt     DateTime?
   carrierCollectionReceivedAmount Float?
   carrierCollectionNotes          String?
   totalAmount                     Float
-  discount                        Float     @default(0)
+  discount                        Float          @default(0)
   finalAmount                     Float
   paymentMethod                   String
   pay                             String?
@@ -872,28 +949,32 @@ model Order {
   amountBank                      String?
   deliveryMethod                  String?
   additionalNotes                 String?
-  status                          String    @default("PENDING")
+  status                          String         @default("PENDING")
   customerId                      String
   userId                          String?
   warehouseId                     Int?
   shippingId                      Int?
   couponId                        String?
-  paidAmount                      Float     @default(0)
-  remainingAmount                 Float     @default(0)
+  paidAmount                      Float          @default(0)
+  remainingAmount                 Float          @default(0)
+  trackingNumber                  String?
+  trackingStatus                  TrackingStatus @default(PENDING)
+  trackingUrl                     String?
   manualCreatedAt                 DateTime?
-  createdAt                       DateTime  @default(now())
-  updatedAt                       DateTime  @updatedAt
+  createdAt                       DateTime       @default(now())
+  updatedAt                       DateTime       @updatedAt
 
   // ─── Existing Relations ───
-  customer   Customer          @relation(fields: [customerId], references: [id])
-  user       User?             @relation(fields: [userId], references: [id])
-  items      OrderItem[]
-  warehouse  Warehouse?        @relation(fields: [warehouseId], references: [id])
-  shipping   shipping?         @relation(fields: [shippingId], references: [id])
-  warranties Warranty[]
-  coupon     Coupon?           @relation(fields: [couponId], references: [id])
-  returns    OrderReturn[]
-  payments   CustomerPayment[]
+  customer            Customer             @relation(fields: [customerId], references: [id])
+  user                User?                @relation(fields: [userId], references: [id])
+  items               OrderItem[]
+  warehouse           Warehouse?           @relation(fields: [warehouseId], references: [id])
+  shipping            shipping?            @relation(fields: [shippingId], references: [id])
+  warranties          Warranty[]
+  coupon              Coupon?              @relation(fields: [couponId], references: [id])
+  returns             OrderReturn[]
+  payments            CustomerPayment[]
+  loyaltyTransactions LoyaltyTransaction[]
 
   // ─── NEW: E-commerce Affiliate Relations ───
   commissions Commission[]
@@ -1429,4 +1510,132 @@ model CustomerPayment {
   @@index([orderId])
   @@index([paymentDate])
   @@map("customer_payments")
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  Phase 2+3: Loyalty, Notifications, Tasks, Tracking, Backup  ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ============================================
+// LoyaltyRule
+// ============================================
+
+model LoyaltyRule {
+  id                String   @id @default(uuid())
+  name              String?
+  pointsPerCurrency Float    @default(1)
+  redeemValue       Float    @default(0)
+  minPointsToRedeem Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("loyalty_rules")
+}
+
+// ============================================
+// LoyaltyTransaction
+// ============================================
+
+model LoyaltyTransaction {
+  id         String                 @id @default(uuid())
+  customerId String
+  orderId    Int?
+  type       LoyaltyTransactionType
+  points     Int
+  value      Float                  @default(0)
+  notes      String?
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  order    Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([orderId])
+  @@index([createdAt])
+  @@map("loyalty_transactions")
+}
+
+// ============================================
+// Notification
+// ============================================
+
+model Notification {
+  id         String              @id @default(uuid())
+  type       NotificationType
+  channel    NotificationChannel @default(IN_APP)
+  userId     String?
+  customerId String?
+  title      String
+  message    String
+  entityType String?
+  entityId   String?
+  readAt     DateTime?
+  sentAt     DateTime?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt])
+  @@index([customerId, readAt])
+  @@index([type, createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// Task (Rep tasks/appointments)
+// ============================================
+
+model Task {
+  id                  String     @id @default(uuid())
+  title               String
+  type                TaskType   @default(VISIT)
+  description         String?
+  assignedUserId      String
+  customerId          String?
+  wholesaleCustomerId String?
+  dueDate             DateTime
+  completedAt         DateTime?
+  status              TaskStatus @default(PENDING)
+  latitude            Float?
+  longitude           Float?
+  resultNotes         String?
+  createdById         String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  assignedUser      User               @relation(fields: [assignedUserId], references: [id], onDelete: Cascade)
+  customer          Customer?          @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  wholesaleCustomer WholesaleCustomer? @relation(fields: [wholesaleCustomerId], references: [id], onDelete: SetNull)
+  createdBy         User?              @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([assignedUserId, status])
+  @@index([dueDate])
+  @@index([customerId])
+  @@index([wholesaleCustomerId])
+  @@map("tasks")
+}
+
+// ============================================
+// BackupLog
+// ============================================
+
+model BackupLog {
+  id           String       @id @default(uuid())
+  name         String
+  fileUrl      String?
+  fileSize     Int?
+  status       BackupStatus @default(PENDING)
+  errorMessage String?
+  createdById  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  createdBy User? @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@map("backup_logs")
 }

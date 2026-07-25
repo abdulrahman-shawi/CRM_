@@ -1639,14 +1639,72 @@ export async function GetEmployeeCustomerReport(userId: string, periodOrFilter: 
 
 export async function GetTopSellingUsersByPermission(userId: string, dateFilter?: OrderDateFilter) {
   try {
+    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
     });
 
     if (!user) return { success: false, error: "User not found", data: [] };
-    void dateFilter;
-    return { success: true, data: [] };
+
+    const canViewAll = isAdmin(user) || Boolean(user?.permission?.viewOrders) || Boolean(user?.permission?.viewAnalytics);
+    if (!canViewAll) return { success: true, data: [] };
+
+    const createdAtFilter = buildOrderDateWhere(dateFilter);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+
+    const whereClause = {
+      ...(canViewAll ? {} : { userId: userId }),
+      ...(createdAtFilter ? {
+        OR: [
+          { manualCreatedAt: createdAtFilter },
+          { AND: [{ manualCreatedAt: null }, { createdAt: createdAtFilter }] }
+        ]
+      } : {}),
+      ...(warehouseScope ? warehouseScope : {}),
+    };
+
+    const orders = await prisma.order.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        userId: true,
+        finalAmount: true,
+        usdToTryRateAtOrder: true,
+        status: true,
+        warehouse: { select: { location: true } },
+        items: { select: { quantity: true, price: true, discount: true } },
+        user: { select: { id: true, username: true } },
+      },
+    });
+
+    const userMap = new Map<string, { userId: string; name: string; totalOrders: number; totalSalesAmount: number }>();
+
+    for (const order of orders) {
+      if (!order.userId) continue;
+      const amountUSD = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
+      const existing = userMap.get(order.userId) || {
+        userId: order.userId,
+        name: order.user?.username || "مستخدم غير معروف",
+        totalOrders: 0,
+        totalSalesAmount: 0,
+      };
+      existing.totalOrders += 1;
+      existing.totalSalesAmount += amountUSD;
+      userMap.set(order.userId, existing);
+    }
+
+    const data = Array.from(userMap.values())
+      .map((row) => ({
+        userId: row.userId,
+        name: row.name,
+        totalOrders: row.totalOrders,
+        totalSalesAmount: Number(row.totalSalesAmount.toFixed(2)),
+      }))
+      .sort((a, b) => b.totalSalesAmount - a.totalSalesAmount)
+      .slice(0, 10);
+
+    return { success: true, data };
   } catch (error) {
     console.error("Error in GetTopSellingUsersByPermission:", error);
     return { success: false, data: [] };

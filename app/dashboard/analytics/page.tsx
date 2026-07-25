@@ -37,6 +37,7 @@ import { MapPin, Package, ReceiptText, TrendingDown, TrendingUp, Trophy, Truck, 
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 type OrderFilterPreset = "this_month" | "last_month" | "custom";
 type EmployeeReportPeriod = "day" | "week" | "month" | "custom";
@@ -80,6 +81,31 @@ const formatUSD = (value: number | undefined | null) =>
   });
 
 const formatPercent = (value: number | undefined | null) => `${Number(value || 0).toFixed(2)}%`;
+
+const downloadCSV = (filename: string, rows: Record<string, string | number>[]) => {
+  if (rows.length === 0) return;
+  const headers = Object.keys(rows[0]);
+  const csv = [
+    headers.join(","),
+    ...rows.map((row) =>
+      headers
+        .map((h) => {
+          const cell = String(row[h] ?? "").replace(/"/g, '""');
+          return `"${cell}"`;
+        })
+        .join(",")
+    ),
+  ].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
 
 const normalizeToUSD = (amount: number, warehouseLocation?: string | null, exchangeRate: number = 0) => {
   const numericAmount = Number(amount || 0);
@@ -1052,6 +1078,32 @@ const AnalyticPage: React.FC = () => {
             title="ربحية المنتج التقديرية وتحويله"
             description="يعرض صافي المبيعات بعد خصومات الطلب والمصاريف الموزعة، مع Funnel الزيارات إلى الطلبات ومعدل الإلغاء والضمان لكل منتج."
             icon={<Package className="text-indigo-500" />}
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  downloadCSV(
+                    "product-insights.csv",
+                    productInsights.data?.map((product: any) => ({
+                      المنتج: product.name,
+                      "الوحدات المباعة": product.revenueUnits,
+                      "صافي المبيعات ($)": product.totalRevenueUSD,
+                      "المساهمة التقديرية ($)": product.estimatedContributionUSD,
+                      "هامش المساهمة (%)": product.contributionMargin,
+                      "متوسط الوحدة ($)": product.averageRevenuePerUnitUSD,
+                      المشاهدات: product.views,
+                      الزوار: product.uniqueVisitors,
+                      "نسبة التحويل (%)": product.viewsToOrdersRate,
+                      "نسبة الإلغاء (%)": product.cancellationRate,
+                      "وحدات الضمان": product.warrantyQuantity,
+                    })) || []
+                  )
+                }
+              >
+                <Download size={14} className="ml-1" /> Excel
+              </Button>
+            }
           />
           <DynamicCard.Content>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">

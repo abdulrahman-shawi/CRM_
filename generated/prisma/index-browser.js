@@ -217,7 +217,18 @@ exports.Prisma.PermissionScalarFieldEnum = {
   deleteReturns: 'deleteReturns',
   viewCustomerPayments: 'viewCustomerPayments',
   addCustomerPayments: 'addCustomerPayments',
-  deleteCustomerPayments: 'deleteCustomerPayments'
+  deleteCustomerPayments: 'deleteCustomerPayments',
+  viewLoyalty: 'viewLoyalty',
+  editLoyalty: 'editLoyalty',
+  viewNotifications: 'viewNotifications',
+  viewTasks: 'viewTasks',
+  addTasks: 'addTasks',
+  editTasks: 'editTasks',
+  deleteTasks: 'deleteTasks',
+  viewTracking: 'viewTracking',
+  editTracking: 'editTracking',
+  viewBackups: 'viewBackups',
+  manageBackups: 'manageBackups'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -561,6 +572,9 @@ exports.Prisma.OrderScalarFieldEnum = {
   couponId: 'couponId',
   paidAmount: 'paidAmount',
   remainingAmount: 'remainingAmount',
+  trackingNumber: 'trackingNumber',
+  trackingStatus: 'trackingStatus',
+  trackingUrl: 'trackingUrl',
   manualCreatedAt: 'manualCreatedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -858,6 +872,76 @@ exports.Prisma.CustomerPaymentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LoyaltyRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  pointsPerCurrency: 'pointsPerCurrency',
+  redeemValue: 'redeemValue',
+  minPointsToRedeem: 'minPointsToRedeem',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LoyaltyTransactionScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  orderId: 'orderId',
+  type: 'type',
+  points: 'points',
+  value: 'value',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  channel: 'channel',
+  userId: 'userId',
+  customerId: 'customerId',
+  title: 'title',
+  message: 'message',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  readAt: 'readAt',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  type: 'type',
+  description: 'description',
+  assignedUserId: 'assignedUserId',
+  customerId: 'customerId',
+  wholesaleCustomerId: 'wholesaleCustomerId',
+  dueDate: 'dueDate',
+  completedAt: 'completedAt',
+  status: 'status',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  resultNotes: 'resultNotes',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BackupLogScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -942,6 +1026,15 @@ exports.WarrantyType = exports.$Enums.WarrantyType = {
   DAMAGED: 'DAMAGED'
 };
 
+exports.TrackingStatus = exports.$Enums.TrackingStatus = {
+  PENDING: 'PENDING',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  RETURNED: 'RETURNED'
+};
+
 exports.ExpenseType = exports.$Enums.ExpenseType = {
   DAILY: 'DAILY',
   STAFF_SALARY: 'STAFF_SALARY',
@@ -1020,6 +1113,49 @@ exports.PaymentType = exports.$Enums.PaymentType = {
   OTHER: 'OTHER'
 };
 
+exports.LoyaltyTransactionType = exports.$Enums.LoyaltyTransactionType = {
+  EARN: 'EARN',
+  REDEEM: 'REDEEM',
+  BONUS: 'BONUS',
+  EXPIRE: 'EXPIRE'
+};
+
+exports.NotificationType = exports.$Enums.NotificationType = {
+  LOW_STOCK: 'LOW_STOCK',
+  ORDER_STATUS_CHANGE: 'ORDER_STATUS_CHANGE',
+  WHOLESALE_FOLLOW_UP: 'WHOLESALE_FOLLOW_UP',
+  TASK_REMINDER: 'TASK_REMINDER',
+  SYSTEM: 'SYSTEM'
+};
+
+exports.NotificationChannel = exports.$Enums.NotificationChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP'
+};
+
+exports.TaskType = exports.$Enums.TaskType = {
+  VISIT: 'VISIT',
+  CALL: 'CALL',
+  FOLLOW_UP: 'FOLLOW_UP',
+  DELIVERY: 'DELIVERY',
+  MEETING: 'MEETING',
+  OTHER: 'OTHER'
+};
+
+exports.TaskStatus = exports.$Enums.TaskStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.BackupStatus = exports.$Enums.BackupStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Permission: 'Permission',
@@ -1067,7 +1203,12 @@ exports.Prisma.ModelName = {
   Coupon: 'Coupon',
   OrderReturn: 'OrderReturn',
   OrderReturnItem: 'OrderReturnItem',
-  CustomerPayment: 'CustomerPayment'
+  CustomerPayment: 'CustomerPayment',
+  LoyaltyRule: 'LoyaltyRule',
+  LoyaltyTransaction: 'LoyaltyTransaction',
+  Notification: 'Notification',
+  Task: 'Task',
+  BackupLog: 'BackupLog'
 };
 
 /**
