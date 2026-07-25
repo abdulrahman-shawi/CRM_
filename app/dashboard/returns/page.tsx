@@ -3,6 +3,7 @@ import { DataTable } from '@/components/shared/DataTable';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useAuth } from '@/context/AuthContext';
 import { hasPermission } from '@/lib/utils';
 import { createOrderReturn, deleteOrderReturn, getOrderReturns } from '@/server/return';
@@ -89,10 +90,10 @@ export default function ReturnsPage() {
         row.order?.customer?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
-    const filteredOrders = orders.filter((o) =>
-        o.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
-        o.customer?.name?.toLowerCase().includes(search.toLowerCase())
-    );
+    const orderOptions = orders.map((o) => ({
+        value: o.id,
+        label: `${o.orderNumber} - ${o.customer?.name || 'عميل'} (${o.status})`,
+    }));
 
     return (
         <div className="p-4">
@@ -122,10 +123,12 @@ export default function ReturnsPage() {
             />
             <AppModal title="إنشاء مرتجع" isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
                 <div className="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
-                    <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" onChange={(e) => { setSelectedOrder(orders.find((o) => o.id === Number(e.target.value)) || null); setSelectedItems({}); }}>
-                        <option value="">اختر طلباً</option>
-                        {filteredOrders.map((o) => <option key={o.id} value={o.id}>{o.orderNumber} - {o.customer?.name}</option>)}
-                    </select>
+                    <SearchableSelect
+                        options={orderOptions}
+                        value={selectedOrder?.id}
+                        onChange={(value) => { setSelectedOrder(orders.find((o) => o.id === Number(value)) || null); setSelectedItems({}); }}
+                        placeholder="ابحث برقم الطلب أو اسم العميل..."
+                    />
 
                     {selectedOrder && (
                         <div className="border border-slate-100 dark:border-slate-800 rounded-xl p-3 space-y-2">

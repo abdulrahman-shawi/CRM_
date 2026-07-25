@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -34,11 +35,11 @@ export default function RepReturnsPage() {
     const canCreate = user && (isAdmin(user) || hasPermission(user, 'addReturns') || hasPermission(user, 'viewWholesaleCustomers'));
 
     const load = React.useCallback(async () => {
-        const [retRes, ordRes] = await Promise.all([getRepReturns(search), getRepOrders(search)]);
+        const [retRes, allOrdRes] = await Promise.all([getRepReturns(search), getRepOrders()]);
         if (retRes.success) setReturns(retRes.data || []);
         else toast.error((retRes as any).error || 'تعذر تحميل المرتجعات');
-        if (ordRes.success) setOrders(ordRes.data || []);
-        else toast.error((ordRes as any).error || 'تعذر تحميل الطلبات');
+        if (allOrdRes.success) setOrders(allOrdRes.data || []);
+        else toast.error((allOrdRes as any).error || 'تعذر تحميل الطلبات');
     }, [search]);
 
     React.useEffect(() => {
@@ -81,10 +82,15 @@ export default function RepReturnsPage() {
         { header: 'التاريخ', accessor: (row: any) => new Date(row.createdAt).toLocaleDateString('ar-EG') },
     ];
 
-    const filteredOrders = orders.filter((o) =>
-        o.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
-        o.customer?.name?.toLowerCase().includes(search.toLowerCase())
+    const filteredReturns = returns.filter((row) =>
+        row.order?.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
+        row.order?.customer?.name?.toLowerCase().includes(search.toLowerCase())
     );
+
+    const orderOptions = orders.map((o) => ({
+        value: o.id,
+        label: `${o.orderNumber} - ${o.customer?.name || 'عميل'} (${o.status})`,
+    }));
 
     if (!canView) return <div className="p-4 text-red-500">غير مصرح لك بعرض هذه الصفحة</div>;
 
@@ -108,9 +114,9 @@ export default function RepReturnsPage() {
                 </div>
             </div>
             <DataTable
-                data={returns}
+                data={filteredReturns}
                 columns={columns}
-                totalCount={returns.length}
+                totalCount={filteredReturns.length}
                 pageSize={10}
                 currentPage={1}
                 onPageChange={() => {}}
@@ -118,23 +124,12 @@ export default function RepReturnsPage() {
 
             <AppModal title="إنشاء مرتجع" isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
                 <div className="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
-                    <FormInput
-                        label="بحث بالطلب/العميل"
-                        className="text-gray-800 dark:text-white"
-                        placeholder="ابدأ الكتابة للبحث..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                    <SearchableSelect
+                        options={orderOptions}
+                        value={selectedOrder?.id}
+                        onChange={(value) => { setSelectedOrder(orders.find((o) => o.id === Number(value)) || null); setSelectedItems({}); }}
+                        placeholder="ابحث برقم الطلب أو اسم العميل..."
                     />
-                    <select
-                        className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm"
-                        onChange={(e) => { setSelectedOrder(orders.find((o) => o.id === Number(e.target.value)) || null); setSelectedItems({}); }}
-                        value={selectedOrder?.id || ''}
-                    >
-                        <option value="">اختر طلباً</option>
-                        {filteredOrders.map((o) => (
-                            <option key={o.id} value={o.id}>{o.orderNumber} - {o.customer?.name} ({o.status})</option>
-                        ))}
-                    </select>
 
                     {selectedOrder && (
                         <div className="border border-slate-100 dark:border-slate-800 rounded-xl p-3 space-y-2">
