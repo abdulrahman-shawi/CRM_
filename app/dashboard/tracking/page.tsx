@@ -3,7 +3,8 @@
 import * as React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { hasPermission } from '@/lib/utils';
-import { getOrdersWithTracking, updateOrderTracking, getTrackingStatusLabel } from '@/server/tracking';
+import { getOrdersWithTracking, updateOrderTracking } from '@/server/tracking';
+import { getTrackingStatusLabel } from '@/lib/utils';
 import { DataTable } from '@/components/shared/DataTable';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';

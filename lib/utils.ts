@@ -37,3 +37,16 @@ export function formatPhoneForDisplay(phone: string) {
 
   return digits.match(/.{1,3}/g)?.join(" ") ?? digits;
 }
+
+const TRACKING_STATUS_LABELS: Record<string, string> = {
+  PENDING: 'معلق',
+  PICKED_UP: 'تم الالتقاط',
+  IN_TRANSIT: 'في الطريق',
+  OUT_FOR_DELIVERY: 'خرج للتوصيل',
+  DELIVERED: 'تم التسليم',
+  RETURNED: 'مرتجع',
+};
+
+export function getTrackingStatusLabel(status?: string | null) {
+  return TRACKING_STATUS_LABELS[status || ''] || status || 'غير محدد';
+}

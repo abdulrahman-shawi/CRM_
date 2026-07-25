@@ -172,7 +172,3 @@ export async function syncTrackingStatusFromOrderStatus(orderId: number, status:
         return { success: false, error: 'تعذر مزامنة حالة التتبع' };
     }
 }
-
-export function getTrackingStatusLabel(status?: string | null) {
-    return TRACKING_STATUS_LABELS[status || ''] || status || 'غير محدد';
-}
