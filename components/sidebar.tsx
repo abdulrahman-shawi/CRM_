@@ -38,7 +38,6 @@ import {
   Bell,
   MapPin,
   ClipboardList,
-  Database,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -266,8 +265,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       items: [
         (user && hasAnyPermission(user, ["viewNotifications"])) &&
         { icon: Bell, label: "الإشعارات", href: "/dashboard/notifications" },
-        (user && hasAnyPermission(user, ["viewBackups", "manageBackups"])) &&
-        { icon: Database, label: "النسخ الاحتياطي", href: "/dashboard/backups" },
         {
           icon: Settings2,
           label: "الإعدادات",

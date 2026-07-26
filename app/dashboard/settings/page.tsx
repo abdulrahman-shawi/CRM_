@@ -3,8 +3,10 @@
 import * as React from "react";
 import toast from "react-hot-toast";
 import { getGeneralSettings, upsertGeneralSettings } from "@/server/general-settings";
+import { getBackups, createBackup, restoreBackup, deleteBackup, restoreUploadedBackup } from "@/server/backup";
 import { Button } from "@/components/ui/button";
 import { MultiFileUpload, FileItem } from "@/components/ui/ImageUpload";
+import { Download, RotateCcw, Trash2, Loader2 } from "lucide-react";
 
 type FormState = {
   siteName: string;
@@ -209,6 +211,8 @@ export default function GeneralSettingsPage() {
   const [saving, setSaving] = React.useState(false);
   const [exporting, setExporting] = React.useState(false);
   const [importing, setImporting] = React.useState(false);
+  const [backups, setBackups] = React.useState<any[]>([]);
+  const [backupBusy, setBackupBusy] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   const handleChange = (key: keyof FormState, value: string) => {
@@ -255,7 +259,13 @@ export default function GeneralSettingsPage() {
 
   React.useEffect(() => {
     loadData();
+    loadBackups();
   }, [loadData]);
+
+  const loadBackups = async () => {
+    const res = await getBackups();
+    if (res.success) setBackups(res.data || []);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -336,6 +346,55 @@ export default function GeneralSettingsPage() {
     }
   };
 
+  const handleCreateBackup = async (format: "custom" | "plain") => {
+    setBackupBusy(true);
+    const loadingToast = toast.loading("جاري إنشاء النسخة الاحتياطية...");
+
+    try {
+      const res = await createBackup(undefined, format);
+      if (!res.success) {
+        throw new Error(res.error || "فشل إنشاء النسخة الاحتياطية");
+      }
+
+      toast.success("تم إنشاء النسخة الاحتياطية بنجاح");
+      await loadBackups();
+      if (res.filePath) window.open(res.filePath, "_blank");
+    } catch (error: any) {
+      toast.error(error?.message || "فشل إنشاء النسخة الاحتياطية");
+    } finally {
+      toast.dismiss(loadingToast);
+      setBackupBusy(false);
+    }
+  };
+
+  const handleRestoreServerBackup = async (backup: any) => {
+    if (!window.confirm("هل أنت متأكد من استعادة هذه النسخة؟ ستُستبدل البيانات الحالية.")) return;
+    setBackupBusy(true);
+    const loadingToast = toast.loading("جاري استعادة النسخة...");
+
+    try {
+      const res = await restoreBackup(backup.id);
+      if (!res.success) throw new Error(res.error);
+      toast.success("تمت الاستعادة بنجاح");
+    } catch (error: any) {
+      toast.error(error?.message || "فشل الاستعادة");
+    } finally {
+      toast.dismiss(loadingToast);
+      setBackupBusy(false);
+    }
+  };
+
+  const handleDeleteServerBackup = async (backup: any) => {
+    if (!window.confirm("هل أنت متأكد من حذف النسخة؟")) return;
+    const res = await deleteBackup(backup.id);
+    if (res.success) {
+      toast.success("تم حذف النسخة");
+      await loadBackups();
+    } else {
+      toast.error(res.error || "تعذر الحذف");
+    }
+  };
+
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
@@ -351,21 +410,33 @@ export default function GeneralSettingsPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("replace", "true");
 
-      const response = await fetch("/api/settings/data-transfer", {
-        method: "POST",
-        body: formData,
-      });
+      const fileName = file.name.toLowerCase();
 
-      const result = await response.json();
+      if (fileName.endsWith(".sql") || fileName.endsWith(".dump") || fileName.endsWith(".backup")) {
+        // استعادة نسخة قاعدة بيانات (SQL أو DUMP)
+        if (!window.confirm("سيتم استبدال البيانات الحالية بمحتوى النسخة. هل تريد المتابعة؟")) return;
+        const res = await restoreUploadedBackup(formData);
+        if (!res.success) throw new Error(res.error);
+      } else {
+        // استيراد ملف JSON
+        formData.append("replace", "true");
 
-      if (!response.ok || !result?.success) {
-        throw new Error(result?.error || "فشل في استيراد البيانات");
+        const response = await fetch("/api/settings/data-transfer", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result?.success) {
+          throw new Error(result?.error || "فشل في استيراد البيانات");
+        }
       }
 
       toast.success("تم استيراد البيانات بنجاح");
       await loadData();
+      await loadBackups();
     } catch (error) {
       toast.error("تعذر استيراد البيانات");
     } finally {
@@ -607,27 +678,92 @@ export default function GeneralSettingsPage() {
 
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4">
         <h2 className="text-lg font-bold text-gray-800 dark:text-white">النسخ الاحتياطي والبيانات</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-300">يمكنك تصدير نسخة احتياطية كاملة أو استيراد ملف بيانات سابق.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-300">
+          يمكنك تصدير نسخة احتياطية كاملة أو استيراد ملف بيانات سابق. الصيغ المدعومة: JSON، SQL، DUMP.
+        </p>
 
         <input
           ref={fileInputRef}
           type="file"
-          accept="application/json"
+          accept=".json,.sql,.dump,.backup,application/json,application/sql"
           className="hidden"
           onChange={handleImportFile}
         />
 
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={() => handleExport("backup")} disabled={exporting || importing || loading}>
-            {exporting ? "جاري التصدير..." : "أخذ نسخة احتياطية"}
-          </Button>
-          <Button onClick={() => handleExport("export")} disabled={exporting || importing || loading}>
-            {exporting ? "جاري التصدير..." : "تصدير البيانات"}
-          </Button>
-          <Button onClick={handleImportClick} disabled={exporting || importing || loading}>
-            {importing ? "جاري الاستيراد..." : "استيراد البيانات"}
-          </Button>
+        <div className="space-y-3">
+          <div>
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">تصدير البيانات</p>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => handleExport("backup")} disabled={exporting || importing || backupBusy || loading}>
+                {exporting ? "جاري التصدير..." : "تصدير JSON"}
+              </Button>
+              <Button onClick={() => handleCreateBackup("plain")} disabled={exporting || importing || backupBusy || loading}>
+                {backupBusy ? "جاري الإنشاء..." : "نسخة SQL"}
+              </Button>
+              <Button onClick={() => handleCreateBackup("custom")} disabled={exporting || importing || backupBusy || loading}>
+                {backupBusy ? "جاري الإنشاء..." : "نسخة DUMP"}
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">استيراد / استعادة</p>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={handleImportClick} disabled={exporting || importing || backupBusy || loading}>
+                {importing ? "جاري الاستيراد..." : "رفع ملف (JSON / SQL / DUMP)"}
+              </Button>
+            </div>
+          </div>
         </div>
+
+        {backups.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">النسخ المحفوظة على الخادم</p>
+            <div className="divide-y divide-slate-200 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+              {backups.map((backup) => (
+                <div
+                  key={backup.id}
+                  className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white dark:bg-slate-950/40"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{backup.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {new Date(backup.createdAt).toLocaleString("ar-EG")} — {backup.fileSize} —{" "}
+                      {backup.status === "SUCCESS" ? "نجاح" : backup.status === "FAILED" ? "فشل" : "قيد التنفيذ"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      title="تحميل"
+                      onClick={() => window.open(backup.fileUrl, "_blank")}
+                      className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    >
+                      <Download size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      title="استعادة"
+                      disabled={backupBusy}
+                      onClick={() => handleRestoreServerBackup(backup)}
+                      className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 disabled:opacity-50"
+                    >
+                      {backupBusy ? <Loader2 size={16} className="animate-spin" /> : <RotateCcw size={16} />}
+                    </button>
+                    <button
+                      type="button"
+                      title="حذف"
+                      onClick={() => handleDeleteServerBackup(backup)}
+                      className="p-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -84,7 +84,9 @@ export async function getBackups() {
     }
 }
 
-export async function createBackup(name?: string) {
+export type BackupFormat = 'custom' | 'plain';
+
+export async function createBackup(name?: string, format: BackupFormat = 'custom') {
     const user = await getCurrentSessionUser();
     if (!user) return { success: false, error: 'غير مصرح' };
     requirePermission(user, 'manageBackups');
@@ -94,7 +96,8 @@ export async function createBackup(name?: string) {
 
     ensureBackupDir();
     const timestamp = Date.now();
-    const fileName = `backup_${timestamp}.dump`;
+    const extension = format === 'plain' ? 'sql' : 'dump';
+    const fileName = `backup_${timestamp}.${extension}`;
     const filePath = path.join(BACKUP_DIR, fileName);
     const displayName = name || `نسخة احتياطية ${new Date().toLocaleString('ar-EG')}`;
 
@@ -109,14 +112,14 @@ export async function createBackup(name?: string) {
 
     try {
         const pgDumpPath = '"C:/Program Files/PostgreSQL/18/bin/pg_dump"';
-        const command = `${pgDumpPath} --dbname="${dbUrl}" --format=custom --file="${filePath}"`;
+        const command = `${pgDumpPath} --dbname="${dbUrl}" --format=${format} --file="${filePath}"`;
         await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
         const stats = fs.statSync(filePath);
         await prisma.backupLog.update({
             where: { id: log.id },
             data: { status: 'SUCCESS', fileSize: stats.size },
         });
-        revalidatePath('/dashboard/backups');
+        revalidatePath('/dashboard/settings');
         return { success: true, data: log, filePath: `/uploads/backups/${fileName}` };
     } catch (error: any) {
         console.error('createBackup error:', error);
@@ -152,14 +155,65 @@ export async function restoreBackup(backupId: string) {
         const filePath = path.join(BACKUP_DIR, fileName);
         if (!fs.existsSync(filePath)) return { success: false, error: 'ملف النسخة الاحتياطية غير موجود' };
 
-        const pgRestorePath = '"C:/Program Files/PostgreSQL/18/bin/pg_restore"';
-        const command = `${pgRestorePath} --dbname="${dbUrl}" --clean --if-exists --format=custom "${filePath}"`;
-        await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
+        if (fileName.endsWith('.sql')) {
+            const psqlPath = '"C:/Program Files/PostgreSQL/18/bin/psql"';
+            const command = `${psqlPath} --dbname="${dbUrl}" --file="${filePath}"`;
+            await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
+        } else {
+            const pgRestorePath = '"C:/Program Files/PostgreSQL/18/bin/pg_restore"';
+            const command = `${pgRestorePath} --dbname="${dbUrl}" --clean --if-exists --format=custom "${filePath}"`;
+            await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
+        }
 
-        revalidatePath('/dashboard/backups');
+        revalidatePath('/dashboard/settings');
         return { success: true };
     } catch (error: any) {
         console.error('restoreBackup error:', error);
+        return { success: false, error: error?.message || 'فشل استعادة النسخة الاحتياطية' };
+    }
+}
+
+export async function restoreUploadedBackup(formData: FormData) {
+    const user = await getCurrentSessionUser();
+    if (!user) return { success: false, error: 'غير مصرح' };
+    requirePermission(user, 'manageBackups');
+
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) return { success: false, error: 'لم يتم العثور على رابط قاعدة البيانات' };
+
+    try {
+        const file = formData.get('file');
+        if (!(file instanceof File)) return { success: false, error: 'ملف الاستعادة غير صالح' };
+
+        const originalName = file.name || 'backup';
+        const isSql = originalName.toLowerCase().endsWith('.sql');
+        const isDump = originalName.toLowerCase().endsWith('.dump') || originalName.toLowerCase().endsWith('.backup');
+        if (!isSql && !isDump) {
+            return { success: false, error: 'صيغة الملف غير مدعومة، الصيغ المدعومة: .sql أو .dump' };
+        }
+
+        ensureBackupDir();
+        const extension = isSql ? 'sql' : 'dump';
+        const fileName = `restore_${Date.now()}.${extension}`;
+        const filePath = path.join(BACKUP_DIR, fileName);
+        const buffer = Buffer.from(await file.arrayBuffer());
+        fs.writeFileSync(filePath, buffer);
+
+        if (isSql) {
+            const psqlPath = '"C:/Program Files/PostgreSQL/18/bin/psql"';
+            const command = `${psqlPath} --dbname="${dbUrl}" --file="${filePath}"`;
+            await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
+        } else {
+            const pgRestorePath = '"C:/Program Files/PostgreSQL/18/bin/pg_restore"';
+            const command = `${pgRestorePath} --dbname="${dbUrl}" --clean --if-exists --format=custom "${filePath}"`;
+            await execAsync(command, { env: { ...process.env, PGPASSWORD: '' } });
+        }
+
+        fs.unlink(filePath, () => {});
+        revalidatePath('/dashboard/settings');
+        return { success: true };
+    } catch (error: any) {
+        console.error('restoreUploadedBackup error:', error);
         return { success: false, error: error?.message || 'فشل استعادة النسخة الاحتياطية' };
     }
 }
@@ -184,7 +238,7 @@ export async function deleteBackup(backupId: string) {
             fs.unlinkSync(filePath);
         }
         await prisma.backupLog.delete({ where: { id: backupId } }).catch(() => {});
-        revalidatePath('/dashboard/backups');
+        revalidatePath('/dashboard/settings');
         return { success: true };
     } catch (error: any) {
         console.error('deleteBackup error:', error);
