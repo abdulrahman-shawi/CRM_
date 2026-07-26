@@ -1,113 +1,136 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-
-type ExportPayload = {
-  version: string;
-  exportedAt: string;
-  data: {
-    countries: any[];
-    permissions: any[];
-    users: any[];
-    categories: any[];
-    products: any[];
-    productImages: any[];
-    warehouses: any[];
-    productStocks: any[];
-    stockMovements: any[];
-    userTargets: any[];
-    targetProducts: any[];
-    trackingCompanies: any[];
-    generalSettings: any[];
-    customers: any[];
-    customerUserLinks: Array<{ customerId: string; userId: string }>;
-    messages: any[];
-    orders: any[];
-    orderItems: any[];
-  };
-};
+import { Prisma } from "@/generated/prisma";
+import { decrypt } from "@/lib/auth";
+import { hasPermission, isAdmin } from "@/lib/utils";
 
 const toArray = (value: unknown): any[] => (Array.isArray(value) ? value : []);
 
-async function resetSerialSequence(tx: any, tableName: string) {
-  await tx.$executeRawUnsafe(
-    `SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), COALESCE((SELECT MAX(id) FROM "${tableName}"), 1), true);`
+// أسماء الجداول كما تظهر في عميل Prisma (أول حرف صغير)
+const delegateName = (modelName: string) =>
+  modelName.charAt(0).toLowerCase() + modelName.slice(1);
+
+const dmmfModels: any[] = (Prisma as any).dmmf?.datamodel?.models ?? [];
+
+// ترتيب الجداول هرمياً: الجداول المُشار إليها (الآباء) قبل الجداول المرتبطة بها (الأبناء)
+// حتى ينجح الحذف العكسي والإدخال بالترتيب دون كسر العلاقات Foreign Key.
+// يُبنى الترتيب من علاقات قاعدة البيانات الفعلية (information_schema) وليس من افتراضات.
+async function getSortedModels(): Promise<any[]> {
+  const tableOf = (model: any) => model.dbName ?? model.name;
+  const modelsByTable = new Map<string, any>(
+    dmmfModels.map((model) => [tableOf(model), model])
   );
+
+  const fkRows = await prisma.$queryRawUnsafe<Array<{ child: string; parent: string }>>(
+    `SELECT kcu.table_name AS child, ccu.table_name AS parent
+     FROM information_schema.table_constraints tc
+     JOIN information_schema.key_column_usage kcu
+       ON tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema
+     JOIN information_schema.constraint_column_usage ccu
+       ON tc.constraint_name = ccu.constraint_name AND tc.table_schema = ccu.constraint_schema
+     WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = 'public'`
+  );
+
+  // خريطة الاعتماديات: الجدول الابن يعتمد على الجدول الأب
+  const deps = new Map<string, Set<string>>();
+  for (const row of fkRows) {
+    if (!modelsByTable.has(row.child) || !modelsByTable.has(row.parent)) continue;
+    if (row.child === row.parent) continue; // علاقة ذاتية (مثل User.parentId)
+    if (!deps.has(row.child)) deps.set(row.child, new Set());
+    deps.get(row.child)!.add(row.parent);
+  }
+
+  const sorted: any[] = [];
+  const visited = new Set<string>();
+  const visiting = new Set<string>();
+
+  const visit = (model: any) => {
+    const table = tableOf(model);
+    if (visited.has(table) || visiting.has(table)) return;
+    visiting.add(table);
+    for (const dep of Array.from(deps.get(table) ?? new Set<string>())) {
+      const depModel = modelsByTable.get(dep);
+      if (depModel) visit(depModel);
+    }
+    visiting.delete(table);
+    visited.add(table);
+    sorted.push(model);
+  };
+
+  for (const model of dmmfModels) visit(model);
+  return sorted;
+}
+
+// توافق مع ملفات التصدير القديمة التي كانت تستخدم أسماء جمع
+const LEGACY_KEY_BY_DELEGATE: Record<string, string> = {
+  country: "countries",
+  permission: "permissions",
+  user: "users",
+  category: "categories",
+  product: "products",
+  productImage: "productImages",
+  warehouse: "warehouses",
+  productStock: "productStocks",
+  stockMovement: "stockMovements",
+  userTarget: "userTargets",
+  targetProduct: "targetProducts",
+  trakingCompany: "trackingCompanies",
+  generalSetting: "generalSettings",
+  customer: "customers",
+  message: "messages",
+  order: "orders",
+  orderItem: "orderItems",
+};
+
+async function getSessionUser() {
+  try {
+    const session = cookies().get("skynova")?.value;
+    if (!session) return null;
+    const decoded = await decrypt(session);
+    if (!decoded?.userId) return null;
+    return await prisma.user.findUnique({
+      where: { id: String(decoded.userId) },
+      include: { permission: true },
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function requireBackupAccess() {
+  const user = await getSessionUser();
+  if (!user || (!isAdmin(user) && !hasPermission(user, "manageBackups"))) return null;
+  return user;
 }
 
 export async function GET() {
   try {
-    const [
-      countries,
-      permissions,
-      users,
-      categories,
-      products,
-      productImages,
-      warehouses,
-      productStocks,
-      stockMovements,
-      userTargets,
-      targetProducts,
-      trackingCompanies,
-      generalSettings,
-      customers,
-      messages,
-      orders,
-      orderItems,
-      customerLinkRows,
-    ] = await Promise.all([
-      prisma.country.findMany(),
-      prisma.permission.findMany(),
-      prisma.user.findMany(),
-      prisma.category.findMany(),
-      prisma.product.findMany(),
-      prisma.productImage.findMany(),
-      prisma.warehouse.findMany(),
-      prisma.productStock.findMany(),
-      prisma.stockMovement.findMany(),
-      prisma.userTarget.findMany(),
-      prisma.targetProduct.findMany(),
-      prisma.trakingCompany.findMany(),
-      prisma.generalSetting.findMany(),
-      prisma.customer.findMany(),
-      prisma.message.findMany(),
-      prisma.order.findMany(),
-      prisma.orderItem.findMany(),
-      prisma.customer.findMany({
-        select: {
-          id: true,
-          users: { select: { id: true } },
-        },
-      }),
-    ]);
+    const user = await requireBackupAccess();
+    if (!user) {
+      return NextResponse.json({ success: false, error: "غير مصرح لك بتصدير البيانات" }, { status: 403 });
+    }
 
-    const customerUserLinks = customerLinkRows.flatMap((row) =>
+    const sortedModels = await getSortedModels();
+    const data: Record<string, any[]> = {};
+
+    for (const model of sortedModels) {
+      const delegate = delegateName(model.name);
+      data[delegate] = await (prisma as any)[delegate].findMany();
+    }
+
+    // روابط many-to-many الضمنية بين العملاء والمستخدمين
+    const customerLinkRows = await prisma.customer.findMany({
+      select: { id: true, users: { select: { id: true } } },
+    });
+    data.customerUserLinks = customerLinkRows.flatMap((row) =>
       row.users.map((user) => ({ customerId: row.id, userId: user.id }))
     );
 
-    const payload: ExportPayload = {
-      version: "1.0.0",
+    const payload = {
+      version: "2.0.0",
       exportedAt: new Date().toISOString(),
-      data: {
-        countries,
-        permissions,
-        users,
-        categories,
-        products,
-        productImages,
-        warehouses,
-        productStocks,
-        stockMovements,
-        userTargets,
-        targetProducts,
-        trackingCompanies,
-        generalSettings,
-        customers,
-        customerUserLinks,
-        messages,
-        orders,
-        orderItems,
-      },
+      data,
     };
 
     return NextResponse.json(payload);
@@ -119,6 +142,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await requireBackupAccess();
+    if (!user) {
+      return NextResponse.json({ success: false, error: "غير مصرح لك باستيراد البيانات" }, { status: 403 });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file");
     const replaceExisting = String(formData.get("replace") ?? "true") !== "false";
@@ -131,96 +159,57 @@ export async function POST(req: NextRequest) {
     const parsed = JSON.parse(text);
     const data = parsed?.data ?? parsed;
 
-    await prisma.$transaction(async (tx) => {
-      if (replaceExisting) {
-        await tx.orderItem.deleteMany();
-        await tx.order.deleteMany();
-        await tx.message.deleteMany();
-        await tx.customer.deleteMany();
+    const sortedModels = await getSortedModels();
 
-        await tx.targetProduct.deleteMany();
-        await tx.userTarget.deleteMany();
+    await prisma.$transaction(
+      async (tx) => {
+        // حذف البيانات الحالية بترتيب عكسي (الأبناء قبل الآباء)
+        if (replaceExisting) {
+          for (const model of [...sortedModels].reverse()) {
+            await (tx as any)[delegateName(model.name)].deleteMany();
+          }
+        }
 
-        await tx.stockMovement.deleteMany();
-        await tx.productImage.deleteMany();
-        await tx.productStock.deleteMany();
+        // إدخال البيانات بترتيب هرمي (الآباء قبل الأبناء)
+        for (const model of sortedModels) {
+          const delegate = delegateName(model.name);
+          const legacyKey = LEGACY_KEY_BY_DELEGATE[delegate];
+          const rows = toArray(data?.[delegate] ?? (legacyKey ? data?.[legacyKey] : undefined));
+          if (!rows.length) continue;
 
-        await tx.product.deleteMany();
-        await tx.category.deleteMany();
+          // المستخدمون المرتبطون بمدير (parentId) يجب أن يأتي المدير أولاً
+          if (delegate === "user") {
+            rows.sort((a, b) => (a?.parentId ? 1 : 0) - (b?.parentId ? 1 : 0));
+          }
 
-        await tx.trakingCompany.deleteMany();
-        await tx.generalSetting.deleteMany();
-        await tx.warehouse.deleteMany();
-        await tx.country.deleteMany();
+          await (tx as any)[delegate].createMany({ data: rows, skipDuplicates: true });
+        }
 
-        await tx.user.deleteMany();
-        await tx.permission.deleteMany();
-      }
+        // إعادة ربط العملاء بالمستخدمين (علاقة many-to-many ضمنية)
+        const customerUserLinks = toArray(data?.customerUserLinks);
+        for (const link of customerUserLinks) {
+          const customerId = String(link?.customerId || "");
+          const userId = String(link?.userId || "");
+          if (!customerId || !userId) continue;
 
-      const countries = toArray(data?.countries);
-      const permissions = toArray(data?.permissions);
-      const users = toArray(data?.users);
-      const categories = toArray(data?.categories);
-      const products = toArray(data?.products);
-      const productImages = toArray(data?.productImages);
-      const warehouses = toArray(data?.warehouses);
-      const productStocks = toArray(data?.productStocks);
-      const stockMovements = toArray(data?.stockMovements);
-      const userTargets = toArray(data?.userTargets);
-      const targetProducts = toArray(data?.targetProducts);
-      const trackingCompanies = toArray(data?.trackingCompanies);
-      const generalSettings = toArray(data?.generalSettings);
-      const customers = toArray(data?.customers);
-      const customerUserLinks = toArray(data?.customerUserLinks);
-      const messages = toArray(data?.messages);
-      const orders = toArray(data?.orders);
-      const orderItems = toArray(data?.orderItems);
+          await tx.customer
+            .update({
+              where: { id: customerId },
+              data: { users: { connect: { id: userId } } },
+            })
+            .catch(() => {});
+        }
 
-      if (countries.length) await tx.country.createMany({ data: countries, skipDuplicates: true });
-      if (permissions.length) await tx.permission.createMany({ data: permissions, skipDuplicates: true });
-      if (users.length) await tx.user.createMany({ data: users, skipDuplicates: true });
-
-      if (categories.length) await tx.category.createMany({ data: categories, skipDuplicates: true });
-      if (products.length) await tx.product.createMany({ data: products, skipDuplicates: true });
-      if (productImages.length) await tx.productImage.createMany({ data: productImages, skipDuplicates: true });
-
-      if (warehouses.length) await tx.warehouse.createMany({ data: warehouses, skipDuplicates: true });
-      if (productStocks.length) await tx.productStock.createMany({ data: productStocks, skipDuplicates: true });
-      if (stockMovements.length) await tx.stockMovement.createMany({ data: stockMovements, skipDuplicates: true });
-
-      if (userTargets.length) await tx.userTarget.createMany({ data: userTargets, skipDuplicates: true });
-      if (targetProducts.length) await tx.targetProduct.createMany({ data: targetProducts, skipDuplicates: true });
-
-      if (trackingCompanies.length) await tx.trakingCompany.createMany({ data: trackingCompanies, skipDuplicates: true });
-      if (generalSettings.length) await tx.generalSetting.createMany({ data: generalSettings, skipDuplicates: true });
-
-      if (customers.length) await tx.customer.createMany({ data: customers, skipDuplicates: true });
-
-      for (const link of customerUserLinks) {
-        const customerId = String(link?.customerId || "");
-        const userId = String(link?.userId || "");
-        if (!customerId || !userId) continue;
-
-        await tx.customer.update({
-          where: { id: customerId },
-          data: { users: { connect: { id: userId } } },
-        });
-      }
-
-      if (messages.length) await tx.message.createMany({ data: messages, skipDuplicates: true });
-      if (orders.length) await tx.order.createMany({ data: orders, skipDuplicates: true });
-      if (orderItems.length) await tx.orderItem.createMany({ data: orderItems, skipDuplicates: true });
-
-      await resetSerialSequence(tx, "Country");
-      await resetSerialSequence(tx, "Category");
-      await resetSerialSequence(tx, "Product");
-      await resetSerialSequence(tx, "ProductImage");
-      await resetSerialSequence(tx, "Warehouse");
-      await resetSerialSequence(tx, "ProductStock");
-      await resetSerialSequence(tx, "Order");
-      await resetSerialSequence(tx, "OrderItem");
-      await resetSerialSequence(tx, "GeneralSetting");
-    });
+        // إعادة ضبط عدادات الترقيم التلقائي لكل الجداول
+        for (const model of sortedModels) {
+          const tableName = model.dbName ?? model.name;
+          await tx.$executeRawUnsafe(
+            `SELECT setval(pg_get_serial_sequence('"${tableName}"', 'id'), COALESCE((SELECT MAX(id) FROM "${tableName}"), 1), true) WHERE pg_get_serial_sequence('"${tableName}"', 'id') IS NOT NULL;`
+          );
+        }
+      },
+      { timeout: 120000, maxWait: 20000 }
+    );
 
     return NextResponse.json({ success: true, message: "تم استيراد البيانات بنجاح" });
   } catch (error) {
