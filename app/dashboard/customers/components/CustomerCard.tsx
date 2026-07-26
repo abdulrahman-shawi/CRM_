@@ -170,6 +170,13 @@ ${customer.status === "فرصة جديدة"
                 })}
               </span>
             </div>
+
+            <div className="flex flex-col border-r border-slate-200 dark:border-slate-700 pr-3">
+              <span className="text-[9px] text-slate-400 font-bold leading-none mb-1">نقاط الولاء</span>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black leading-none">
+                {Number(customer.loyaltyPoints || 0)} نقطة
+              </span>
+            </div>
           </div>
         </div>
 

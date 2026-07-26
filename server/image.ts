@@ -3,6 +3,7 @@
 import { put, del } from '@vercel/blob';
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { generateBarcodeValue } from "@/lib/barcode";
 
 /**
  * دالة مساعدة لتنظيف اسم الملف من الحروف الخاصة والعربية
@@ -119,7 +120,8 @@ export async function saveProductWithFiles(formData: FormData) {
         const name = formData.get('name') as string;
         const normalizedName = name.trim();
         const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
-        const barcode = String(formData.get('barcode') || '').trim() || null;
+        // توليد باركود تلقائي عند عدم إدخاله
+        const barcode = String(formData.get('barcode') || '').trim() || generateBarcodeValue();
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;
@@ -282,7 +284,8 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
     try {
         const name = formData.get('name') as string;
         const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
-        const barcode = String(formData.get('barcode') || '').trim() || null;
+        // توليد باركود تلقائي عند عدم إدخاله
+        const barcode = String(formData.get('barcode') || '').trim() || generateBarcodeValue();
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;

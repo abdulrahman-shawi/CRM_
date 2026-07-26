@@ -15,6 +15,8 @@ import { getallcategory } from '@/server/category';
 import { deleteProductFromWarehouse, saveProductWithFiles, updateProductWithFiles } from '@/server/image';
 import { getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
 import { getWarehouse } from '@/server/warehouse';
+import { Barcode } from '@/components/ui/barcode';
+import { generateBarcodeValue } from '@/lib/barcode';
 import { error } from 'console';
 import { image } from 'framer-motion/client';
 import { FileDown, Mail, Plus, Warehouse, FileText } from 'lucide-react';
@@ -1061,6 +1063,15 @@ const ProductLayout = () => {
                             }
                         },
                         {
+                            header: "الباركود",
+                            accessor: (row: any) => row.barcode ? (
+                                <div className="text-slate-800 dark:text-slate-100" dir="ltr">
+                                    <Barcode value={row.barcode} height={30} showValue={false} />
+                                    <span className="block text-[10px] font-mono text-slate-500 dark:text-slate-400 text-center">{row.barcode}</span>
+                                </div>
+                            ) : "—"
+                        },
+                        {
                             header: "السعر",
                             accessor: (row: any) => (
                                 Number(row?.__stock?.discount || 0) > 0 ? (
@@ -1170,11 +1181,27 @@ const ProductLayout = () => {
                         defaultValues={forData || { warehouseStocks: [{ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }], wholesalePricingTiers: [] }}
                         submitLabel={editId ? "تعديل المنتج" : "حفظ المنتج"}
                     >
-                        {({ register, control, formState: { errors } }) => (
+                        {({ register, control, setValue, watch, formState: { errors } }) => (
                             <div className="grid gap-4 md:grid-cols-2">
                                 <FormInput className='col-span-2' label="اسم المنتج" {...register("name")} error={errors.name?.message as string} />
                                 <FormInput className='col-span-2' label="رقم الموديل" {...register("modelNumber")} error={errors.modelNumber?.message as string} />
-                                <FormInput className='col-span-2' label="الباركود" {...register("barcode")} error={errors.barcode?.message as string} dir="ltr" />
+                                <div className='col-span-2 space-y-2'>
+                                    <div className="flex items-end gap-2">
+                                        <FormInput className='flex-1' label="الباركود" {...register("barcode")} error={errors.barcode?.message as string} dir="ltr" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setValue("barcode", generateBarcodeValue())}
+                                            className="h-10 px-4 rounded-md bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+                                        >
+                                            توليد تلقائي
+                                        </button>
+                                    </div>
+                                    {watch("barcode") && (
+                                        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md p-2 inline-block text-slate-900 dark:text-slate-100" dir="ltr">
+                                            <Barcode value={watch("barcode")} height={44} />
+                                        </div>
+                                    )}
+                                </div>
                                 <FormInput className='col-span-2' label="Meta Title" {...register("metaTitle")} error={errors.metaTitle?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Description" {...register("metaDescription")} error={errors.metaDescription?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Keywords" {...register("metaKeywords")} error={errors.metaKeywords?.message as string} />

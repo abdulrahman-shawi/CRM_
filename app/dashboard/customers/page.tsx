@@ -1135,6 +1135,14 @@ const CustomrLayout: React.FC = () => {
       className: "text-xs font-bold text-slate-600 dark:text-slate-300",
     },
     {
+      header: "نقاط الولاء",
+      accessor: (customer: any) => (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs font-black">
+          {Number(customer.loyaltyPoints || 0)}
+        </span>
+      ),
+    },
+    {
       header: "آخر رسالة",
       accessor: (customer: any) => {
         const lastMessage = getCustomerLastMessage(customer);

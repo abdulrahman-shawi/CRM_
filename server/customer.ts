@@ -80,6 +80,7 @@ const customerListSelect = {
   city: true,
   rating: true,
   status: true,
+  loyaltyPoints: true,
   createdAt: true,
   updatedAt: true,
   users: {
@@ -118,6 +119,7 @@ const customerDetailsSelect = {
   city: true,
   rating: true,
   status: true,
+  loyaltyPoints: true,
   createdAt: true,
   updatedAt: true,
   orders: {
