@@ -6,6 +6,7 @@ import { Save, Trash2 } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import toast from "react-hot-toast";
 import { AppModal } from "@/components/ui/app-modal";
+import { MapPicker } from "@/components/ui/MapPicker";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
 import { getCountries } from "@/server/country";
 import { getCities } from "@/server/city";
@@ -720,6 +721,9 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
                 className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left"
                 dir="ltr"
               />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <MapPicker value={googleMapsLink} onChange={setGoogleMapsLink} />
             </div>
             <div className="space-y-2 md:col-span-2">
               <label className="text-xs font-bold text-slate-500 mr-2">ملاحظات التوصيل</label>
