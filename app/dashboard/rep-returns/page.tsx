@@ -75,21 +75,21 @@ export default function RepReturnsPage() {
     };
 
     const columns = [
-        { header: 'رقم الطلب', accessor: (row: any) => row.order?.orderNumber },
-        { header: 'العميل', accessor: (row: any) => row.order?.customer?.name },
+        { header: 'رقم الطلب', accessor: (row: any) => row.wholesaleOrder?.orderNumber },
+        { header: 'العميل', accessor: (row: any) => row.wholesaleOrder?.wholesaleCustomer?.name },
         { header: 'السبب', accessor: (row: any) => REASON_LABELS[row.reason] || row.reason },
         { header: 'المبلغ المسترد', accessor: (row: any) => Number(row.refundAmount || 0).toLocaleString() },
         { header: 'التاريخ', accessor: (row: any) => new Date(row.createdAt).toLocaleDateString('ar-EG') },
     ];
 
     const filteredReturns = returns.filter((row) =>
-        row.order?.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
-        row.order?.customer?.name?.toLowerCase().includes(search.toLowerCase())
+        row.wholesaleOrder?.orderNumber?.toLowerCase().includes(search.toLowerCase()) ||
+        row.wholesaleOrder?.wholesaleCustomer?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
     const orderOptions = orders.map((o) => ({
         value: o.id,
-        label: `${o.orderNumber} - ${o.customer?.name || 'عميل'} (${o.status})`,
+        label: `${o.orderNumber} - ${o.wholesaleCustomer?.name || 'عميل'} (${o.status})`,
     }));
 
     if (!canView) return <div className="p-4 text-red-500">غير مصرح لك بعرض هذه الصفحة</div>;

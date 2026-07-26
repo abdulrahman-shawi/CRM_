@@ -160,7 +160,7 @@ npx prisma migrate deploy
 
 Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file is also present for Prisma's new configuration format.
 
-**Important models:** `User`, `Permission`, `Order`, `OrderItem`, `Product`, `ProductStock`, `Warehouse`, `Customer`, `Expense`, `Shipping`, `Warranty`, `Page`, `AffiliateLink`, `Commission`.
+**Important models:** `User`, `Permission`, `Order`, `OrderItem`, `Product`, `ProductStock`, `Warehouse`, `Customer`, `Expense`, `Shipping`, `Warranty`, `Page`, `AffiliateLink`, `Commission`, `WholesaleOrder`, `WholesaleOrderReturn`.
 
 ---
 

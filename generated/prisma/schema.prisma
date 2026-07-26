@@ -455,9 +455,10 @@ model Product {
   wholesaleOrderItems   WholesaleOrderItem[]
 
   // ─── Phase 1 Relations ───
-  suppliers     ProductSupplier[]
-  purchaseItems PurchaseInvoiceItem[]
-  returnItems   OrderReturnItem[]
+  suppliers            ProductSupplier[]
+  purchaseItems        PurchaseInvoiceItem[]
+  returnItems          OrderReturnItem[]
+  wholesaleReturnItems WholesaleOrderReturnItem[]
 }
 
 model AdPageVisit {
@@ -575,22 +576,23 @@ model City {
 // ============================================
 
 model Warehouse {
-  id              Int                   @id @default(autoincrement())
-  name            String                @unique
-  location        String
-  countryId       Int?
-  cityId          Int?
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  country         Country?              @relation(fields: [countryId], references: [id], onDelete: SetNull)
-  city            City?                 @relation(fields: [cityId], references: [id], onDelete: SetNull)
-  stocks          ProductStock[]
-  orders          Order[]
-  wholesaleOrders WholesaleOrder[]
-  movements       StockMovement[]
-  warranties      Warranty[]
-  purchaseItems   PurchaseInvoiceItem[]
-  returns         OrderReturn[]
+  id               Int                    @id @default(autoincrement())
+  name             String                 @unique
+  location         String
+  countryId        Int?
+  cityId           Int?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  country          Country?               @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  city             City?                  @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  stocks           ProductStock[]
+  orders           Order[]
+  wholesaleOrders  WholesaleOrder[]
+  movements        StockMovement[]
+  warranties       Warranty[]
+  purchaseItems    PurchaseInvoiceItem[]
+  returns          OrderReturn[]
+  wholesaleReturns WholesaleOrderReturn[]
 
   @@index([countryId])
   @@index([cityId])
@@ -847,10 +849,11 @@ model WholesaleOrder {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  wholesaleCustomer WholesaleCustomer    @relation(fields: [wholesaleCustomerId], references: [id], onDelete: Cascade)
-  user              User?                @relation("WholesaleOrderUser", fields: [userId], references: [id], onDelete: SetNull)
-  warehouse         Warehouse?           @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  wholesaleCustomer WholesaleCustomer      @relation(fields: [wholesaleCustomerId], references: [id], onDelete: Cascade)
+  user              User?                  @relation("WholesaleOrderUser", fields: [userId], references: [id], onDelete: SetNull)
+  warehouse         Warehouse?             @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
   items             WholesaleOrderItem[]
+  returns           WholesaleOrderReturn[]
 
   @@index([createdAt])
   @@index([wholesaleCustomerId, createdAt])
@@ -871,9 +874,50 @@ model WholesaleOrderItem {
   order   WholesaleOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product        @relation(fields: [productId], references: [id])
 
+  returnItems WholesaleOrderReturnItem[]
+
   @@index([orderId])
   @@index([productId])
   @@map("wholesale_order_items")
+}
+
+model WholesaleOrderReturn {
+  id               String       @id @default(uuid())
+  wholesaleOrderId Int
+  reason           ReturnReason @default(OTHER)
+  reasonNotes      String?
+  refundAmount     Float        @default(0)
+  warehouseId      Int?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  wholesaleOrder WholesaleOrder             @relation(fields: [wholesaleOrderId], references: [id], onDelete: Cascade)
+  warehouse      Warehouse?                 @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  items          WholesaleOrderReturnItem[]
+
+  @@index([wholesaleOrderId])
+  @@index([warehouseId])
+  @@map("wholesale_order_returns")
+}
+
+model WholesaleOrderReturnItem {
+  id                     String   @id @default(uuid())
+  wholesaleOrderReturnId String
+  wholesaleOrderItemId   Int
+  productId              Int
+  quantity               Int      @default(1)
+  price                  Float    @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  wholesaleOrderReturn WholesaleOrderReturn @relation(fields: [wholesaleOrderReturnId], references: [id], onDelete: Cascade)
+  wholesaleOrderItem   WholesaleOrderItem   @relation(fields: [wholesaleOrderItemId], references: [id], onDelete: Cascade)
+  product              Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([wholesaleOrderReturnId])
+  @@index([wholesaleOrderItemId])
+  @@index([productId])
+  @@map("wholesale_order_return_items")
 }
 
 // ============================================

@@ -4,7 +4,7 @@ import { decrypt } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { hasPermission, isAdmin } from '@/lib/utils';
-import { createOrderReturn } from '@/server/return';
+import { revalidatePath } from 'next/cache';
 
 async function getCurrentSessionUser() {
     try {
@@ -29,6 +29,13 @@ async function getScopedUserIds(userId: string) {
     return rows.map((row) => row.id);
 }
 
+function round(value: number) {
+    return Number(Number(value).toFixed(2));
+}
+
+const RETURNABLE_STATUSES = new Set(['تم تسليم الطلب', 'تم التسليم', 'تم البيع', 'مدفوعة', 'قيد التوصيل']);
+
+// طلبات الجملة الخاصة بالمندوب (تُستخدم في شاشة مرتجعات المندوبين)
 export async function getRepOrders(search?: string) {
     const user = await getCurrentSessionUser();
     if (!user) return { success: false, error: 'غير مصرح' };
@@ -45,11 +52,11 @@ export async function getRepOrders(search?: string) {
             const term = search.trim();
             where.OR = [
                 { orderNumber: { contains: term, mode: 'insensitive' } },
-                { customer: { name: { contains: term, mode: 'insensitive' } } },
+                { wholesaleCustomer: { name: { contains: term, mode: 'insensitive' } } },
             ];
         }
 
-        const orders = await prisma.order.findMany({
+        const orders = await prisma.wholesaleOrder.findMany({
             where,
             orderBy: { createdAt: 'desc' },
             take: 200,
@@ -58,7 +65,7 @@ export async function getRepOrders(search?: string) {
                 orderNumber: true,
                 status: true,
                 finalAmount: true,
-                customer: { select: { id: true, name: true } },
+                wholesaleCustomer: { select: { id: true, name: true } },
                 warehouse: { select: { id: true, name: true } },
                 items: {
                     select: {
@@ -89,28 +96,28 @@ export async function getRepReturns(search?: string) {
     try {
         const scopedIds = isAdmin(user) ? undefined : await getScopedUserIds(user.id);
         const where: any = {};
-        if (scopedIds) where.order = { userId: { in: scopedIds } };
+        if (scopedIds) where.wholesaleOrder = { userId: { in: scopedIds } };
 
         if (search?.trim()) {
             const term = search.trim();
             where.OR = [
-                { order: { orderNumber: { contains: term, mode: 'insensitive' } } },
-                { order: { customer: { name: { contains: term, mode: 'insensitive' } } } },
+                { wholesaleOrder: { orderNumber: { contains: term, mode: 'insensitive' } } },
+                { wholesaleOrder: { wholesaleCustomer: { name: { contains: term, mode: 'insensitive' } } } },
             ];
-            if (scopedIds) where.order.userId = { in: scopedIds };
+            if (scopedIds) where.wholesaleOrder.userId = { in: scopedIds };
         }
 
-        const returns = await prisma.orderReturn.findMany({
+        const returns = await prisma.wholesaleOrderReturn.findMany({
             where,
             orderBy: { createdAt: 'desc' },
             take: 200,
             include: {
-                order: { select: { id: true, orderNumber: true, customer: { select: { id: true, name: true } } } },
+                wholesaleOrder: { select: { id: true, orderNumber: true, wholesaleCustomer: { select: { id: true, name: true } } } },
                 warehouse: { select: { id: true, name: true } },
                 items: {
                     include: {
                         product: { select: { id: true, name: true } },
-                        orderItem: { select: { id: true, price: true, discount: true } },
+                        wholesaleOrderItem: { select: { id: true, price: true, discount: true } },
                     },
                 },
             },
@@ -136,20 +143,102 @@ export async function createRepReturn(data: {
     if (!canCreate) return { success: false, error: 'غير مصرح لك بإنشاء مرتجع' };
 
     try {
+        const orderId = Number(data.orderId);
+        if (!orderId) return { success: false, error: 'الطلب مطلوب' };
+        if (!Array.isArray(data.items) || data.items.length === 0) return { success: false, error: 'يجب إرجاع صنف واحد على الأقل' };
+
+        const order = await prisma.wholesaleOrder.findUnique({
+            where: { id: orderId },
+            include: { items: true },
+        });
+        if (!order) return { success: false, error: 'الطلب غير موجود' };
+
         if (!isAdmin(user)) {
-            const order = await prisma.order.findUnique({
-                where: { id: Number(data.orderId) },
-                select: { userId: true },
-            });
-            if (!order) return { success: false, error: 'الطلب غير موجود' };
             const scopedIds = await getScopedUserIds(user.id);
             if (!order.userId || !scopedIds.includes(order.userId)) {
                 return { success: false, error: 'هذا الطلب خارج نطاق صلاحياتك' };
             }
         }
-        return createOrderReturn(data);
+
+        if (!RETURNABLE_STATUSES.has(order.status)) {
+            return { success: false, error: 'لا يمكن إرجاع طلب بهذه الحالة' };
+        }
+
+        const warehouseId = data.warehouseId ? Number(data.warehouseId) : order.warehouseId || undefined;
+
+        const result = await prisma.$transaction(async (tx) => {
+            let refundAmount = 0;
+            const returnItems = [];
+
+            for (const entry of data.items) {
+                const orderItem = order.items.find((i) => i.id === Number(entry.orderItemId));
+                if (!orderItem) continue;
+                const quantity = Math.min(Number(entry.quantity || 0), orderItem.quantity);
+                if (quantity <= 0) continue;
+                const effectivePrice = Math.max(0, orderItem.price - (orderItem.discount || 0));
+                refundAmount += effectivePrice * quantity;
+
+                returnItems.push({
+                    wholesaleOrderItemId: orderItem.id,
+                    productId: orderItem.productId,
+                    quantity,
+                    price: effectivePrice,
+                });
+
+                if (warehouseId) {
+                    const stock = await tx.productStock.findUnique({
+                        where: { productId_warehouseId: { productId: orderItem.productId, warehouseId } },
+                    });
+                    if (stock) {
+                        await tx.productStock.update({
+                            where: { id: stock.id },
+                            data: { quantity: stock.quantity + quantity },
+                        });
+                    } else {
+                        await tx.productStock.create({
+                            data: {
+                                productId: orderItem.productId,
+                                warehouseId,
+                                quantity,
+                            },
+                        });
+                    }
+                }
+
+                await tx.stockMovement.create({
+                    data: {
+                        productId: orderItem.productId,
+                        warehouseId: warehouseId || order.warehouseId || 1,
+                        userId: user.id,
+                        quantity,
+                        type: 'RETURN',
+                        reason: `مرتجع طلب جملة #${order.orderNumber} - ${data.reason}`,
+                    },
+                });
+            }
+
+            if (returnItems.length === 0) throw new Error('لا يوجد أصناف صالحة للإرجاع');
+
+            const orderReturn = await tx.wholesaleOrderReturn.create({
+                data: {
+                    wholesaleOrderId: orderId,
+                    reason: data.reason,
+                    reasonNotes: data.reasonNotes || null,
+                    refundAmount: round(refundAmount),
+                    warehouseId,
+                    items: { create: returnItems },
+                },
+                include: { items: true },
+            });
+
+            return orderReturn;
+        });
+
+        revalidatePath('/dashboard/rep-returns');
+        revalidatePath('/dashboard/wholesale-orders');
+        return { success: true, data: result };
     } catch (error: any) {
         console.error('createRepReturn error:', error);
-        return { success: false, error: 'تعذر إنشاء المرتجع' };
+        return { success: false, error: error.message || 'تعذر إنشاء المرتجع' };
     }
 }

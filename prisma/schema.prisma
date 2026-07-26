@@ -460,6 +460,7 @@ model Product {
   suppliers      ProductSupplier[]
   purchaseItems  PurchaseInvoiceItem[]
   returnItems    OrderReturnItem[]
+  wholesaleReturnItems WholesaleOrderReturnItem[]
 }
 
 model AdPageVisit {
@@ -594,6 +595,7 @@ model Warehouse {
   warranties Warranty[]
   purchaseItems PurchaseInvoiceItem[]
   returns     OrderReturn[]
+  wholesaleReturns WholesaleOrderReturn[]
 
   @@index([countryId])
   @@index([cityId])
@@ -854,6 +856,7 @@ model WholesaleOrder {
   user              User?             @relation("WholesaleOrderUser", fields: [userId], references: [id], onDelete: SetNull)
   warehouse         Warehouse?        @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
   items             WholesaleOrderItem[]
+  returns           WholesaleOrderReturn[]
 
   @@index([createdAt])
   @@index([wholesaleCustomerId, createdAt])
@@ -874,9 +877,50 @@ model WholesaleOrderItem {
   order   WholesaleOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product        @relation(fields: [productId], references: [id])
 
+  returnItems WholesaleOrderReturnItem[]
+
   @@index([orderId])
   @@index([productId])
   @@map("wholesale_order_items")
+}
+
+model WholesaleOrderReturn {
+  id               String       @id @default(uuid())
+  wholesaleOrderId Int
+  reason           ReturnReason @default(OTHER)
+  reasonNotes      String?
+  refundAmount     Float        @default(0)
+  warehouseId      Int?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  wholesaleOrder WholesaleOrder @relation(fields: [wholesaleOrderId], references: [id], onDelete: Cascade)
+  warehouse      Warehouse?     @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  items          WholesaleOrderReturnItem[]
+
+  @@index([wholesaleOrderId])
+  @@index([warehouseId])
+  @@map("wholesale_order_returns")
+}
+
+model WholesaleOrderReturnItem {
+  id                     String   @id @default(uuid())
+  wholesaleOrderReturnId String
+  wholesaleOrderItemId   Int
+  productId              Int
+  quantity               Int      @default(1)
+  price                  Float    @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  wholesaleOrderReturn WholesaleOrderReturn @relation(fields: [wholesaleOrderReturnId], references: [id], onDelete: Cascade)
+  wholesaleOrderItem   WholesaleOrderItem   @relation(fields: [wholesaleOrderItemId], references: [id], onDelete: Cascade)
+  product              Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([wholesaleOrderReturnId])
+  @@index([wholesaleOrderItemId])
+  @@index([productId])
+  @@map("wholesale_order_return_items")
 }
 
 // ============================================

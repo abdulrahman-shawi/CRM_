@@ -512,6 +512,28 @@ exports.Prisma.WholesaleOrderItemScalarFieldEnum = {
   productId: 'productId'
 };
 
+exports.Prisma.WholesaleOrderReturnScalarFieldEnum = {
+  id: 'id',
+  wholesaleOrderId: 'wholesaleOrderId',
+  reason: 'reason',
+  reasonNotes: 'reasonNotes',
+  refundAmount: 'refundAmount',
+  warehouseId: 'warehouseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WholesaleOrderReturnItemScalarFieldEnum = {
+  id: 'id',
+  wholesaleOrderReturnId: 'wholesaleOrderReturnId',
+  wholesaleOrderItemId: 'wholesaleOrderItemId',
+  productId: 'productId',
+  quantity: 'quantity',
+  price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.WarrantyScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -1020,6 +1042,14 @@ exports.WholesaleVisitStatus = exports.$Enums.WholesaleVisitStatus = {
   CLOSED: 'CLOSED'
 };
 
+exports.ReturnReason = exports.$Enums.ReturnReason = {
+  DAMAGED: 'DAMAGED',
+  WRONG_PRODUCT: 'WRONG_PRODUCT',
+  CUSTOMER_RETURN: 'CUSTOMER_RETURN',
+  EXPIRED: 'EXPIRED',
+  OTHER: 'OTHER'
+};
+
 exports.WarrantyType = exports.$Enums.WarrantyType = {
   REPLACEMENT: 'REPLACEMENT',
   MAINTENANCE: 'MAINTENANCE',
@@ -1097,14 +1127,6 @@ exports.CouponStatus = exports.$Enums.CouponStatus = {
   DISABLED: 'DISABLED'
 };
 
-exports.ReturnReason = exports.$Enums.ReturnReason = {
-  DAMAGED: 'DAMAGED',
-  WRONG_PRODUCT: 'WRONG_PRODUCT',
-  CUSTOMER_RETURN: 'CUSTOMER_RETURN',
-  EXPIRED: 'EXPIRED',
-  OTHER: 'OTHER'
-};
-
 exports.PaymentType = exports.$Enums.PaymentType = {
   CASH: 'CASH',
   BANK_TRANSFER: 'BANK_TRANSFER',
@@ -1179,6 +1201,8 @@ exports.Prisma.ModelName = {
   ProductWholesalePriceTier: 'ProductWholesalePriceTier',
   WholesaleOrder: 'WholesaleOrder',
   WholesaleOrderItem: 'WholesaleOrderItem',
+  WholesaleOrderReturn: 'WholesaleOrderReturn',
+  WholesaleOrderReturnItem: 'WholesaleOrderReturnItem',
   Warranty: 'Warranty',
   Message: 'Message',
   Order: 'Order',
