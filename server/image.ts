@@ -119,6 +119,7 @@ export async function saveProductWithFiles(formData: FormData) {
         const name = formData.get('name') as string;
         const normalizedName = name.trim();
         const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
+        const barcode = String(formData.get('barcode') || '').trim() || null;
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;
@@ -227,6 +228,7 @@ export async function saveProductWithFiles(formData: FormData) {
             data: {
                 name: normalizedName,
                 modelNumber,
+                barcode,
                 description,
                 metaTitle,
                 metaDescription,
@@ -280,6 +282,7 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
     try {
         const name = formData.get('name') as string;
         const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
+        const barcode = String(formData.get('barcode') || '').trim() || null;
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;
@@ -453,6 +456,7 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
             data: {
                 name,
                 modelNumber,
+                barcode,
                 description,
                 metaTitle,
                 metaDescription,

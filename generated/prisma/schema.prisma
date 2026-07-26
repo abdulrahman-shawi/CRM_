@@ -417,6 +417,7 @@ model Product {
   id          Int      @id @default(autoincrement())
   name        String
   modelNumber String?
+  barcode     String?
   description String?
   googleLink  String?
   categoryId  Int?

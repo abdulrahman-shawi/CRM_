@@ -264,8 +264,41 @@ export async function redeemLoyaltyPoints(customerId: string, pointsToRedeem: nu
     }
 }
 
-export async function addBonusPoints(customerId: string, points: number, notes?: string) {
-    const user = await getCurrentSessionUser();
+export async function addManualLoyaltyPointsForOrder(orderId: number, pointsInput: number) {
+    try {
+        const points = Math.max(0, Math.floor(Number(pointsInput || 0)));
+        if (points <= 0) return { success: true, data: null };
+
+        const order = await prisma.order.findUnique({
+            where: { id: orderId },
+            select: { id: true, customerId: true },
+        });
+        if (!order || !order.customerId) return { success: true, data: null };
+
+        const result = await prisma.$transaction(async (tx) => {
+            await tx.customer.update({
+                where: { id: order.customerId },
+                data: { loyaltyPoints: { increment: points } },
+            });
+            return tx.loyaltyTransaction.create({
+                data: {
+                    customerId: order.customerId,
+                    orderId: order.id,
+                    type: 'BONUS',
+                    points,
+                    value: 0,
+                    notes: `نقاط إضافية من الموظف على طلب #${orderId}`,
+                },
+            });
+        });
+        return { success: true, data: result };
+    } catch (error: any) {
+        console.error('addManualLoyaltyPointsForOrder error:', error);
+        return { success: false, error: 'تعذر إضافة نقاط الولاء اليدوية' };
+    }
+}
+
+export async function addBonusPoints(customerId: string, points: number, notes?: string) {    const user = await getCurrentSessionUser();
     if (!user) return { success: false, error: 'غير مصرح' };
     requirePermission(user, 'editLoyalty');
     try {

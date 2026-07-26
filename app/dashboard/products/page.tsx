@@ -38,6 +38,7 @@ const getFileNameFromUrl = (url?: string) => {
 const productschama = z.object({
     name: z.string().min(3, "اسم المنتج مطلوب"),
     modelNumber: z.string().optional().nullable(),
+    barcode: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     metaTitle: z.string().optional().nullable(),
     metaDescription: z.string().optional().nullable(),
@@ -439,6 +440,7 @@ const ProductLayout = () => {
                 const formData = new FormData();
                 formData.append('name', data.name);
                 formData.append('modelNumber', data.modelNumber || '');
+                formData.append('barcode', data.barcode || '');
                 formData.append('categoryId', data.categoryId.toString());
                 formData.append('description', data.description || '');
                 formData.append('metaTitle', data.metaTitle || '');
@@ -485,6 +487,7 @@ const ProductLayout = () => {
                 const formData = new FormData();
                 formData.append('name', data.name);
                 formData.append('modelNumber', data.modelNumber || '');
+                formData.append('barcode', data.barcode || '');
                 formData.append('categoryId', data.categoryId.toString());
                 formData.append('description', data.description || '');
                 formData.append('metaTitle', data.metaTitle || '');
@@ -534,6 +537,7 @@ const ProductLayout = () => {
         setFormData({
             name: data.name,
             modelNumber: data.modelNumber || '',
+            barcode: data.barcode || '',
             categoryId: data.categoryId,
             description: data.description,
             metaTitle: data.metaTitle || '',
@@ -1170,6 +1174,7 @@ const ProductLayout = () => {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <FormInput className='col-span-2' label="اسم المنتج" {...register("name")} error={errors.name?.message as string} />
                                 <FormInput className='col-span-2' label="رقم الموديل" {...register("modelNumber")} error={errors.modelNumber?.message as string} />
+                                <FormInput className='col-span-2' label="الباركود" {...register("barcode")} error={errors.barcode?.message as string} dir="ltr" />
                                 <FormInput className='col-span-2' label="Meta Title" {...register("metaTitle")} error={errors.metaTitle?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Description" {...register("metaDescription")} error={errors.metaDescription?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Keywords" {...register("metaKeywords")} error={errors.metaKeywords?.message as string} />

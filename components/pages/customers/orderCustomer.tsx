@@ -64,6 +64,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
   const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
   const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [overallDiscount, setOverallDiscount] = React.useState(0);
+  const [loyaltyPoints, setLoyaltyPoints] = React.useState(0);
   const [additionalNotes, setAdditionalNotes] = React.useState("");
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -189,6 +190,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     setSearchQueries({});
     setShowDropdown({});
     setOverallDiscount(0);
+    setLoyaltyPoints(0);
 
     // إعادة بيانات العميل
     setCustomerId("");
@@ -291,6 +293,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       additionalNotes,
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
+      loyaltyPoints: Math.max(0, Math.floor(Number(loyaltyPoints) || 0)),
       subTotal: Number(subTotal)
     };
 
@@ -337,6 +340,17 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                 <input type="number" value={overallDiscount} onChange={(e) => setOverallDiscount(Number(e.target.value))} className="w-32 bg-red-50 dark:bg-red-900/10 p-3 rounded-2xl border border-red-100 dark:border-red-900/20 outline-none font-bold text-red-600 text-center" placeholder="0" />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400"> {currencySymbol}</span>
               </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-emerald-600 uppercase px-1">نقاط ولاء إضافية</label>
+              <input
+                type="number"
+                min="0"
+                value={loyaltyPoints}
+                onChange={(e) => setLoyaltyPoints(Math.max(0, Number(e.target.value)))}
+                className="w-32 bg-emerald-50 dark:bg-emerald-900/10 p-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 outline-none font-bold text-emerald-600 text-center"
+                placeholder="0"
+              />
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/20 px-8 py-4 rounded-3xl">
               <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">الإجمالي النهائي</p>

@@ -12564,6 +12564,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     modelNumber: string | null
+    barcode: string | null
     description: string | null
     googleLink: string | null
     categoryId: number | null
@@ -12584,6 +12585,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     modelNumber: string | null
+    barcode: string | null
     description: string | null
     googleLink: string | null
     categoryId: number | null
@@ -12604,6 +12606,7 @@ export namespace Prisma {
     id: number
     name: number
     modelNumber: number
+    barcode: number
     description: number
     googleLink: number
     categoryId: number
@@ -12644,6 +12647,7 @@ export namespace Prisma {
     id?: true
     name?: true
     modelNumber?: true
+    barcode?: true
     description?: true
     googleLink?: true
     categoryId?: true
@@ -12664,6 +12668,7 @@ export namespace Prisma {
     id?: true
     name?: true
     modelNumber?: true
+    barcode?: true
     description?: true
     googleLink?: true
     categoryId?: true
@@ -12684,6 +12689,7 @@ export namespace Prisma {
     id?: true
     name?: true
     modelNumber?: true
+    barcode?: true
     description?: true
     googleLink?: true
     categoryId?: true
@@ -12791,6 +12797,7 @@ export namespace Prisma {
     id: number
     name: string
     modelNumber: string | null
+    barcode: string | null
     description: string | null
     googleLink: string | null
     categoryId: number | null
@@ -12830,6 +12837,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     modelNumber?: boolean
+    barcode?: boolean
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
@@ -12869,6 +12877,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     modelNumber?: boolean
+    barcode?: boolean
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
@@ -12890,6 +12899,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     modelNumber?: boolean
+    barcode?: boolean
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
@@ -12911,6 +12921,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     modelNumber?: boolean
+    barcode?: boolean
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
@@ -12927,7 +12938,7 @@ export namespace Prisma {
     costPrice?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "modelNumber" | "description" | "googleLink" | "categoryId" | "createdAt" | "seoSlug" | "metaTitle" | "metaDescription" | "metaKeywords" | "isActive" | "showInAds" | "affiliatePrice" | "affiliateCommissionRate" | "wholesalePrice" | "costPrice", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "modelNumber" | "barcode" | "description" | "googleLink" | "categoryId" | "createdAt" | "seoSlug" | "metaTitle" | "metaDescription" | "metaKeywords" | "isActive" | "showInAds" | "affiliatePrice" | "affiliateCommissionRate" | "wholesalePrice" | "costPrice", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     category?: boolean | Product$categoryArgs<ExtArgs>
@@ -12982,6 +12993,7 @@ export namespace Prisma {
       id: number
       name: string
       modelNumber: string | null
+      barcode: string | null
       description: string | null
       googleLink: string | null
       categoryId: number | null
@@ -13440,6 +13452,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Product", 'Int'>
     readonly name: FieldRef<"Product", 'String'>
     readonly modelNumber: FieldRef<"Product", 'String'>
+    readonly barcode: FieldRef<"Product", 'String'>
     readonly description: FieldRef<"Product", 'String'>
     readonly googleLink: FieldRef<"Product", 'String'>
     readonly categoryId: FieldRef<"Product", 'Int'>
@@ -74970,6 +74983,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     modelNumber: 'modelNumber',
+    barcode: 'barcode',
     description: 'description',
     googleLink: 'googleLink',
     categoryId: 'categoryId',
@@ -77075,6 +77089,7 @@ export namespace Prisma {
     id?: IntFilter<"Product"> | number
     name?: StringFilter<"Product"> | string
     modelNumber?: StringNullableFilter<"Product"> | string | null
+    barcode?: StringNullableFilter<"Product"> | string | null
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
@@ -77113,6 +77128,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     modelNumber?: SortOrderInput | SortOrder
+    barcode?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     googleLink?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
@@ -77155,6 +77171,7 @@ export namespace Prisma {
     NOT?: ProductWhereInput | ProductWhereInput[]
     name?: StringFilter<"Product"> | string
     modelNumber?: StringNullableFilter<"Product"> | string | null
+    barcode?: StringNullableFilter<"Product"> | string | null
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
@@ -77192,6 +77209,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     modelNumber?: SortOrderInput | SortOrder
+    barcode?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     googleLink?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
@@ -77220,6 +77238,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Product"> | number
     name?: StringWithAggregatesFilter<"Product"> | string
     modelNumber?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    barcode?: StringNullableWithAggregatesFilter<"Product"> | string | null
     description?: StringNullableWithAggregatesFilter<"Product"> | string | null
     googleLink?: StringNullableWithAggregatesFilter<"Product"> | string | null
     categoryId?: IntNullableWithAggregatesFilter<"Product"> | number | null
@@ -82761,6 +82780,7 @@ export namespace Prisma {
   export type ProductCreateInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -82798,6 +82818,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -82834,6 +82855,7 @@ export namespace Prisma {
   export type ProductUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -82871,6 +82893,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -82908,6 +82931,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -82927,6 +82951,7 @@ export namespace Prisma {
   export type ProductUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -82946,6 +82971,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -88922,6 +88948,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     modelNumber?: SortOrder
+    barcode?: SortOrder
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
@@ -88951,6 +88978,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     modelNumber?: SortOrder
+    barcode?: SortOrder
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
@@ -88971,6 +88999,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     modelNumber?: SortOrder
+    barcode?: SortOrder
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
@@ -100658,6 +100687,7 @@ export namespace Prisma {
   export type ProductCreateWithoutCategoryInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -100694,6 +100724,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -100803,6 +100834,7 @@ export namespace Prisma {
     id?: IntFilter<"Product"> | number
     name?: StringFilter<"Product"> | string
     modelNumber?: StringNullableFilter<"Product"> | string | null
+    barcode?: StringNullableFilter<"Product"> | string | null
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
@@ -101923,6 +101955,7 @@ export namespace Prisma {
   export type ProductCreateWithoutAdPageVisitsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -101959,6 +101992,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -102010,6 +102044,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutAdPageVisitsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102046,6 +102081,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -102081,6 +102117,7 @@ export namespace Prisma {
   export type ProductCreateWithoutLandingPageInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -102117,6 +102154,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -102168,6 +102206,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutLandingPageInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102204,6 +102243,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -102239,6 +102279,7 @@ export namespace Prisma {
   export type ProductCreateWithoutReviewsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -102275,6 +102316,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -102419,6 +102461,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutReviewsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -102455,6 +102498,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -103431,6 +103475,7 @@ export namespace Prisma {
   export type ProductCreateWithoutStocksInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -103467,6 +103512,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -103556,6 +103602,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutStocksInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103592,6 +103639,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -103671,6 +103719,7 @@ export namespace Prisma {
   export type ProductCreateWithoutStockMovementsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -103707,6 +103756,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -103889,6 +103939,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutStockMovementsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103925,6 +103976,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -104554,6 +104606,7 @@ export namespace Prisma {
   export type ProductCreateWithoutTargetProductsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -104590,6 +104643,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -104674,6 +104728,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutTargetProductsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -104710,6 +104765,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -104745,6 +104801,7 @@ export namespace Prisma {
   export type ProductCreateWithoutImagesInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -104781,6 +104838,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -104832,6 +104890,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutImagesInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -104868,6 +104927,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -106195,6 +106255,7 @@ export namespace Prisma {
   export type ProductCreateWithoutWholesalePricingTiersInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -106231,6 +106292,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -106282,6 +106344,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutWholesalePricingTiersInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -106318,6 +106381,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -106918,6 +106982,7 @@ export namespace Prisma {
   export type ProductCreateWithoutWholesaleOrderItemsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -106954,6 +107019,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -107101,6 +107167,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutWholesaleOrderItemsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -107137,6 +107204,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -107491,6 +107559,7 @@ export namespace Prisma {
   export type ProductCreateWithoutWholesaleReturnItemsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -107527,6 +107596,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -107639,6 +107709,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutWholesaleReturnItemsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -107675,6 +107746,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -107710,6 +107782,7 @@ export namespace Prisma {
   export type ProductCreateWithoutWarrantiesAsProductInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -107746,6 +107819,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -107994,6 +108068,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutWarrantiesAsProductInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -108030,6 +108105,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -109843,6 +109919,7 @@ export namespace Prisma {
   export type ProductCreateWithoutOrderItemsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -109879,6 +109956,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -110097,6 +110175,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutOrderItemsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -110133,6 +110212,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -110504,6 +110584,7 @@ export namespace Prisma {
   export type ProductCreateWithoutAffiliateLinksInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -110540,6 +110621,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -110747,6 +110829,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutAffiliateLinksInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -110783,6 +110866,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -110951,6 +111035,7 @@ export namespace Prisma {
   export type ProductCreateWithoutOfferDiscountsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -110987,6 +111072,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -111109,6 +111195,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutOfferDiscountsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -111145,6 +111232,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -111970,6 +112058,7 @@ export namespace Prisma {
   export type ProductCreateWithoutSuppliersInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -112006,6 +112095,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -112086,6 +112176,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutSuppliersInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -112122,6 +112213,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -112529,6 +112621,7 @@ export namespace Prisma {
   export type ProductCreateWithoutPurchaseItemsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -112565,6 +112658,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -112693,6 +112787,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutPurchaseItemsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -112729,6 +112824,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -113320,6 +113416,7 @@ export namespace Prisma {
   export type ProductCreateWithoutReturnItemsInput = {
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -113356,6 +113453,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
@@ -113470,6 +113568,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutReturnItemsInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -113506,6 +113605,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -117187,6 +117287,7 @@ export namespace Prisma {
     id?: number
     name: string
     modelNumber?: string | null
+    barcode?: string | null
     description?: string | null
     googleLink?: string | null
     createdAt?: Date | string
@@ -117222,6 +117323,7 @@ export namespace Prisma {
   export type ProductUpdateWithoutCategoryInput = {
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -117258,6 +117360,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -117294,6 +117397,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     modelNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

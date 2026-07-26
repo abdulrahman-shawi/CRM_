@@ -4,7 +4,7 @@ import { decrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers";
 import { validateCoupon } from "@/server/coupon";
-import { earnLoyaltyPointsForOrder } from "@/server/loyalty";
+import { earnLoyaltyPointsForOrder, addManualLoyaltyPointsForOrder } from "@/server/loyalty";
 import { createOrderStatusChangeNotification } from "@/server/notification";
 import { syncTrackingStatusFromOrderStatus } from "@/server/tracking";
 
@@ -742,6 +742,11 @@ export async function createOrder(data: any, items: any[], user: any) {
         });
 
         await earnLoyaltyPointsForOrder(result.id);
+
+        const manualPoints = Math.max(0, Math.floor(Number(data.loyaltyPoints || 0)));
+        if (manualPoints > 0) {
+            await addManualLoyaltyPointsForOrder(result.id, manualPoints);
+        }
 
         return { success: true, order: result };
     } catch (error: any) {
