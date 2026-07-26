@@ -205,6 +205,9 @@ Heavy business logic lives in `server/*.ts` files as async exported functions wi
 ### API Routes
 Lightweight API routes exist under `app/api/` for specific needs (login, logout, impersonation, user profile, settings data-transfer, WhatsApp sharing).
 
+### WhatsApp Cloud API
+Bulk WhatsApp campaigns are sent via Meta's WhatsApp Cloud API (`lib/whatsapp.ts`), triggered by `launchCampaign` in `server/marketing.ts` for `WHATSAPP`-type campaigns. Required env vars: `WHATSAPP_CLOUD_API_TOKEN` (or `WHATSAPP_TOKEN`), `WHATSAPP_PHONE_NUMBER_ID`, optional `WHATSAPP_API_VERSION` (default `v21.0`). If the campaign's `channelDetails.templateName` is set, an approved Meta template is sent (customer name passed as the first body variable); otherwise free-form text is sent, which only reaches users inside Meta's 24-hour messaging window.
+
 ### Stock Management
 Orders affect stock in real time via `applyOrderStockChange` in `server/order.ts`:
 - Sold/delivered statuses **decrease** stock.

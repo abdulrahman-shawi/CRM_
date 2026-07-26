@@ -89,6 +89,8 @@ type CampaignForm = {
   audience: string;
   targetIds: string[];
   scheduledAt: string;
+  whatsappTemplateName: string;
+  whatsappTemplateLanguage: string;
 };
 
 const emptyForm = (): CampaignForm => ({
@@ -100,6 +102,8 @@ const emptyForm = (): CampaignForm => ({
   audience: "ALL_CUSTOMERS",
   targetIds: [],
   scheduledAt: "",
+  whatsappTemplateName: "",
+  whatsappTemplateLanguage: "ar",
 });
 
 function formatDateTimeLocal(value?: Date | string | null) {
@@ -217,6 +221,7 @@ function CampaignsPageContent() {
         return;
       }
       const data = response.data as Campaign;
+      const channelDetails = (data.channelDetails || {}) as Record<string, any>;
       setEditingId(data.id);
       setForm({
         title: data.title || "",
@@ -227,6 +232,8 @@ function CampaignsPageContent() {
         audience: data.audience || "ALL_CUSTOMERS",
         targetIds: Array.isArray(data.targetIds) ? data.targetIds.map(String) : [],
         scheduledAt: formatDateTimeLocal(data.scheduledAt),
+        whatsappTemplateName: String(channelDetails.templateName || ""),
+        whatsappTemplateLanguage: String(channelDetails.templateLanguage || "ar"),
       });
       setIsFormOpen(true);
     } finally {
@@ -259,6 +266,13 @@ function CampaignsPageContent() {
         ...form,
         targetIds: form.audience === "CUSTOM" ? form.targetIds : [],
         scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null,
+        channelDetails:
+          form.type === "WHATSAPP"
+            ? {
+                templateName: form.whatsappTemplateName.trim(),
+                templateLanguage: form.whatsappTemplateLanguage.trim() || "ar",
+              }
+            : {},
       };
       const response = editingId
         ? await updateCampaign(editingId, payload)
@@ -374,7 +388,7 @@ function CampaignsPageContent() {
         toast.success("تم إطلاق الحملة بنجاح", { duration: 4000 });
         toast.error(response.warning, { duration: 6000 });
       } else {
-        toast.success("تم إطلاق الحملة وإرسال البريد بنجاح");
+        toast.success("تم إطلاق الحملة وإرسال الرسائل بنجاح");
       }
       await loadData();
     } finally {
@@ -661,6 +675,38 @@ function CampaignsPageContent() {
                 placeholder="موضوع الرسالة"
               />
             </label>
+          )}
+
+          {form.type === "WHATSAPP" && (
+            <>
+              <label className="space-y-2">
+                <span className="text-xs font-black text-slate-600 dark:text-slate-300">اسم قالب واتساب (اختياري)</span>
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={form.whatsappTemplateName}
+                  onChange={(e) => setForm((f) => ({ ...f, whatsappTemplateName: e.target.value }))}
+                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  placeholder="مثال: promotional_offer"
+                />
+              </label>
+
+              <label className="space-y-2">
+                <span className="text-xs font-black text-slate-600 dark:text-slate-300">لغة القالب</span>
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={form.whatsappTemplateLanguage}
+                  onChange={(e) => setForm((f) => ({ ...f, whatsappTemplateLanguage: e.target.value }))}
+                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                  placeholder="ar"
+                />
+              </label>
+
+              <p className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300 md:col-span-2">
+                عند تحديد قالب معتمد من Meta يُمرَّر اسم العميل كأول متغير في القالب. بدون قالب يُرسل نص المحتوى مباشرة ولا يصل إلا لمن راسلك خلال آخر 24 ساعة. يمكنك استخدام {"{{name}}"} في المحتوى لإدراج اسم العميل.
+              </p>
+            </>
           )}
 
           <label className="space-y-2 md:col-span-2">

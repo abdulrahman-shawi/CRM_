@@ -4,6 +4,12 @@ import { decrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hasAnyPermission, hasPermission, isAdmin } from "@/lib/utils";
 import { getTrackingBaseUrl, isValidEmail, sendCampaignEmail } from "@/lib/email";
+import {
+  getWhatsAppConfig,
+  normalizeWhatsAppPhone,
+  sendWhatsAppTemplateMessage,
+  sendWhatsAppTextMessage,
+} from "@/lib/whatsapp";
 import { cookies } from "next/headers";
 
 const CAMPAIGN_TYPES = ["EMAIL", "SOCIAL", "SMS", "CONTENT", "WHATSAPP"] as const;
@@ -184,6 +190,91 @@ async function getCampaignRecipients(audience: CampaignAudience, targetIds: any)
 
   return resolveCustomRecipients(parseTargetIds(targetIds));
 }
+
+type WhatsAppRecipient = { id: string; phone: string; name: string | null; type: "customer" | "wholesale" | "rep" };
+
+async function resolveCustomWhatsAppRecipients(ids: string[]) {
+  const recipients: WhatsAppRecipient[] = [];
+  const seen = new Set<string>();
+
+  for (const rawId of ids) {
+    const id = rawId.trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+
+    const customer = await prisma.customer.findUnique({
+      where: { id },
+      select: { id: true, phone: true, countryCode: true, name: true },
+    });
+    if (customer) {
+      const phone = normalizeWhatsAppPhone(customer.phone?.[0], customer.countryCode);
+      if (phone) {
+        recipients.push({ id: customer.id, phone, name: customer.name, type: "customer" });
+        continue;
+      }
+    }
+
+    const wholesale = await prisma.wholesaleCustomer.findUnique({
+      where: { id },
+      select: { id: true, phone: true, whatsappPhone: true, name: true },
+    });
+    if (wholesale) {
+      const phone = normalizeWhatsAppPhone(wholesale.whatsappPhone || wholesale.phone?.[0]);
+      if (phone) {
+        recipients.push({ id: wholesale.id, phone, name: wholesale.name, type: "wholesale" });
+      }
+    }
+  }
+
+  return recipients;
+}
+
+async function getWhatsAppCampaignRecipients(audience: CampaignAudience, targetIds: any) {
+  if (audience === "ALL_CUSTOMERS") {
+    const customers = await prisma.customer.findMany({
+      where: { phone: { isEmpty: false } },
+      select: { id: true, phone: true, countryCode: true, name: true },
+    });
+    const recipients: WhatsAppRecipient[] = [];
+    for (const customer of customers) {
+      const phone = normalizeWhatsAppPhone(customer.phone?.[0], customer.countryCode);
+      if (phone) recipients.push({ id: customer.id, phone, name: customer.name, type: "customer" });
+    }
+    return recipients;
+  }
+
+  if (audience === "ALL_WHOLESALE") {
+    const wholesale = await prisma.wholesaleCustomer.findMany({
+      select: { id: true, phone: true, whatsappPhone: true, name: true },
+    });
+    const recipients: WhatsAppRecipient[] = [];
+    for (const customer of wholesale) {
+      const phone = normalizeWhatsAppPhone(customer.whatsappPhone || customer.phone?.[0]);
+      if (phone) recipients.push({ id: customer.id, phone, name: customer.name, type: "wholesale" });
+    }
+    return recipients;
+  }
+
+  if (audience === "ALL_REPS") {
+    const reps = await prisma.user.findMany({
+      where: {
+        accountType: { in: ["STAFF", "MANAGER"] },
+        phone: { not: null },
+      },
+      select: { id: true, phone: true, username: true },
+    });
+    const recipients: WhatsAppRecipient[] = [];
+    for (const rep of reps) {
+      const phone = normalizeWhatsAppPhone(rep.phone);
+      if (phone) recipients.push({ id: rep.id, phone, name: rep.username, type: "rep" });
+    }
+    return recipients;
+  }
+
+  return resolveCustomWhatsAppRecipients(parseTargetIds(targetIds));
+}
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const campaignSelect = {
   id: true,
@@ -400,7 +491,7 @@ export async function launchCampaign(id: string | number) {
 
     const campaign = await prisma.campaign.findUnique({
       where: { id: campaignId },
-      select: { id: true, title: true, subject: true, content: true, type: true, status: true, scheduledAt: true, audience: true, targetIds: true },
+      select: { id: true, title: true, subject: true, content: true, type: true, status: true, scheduledAt: true, audience: true, targetIds: true, channelDetails: true },
     });
 
     if (!campaign) {
@@ -447,6 +538,51 @@ export async function launchCampaign(id: string | number) {
             .map((f, idx) => `${idx + 1}. ${f.reason?.message || "خطأ"}`)
             .join(" ");
           sendError = `فشل إرسال ${failures.length} رسائل من ${recipients.length}: ${messages}`;
+        }
+      }
+
+      metrics.sent = sentCount;
+      metrics.opened = 0;
+      metrics.clicked = 0;
+      metrics.converted = 0;
+    }
+
+    if (campaign.type === "WHATSAPP" && nextStatus === "RUNNING") {
+      if (!getWhatsAppConfig()) {
+        return { success: false, error: "WhatsApp Cloud API غير مهيأ. أضف WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID في متغيرات البيئة" };
+      }
+
+      const channelDetails = (campaign.channelDetails || {}) as Record<string, any>;
+      const templateName = String(channelDetails.templateName || "").trim();
+      const templateLanguage = String(channelDetails.templateLanguage || "ar").trim() || "ar";
+
+      const recipients = await getWhatsAppCampaignRecipients(campaign.audience as CampaignAudience, campaign.targetIds);
+
+      if (recipients.length === 0) {
+        sendError = "لا يوجد مستلمون بأرقام واتساب صالحة لهذه الحملة";
+      } else {
+        const failures: string[] = [];
+
+        // إرسال تسلسلي مع تأخير بسيط لاحترام حدود المعدل في Meta
+        for (const recipient of recipients) {
+          try {
+            const recipientName = recipient.name || "";
+            if (templateName) {
+              await sendWhatsAppTemplateMessage(recipient.phone, templateName, templateLanguage, [recipientName]);
+            } else {
+              const text = campaign.content.replace(/\{\{\s*name\s*\}\}/gi, recipientName);
+              await sendWhatsAppTextMessage(recipient.phone, text);
+            }
+            sentCount += 1;
+          } catch (error: any) {
+            failures.push(`${recipient.name || recipient.phone}: ${error?.message || "خطأ"}`);
+          }
+          await delay(250);
+        }
+
+        if (failures.length > 0) {
+          console.error("Campaign WhatsApp failures:", failures);
+          sendError = `فشل إرسال ${failures.length} رسائل من ${recipients.length}: ${failures.slice(0, 5).join(" | ")}`;
         }
       }
 
