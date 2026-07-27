@@ -626,7 +626,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         statusCounts,
         statusOptions,
         PAGE_SIZE,
-    } = useOrderFilters(orders, user);
+    } = useOrderFilters(orders, user, cities);
 
     // 1. تأكد من وجود حالة للتحميل في المكون الخاص بك
     // const [isSubmitting, setIsSubmitting] = useState(false);

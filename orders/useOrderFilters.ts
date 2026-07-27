@@ -11,7 +11,7 @@ interface User {
   };
 }
 
-export const useOrderFilters = (orders: any[], user?: User) => {
+export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: number | string; name: string }> = []) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [cityId, setCityId] = React.useState("");
   const [warehouseId, setWarehouseId] = React.useState("");
@@ -46,10 +46,16 @@ export const useOrderFilters = (orders: any[], user?: User) => {
 
       if (!matchesText) return false;
 
-      // فلتر المدينة
+      // فلتر المدينة: يطابق مدينة المستودع (cityId) أو اسم مدينة العميل (order.city)
       if (cityId) {
         const orderCityId = order.warehouse?.city?.id ?? order.warehouse?.cityId;
-        if (String(orderCityId || "") !== String(cityId)) return false;
+        const selectedCityName = String(
+          cities.find((city) => String(city.id) === String(cityId))?.name || ""
+        ).trim();
+        const orderCityName = String(order.city || "").trim();
+        const matchesWarehouseCity = String(orderCityId || "") === String(cityId);
+        const matchesCustomerCity = Boolean(selectedCityName) && orderCityName === selectedCityName;
+        if (!matchesWarehouseCity && !matchesCustomerCity) return false;
       }
 
       // فلتر المستودع
@@ -77,7 +83,7 @@ export const useOrderFilters = (orders: any[], user?: User) => {
 
       return true;
     });
-  }, [orders, user, searchQuery, cityId, warehouseId, shippingCompany, monthFilterType, customMonth]);
+  }, [orders, user, cities, searchQuery, cityId, warehouseId, shippingCompany, monthFilterType, customMonth]);
 
   const statusOptions = [
     "طلب جديد",

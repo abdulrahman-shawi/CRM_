@@ -52,6 +52,7 @@ const initialForm: FormState = {
 
 const CURRENCIES = [
   { code: "USD", name: "الدولار الأمريكي" },
+  { code: "SYP", name: "الليرة السورية" },
   { code: "EUR", name: "اليورو" },
   { code: "GBP", name: "الجنيه الإسترليني" },
   { code: "JPY", name: "الين الياباني" },
