@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import PhoneInput from "react-phone-number-input";
+import type { Country as PhoneCountry } from "react-phone-number-input";
 import toast from "react-hot-toast";
 import {
   Building2,
@@ -34,6 +35,7 @@ import {
   updateWholesaleCustomer,
 } from "@/server/wholesale-customer";
 import { getCampaigns } from "@/server/marketing";
+import { getCountriesWithCities } from "@/server/country";
 import { sendEmailToRecipient } from "@/server/email";
 
 type SalesRep = {
@@ -156,37 +158,10 @@ const LEGACY_ACTIVITY_LABELS: Record<string, string> = {
   CLINIC: "عيادة",
 };
 
-const WHOLESALE_COUNTRY_OPTIONS = ["سوريا", "تركيا"] as const;
-
-const WHOLESALE_CITIES_BY_COUNTRY: Record<(typeof WHOLESALE_COUNTRY_OPTIONS)[number], string[]> = {
-  "سوريا": [
-    "دمشق",
-    "ريف دمشق",
-    "حلب",
-    "حمص",
-    "حماة",
-    "اللاذقية",
-    "طرطوس",
-    "إدلب",
-    "درعا",
-    "السويداء",
-    "القنيطرة",
-    "دير الزور",
-    "الرقة",
-    "الحسكة",
-  ],
-  "تركيا": [
-    "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin",
-    "Aydın", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa",
-    "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan",
-    "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay",
-    "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli",
-    "Kırşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin",
-    "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt",
-    "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak",
-    "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman",
-    "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce",
-  ],
+type CountryWithCities = {
+  id: number;
+  name: string;
+  cities: { id: number; name: string; countryId: number }[];
 };
 
 const VISIT_RESULT_OPTIONS = [
@@ -229,7 +204,17 @@ const CONTACT_ROLE_OPTIONS = [
   { value: "OTHER", label: "أخرى" },
 ];
 
-const COUNTRY_MAP_CONFIG = {
+type CountryMapConfig = {
+  center: { latitude: number; longitude: number };
+  delta: { latitude: number; longitude: number };
+};
+
+const DEFAULT_MAP_CONFIG: CountryMapConfig = {
+  center: { latitude: 33.5138, longitude: 36.2765 },
+  delta: { latitude: 2.2, longitude: 2.8 },
+};
+
+const COUNTRY_MAP_CONFIG: Record<string, CountryMapConfig> = {
   "سوريا": {
     center: { latitude: 34.8, longitude: 38.8 },
     delta: { latitude: 2.2, longitude: 2.8 },
@@ -238,9 +223,13 @@ const COUNTRY_MAP_CONFIG = {
     center: { latitude: 39.0, longitude: 35.0 },
     delta: { latitude: 5.5, longitude: 8.5 },
   },
-} as const;
+};
 
-type WholesaleCountry = (typeof WHOLESALE_COUNTRY_OPTIONS)[number];
+function getCountryMapConfig(country: string): CountryMapConfig {
+  return COUNTRY_MAP_CONFIG[country] ?? DEFAULT_MAP_CONFIG;
+}
+
+type WholesaleCountry = string;
 
 type GeoCoordinates = {
   latitude: number;
@@ -263,7 +252,7 @@ function createEmptyCustomerForm(): CustomerFormState {
     contactRoleOther: "",
     email: "",
     phoneNumbers: [""],
-    country: "سوريا",
+    country: "",
     city: "",
     area: "",
     address: "",
@@ -336,20 +325,26 @@ function getUniqueDisplayPhones(values: string[] | null | undefined) {
   return uniqueValues.map((item) => formatPhoneForDisplay(item));
 }
 
-function isWholesaleCountry(value: string): value is (typeof WHOLESALE_COUNTRY_OPTIONS)[number] {
-  return WHOLESALE_COUNTRY_OPTIONS.includes(value as (typeof WHOLESALE_COUNTRY_OPTIONS)[number]);
+function isKnownCountry(value: string, allowedCountries: string[]) {
+  return allowedCountries.includes(value);
 }
 
-function getPhoneDefaultCountry(country: string) {
-  return country === "تركيا" ? "TR" : "SY";
+const PHONE_DEFAULT_COUNTRY_BY_NAME: Record<string, PhoneCountry> = {
+  "سوريا": "SY",
+  "تركيا": "TR",
+};
+
+function getPhoneDefaultCountry(country: string): PhoneCountry | undefined {
+  return PHONE_DEFAULT_COUNTRY_BY_NAME[country];
 }
 
-function getAllowedCountriesFromAccess(): WholesaleCountry[] {
-  return [...WHOLESALE_COUNTRY_OPTIONS];
-}
+const WHATSAPP_DIAL_CODE_BY_COUNTRY: Record<string, string> = {
+  "سوريا": "963",
+  "تركيا": "90",
+};
 
-function getAllowedCountriesFromUser(_value: unknown) {
-  return getAllowedCountriesFromAccess();
+function getWhatsAppDialCode(country: string | null | undefined) {
+  return WHATSAPP_DIAL_CODE_BY_COUNTRY[String(country || "")] ?? "";
 }
 
 function parseMapLinkCoordinates(value: string): GeoCoordinates | null {
@@ -403,7 +398,7 @@ function isWithinBounds(
     && longitude <= bounds.maxLongitude;
 }
 
-function getCountryFromCoordinates(latitude: number, longitude: number): WholesaleCountry {
+function getCountryFromCoordinates(latitude: number, longitude: number): string | null {
   if (isWithinBounds(latitude, longitude, {
     minLatitude: 35.8,
     maxLatitude: 42.2,
@@ -422,7 +417,7 @@ function getCountryFromCoordinates(latitude: number, longitude: number): Wholesa
     return "سوريا";
   }
 
-  return "سوريا";
+  return null;
 }
 
 function createGoogleMapsLink(latitude: number, longitude: number) {
@@ -436,7 +431,7 @@ function formatCoordinate(value: number) {
 function createMapEmbedUrl(center: GeoCoordinates, country: WholesaleCountry, focusOnLocation: boolean) {
   const baseDelta = focusOnLocation
     ? { latitude: 0.08, longitude: 0.12 }
-    : COUNTRY_MAP_CONFIG[country].delta;
+    : getCountryMapConfig(country).delta;
 
   const minLongitude = center.longitude - baseDelta.longitude;
   const maxLongitude = center.longitude + baseDelta.longitude;
@@ -458,13 +453,13 @@ function getLocationStatusMessage(status: LocationState["status"]) {
     case "ready":
       return "تم تحديد موقع المسؤول الحالي وعرضه على الخريطة.";
     case "denied":
-      return "تم رفض صلاحية الموقع. تم فتح الخريطة على سوريا بشكل افتراضي.";
+      return "تم رفض صلاحية الموقع. تم فتح الخريطة على الموقع الافتراضي.";
     case "unsupported":
-      return "المتصفح لا يدعم تحديد الموقع. تم فتح الخريطة على سوريا بشكل افتراضي.";
+      return "المتصفح لا يدعم تحديد الموقع. تم فتح الخريطة على الموقع الافتراضي.";
     case "error":
-      return "تعذر تحديد الموقع الحالي. تم فتح الخريطة على سوريا بشكل افتراضي.";
+      return "تعذر تحديد الموقع الحالي. تم فتح الخريطة على الموقع الافتراضي.";
     default:
-      return "سيتم فتح الخريطة على موقع المسؤول إن توفر، وإلا على سوريا افتراضياً.";
+      return "سيتم فتح الخريطة على موقع المسؤول إن توفر، وإلا على الموقع الافتراضي.";
   }
 }
 
@@ -523,6 +518,7 @@ export default function WholesaleCustomersPage() {
   const { user, loading } = useAuth();
   const [customers, setCustomers] = React.useState<WholesaleCustomer[]>([]);
   const [salesReps, setSalesReps] = React.useState<SalesRep[]>([]);
+  const [countryRows, setCountryRows] = React.useState<CountryWithCities[]>([]);
   const [page, setPage] = React.useState(1);
   const [search, setSearch] = React.useState("");
   const deferredSearch = React.useDeferredValue(search);
@@ -555,14 +551,18 @@ export default function WholesaleCustomersPage() {
   const [locationState, setLocationState] = React.useState<LocationState>({
     status: "idle",
     coordinates: null,
-    country: "سوريا",
+    country: "",
   });
   const isUserAdmin = isAdmin(user);
 
   const availableCities = React.useMemo(() => {
-    if (!isWholesaleCountry(customerForm.country)) return [];
-    return WHOLESALE_CITIES_BY_COUNTRY[customerForm.country];
-  }, [customerForm.country]);
+    const countryRow = countryRows.find((item) => item.name === customerForm.country);
+    return countryRow ? countryRow.cities.map((city) => city.name) : [];
+  }, [countryRows, customerForm.country]);
+
+  const countryOptions = React.useMemo(() => {
+    return countryRows.map((item) => item.name);
+  }, [countryRows]);
 
   const canAccessWholesale = React.useMemo(() => {
     if (!user) return false;
@@ -577,9 +577,10 @@ export default function WholesaleCustomersPage() {
 
   const loadData = React.useCallback(async () => {
     setIsLoading(true);
-    const [customersResponse, repsResponse] = await Promise.all([
+    const [customersResponse, repsResponse, countriesResponse] = await Promise.all([
       getWholesaleCustomers(),
       getWholesaleSalesReps(),
+      getCountriesWithCities(),
     ]);
 
     if (!customersResponse.success) {
@@ -594,6 +595,8 @@ export default function WholesaleCustomersPage() {
       setSalesReps((repsResponse.data as SalesRep[]) || []);
     }
 
+    setCountryRows(Array.isArray(countriesResponse) ? (countriesResponse as CountryWithCities[]) : []);
+
     setIsLoading(false);
   }, []);
 
@@ -607,8 +610,8 @@ export default function WholesaleCustomersPage() {
     if (digits.startsWith("+") || digits.startsWith("00") || digits.length > 10) {
       return digits.replace(/^\+?/, "");
     }
-    const code = country === "تركيا" ? "90" : "963";
-    return `${code}${digits}`;
+    const code = getWhatsAppDialCode(country);
+    return code ? `${code}${digits}` : digits;
   }
 
   async function openCustomerWhatsAppModal(customer: WholesaleCustomer) {
@@ -708,7 +711,7 @@ export default function WholesaleCustomersPage() {
       setLocationState({
         status: "unsupported",
         coordinates: null,
-        country: "سوريا",
+        country: "",
       });
       return;
     }
@@ -721,7 +724,7 @@ export default function WholesaleCustomersPage() {
         if (!isActive) return;
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        const country = getCountryFromCoordinates(latitude, longitude);
+        const country = getCountryFromCoordinates(latitude, longitude) ?? "";
         setLocationState({
           status: "ready",
           coordinates: { latitude, longitude },
@@ -733,7 +736,7 @@ export default function WholesaleCustomersPage() {
         setLocationState({
           status: error.code === error.PERMISSION_DENIED ? "denied" : "error",
           coordinates: null,
-          country: "سوريا",
+          country: "",
         });
       },
       {
@@ -819,18 +822,13 @@ export default function WholesaleCustomersPage() {
     return { total, todayVisits, hotLeads, monthlySales };
   }, [visibleCustomers]);
 
-  const selectedSalesRep = React.useMemo(() => {
-    return salesReps.find((rep) => rep.id === customerForm.assignedUserId) ?? null;
-  }, [customerForm.assignedUserId, salesReps]);
-
   const mapLinkCoordinates = React.useMemo(() => {
     return parseMapLinkCoordinates(customerForm.googleMapsLink);
   }, [customerForm.googleMapsLink]);
 
   const allowedCountriesForAssignee = React.useMemo<WholesaleCountry[]>(() => {
-    const scopedCountries = getAllowedCountriesFromUser(selectedSalesRep ?? user);
-    return scopedCountries.length > 0 ? scopedCountries : [...WHOLESALE_COUNTRY_OPTIONS];
-  }, [selectedSalesRep, user]);
+    return countryOptions;
+  }, [countryOptions]);
 
   const resolvedCustomerCountry = React.useMemo<WholesaleCountry>(() => {
     const linkCountry = mapLinkCoordinates
@@ -841,7 +839,7 @@ export default function WholesaleCustomersPage() {
       return linkCountry;
     }
 
-    if (isWholesaleCountry(customerForm.country) && allowedCountriesForAssignee.includes(customerForm.country)) {
+    if (isKnownCountry(customerForm.country, allowedCountriesForAssignee)) {
       return customerForm.country;
     }
 
@@ -849,23 +847,24 @@ export default function WholesaleCustomersPage() {
       return locationState.country;
     }
 
-    return allowedCountriesForAssignee[0] ?? "سوريا";
+    return allowedCountriesForAssignee[0] ?? "";
   }, [allowedCountriesForAssignee, customerForm.country, locationState.coordinates, locationState.country, mapLinkCoordinates]);
 
   React.useEffect(() => {
     setCustomerForm((current) => {
       if (current.country === resolvedCustomerCountry) return current;
+      const nextCities = countryRows.find((item) => item.name === resolvedCustomerCountry)?.cities.map((city) => city.name) ?? [];
       return {
         ...current,
         country: resolvedCustomerCountry,
-        city: WHOLESALE_CITIES_BY_COUNTRY[resolvedCustomerCountry].includes(current.city) ? current.city : "",
+        city: nextCities.includes(current.city) ? current.city : "",
       };
     });
-  }, [resolvedCustomerCountry]);
+  }, [resolvedCustomerCountry, countryRows]);
 
   const mapCountry = React.useMemo<WholesaleCountry>(() => {
     if (mapLinkCoordinates) {
-      return getCountryFromCoordinates(mapLinkCoordinates.latitude, mapLinkCoordinates.longitude);
+      return getCountryFromCoordinates(mapLinkCoordinates.latitude, mapLinkCoordinates.longitude) ?? resolvedCustomerCountry;
     }
     return resolvedCustomerCountry;
   }, [mapLinkCoordinates, resolvedCustomerCountry]);
@@ -886,7 +885,7 @@ export default function WholesaleCustomersPage() {
       return locationState.coordinates;
     }
 
-    return COUNTRY_MAP_CONFIG[mapCountry].center;
+    return getCountryMapConfig(mapCountry).center;
   }, [customerForm.latitude, customerForm.longitude, locationState.coordinates, mapCountry, mapLinkCoordinates]);
 
   const mapEmbedUrl = React.useMemo(() => {
@@ -900,11 +899,12 @@ export default function WholesaleCustomersPage() {
     const nextCountry = allowedCountriesForAssignee.includes(country)
       ? country
       : (allowedCountriesForAssignee[0] ?? country);
+    const nextCities = countryRows.find((item) => item.name === nextCountry)?.cities.map((city) => city.name) ?? [];
 
     setCustomerForm((current) => ({
       ...current,
       country: nextCountry,
-      city: WHOLESALE_CITIES_BY_COUNTRY[nextCountry].includes(current.city) ? current.city : "",
+      city: nextCities.includes(current.city) ? current.city : "",
       latitude: formatCoordinate(coordinates.latitude),
       longitude: formatCoordinate(coordinates.longitude),
       googleMapsLink: createGoogleMapsLink(coordinates.latitude, coordinates.longitude),
@@ -915,9 +915,10 @@ export default function WholesaleCustomersPage() {
     setEditingCustomerId(null);
     const nextForm = createEmptyCustomerForm();
     nextForm.assignedUserId = isUserAdmin ? "" : (user?.id || "");
+    nextForm.country = allowedCountriesForAssignee.includes(locationState.country)
+      ? locationState.country
+      : (allowedCountriesForAssignee[0] ?? "");
     if (locationState.coordinates) {
-      const country = locationState.country;
-      nextForm.country = country;
       nextForm.latitude = formatCoordinate(locationState.coordinates.latitude);
       nextForm.longitude = formatCoordinate(locationState.coordinates.longitude);
       nextForm.googleMapsLink = createGoogleMapsLink(locationState.coordinates.latitude, locationState.coordinates.longitude);
@@ -937,7 +938,7 @@ export default function WholesaleCustomersPage() {
       contactRoleOther: customer.contactRoleOther || "",
       email: customer.email || "",
       phoneNumbers: customer.phone.length > 0 ? customer.phone : [""],
-      country: isWholesaleCountry(customer.country || "") ? customer.country || "سوريا" : "سوريا",
+      country: customer.country && countryOptions.includes(customer.country) ? customer.country : (countryOptions[0] ?? ""),
       city: customer.city || "",
       area: customer.area || "",
       address: customer.address || "",
@@ -1692,6 +1693,7 @@ export default function WholesaleCustomersPage() {
           </Field>
           <Field label="البلد">
             <select value={customerForm.country} onChange={(event) => setCustomerForm((current) => ({ ...current, country: event.target.value }))} className="field-input">
+              <option value="">اختر البلد</option>
               {allowedCountriesForAssignee.map((country) => (
                 <option key={country} value={country}>{country}</option>
               ))}

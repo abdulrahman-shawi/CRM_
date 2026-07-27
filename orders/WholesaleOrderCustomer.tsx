@@ -4,6 +4,7 @@ import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Save, ScanLine, Trash2 } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
+import type { Country as PhoneCountry } from "react-phone-number-input";
 import toast from "react-hot-toast";
 import { AppModal } from "@/components/ui/app-modal";
 import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
@@ -76,8 +77,13 @@ function getEffectivePrice(price: number, discount: number) {
   return Math.max(0, Number(price || 0) - Number(discount || 0));
 }
 
-function getPhoneDefaultCountry(country: string | null | undefined) {
-  return String(country || "سوريا") === "تركيا" ? "TR" : "SY";
+const PHONE_DEFAULT_COUNTRY_BY_NAME: Record<string, PhoneCountry> = {
+  "سوريا": "SY",
+  "تركيا": "TR",
+};
+
+function getPhoneDefaultCountry(country: string | null | undefined): PhoneCountry | undefined {
+  return PHONE_DEFAULT_COUNTRY_BY_NAME[String(country || "")];
 }
 
 function resolveWholesaleUnitPrice(product: any, quantity: number, warehouseId: string) {

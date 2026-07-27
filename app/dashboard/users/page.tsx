@@ -137,7 +137,6 @@ const UserManagement: React.FunctionComponent = () => {
     totalDefaultSalary: number;
     editedSalary: number | null;
     payableSalary: number;
-    exchangeRateBreakdown: Array<{ label: string; exchangeRate: number | null; sourceType: "TRY_CONVERTED" | "USD_DIRECT"; revenue: number; shipping: number; netRevenue: number; ordersCount: number }>;
     productBreakdown: Array<{ productId: number; productName: string; quantity: number; revenue: number; ordersCount: number }>;
     dailySalesBreakdown: Array<{ date: string; quantity: number; revenue: number; ordersCount: number }>;
     statusBreakdown: Array<{ status: string; count: number; amount: number }>;
@@ -701,7 +700,6 @@ const UserManagement: React.FunctionComponent = () => {
         totalDefaultSalary,
         editedSalary: hasEditedSalary ? editedSalaryValue : null,
         payableSalary,
-        exchangeRateBreakdown: Array.isArray(summary?.exchangeRateBreakdown) ? summary.exchangeRateBreakdown : [],
         productBreakdown: Array.isArray(summary?.productBreakdown) ? summary.productBreakdown : [],
         dailySalesBreakdown: Array.isArray(summary?.dailySalesBreakdown) ? summary.dailySalesBreakdown : [],
         statusBreakdown: Array.isArray(summary?.statusBreakdown) ? summary.statusBreakdown : [],
@@ -745,21 +743,6 @@ const UserManagement: React.FunctionComponent = () => {
       const monthLabel = financialReportMonth
         ? new Date(`${financialReportMonth}-01`).toLocaleDateString("ar-EG", { year: "numeric", month: "long" })
         : "الشهر الحالي";
-
-      const exchangeRowsHtml = financialReportData.exchangeRateBreakdown.length
-        ? financialReportData.exchangeRateBreakdown
-            .map(
-              (row) => `
-                <div style="display:grid;grid-template-columns:1.1fr .85fr .55fr .8fr;gap:6px;padding:6px 8px;border-bottom:1px solid #e2e8f0;align-items:center;">
-                  <div style="font-weight:700;color:#0f172a;">${row.sourceType === "TRY_CONVERTED" ? "طلبات تركيا" : "طلبات USD مباشرة"}</div>
-                  <div style="color:#475569;">${row.exchangeRate === null ? "-" : row.label}</div>
-                  <div style="color:#475569;">${Number(row.ordersCount || 0).toLocaleString()}</div>
-                  <div style="font-weight:800;color:#2563eb;">${formatMoney(row.netRevenue)} $</div>
-                </div>
-              `
-            )
-            .join("")
-        : `<div style="padding:10px 8px;color:#64748b;">لا توجد بيانات</div>`;
 
       const productRowsHtml = financialReportData.productBreakdown.length
         ? financialReportData.productBreakdown
@@ -872,11 +855,7 @@ const UserManagement: React.FunctionComponent = () => {
           <div style="font-size:11px;color:#334155;line-height:1.9;white-space:pre-wrap;word-break:break-word;">${financialReportData.employeeNotes || "لا توجد ملاحظات لهذا الموظف"}</div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1.05fr .95fr 1fr 1fr;gap:10px;align-items:start;">
-          <div style="border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;">
-            <div style="padding:8px 10px;background:#f8fafc;font-size:12px;font-weight:900;">تفصيل سعر الصرف</div>
-            <div style="font-size:10px;">${exchangeRowsHtml}</div>
-          </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:start;">
           <div style="border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;">
             <div style="padding:8px 10px;background:#f8fafc;font-size:12px;font-weight:900;">أفضل المنتجات</div>
             <div style="font-size:10px;">${productRowsHtml}</div>
@@ -1204,45 +1183,6 @@ const UserManagement: React.FunctionComponent = () => {
                 <div className="whitespace-pre-wrap text-slate-600 dark:text-slate-300">
                   {financialReportData.employeeNotes || "لا توجد ملاحظات لهذا الموظف."}
                 </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="font-black text-slate-800 dark:text-white">تفصيل المبيعات حسب سعر صرف الدولار</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-300">الطلبات التركية تُجمع حسب سعر الصرف المستخدم، والطلبات المباشرة بالدولار تبقى في قسم مستقل</div>
-                  </div>
-                </div>
-                {financialReportData.exchangeRateBreakdown.length === 0 ? (
-                  <div className="text-sm text-slate-500 dark:text-slate-300">لا توجد بيانات لسعر الصرف في هذا الشهر.</div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-slate-200 text-slate-500 dark:border-slate-800 dark:text-slate-300">
-                          <th className="px-3 py-2 text-right">نوع التسعير</th>
-                          <th className="px-3 py-2 text-right">سعر الصرف</th>
-                          <th className="px-3 py-2 text-right">الطلبات</th>
-                          <th className="px-3 py-2 text-right">المبيعات</th>
-                          <th className="px-3 py-2 text-right">الشحن</th>
-                          <th className="px-3 py-2 text-right">الصافي</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {financialReportData.exchangeRateBreakdown.map((row) => (
-                          <tr key={`${row.label}-${row.ordersCount}`} className="border-b border-slate-100 dark:border-slate-800/70">
-                            <td className="px-3 py-2 font-bold text-slate-800 dark:text-slate-100">{row.sourceType === "TRY_CONVERTED" ? "طلبات تركيا" : "طلبات USD مباشرة"}</td>
-                            <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{row.exchangeRate === null ? "-" : row.label}</td>
-                            <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{Number(row.ordersCount || 0).toLocaleString()}</td>
-                            <td className="px-3 py-2 font-bold text-emerald-600">{formatMoney(row.revenue)}</td>
-                            <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{formatMoney(row.shipping)}</td>
-                            <td className="px-3 py-2 font-bold text-blue-600">{formatMoney(row.netRevenue)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
               </div>
 
               <div className="grid gap-3 lg:grid-cols-2">

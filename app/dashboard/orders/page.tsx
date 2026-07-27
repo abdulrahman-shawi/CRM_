@@ -1042,8 +1042,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     );
 };
 
-// سعر صرف الدولار مقابل الليرة التركية (يتم تحديثه من المستخدم عند اختيار تركيا)
-
 
 
 

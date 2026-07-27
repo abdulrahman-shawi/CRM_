@@ -20,6 +20,24 @@ export const getCountries = async () => {
     return JSON.parse(JSON.stringify(countries));
 };
 
+export const getCountriesWithCities = async () => {
+    const countries = await prisma.country.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+            cities: {
+                orderBy: { name: "asc" },
+                select: {
+                    id: true,
+                    name: true,
+                    countryId: true,
+                },
+            },
+        },
+    });
+
+    return JSON.parse(JSON.stringify(countries));
+};
+
 export const createCountry = async (data: any) => {
     try {
         const name = normalizeCountryName(data.name);

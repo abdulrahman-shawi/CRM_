@@ -266,15 +266,18 @@ function hasWholesaleAccess(user: any) {
     || hasPermission(user, "deleteWholesaleCustomers");
 }
 
-function getAllowedWholesaleCountries(user: any) {
+async function getAllowedWholesaleCountries(user: any) {
   void user;
-  return ["سوريا", "تركيا"];
+  const countries = await prisma.country.findMany({
+    select: { name: true },
+  });
+  return countries.map((country) => country.name);
 }
 
-function getScopedWholesaleCountryWhere(user: any) {
+async function getScopedWholesaleCountryWhere(user: any) {
   if (isAdmin(user)) return {};
 
-  const countries = getAllowedWholesaleCountries(user);
+  const countries = await getAllowedWholesaleCountries(user);
   if (countries.length === 0) {
     return {
       country: {
@@ -290,12 +293,12 @@ function getScopedWholesaleCountryWhere(user: any) {
   };
 }
 
-function getScopedWholesaleWhere(user: any) {
+async function getScopedWholesaleWhere(user: any) {
   if (isAdmin(user)) return {};
 
   return {
     AND: [
-      getScopedWholesaleCountryWhere(user),
+      await getScopedWholesaleCountryWhere(user),
       {
         OR: [
           { assignedUserId: user.id },
@@ -308,20 +311,17 @@ function getScopedWholesaleWhere(user: any) {
 
 function normalizeWholesaleCountry(value: unknown) {
   const normalized = String(value ?? "").trim();
-  if (normalized === "سوريا" || normalized === "تركيا") {
-    return normalized;
-  }
-  return null;
+  return normalized || null;
 }
 
-function resolveScopedCountry(preferredCountry: unknown, user: any) {
+async function resolveScopedCountry(preferredCountry: unknown, user: any) {
   const normalizedPreferred = normalizeWholesaleCountry(preferredCountry);
 
   if (isAdmin(user)) {
     return normalizedPreferred;
   }
 
-  const allowedCountries = getAllowedWholesaleCountries(user);
+  const allowedCountries = await getAllowedWholesaleCountries(user);
   if (normalizedPreferred && allowedCountries.includes(normalizedPreferred)) {
     return normalizedPreferred;
   }
@@ -346,7 +346,7 @@ async function getAccessibleCustomerId(id: string, user: any) {
   const customer = await prisma.wholesaleCustomer.findFirst({
     where: {
       id,
-      ...getScopedWholesaleWhere(user),
+      ...await getScopedWholesaleWhere(user),
     },
     select: { id: true, assignedUserId: true },
   });
@@ -386,7 +386,7 @@ export async function getWholesaleCustomers() {
     }
 
     const data = await prisma.wholesaleCustomer.findMany({
-      where: getScopedWholesaleWhere(currentUser),
+      where: await getScopedWholesaleWhere(currentUser),
       orderBy: [{ nextFollowUpAt: 'asc' }, { createdAt: 'desc' }],
       select: wholesaleCustomerSelect,
     });
@@ -474,7 +474,7 @@ export async function createWholesaleCustomer(payload: WholesaleCustomerPayload)
       : currentUser.id;
     const assignedUser = await getUserCountryScope(assignedUserId);
     const countryOwner = assignedUser ?? currentUser;
-    const country = resolveScopedCountry(payload.country, countryOwner);
+    const country = await resolveScopedCountry(payload.country, countryOwner);
 
     if (!country) {
       return { success: false, error: 'تعذر تحديد دولة العميل من صلاحيات المستخدم' };
@@ -548,7 +548,7 @@ export async function updateWholesaleCustomer(id: string, payload: WholesaleCust
       : (accessibleCustomer.assignedUserId ?? currentUser.id);
     const assignedUser = await getUserCountryScope(assignedUserId);
     const countryOwner = assignedUser ?? currentUser;
-    const country = resolveScopedCountry(payload.country, countryOwner);
+    const country = await resolveScopedCountry(payload.country, countryOwner);
 
     if (!country) {
       return { success: false, error: 'تعذر تحديد دولة العميل من صلاحيات المستخدم' };

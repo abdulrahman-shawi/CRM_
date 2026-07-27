@@ -6,7 +6,7 @@
 
 ## Project Overview
 
-**SKYNOVA CRM** is a full-stack CRM / ERP web application built with Next.js 14 (App Router). It supports multi-role user management, order lifecycle tracking, warehouse inventory across two countries (Turkey and Syria), employee targets & salaries, expense tracking, customer management, analytics, and an e-commerce affiliate platform.
+**SKYNOVA CRM** is a full-stack CRM / ERP web application built with Next.js 14 (App Router). It supports multi-role user management, order lifecycle tracking, multi-warehouse inventory across dynamically managed countries and cities, employee targets & salaries, expense tracking, customer management, analytics, and an e-commerce affiliate platform.
 
 The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-facing labels, toast messages, and inline comments are in Arabic. Code identifiers (variables, functions, filenames) remain in English.
 
@@ -213,7 +213,7 @@ Bulk WhatsApp campaigns are sent via Meta's WhatsApp Cloud API (`lib/whatsapp.ts
 Orders affect stock in real time via `applyOrderStockChange` in `server/order.ts`:
 - Sold/delivered statuses **decrease** stock.
 - Cancelled/returned statuses **restore** stock.
-- Warehouses are located in either Turkey or Syria; stock lookups fall back by location name when `warehouseId` is absent.
+- Warehouses are linked to dynamically managed `Country`/`City` records; stock lookups fall back by warehouse location name when `warehouseId` is absent.
 
 ### Warranty
 Warranty records (`server/warranty.ts`) now require a **warehouse** and **quantity** for every type:

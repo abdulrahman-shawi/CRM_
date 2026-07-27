@@ -5,50 +5,18 @@ import { hasPermission, isAdmin } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { decrypt } from "@/lib/auth";
 
-const normalizeOrderAmountToUSD = (amount: number, warehouseLocation?: string | null, exchangeRate: number = 0) => {
-  const value = Number(amount || 0);
-  const safeRate = Number(exchangeRate) > 0 ? Number(exchangeRate) : 0;
-  return String(warehouseLocation || "").trim() === "تركيا" && safeRate > 0 ? value / safeRate : value;
-};
 const NON_REVENUE_STATUSES = ["تم الغاء الطلب", "فشل التسليم مرتجع"];
 const DELIVERED_ORDER_STATUSES = ["تم تسليم الطلب", "تم التسليم", "تم استلام الطلب"];
 
-const resolveOrderExchangeRate = (
-  orderLike: { usdToTryRateAtOrder?: number | null },
-  fallbackExchangeRate: number = 0
-) => {
-  const snapshotRate = Number(orderLike?.usdToTryRateAtOrder || 0);
-  if (snapshotRate > 0) return snapshotRate;
-  return Number(fallbackExchangeRate) > 0 ? Number(fallbackExchangeRate) : 0;
-};
-
-const getTurkeyExchangeRateFromSettings = async () => {
-  try {
-    const settings = await prisma.generalSetting.findFirst({
-      orderBy: { id: "asc" },
-      select: { usdToTryRate: true },
-    });
-
-    const rate = Number(settings?.usdToTryRate || 0);
-    return rate > 0 ? rate : 0;
-  } catch (error) {
-    return 0;
-  }
-};
-
-const getOrderAmountFromItemsInUSD = (order: {
+const getOrderAmountFromItems = (order: {
   finalAmount?: number | null;
   discount?: number | null;
-  usdToTryRateAtOrder?: number | null;
-  manualCreatedAt?: Date | null;
-  warehouse?: { location?: string | null } | null;
   items?: Array<{ quantity?: number | null; price?: number | null; discount?: number | null }>;
-}, exchangeRate: number = 0) => {
-  const effectiveRate = resolveOrderExchangeRate(order, exchangeRate);
+}) => {
   const items = Array.isArray(order.items) ? order.items : [];
 
   if (items.length === 0) {
-    return normalizeOrderAmountToUSD(Number(order.finalAmount || 0), order.warehouse?.location, effectiveRate);
+    return Number(order.finalAmount || 0);
   }
 
   const itemsTotal = items.reduce((sum, item) => {
@@ -61,8 +29,7 @@ const getOrderAmountFromItemsInUSD = (order: {
   }, 0);
 
   const globalDiscount = Math.max(0, Number(order.discount || 0));
-  const finalOrderAmount = Math.max(0, itemsTotal - globalDiscount);
-  return normalizeOrderAmountToUSD(finalOrderAmount, order.warehouse?.location, effectiveRate);
+  return Math.max(0, itemsTotal - globalDiscount);
 };
 
 const getOrderEffectiveDate = (orderLike: { manualCreatedAt?: Date | null; createdAt?: Date | null }) => {
@@ -74,7 +41,7 @@ const getOrderEffectiveDate = (orderLike: { manualCreatedAt?: Date | null; creat
 type OrderDateFilter = {
   startDate?: string;
   endDate?: string;
-  warehouseLocation?: "سوريا" | "تركيا";
+  warehouseId?: number;
 };
 
 type EmployeeReportPeriod = "day" | "week" | "month" | "custom";
@@ -108,10 +75,10 @@ const buildOrderDateWhere = (dateFilter?: OrderDateFilter) => {
   };
 };
 
-const buildWarehouseScope = (warehouseLocation?: string) => {
-  const normalized = String(warehouseLocation || "").trim();
-  if (normalized !== "سوريا" && normalized !== "تركيا") return undefined;
-  return { warehouse: { location: normalized } };
+const buildWarehouseScope = (warehouseId?: number) => {
+  const id = Number(warehouseId);
+  if (!Number.isInteger(id) || id <= 0) return undefined;
+  return { warehouseId: id };
 };
 
 const buildPeriodRange = (period: EmployeeReportPeriod) => {
@@ -166,7 +133,6 @@ const buildEmployeeRange = (filter?: EmployeeReportFilter) => {
 // src/actions/analytics.ts
 export async function GetSalesByStatusAction(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -176,7 +142,7 @@ export async function GetSalesByStatusAction(userId: string, dateFilter?: OrderD
 
     const canViewAll = isAdmin(user) || Boolean(user.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
     const whereClause = {
       ...(canViewAll ? {} : { userId: userId }),
       ...(createdAtFilter ? { createdAt: createdAtFilter } : {}),
@@ -187,11 +153,6 @@ export async function GetSalesByStatusAction(userId: string, dateFilter?: OrderD
       where: whereClause,
       include: {
         customer: true,
-        warehouse: {
-          select: {
-            location: true,
-          }
-        },
         items: {
           select: {
             quantity: true,
@@ -213,7 +174,7 @@ export async function GetSalesByStatusAction(userId: string, dateFilter?: OrderD
     let failedReturnCount = 0;
 
     orders.forEach(order => {
-      const orderAmountUSD = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
+      const orderAmountUSD = getOrderAmountFromItems(order);
 
       if (!statusGroups[order.status]) {
         statusGroups[order.status] = {
@@ -267,7 +228,6 @@ export async function GetSalesByStatusAction(userId: string, dateFilter?: OrderD
 
 export async function GetSalesTimelineAction(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -277,7 +237,7 @@ export async function GetSalesTimelineAction(userId: string, dateFilter?: OrderD
 
     const canViewAll = isAdmin(user) || Boolean(user.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
     const whereClause = {
       ...(canViewAll ? {} : { userId: userId }),
       ...(createdAtFilter ? { createdAt: createdAtFilter } : {}),
@@ -291,12 +251,6 @@ export async function GetSalesTimelineAction(userId: string, dateFilter?: OrderD
         createdAt: true,
         finalAmount: true,
         discount: true,
-        usdToTryRateAtOrder: true,
-        warehouse: {
-          select: {
-            location: true,
-          }
-        },
         items: {
           select: {
             quantity: true,
@@ -311,7 +265,7 @@ export async function GetSalesTimelineAction(userId: string, dateFilter?: OrderD
     const timeline: Record<string, any> = {};
 
     orders.forEach(order => {
-      const orderAmountUSD = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
+      const orderAmountUSD = getOrderAmountFromItems(order);
       const date = new Date(order.createdAt);
       const monthYear = `${date.getMonth() + 1}-${date.getFullYear()}`;
 
@@ -476,78 +430,16 @@ export async function GetTopCustomers(userId: string, dateFilter?: OrderDateFilt
   }
 }
 
-// export async function GetSalesByCity(userId: string, dateFilter?: OrderDateFilter) {
-//   try {
-//     const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
-//     const user = await prisma.user.findUnique({
-//       where: { id: userId },
-//       include: { permission: true }
-//     });
-    
-//     const canViewAll = isAdmin(user) || Boolean(user?.permission?.viewOrders);
-//     const createdAtFilter = buildOrderDateWhere(dateFilter);
-//     const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
-//     const whereClause = {
-//       ...(canViewAll ? {} : { userId: userId }),
-//       ...(createdAtFilter ? { createdAt: createdAtFilter } : {}),
-//       ...(warehouseScope ? warehouseScope : {}),
-//     };
-
-//     const orders = await prisma.order.findMany({
-//       where: whereClause,
-//       select: {
-//         finalAmount: true,
-//         usdToTryRateAtOrder: true,
-//         warehouse: {
-//           select: {
-//             location: true,
-//           }
-//         }
-//       }
-//     });
-
-//     const groupedByWarehouseCountry = orders.reduce((acc, order) => {
-//       const warehouseCountry = String(order.warehouse?.location || "غير محدد").trim() || "غير محدد";
-
-//       if (!acc[warehouseCountry]) {
-//         acc[warehouseCountry] = {
-//           location: warehouseCountry,
-//           _count: { id: 0 },
-//           _sum: { finalAmount: 0 },
-//         };
-//       }
-
-//       acc[warehouseCountry]._count.id += 1;
-//       const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-//       acc[warehouseCountry]._sum.finalAmount += normalizeOrderAmountToUSD(
-//         Number(order.finalAmount || 0),
-//         order.warehouse?.location,
-//         effectiveRate
-//       );
-//       return acc;
-//     }, {} as Record<string, { location: string; _count: { id: number }; _sum: { finalAmount: number } }>);
-
-//     const citySales = Object.values(groupedByWarehouseCountry).sort(
-//       (a, b) => (b._sum.finalAmount || 0) - (a._sum.finalAmount || 0)
-//     );
-
-//     return { success: true, data: citySales };
-//   } catch (error) {
-//     return { success: false, data: [] };
-//   }
-// }
-
 export async function GetSalesByCity(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
     });
-    
+
     const canViewAll = isAdmin(user) || Boolean(user?.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     // تحديث شروط البحث لتعمل مع التاريخ اليدوي
     const whereClause = {
@@ -557,9 +449,9 @@ export async function GetSalesByCity(userId: string, dateFilter?: OrderDateFilte
         OR: [
           { manualCreatedAt: createdAtFilter },
           { AND: [
-              { manualCreatedAt: null }, 
+              { manualCreatedAt: null },
               { createdAt: createdAtFilter }
-            ] 
+            ]
           }
         ]
       } : {}),
@@ -569,40 +461,38 @@ export async function GetSalesByCity(userId: string, dateFilter?: OrderDateFilte
       where: whereClause,
       select: {
         finalAmount: true,
-        usdToTryRateAtOrder: true,
         manualCreatedAt: true, // جلب التاريخ اليدوي
         createdAt: true,       // جلب التاريخ الأصلي
         warehouse: {
           select: {
             location: true,
+            city: {
+              select: {
+                name: true,
+              }
+            }
           }
         }
       }
     });
 
-    const groupedByWarehouseCountry = orders.reduce((acc, order) => {
-      const warehouseCountry = String(order.warehouse?.location || "غير محدد").trim() || "غير محدد";
+    const groupedByWarehouseCity = orders.reduce((acc, order) => {
+      const warehouseCity = String(order.warehouse?.city?.name || order.warehouse?.location || "غير محدد").trim() || "غير محدد";
 
-      if (!acc[warehouseCountry]) {
-        acc[warehouseCountry] = {
-          location: warehouseCountry,
+      if (!acc[warehouseCity]) {
+        acc[warehouseCity] = {
+          location: warehouseCity,
           _count: { id: 0 },
           _sum: { finalAmount: 0 },
         };
       }
 
-      acc[warehouseCountry]._count.id += 1;
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-      
-      acc[warehouseCountry]._sum.finalAmount += normalizeOrderAmountToUSD(
-        Number(order.finalAmount || 0),
-        order.warehouse?.location,
-        effectiveRate
-      );
+      acc[warehouseCity]._count.id += 1;
+      acc[warehouseCity]._sum.finalAmount += Number(order.finalAmount || 0);
       return acc;
     }, {} as Record<string, { location: string; _count: { id: number }; _sum: { finalAmount: number } }>);
 
-    const citySales = Object.values(groupedByWarehouseCountry).sort(
+    const citySales = Object.values(groupedByWarehouseCity).sort(
       (a, b) => (b._sum.finalAmount || 0) - (a._sum.finalAmount || 0)
     );
 
@@ -615,7 +505,6 @@ export async function GetSalesByCity(userId: string, dateFilter?: OrderDateFilte
 
 export async function GetOrdersByCity(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -625,7 +514,7 @@ export async function GetOrdersByCity(userId: string, dateFilter?: OrderDateFilt
 
     const canViewAll = isAdmin(user) || Boolean(user?.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const whereClause = {
       ...(canViewAll ? {} : { userId: userId }),
@@ -648,12 +537,6 @@ export async function GetOrdersByCity(userId: string, dateFilter?: OrderDateFilt
       select: {
         city: true,
         finalAmount: true,
-        usdToTryRateAtOrder: true,
-        warehouse: {
-          select: {
-            location: true,
-          }
-        }
       }
     });
 
@@ -669,12 +552,7 @@ export async function GetOrdersByCity(userId: string, dateFilter?: OrderDateFilt
       }
 
       acc[cityName]._count.id += 1;
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-      acc[cityName]._sum.finalAmount += normalizeOrderAmountToUSD(
-        Number(order.finalAmount || 0),
-        order.warehouse?.location,
-        effectiveRate
-      );
+      acc[cityName]._sum.finalAmount += Number(order.finalAmount || 0);
 
       return acc;
     }, {} as Record<string, { city: string; _count: { id: number }; _sum: { finalAmount: number } }>);
@@ -764,7 +642,6 @@ export async function GetWholesaleActiveRegions(userId: string) {
 
 export async function GetShippingTotalsByCompany(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -774,7 +651,7 @@ export async function GetShippingTotalsByCompany(userId: string, dateFilter?: Or
 
     const canViewAll = isAdmin(user) || Boolean(user?.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const whereClause = {
       ...(canViewAll ? {} : { userId: userId }),
@@ -796,28 +673,17 @@ export async function GetShippingTotalsByCompany(userId: string, dateFilter?: Or
       where: whereClause,
       select: {
         shippingPrice: true,
-        usdToTryRateAtOrder: true,
         shipping: {
           select: {
             name: true,
           }
         },
-        warehouse: {
-          select: {
-            location: true,
-          }
-        }
       }
     });
 
     const groupedByCompany = orders.reduce((acc, order) => {
       const companyName = String(order.shipping?.name || "غير محدد").trim() || "غير محدد";
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-      const shippingValue = normalizeOrderAmountToUSD(
-        Number(order.shippingPrice || 0),
-        order.warehouse?.location,
-        effectiveRate
-      );
+      const shippingValue = Number(order.shippingPrice || 0);
 
       if (!acc[companyName]) {
         acc[companyName] = {
@@ -852,10 +718,10 @@ export async function GetDailyExpensesAnalytics(userId: string, dateFilter?: Ord
 
     if (!user) return { success: false, error: "User not found", data: [] };
     void dateFilter;
-    return { success: true, data: [], summary: { USD: 0, TRY: 0, SYP: 0 } };
+    return { success: true, data: [], summary: { USD: 0 } };
   } catch (error) {
     console.error("Error in GetDailyExpensesAnalytics:", error);
-    return { success: false, data: [], summary: { USD: 0, TRY: 0, SYP: 0 } };
+    return { success: false, data: [], summary: { USD: 0 } };
   }
 }
 // src/actions/analytics.ts
@@ -919,7 +785,7 @@ export async function GetBestSellingProducts(userId: string, dateFilter?: OrderD
 
     const canViewAllOrders = isAdmin(user) || Boolean(user.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const bestSellers = await prisma.orderItem.groupBy({
       by: ['productId'],
@@ -966,7 +832,6 @@ export async function GetBestSellingProducts(userId: string, dateFilter?: OrderD
 
 export async function GetProductInsightsAction(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -988,7 +853,7 @@ export async function GetProductInsightsAction(userId: string, dateFilter?: Orde
 
     const canViewAllOrders = isAdmin(user) || Boolean(user.permission?.viewOrders);
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const orderWhere = {
       ...(canViewAllOrders ? {} : { userId }),
@@ -998,7 +863,7 @@ export async function GetProductInsightsAction(userId: string, dateFilter?: Orde
 
     const warrantyWhere = {
       ...(createdAtFilter ? { createdAt: createdAtFilter } : {}),
-      ...(warehouseScope ? { warehouse: warehouseScope.warehouse } : {}),
+      ...(warehouseScope ? warehouseScope : {}),
     };
 
     const [orders, warranties] = await Promise.all([
@@ -1011,12 +876,6 @@ export async function GetProductInsightsAction(userId: string, dateFilter?: Orde
           shippingPrice: true,
           moneyTransferCommission: true,
           otherCommissions: true,
-          usdToTryRateAtOrder: true,
-          warehouse: {
-            select: {
-              location: true,
-            }
-          },
           commissions: {
             select: {
               amount: true,
@@ -1159,8 +1018,6 @@ export async function GetProductInsightsAction(userId: string, dateFilter?: Orde
     };
 
     for (const order of orders) {
-      const warehouseLocation = order.warehouse?.location || null;
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
       const rawLineTotals = (order.items || []).map((item) => {
         const quantity = Math.max(0, Number(item.quantity || 0));
         const unitPrice = Number(item.price || 0);
@@ -1197,9 +1054,9 @@ export async function GetProductInsightsAction(userId: string, dateFilter?: Orde
         const rawRevenueAfterDiscount = Math.max(0, row.lineSubtotal - allocatedDiscount);
         const affiliateCommission = affiliateCommissionByProduct.get(row.productId) || 0;
 
-        const revenueUSD = normalizeOrderAmountToUSD(rawRevenueAfterDiscount, warehouseLocation, effectiveRate);
-        const discountUSD = normalizeOrderAmountToUSD(allocatedDiscount, warehouseLocation, effectiveRate);
-        const extraCostsUSD = normalizeOrderAmountToUSD(allocatedExtraCosts + affiliateCommission, warehouseLocation, effectiveRate);
+        const revenueUSD = rawRevenueAfterDiscount;
+        const discountUSD = allocatedDiscount;
+        const extraCostsUSD = allocatedExtraCosts + affiliateCommission;
         const contributionUSD = Math.max(0, revenueUSD - extraCostsUSD);
 
         entry.totalUnits += row.quantity;
@@ -1375,7 +1232,7 @@ export async function GetWarrantyStatusProducts(userId: string, dateFilter?: Ord
     }
 
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const warrantyRows = await prisma.warranty.findMany({
       where: {
@@ -1448,7 +1305,7 @@ export async function GetWarrantyStatusProducts(userId: string, dateFilter?: Ord
         productName: row.product?.name || "منتج غير معروف",
         customerName: row.customer?.name || "-",
         warehouseName: row.warehouse?.name || "-",
-        warehouseLocation: row.warehouse?.location || "-",
+        location: row.warehouse?.location || "-",
         orderNumber: row.order?.orderNumber || "-",
         quantity: Math.max(0, Number(row.quantity || 0)),
         notes: row.notes || "-",
@@ -1639,7 +1496,6 @@ export async function GetEmployeeCustomerReport(userId: string, periodOrFilter: 
 
 export async function GetTopSellingUsersByPermission(userId: string, dateFilter?: OrderDateFilter) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { permission: true }
@@ -1651,7 +1507,7 @@ export async function GetTopSellingUsersByPermission(userId: string, dateFilter?
     if (!canViewAll) return { success: true, data: [] };
 
     const createdAtFilter = buildOrderDateWhere(dateFilter);
-    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseLocation);
+    const warehouseScope = buildWarehouseScope(dateFilter?.warehouseId);
 
     const whereClause = {
       ...(canViewAll ? {} : { userId: userId }),
@@ -1670,9 +1526,7 @@ export async function GetTopSellingUsersByPermission(userId: string, dateFilter?
         id: true,
         userId: true,
         finalAmount: true,
-        usdToTryRateAtOrder: true,
         status: true,
-        warehouse: { select: { location: true } },
         items: { select: { quantity: true, price: true, discount: true } },
         user: { select: { id: true, username: true } },
       },
@@ -1682,7 +1536,7 @@ export async function GetTopSellingUsersByPermission(userId: string, dateFilter?
 
     for (const order of orders) {
       if (!order.userId) continue;
-      const amountUSD = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
+      const amountUSD = getOrderAmountFromItems(order);
       const existing = userMap.get(order.userId) || {
         userId: order.userId,
         name: order.user?.username || "مستخدم غير معروف",
@@ -1713,7 +1567,6 @@ export async function GetTopSellingUsersByPermission(userId: string, dateFilter?
 
 export async function GetUserTargetProgress(userId: string, monthKey?: string) {
   try {
-    const turkeyExchangeRate = await getTurkeyExchangeRateFromSettings();
     const session = cookies().get("skynova")?.value;
     const decoded = session ? await decrypt(session) : null;
     const sessionUserId = String(decoded?.userId || "").trim();
@@ -1830,18 +1683,12 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
         userId: true,
         finalAmount: true,
         discount: true,
-        usdToTryRateAtOrder: true,
         shippingPrice: true,
         items: {
           select: {
             quantity: true,
             price: true,
             discount: true,
-          }
-        },
-        warehouse: {
-          select: {
-            location: true,
           }
         }
       }
@@ -1859,17 +1706,11 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
         manualCreatedAt: true,
         finalAmount: true,
         discount: true,
-        usdToTryRateAtOrder: true,
         items: {
           select: {
             quantity: true,
             price: true,
             discount: true,
-          }
-        },
-        warehouse: {
-          select: {
-            location: true,
           }
         }
       }
@@ -1899,14 +1740,8 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
             userId: true,
             orderNumber: true,
             discount: true,
-            usdToTryRateAtOrder: true,
             createdAt: true,
             manualCreatedAt: true,
-            warehouse: {
-              select: {
-                location: true,
-              }
-            }
           }
         }
       }
@@ -1931,14 +1766,6 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
 
     const soldMap = new Map<string, Array<{ createdAt: Date; quantity: number; amount: number }>>();
     const totalSoldByUser = new Map<string, number>();
-    const exchangeRateMap = new Map<string, {
-      label: string;
-      exchangeRate: number | null;
-      sourceType: "TRY_CONVERTED" | "USD_DIRECT";
-      revenue: number;
-      shipping: number;
-      orderIds: Set<number>;
-    }>();
     const productBreakdownMap = new Map<string, { productId: number; productName: string; quantity: number; revenue: number; orderIds: Set<number> }>();
     const dailySalesMap = new Map<string, { date: string; revenue: number; quantity: number; orderIds: Set<number> }>();
 
@@ -1958,8 +1785,7 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
       const orderGlobalDiscount = Math.max(0, Number(item.order?.discount || 0));
       const discountShare = orderRawTotal > 0 ? (rawLineAmount / orderRawTotal) * orderGlobalDiscount : 0;
       const adjustedLineAmount = Math.max(0, rawLineAmount - discountShare);
-      const effectiveRate = resolveOrderExchangeRate(item.order, turkeyExchangeRate);
-      const lineAmount = normalizeOrderAmountToUSD(adjustedLineAmount, item.order?.warehouse?.location, effectiveRate);
+      const lineAmount = adjustedLineAmount;
       const quantity = Math.max(0, Number(item.quantity || 0));
       const list = soldMap.get(key) || [];
       list.push({ createdAt: getOrderEffectiveDate(item.order) || item.order.createdAt, quantity: item.quantity, amount: lineAmount });
@@ -2009,7 +1835,7 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
           if (!orderDate) return false;
           return orderDate >= targetStart && orderDate <= targetEndOfDay;
         })
-        .reduce((sum, order) => sum + getOrderAmountFromItemsInUSD(order, turkeyExchangeRate), 0);
+        .reduce((sum, order) => sum + getOrderAmountFromItems(order), 0);
       const userName = target.user?.username || "";
 
       if (!target.products || target.products.length === 0) {
@@ -2068,42 +1894,17 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
     });
 
     const totalSalesAmount = revenueOrders.reduce((sum, order) => {
-      const converted = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
-      return sum + converted;
+      const amount = getOrderAmountFromItems(order);
+      return sum + amount;
     }, 0);
     const totalShippingAmount = revenueOrders.reduce((sum, order) => {
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-      const shipping = normalizeOrderAmountToUSD(Number(order.shippingPrice || 0), order.warehouse?.location, effectiveRate);
-      return sum + shipping;
+      return sum + Number(order.shippingPrice || 0);
     }, 0);
     const netSalesForCommission = Math.max(0, totalSalesAmount - totalShippingAmount);
 
-    for (const order of revenueOrders) {
-      const warehouseLocation = String(order.warehouse?.location || "").trim();
-      const revenue = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
-      const effectiveRate = resolveOrderExchangeRate(order, turkeyExchangeRate);
-      const shipping = normalizeOrderAmountToUSD(Number(order.shippingPrice || 0), order.warehouse?.location, effectiveRate);
-      const isTurkeyOrder = warehouseLocation === "تركيا";
-      const key = isTurkeyOrder ? `TRY:${effectiveRate.toFixed(4)}` : "USD_DIRECT";
-
-      const currentRate = exchangeRateMap.get(key) || {
-        label: isTurkeyOrder ? `${Number(effectiveRate).toLocaleString("en-US", { maximumFractionDigits: 4 })} TRY` : "USD مباشر",
-        exchangeRate: isTurkeyOrder ? Number(effectiveRate) : null,
-        sourceType: isTurkeyOrder ? "TRY_CONVERTED" : "USD_DIRECT",
-        revenue: 0,
-        shipping: 0,
-        orderIds: new Set<number>(),
-      };
-
-      currentRate.revenue += revenue;
-      currentRate.shipping += shipping;
-      currentRate.orderIds.add(order.id);
-      exchangeRateMap.set(key, currentRate);
-    }
-
     const statusMap = new Map<string, { status: string; count: number; amount: number }>();
     for (const order of scopedOrders) {
-      const amount = getOrderAmountFromItemsInUSD(order, turkeyExchangeRate);
+      const amount = getOrderAmountFromItems(order);
       const currentStatus = statusMap.get(order.status) || {
         status: order.status,
         count: 0,
@@ -2113,23 +1914,6 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
       currentStatus.amount += amount;
       statusMap.set(order.status, currentStatus);
     }
-
-    const exchangeRateBreakdown = Array.from(exchangeRateMap.values())
-      .map((row) => ({
-        label: row.label,
-        exchangeRate: row.exchangeRate,
-        sourceType: row.sourceType,
-        revenue: Number(row.revenue.toFixed(2)),
-        shipping: Number(row.shipping.toFixed(2)),
-        netRevenue: Number(Math.max(0, row.revenue - row.shipping).toFixed(2)),
-        ordersCount: row.orderIds.size,
-      }))
-      .sort((a, b) => {
-        if (a.sourceType === b.sourceType) {
-          return b.revenue - a.revenue;
-        }
-        return a.sourceType === "TRY_CONVERTED" ? -1 : 1;
-      });
 
     const productBreakdown = Array.from(productBreakdownMap.values())
       .map((row) => ({
@@ -2241,7 +2025,6 @@ export async function GetUserTargetProgress(userId: string, monthKey?: string) {
         totalSalesRewardAmount,
         totalProductRewardAmount,
         totalBonusAmount: Number((totalSalesRewardAmount + totalProductRewardAmount).toFixed(2)),
-        exchangeRateBreakdown,
         productBreakdown,
         dailySalesBreakdown,
         statusBreakdown

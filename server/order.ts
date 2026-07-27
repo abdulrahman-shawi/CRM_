@@ -18,14 +18,7 @@ const shouldMarkAffiliateCommissionPaid = (status: string) => PAID_COMMISSION_OR
 const isStockReturnStatus = (status: string) => STOCK_RETURN_STATUSES.has(status);
 const WAREHOUSE_ROLE_NAME = "مستودع";
 
-const normalizeWarehouseLocation = (location?: string | null) => {
-    const value = String(location || "").trim().toLowerCase();
-    if (!value) return "";
-
-    if (value === "سوريا" || value === "syria") return "سوريا";
-    if (value === "تركيا" || value === "turkey") return "تركيا";
-    return String(location || "").trim();
-};
+const normalizeWarehouseLocation = (location?: string | null) => String(location || "").trim();
 
 const parseOptionalDate = (value: any) => {
     if (!value) return null;
@@ -157,9 +150,16 @@ function canViewOrders(user: any) {
     return Boolean(user?.permission?.viewOrders);
 }
 
-function getAllowedWarehouseLocations(user: any) {
+async function getAllowedWarehouseLocations(user: any) {
     void user;
-    return ["سوريا", "تركيا"];
+    const warehouses = await prisma.warehouse.findMany({
+        where: { location: { not: "" } },
+        select: { location: true },
+        distinct: ["location"],
+    });
+    return warehouses
+        .map((warehouse) => String(warehouse.location || "").trim())
+        .filter((location) => location.length > 0);
 }
 
 export async function getCurrentSessionUser() {
@@ -452,7 +452,7 @@ export async function getOrders() {
 
     const isAdminUser = currentUser.accountType === "ADMIN";
     const isWarehouseUser = isWarehouseRole(currentUser);
-    const allowedWarehouseLocations = getAllowedWarehouseLocations(currentUser);
+    const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
 
     const where: any = {};
 
@@ -525,7 +525,7 @@ export async function getOrderById(orderId: string | number) {
 
     if (!isAdminUser) {
         if (isWarehouseUser) {
-            const allowedWarehouseLocations = getAllowedWarehouseLocations(currentUser);
+            const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
             const orderWarehouseLocation = normalizeWarehouseLocation(order?.warehouse?.location);
             const canAccessWarehouse = allowedWarehouseLocations
                 .map((location) => normalizeWarehouseLocation(location))
@@ -570,7 +570,7 @@ export async function getOrdersByIds(orderIds: Array<string | number>) {
 
     const isAdminUser = currentUser.accountType === "ADMIN";
     const isWarehouseUser = isWarehouseRole(currentUser);
-    const allowedWarehouseLocations = getAllowedWarehouseLocations(currentUser);
+    const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
 
     const where: any = {
         id: {
@@ -632,7 +632,6 @@ export async function createOrder(data: any, items: any[], user: any) {
                 throw new Error("المستودع المحدد غير موجود");
             }
 
-            const stockCountry = String(orderWarehouse.location || "").trim();
             const normalizedItems = items.map((item: any) => ({
                 productId: parseInt(item.productId),
                 quantity: parseInt(item.quantity),
@@ -640,10 +639,18 @@ export async function createOrder(data: any, items: any[], user: any) {
                 discount: parseFloat(item.discount || 0),
             }));
 
+            const siteSettings = await tx.generalSetting.findFirst({
+                orderBy: { id: "asc" },
+                select: { siteCurrency: true, usdToTryRate: true },
+            });
             const inputExchangeRate = Number(data.usdToTryRateAtOrder || 0);
-            const usdToTryRateAtOrder = stockCountry === "تركيا"
-                ? (inputExchangeRate > 0 ? inputExchangeRate : null)
-                : null;
+            const settingsExchangeRate = Number(siteSettings?.usdToTryRate || 0);
+            const siteCurrency = String(siteSettings?.siteCurrency || "").trim();
+            const usdToTryRateAtOrder = inputExchangeRate > 0
+                ? inputExchangeRate
+                : (siteCurrency && siteCurrency !== "USD" && settingsExchangeRate > 0
+                    ? settingsExchangeRate
+                    : null);
             const shippingId = Number(data.shippingId || 0);
             const selectedShipping = shippingId > 0
                 ? await tx.shipping.findUnique({ where: { id: shippingId }, select: { price: true } })
@@ -753,16 +760,21 @@ export async function updateOrder(data: any, id: any, items: any) {
                 throw new Error("المستودع المحدد غير موجود");
             }
 
-            const stockCountry = String(orderWarehouse.location || "").trim();
             const oldOrderSavedRate = Number((oldOrder as any)?.usdToTryRateAtOrder || 0);
             const inputExchangeRate = Number(data.usdToTryRateAtOrder || 0);
-            const usdToTryRateAtOrder = stockCountry === "تركيا"
-                ? (inputExchangeRate > 0
-                    ? inputExchangeRate
-                    : (oldOrderSavedRate > 0
-                        ? oldOrderSavedRate
-                        : null))
-                : null;
+            const siteSettings = await tx.generalSetting.findFirst({
+                orderBy: { id: "asc" },
+                select: { siteCurrency: true, usdToTryRate: true },
+            });
+            const settingsExchangeRate = Number(siteSettings?.usdToTryRate || 0);
+            const siteCurrency = String(siteSettings?.siteCurrency || "").trim();
+            const usdToTryRateAtOrder = inputExchangeRate > 0
+                ? inputExchangeRate
+                : (oldOrderSavedRate > 0
+                    ? oldOrderSavedRate
+                    : (siteCurrency && siteCurrency !== "USD" && settingsExchangeRate > 0
+                        ? settingsExchangeRate
+                        : null));
             const shippingId = Number(data.shippingId || 0);
             const selectedShipping = shippingId > 0
                 ? await tx.shipping.findUnique({ where: { id: shippingId }, select: { price: true } })

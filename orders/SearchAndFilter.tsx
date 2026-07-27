@@ -11,8 +11,6 @@ interface SearchAndFilterProps {
   warehouseId?: string;
   onWarehouseChange?: (warehouseId: string) => void;
   warehouseOptions?: Array<{ value: string; label: string }>;
-  warehouseLocation?: string;
-  onWarehouseChangeLegacy?: (location: string) => void;
   shippingCompany: string;
   onShippingCompanyChange: (shippingCompany: string) => void;
   shippingCompanyOptions?: string[];

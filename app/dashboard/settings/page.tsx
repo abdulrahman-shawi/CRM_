@@ -78,8 +78,6 @@ const CURRENCIES = [
   { code: "JOD", name: "الدينار الأردني" },
   { code: "EGP", name: "الجنيه المصري" },
   { code: "LBP", name: "الليرة اللبنانية" },
-  { code: "TRY", name: "الليرة التركية" },
-  { code: "SYP", name: "الليرة السورية" },
   { code: "IQD", name: "الدينار العراقي" },
   { code: "TND", name: "الدينار التونسي" },
   { code: "MAD", name: "الدرهم المغربي" },

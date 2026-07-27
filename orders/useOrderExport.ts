@@ -11,8 +11,6 @@ interface ExportOptions {
 
 const getOrderDisplayDate = (orderLike: any) => orderLike?.manualCreatedAt || orderLike?.createdAt;
 
-const getOrderCurrencySymbol = (orderLike: any) => String(orderLike?.warehouse?.location || "").trim() === "تركيا" ? "₺" : "$";
-
 const getOrderShippingName = (orderLike: any) => String(orderLike?.shipping?.name || "").trim() || "غير محدد";
 
 const getOrderShippingPrice = (orderLike: any) => {

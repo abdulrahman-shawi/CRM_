@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         status: 'طلب جديد',
         receiverName: String(body?.receiverName || body?.customerName || '').trim(),
         receiverPhone: [String(body?.phone || '').trim()],
-        stockCountry: String(body?.stockCountry || 'سوريا').trim() || 'سوريا',
+        stockCountry: String(body?.stockCountry || '').trim(),
         country: String(body?.country || '').trim(),
         city: String(body?.city || '').trim(),
         municipality: String(body?.municipality || '').trim(),

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { calculateQuantityDiscountPricing, normalizeQuantityDiscountTiers } from '@/lib/ad-pricing';
+import { getCountries } from '@/server/country';
 import toast from 'react-hot-toast';
 
 type ProductLike = {
@@ -20,7 +21,19 @@ type ProductLike = {
   } | null;
 };
 
-const countries = ['سوريا', 'لبنان', 'العراق', 'تركيا', 'ليبيا'];
+const createEmptyForm = (defaultCountry: string) => ({
+  customerName: '',
+  phone: '',
+  receiverName: '',
+  country: defaultCountry,
+  city: '',
+  municipality: '',
+  fullAddress: '',
+  deliveryNotes: '',
+  quantity: 1,
+  stockCountry: defaultCountry,
+  paymentMethod: 'عند الاستلام',
+});
 
 export default function AffiliateProductOrderForm({
   product,
@@ -32,19 +45,33 @@ export default function AffiliateProductOrderForm({
   trafficSource?: 'ad' | 'affiliate' | 'product';
 }) {
   const [loading, setLoading] = React.useState(false);
-  const [form, setForm] = React.useState({
-    customerName: '',
-    phone: '',
-    receiverName: '',
-    country: 'سوريا',
-    city: '',
-    municipality: '',
-    fullAddress: '',
-    deliveryNotes: '',
-    quantity: 1,
-    stockCountry: 'سوريا',
-    paymentMethod: 'عند الاستلام',
-  });
+  const [countryOptions, setCountryOptions] = React.useState<string[]>([]);
+  const [form, setForm] = React.useState(() => createEmptyForm(''));
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    getCountries()
+      .then((rows) => {
+        if (!isMounted) return;
+        const names = (Array.isArray(rows) ? (rows as Array<{ name?: string }>) : [])
+          .map((row) => String(row?.name || '').trim())
+          .filter(Boolean);
+        setCountryOptions(names);
+        setForm((prev) => ({
+          ...prev,
+          country: prev.country || names[0] || '',
+          stockCountry: prev.stockCountry || names[0] || '',
+        }));
+      })
+      .catch(() => {
+        // تعذر تحميل الدول — تبقى القوائم فارغة
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const fallbackPrice = Number(product.stocks?.[0]?.price || 0);
   const unitPrice = Number(product.affiliatePrice || 0) > 0 ? Number(product.affiliatePrice) : fallbackPrice;
@@ -133,19 +160,7 @@ export default function AffiliateProductOrderForm({
       }
 
       toast.success('تم إرسال الطلب بنجاح');
-      setForm({
-        customerName: '',
-        phone: '',
-        receiverName: '',
-        country: 'سوريا',
-        city: '',
-        municipality: '',
-        fullAddress: '',
-        deliveryNotes: '',
-        quantity: 1,
-        stockCountry: 'سوريا',
-        paymentMethod: 'عند الاستلام',
-      });
+      setForm(createEmptyForm(countryOptions[0] || ''));
     } catch {
       toast.error('حدث خطأ غير متوقع أثناء إرسال الطلب');
     } finally {
@@ -223,7 +238,8 @@ export default function AffiliateProductOrderForm({
         <label className="space-y-2 text-sm font-bold text-slate-700">
           <span>الدولة</span>
           <select className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.country} onChange={(e) => updateField('country', e.target.value)}>
-            {countries.map((country) => (
+            {countryOptions.length === 0 ? <option value="">اختر الدولة</option> : null}
+            {countryOptions.map((country) => (
               <option key={country} value={country}>{country}</option>
             ))}
           </select>
@@ -231,8 +247,10 @@ export default function AffiliateProductOrderForm({
         <label className="space-y-2 text-sm font-bold text-slate-700">
           <span>بلد المخزون</span>
           <select className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.stockCountry} onChange={(e) => updateField('stockCountry', e.target.value)}>
-            <option value="سوريا">سوريا</option>
-            <option value="تركيا">تركيا</option>
+            {countryOptions.length === 0 ? <option value="">اختر الدولة</option> : null}
+            {countryOptions.map((country) => (
+              <option key={country} value={country}>{country}</option>
+            ))}
           </select>
         </label>
         <label className="space-y-2 text-sm font-bold text-slate-700">

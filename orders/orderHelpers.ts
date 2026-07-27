@@ -1,9 +1,15 @@
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import { getCurrencySymbol, type SiteCurrencySettings } from '@/lib/currency';
 
 // دوال الحصول على معلومات الطلب
-export const getOrderCurrencySymbol = (orderLike: any) => 
-  String(orderLike?.warehouse?.location || "").trim() === "تركيا" ? "₺" : "$";
+export const getOrderCurrencySymbol = (orderLike: any, settings?: SiteCurrencySettings | null) => {
+  const code = String(settings?.code || "").trim();
+  if (code && code !== "USD") {
+    return getCurrencySymbol(code) || code;
+  }
+  return "$";
+};
 
 export const getOrderShippingName = (orderLike: any) => 
   String(orderLike?.shipping?.name || "").trim() || "غير محدد";
@@ -233,11 +239,3 @@ export const statusColors: Record<string, string> = {
   "المتجر": "bg-purple-200 text-purple-900 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800",
 };
 
-// قوائم البيانات
-export const citiesByCountry: Record<string, string[]> = {
-  "سوريا": ["دمشق", "ريف دمشق", "حلب", "حمص", "حماة", "اللاذقية", "طرطوس", "إدلب", "درعا", "السويداء", "القنيطرة", "دير الزور", "الرقة", "الحسكة"],
-  "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة", "بعلبك", "جونية", "جبيل", "البترون", "النبطية"],
-  "العراق": ["بغداد", "البصرة", "الموصل", "أربيل", "النجف", "كربلاء", "كركوك", "السليمانية", "دهوك", "الرمادي", "الفلوجة", "سامراء", "الحلة", "الديوانية", "الناصرية", "الكوت", "العمارة"],
-  "تركيا": ["إسطنبول", "أنقرة", "إزمير", "بورصة", "أنطاليا", "أضنة", "غازي عنتاب", "قونية", "مرسين", "قيصري", "أسكي شهير", "طرابزون", "سامسون", "ديار بكر", "شانلي أورفا", "فان"],
-  "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية", "سبها", "سرت", "طبرق", "درنة", "زليتن", "أجدابيا", "البيضاء", "غريان", "الكفرة", "مرزق"],
-};

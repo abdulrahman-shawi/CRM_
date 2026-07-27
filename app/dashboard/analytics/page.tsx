@@ -4,7 +4,8 @@ import * as React from "react";
 import AdPagesAnalyticsSection from '@/components/pages/analytics/AdPagesAnalyticsSection';
 import DynamicCard from "@/components/ui/dynamicCard";
 import { useAuth } from "@/context/AuthContext";
-import { getGeneralSettings } from "@/server/general-settings";
+import { getWarehouse } from "@/server/warehouse";
+import { useSiteCurrency, formatSiteCurrency } from "@/lib/currency";
 import {
   GetBestSellingProducts,
   GetCustomerAcquisitionMonth,
@@ -107,12 +108,6 @@ const downloadCSV = (filename: string, rows: Record<string, string | number>[]) 
   URL.revokeObjectURL(url);
 };
 
-const normalizeToUSD = (amount: number, warehouseLocation?: string | null, exchangeRate: number = 0) => {
-  const numericAmount = Number(amount || 0);
-  const safeRate = Number(exchangeRate) > 0 ? Number(exchangeRate) : 0;
-  return String(warehouseLocation || "").trim() === "تركيا" && safeRate > 0 ? numericAmount / safeRate : numericAmount;
-};
-
 const COLORS = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899"];
 
 const AnalyticPage: React.FC = () => {
@@ -134,10 +129,10 @@ const AnalyticPage: React.FC = () => {
   const [country, setCountry] = React.useState<{ success: boolean; data: any[] }>({ success: true, data: [] });
   const [ordersByCity, setOrdersByCity] = React.useState<{ success: boolean; data: any[] }>({ success: true, data: [] });
   const [shippingByCompany, setShippingByCompany] = React.useState<{ success: boolean; data: any[] }>({ success: true, data: [] });
-  const [dailyExpenses, setDailyExpenses] = React.useState<{ success: boolean; data: any[]; summary?: { USD: number; TRY: number; SYP: number } }>({
+  const [dailyExpenses, setDailyExpenses] = React.useState<{ success: boolean; data: any[]; summary?: { USD: number } }>({
     success: true,
     data: [],
-    summary: { USD: 0, TRY: 0, SYP: 0 },
+    summary: { USD: 0 },
   });
   const [topSale, setTopSale] = React.useState<{ success: boolean; data: any[] }>({ success: true, data: [] });
   const [productInsights, setProductInsights] = React.useState<{ success: boolean; data: any[]; meta?: any | null }>({ success: true, data: [], meta: null });
@@ -164,8 +159,9 @@ const AnalyticPage: React.FC = () => {
   const [employeeCustomStartDate, setEmployeeCustomStartDate] = React.useState("");
   const [employeeCustomEndDate, setEmployeeCustomEndDate] = React.useState("");
   const [isEmployeeReportPdfExporting, setIsEmployeeReportPdfExporting] = React.useState(false);
-  const [warehouseLocationFilter, setWarehouseLocationFilter] = React.useState<"all" | "سوريا" | "تركيا">("all");
-  const [turkeyExchangeRate, setTurkeyExchangeRate] = React.useState<number>(0);
+  const [warehouseIdFilter, setWarehouseIdFilter] = React.useState<string>("all");
+  const [warehouses, setWarehouses] = React.useState<any[]>([]);
+  const { settings: siteCurrencySettings } = useSiteCurrency();
 
   const isInvalidCustomRange =
     orderFilterPreset === "custom" &&
@@ -174,21 +170,21 @@ const AnalyticPage: React.FC = () => {
     new Date(customStartDate) > new Date(customEndDate);
 
   const orderDateFilter = React.useMemo(() => {
-    const warehouseLocation = warehouseLocationFilter === "all" ? undefined : warehouseLocationFilter;
+    const warehouseId = warehouseIdFilter === "all" ? undefined : Number(warehouseIdFilter);
 
     if (orderFilterPreset === "custom") {
       return {
         startDate: customStartDate || undefined,
         endDate: customEndDate || undefined,
-        warehouseLocation,
+        warehouseId,
       };
     }
 
     return {
       ...getPresetDateRange(orderFilterPreset),
-      warehouseLocation,
+      warehouseId,
     };
-  }, [orderFilterPreset, customStartDate, customEndDate, warehouseLocationFilter]);
+  }, [orderFilterPreset, customStartDate, customEndDate, warehouseIdFilter]);
 
   const employeeReportFilter = React.useMemo(() => {
     if (employeeReportPeriod === "custom") {
@@ -331,18 +327,16 @@ const AnalyticPage: React.FC = () => {
   ]);
 
   React.useEffect(() => {
-    const loadExchangeRate = async () => {
+    const loadWarehouses = async () => {
       try {
-        const res = await getGeneralSettings();
-        const rate = Number(res?.data?.usdToTryRate || 0);
-        if (rate > 0) {
-          setTurkeyExchangeRate(rate);
-        }
+        const res = await getWarehouse();
+        setWarehouses(Array.isArray(res) ? res : []);
       } catch (error) {
+        console.error("Error fetching warehouses:", error);
       }
     };
 
-    loadExchangeRate();
+    loadWarehouses();
   }, []);
 
   React.useEffect(() => {
@@ -490,15 +484,18 @@ const AnalyticPage: React.FC = () => {
           )}
 
           <div className="flex flex-col gap-1 min-w-[220px]">
-            <label className="text-xs font-bold text-slate-500">دولة المستودع</label>
+            <label className="text-xs font-bold text-slate-500">المستودع</label>
             <select
-              value={warehouseLocationFilter}
-              onChange={(e) => setWarehouseLocationFilter(e.target.value as "all" | "سوريا" | "تركيا")}
+              value={warehouseIdFilter}
+              onChange={(e) => setWarehouseIdFilter(e.target.value)}
               className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold"
             >
               <option value="all">كل المستودعات</option>
-              <option value="سوريا">مستودعات سوريا</option>
-              <option value="تركيا">مستودعات تركيا</option>
+              {warehouses.map((w: any) => (
+                <option key={w.id} value={String(w.id)}>
+                  {w.name}{w.location ? ` - ${w.location}` : ""}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -617,19 +614,18 @@ const AnalyticPage: React.FC = () => {
                               <tr className="text-[11px] font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                                 <th className="py-2 px-2">المنتج</th>
                                 <th className="py-2 px-2">الكمية</th>
-                                <th className="py-2 px-2">السعر (USD)</th>
+                                <th className="py-2 px-2">السعر</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                               {(order.items || []).map((item: any) => {
                                 const netUnitPrice = Math.max(0, Number(item.price || 0) - Number(item.discount || 0));
-                                const unitPriceUSD = normalizeToUSD(netUnitPrice, order.warehouse?.location, turkeyExchangeRate);
 
                                 return (
                                   <tr key={item.id}>
                                     <td className="py-2 px-2 text-sm text-slate-700 dark:text-slate-200">{item.product?.name || "منتج"}</td>
                                     <td className="py-2 px-2 text-sm text-blue-600 font-bold">{Number(item.quantity || 0).toLocaleString()}</td>
-                                    <td className="py-2 px-2 text-sm text-emerald-600 font-bold">{formatUSD(unitPriceUSD)} $</td>
+                                    <td className="py-2 px-2 text-sm text-emerald-600 font-bold">{formatSiteCurrency(netUnitPrice, siteCurrencySettings)}</td>
                                   </tr>
                                 );
                               })}
@@ -692,7 +688,7 @@ const AnalyticPage: React.FC = () => {
                     <tr key={row.id}>
                       <td className="py-3 px-2 text-sm font-semibold text-slate-700 dark:text-slate-200">{row.productName}</td>
                       <td className="py-3 px-2 text-sm text-slate-600 dark:text-slate-300">{row.customerName}</td>
-                      <td className="py-3 px-2 text-sm text-slate-600 dark:text-slate-300">{row.warehouseName} / {row.warehouseLocation}</td>
+                      <td className="py-3 px-2 text-sm text-slate-600 dark:text-slate-300">{row.warehouseName}</td>
                       <td className="py-3 px-2 text-sm font-bold text-blue-600">{Number(row.quantity || 0).toLocaleString()}</td>
                       <td className="py-3 px-2 text-sm font-mono text-slate-700 dark:text-slate-200">{row.orderNumber}</td>
                       <td className="py-3 px-2 text-sm text-slate-700 dark:text-slate-200">{row.maintenanceLaborCost != null ? Number(row.maintenanceLaborCost).toLocaleString() : "-"}</td>
@@ -870,20 +866,12 @@ const AnalyticPage: React.FC = () => {
 
       {showDailyExpenses && (
         <DynamicCard isLoading={loading} isError={!dailyExpenses.success} isEmpty={!loading && dailyExpenses.data?.length === 0} variant="glass" className="mt-6">
-          <DynamicCard.Header title="تحليل المصاريف اليومية" description="تجميع المصاريف اليومية حسب التاريخ والعملات" icon={<ReceiptText size={20} className="text-rose-500" />} />
+          <DynamicCard.Header title="تحليل المصاريف اليومية" description="تجميع المصاريف اليومية حسب التاريخ" icon={<ReceiptText size={20} className="text-rose-500" />} />
           <DynamicCard.Content className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-                <div className="text-xs text-slate-500 mb-1">إجمالي USD</div>
+                <div className="text-xs text-slate-500 mb-1">إجمالي المصاريف</div>
                 <div className="text-lg font-black text-emerald-600">{formatUSD(dailyExpenses.summary?.USD)} $</div>
-              </div>
-              <div className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-                <div className="text-xs text-slate-500 mb-1">إجمالي TRY</div>
-                <div className="text-lg font-black text-amber-600">{Number(dailyExpenses.summary?.TRY || 0).toLocaleString("en-US", { maximumFractionDigits: 2 })} ₺</div>
-              </div>
-              <div className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-                <div className="text-xs text-slate-500 mb-1">إجمالي SYP</div>
-                <div className="text-lg font-black text-blue-600">{Number(dailyExpenses.summary?.SYP || 0).toLocaleString("en-US", { maximumFractionDigits: 2 })} ل.س</div>
               </div>
             </div>
 
@@ -894,15 +882,9 @@ const AnalyticPage: React.FC = () => {
                   <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    formatter={(value: number | undefined, name?: string) => {
-                      if (name === "TRY") return [`${Number(value || 0).toLocaleString("en-US")} ₺`, "TRY"];
-                      if (name === "SYP") return [`${Number(value || 0).toLocaleString("en-US")} ل.س`, "SYP"];
-                      return [`${formatUSD(value)} $`, "USD"];
-                    }}
+                    formatter={(value: number | undefined) => [`${formatUSD(value)} $`, "المصاريف"]}
                   />
                   <Bar dataKey="USD" fill="#10b981" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="TRY" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="SYP" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
