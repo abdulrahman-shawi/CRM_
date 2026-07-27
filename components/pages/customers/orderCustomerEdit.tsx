@@ -419,7 +419,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     <div>
       <AppModal footer={
         <div className="pt-6 w-full flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex gap-6 items-center">
+          <div className="flex flex-wrap gap-3 md:gap-6 items-center justify-center">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-red-500 uppercase px-1">خصم إضافي (كلي)</label>
               <div className="relative">
@@ -427,15 +427,15 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400"> {currencySymbol}</span>
               </div>
             </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 px-8 py-4 rounded-3xl">
+            <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 md:px-8 md:py-4 rounded-3xl">
               <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">الإجمالي النهائي</p>
-              <h3 className="text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(grandTotal, settings)}</h3>
+              <h3 className="text-2xl md:text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(grandTotal, settings)}</h3>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={handleSubmit}
-              className={`px-12 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2`}
+              className={`px-8 md:px-12 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2`}
             >
               <Save size={20} /> حفظ الفاتورة
             </button>
@@ -702,7 +702,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                 </select>
               </div>
               {paymentMethod === "مختلطة" ? (
-                <div className="grid col-span-2 grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid md:col-span-2 grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المستلم</label>
                     <input type="text" value={amount} onChange={(e) => setamount(e.target.value)} className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />

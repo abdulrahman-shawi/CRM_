@@ -61,7 +61,7 @@ export const AppModal = ({
                 )}
               >
                 {/* رأس النافذة */}
-                <div className="flex flex-col space-y-1.5 text-center sm:text-right relative">
+                <div className="flex flex-col space-y-1.5 text-center sm:text-right relative min-w-0">
                   <Dialog.Title className="text-xl font-bold leading-none tracking-tight dark:text-slate-100">
                     {title}
                   </Dialog.Title>
@@ -78,13 +78,13 @@ export const AppModal = ({
                 </div>
 
                 {/* المحتوى */}
-                <div className="py-4 overflow-y-auto max-h-[70vh]  custom-scrollbar">
+                <div className="py-4 overflow-y-auto overflow-x-hidden max-h-[70vh] min-w-0 custom-scrollbar">
                   {children}
                 </div>
 
                 {/* التذييل */}
                 {footer && (
-                  <div className="flex flex-col-reverse sm:flex-row sm:justify-start gap-2 mt-2 border-t pt-4 dark:border-slate-800">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-start gap-2 mt-2 border-t pt-4 min-w-0 dark:border-slate-800">
                     {footer}
                   </div>
                 )}
