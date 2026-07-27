@@ -141,7 +141,8 @@ export default function BarcodeLabelsPage() {
                 img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
             });
             if (img.width > 0) {
-                const maxBarWidth = widthPx - 40;
+                // هامش جانبي ~2.5مم كمنطقة أمان (quiet zone) — ضرورية لنجاح قراءة Code39
+                const maxBarWidth = widthPx - 60;
                 const barTop = Math.round(heightPx * 0.35);
                 const barAreaHeight = Math.round(heightPx * 0.42);
                 const scale = Math.min(maxBarWidth / img.width, barAreaHeight / img.height);
@@ -323,7 +324,7 @@ export default function BarcodeLabelsPage() {
                     {labels.map((item, index) => (
                         <div
                             key={`${item.id}-${index}`}
-                            className="barcode-label flex flex-col items-center justify-center overflow-hidden border border-black bg-white p-[1.5mm] text-center"
+                            className="barcode-label flex flex-col items-center justify-center overflow-hidden border border-black bg-white px-[3mm] py-[1.5mm] text-center"
                             style={{ width: size.width, height: size.height }}
                         >
                             <div className="w-full truncate text-[9px] font-bold leading-tight">{item.name}</div>

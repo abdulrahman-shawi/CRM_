@@ -93,7 +93,18 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
 
                 await scanner.start(
                     { facingMode: 'environment' },
-                    { fps: 10, qrbox: { width: 260, height: 160 } },
+                    {
+                        fps: 10,
+                        // منطقة أوسع وأقل ارتفاعاً لتناسب شكل الباركود الشريطي (1D)
+                        qrbox: { width: 300, height: 140 },
+                        // طلب دقة عالية — الباركود الشريطي يحتاج دقة أعلى بكثير من QR
+                        // لتمييز الأعمدة الرفيعة، والدقة الافتراضية (640×480) تُفشل القراءة
+                        videoConstraints: {
+                            facingMode: 'environment',
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 },
+                        },
+                    },
                     (decodedText: string) => {
                         const now = Date.now();
                         const last = lastScanRef.current;
