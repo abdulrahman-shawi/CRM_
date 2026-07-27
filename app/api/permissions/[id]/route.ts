@@ -77,6 +77,24 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
                 editPermissions: Boolean(data.editPermissions),
                 deletePermissions: Boolean(data.deletePermissions),
 
+                // الصفحات الثابتة
+                viewPages: Boolean(data.viewPages),
+                addPages: Boolean(data.addPages),
+                editPages: Boolean(data.editPages),
+                deletePages: Boolean(data.deletePages),
+
+                // التسويق
+                viewMarketing: Boolean(data.viewMarketing),
+                addMarketing: Boolean(data.addMarketing),
+                editMarketing: Boolean(data.editMarketing),
+                deleteMarketing: Boolean(data.deleteMarketing),
+
+                // المرتجعات
+                viewReturns: Boolean(data.viewReturns),
+                addReturns: Boolean(data.addReturns),
+                editReturns: Boolean(data.editReturns),
+                deleteReturns: Boolean(data.deleteReturns),
+
                 // إحصائيات النظام (حقل واحد فقط)
                 viewAnalytics: Boolean(data.viewAnalytics),
             }
