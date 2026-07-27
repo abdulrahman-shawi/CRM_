@@ -212,7 +212,7 @@ export default function ExpensesPage() {
     ];
 
     const actions = [
-        ...(canEdit ? [{ label: 'تعديل', icon: <Pencil size={14} />, variant: 'outline' as const, onClick: openEdit }] : []),
+        ...(canEdit ? [{ label: 'تعديل', icon: <Pencil size={14} />, variant: 'default' as const, onClick: openEdit }] : []),
         ...(canDelete ? [{ label: 'حذف', icon: <Trash2 size={14} />, variant: 'danger' as const, onClick: handleDelete }] : []),
     ];
 
