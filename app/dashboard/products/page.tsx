@@ -17,6 +17,7 @@ import { getProduct, toggleProductActive, toggleProductShowInAds, upsertProductL
 import { getWarehouse } from '@/server/warehouse';
 import { Barcode } from '@/components/ui/barcode';
 import { generateBarcodeValue } from '@/lib/barcode';
+import Link from 'next/link';
 import { error } from 'console';
 import { image } from 'framer-motion/client';
 import { FileDown, Mail, Plus, Warehouse, FileText } from 'lucide-react';
@@ -682,11 +683,16 @@ const ProductLayout = () => {
         <div className="p-4" dir="rtl">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-xl font-bold">إدارة المنتجات</h1>
-                {(user && (user.accountType === "ADMIN" || user.permission?.addProducts === true))
-                    && (
-                        <Button onClick={() => { setEditId(null); setFormData(null); setIsOpen(true); }}>إضافة منتج جديد</Button>
-                    )
-                }
+                <div className="flex items-center gap-2">
+                    <Link href="/dashboard/barcode-labels">
+                        <Button variant="outline">ملصقات الباركود</Button>
+                    </Link>
+                    {(user && (user.accountType === "ADMIN" || user.permission?.addProducts === true))
+                        && (
+                            <Button onClick={() => { setEditId(null); setFormData(null); setIsOpen(true); }}>إضافة منتج جديد</Button>
+                        )
+                    }
+                </div>
 
             </div>
             <div className="flex flex-wrap justify-between items-center gap-3">
