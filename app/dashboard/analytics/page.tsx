@@ -894,18 +894,34 @@ const AnalyticPage: React.FC = () => {
 
       {showSalesGeo && (
         <DynamicCard isLoading={loading} isError={!country.success} isEmpty={!loading && cityData.length === 0} variant="glass" className="mt-6">
-          <DynamicCard.Header title="توزيع الطلبات حسب بلد المستودع" description="تحليل إجمالي الطلبات حسب مواقع المستودعات" icon={<MapPin size={20} className="text-cyan-500" />} />
-          <DynamicCard.Content className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={cityData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
-                  {cityData.map((_: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: number | undefined) => [`${formatUSD(value)}$`, "إجمالي المبيعات"]} />
-              </PieChart>
-            </ResponsiveContainer>
+          <DynamicCard.Header title="توزيع الطلبات حسب مدينة المستودع" description="تحليل إجمالي الطلبات حسب مدن المستودعات" icon={<MapPin size={20} className="text-cyan-500" />} />
+          <DynamicCard.Content className="flex flex-col md:flex-row items-center gap-6">
+            <div className="h-[350px] w-full md:w-1/2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={cityData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
+                    {cityData.map((_: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number | undefined) => [`${formatUSD(value)}$`, "إجمالي المبيعات"]} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="w-full md:w-1/2 flex flex-col gap-2">
+              {cityData.map((item: any, index: number) => (
+                <div key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-slate-50/50 dark:bg-slate-950/50 border border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{item.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-500">
+                    <span>{item.count} طلب</span>
+                    <span className="font-bold text-cyan-600 dark:text-cyan-400">{formatUSD(item.value)}$</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </DynamicCard.Content>
         </DynamicCard>
       )}
