@@ -408,6 +408,14 @@ export default function SystemReportPage() {
                                     'اعتماد ودفع الرواتب وتوثيق حالة كل كشف',
                                 ]}
                                 how="تعمل عبر server/employee-salaries مع بيانات الأداء من server/analytics، وتُجمَّد الأهداف شهرياً بمهمة cron (lib/cron)." />
+                            <PageGuideCard title="المصاريف" path="/dashboard/expenses"
+                                points={[
+                                    'تسجيل المصاريف بثلاثة أنواع: يومية، راتب موظف، إيجار',
+                                    'بطاقات ملخص: الإجمالي، العدد، الرواتب، اليومية والإيجار',
+                                    'فلترة حسب الشهر والنوع مع بحث نصي',
+                                    'المبالغ بالدولار وتُعرض بعملة الموقع',
+                                ]}
+                                how="تعمل عبر server/expenses (CRUD كامل بصلاحيات viewExpenses/add/edit/delete)، وتظهر بياناتها في بطاقة تحليل المصاريف اليومية بصفحة التحليلات." />
                             <PageGuideCard title="المهام والمواعيد" path="/dashboard/tasks"
                                 points={[
                                     'مهام لكل موظف: زيارة، اتصال، اجتماع مع تاريخ وتذكير',

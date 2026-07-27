@@ -716,9 +716,31 @@ export async function GetDailyExpensesAnalytics(userId: string, dateFilter?: Ord
       include: { permission: true }
     });
 
-    if (!user) return { success: false, error: "User not found", data: [] };
-    void dateFilter;
-    return { success: true, data: [], summary: { USD: 0 } };
+    if (!user) return { success: false, error: "User not found", data: [], summary: { USD: 0 } };
+
+    const dateWhere = buildOrderDateWhere(dateFilter);
+    const expenses = await prisma.expense.findMany({
+      where: {
+        ...(dateWhere ? { OR: [{ scheduledDate: dateWhere }, { AND: [{ scheduledDate: null }, { createdAt: dateWhere }] }] } : {}),
+      },
+      select: { amount: true, scheduledDate: true, createdAt: true },
+    });
+
+    const byDate: Record<string, number> = {};
+    let totalUSD = 0;
+    for (const expense of expenses) {
+      const amount = Number(expense.amount) || 0;
+      const dateValue = expense.scheduledDate || expense.createdAt;
+      const dateKey = dateValue ? new Date(dateValue).toISOString().slice(0, 10) : "غير محدد";
+      byDate[dateKey] = (byDate[dateKey] || 0) + amount;
+      totalUSD += amount;
+    }
+
+    const data = Object.entries(byDate)
+      .map(([date, usd]) => ({ date, USD: Number(usd.toFixed(2)) }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    return { success: true, data, summary: { USD: Number(totalUSD.toFixed(2)) } };
   } catch (error) {
     console.error("Error in GetDailyExpensesAnalytics:", error);
     return { success: false, data: [], summary: { USD: 0 } };
