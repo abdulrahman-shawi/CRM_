@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Camera, X } from 'lucide-react';
+import { Camera, CheckCircle2, X } from 'lucide-react';
 import { AppModal } from '@/components/ui/app-modal';
 
 type BarcodeScannerModalProps = {
@@ -40,6 +40,7 @@ function playBeep() {
 export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح الباركود بالكاميرا', continuous = false }: BarcodeScannerModalProps) {
     const [error, setError] = React.useState<string | null>(null);
     const [lastCode, setLastCode] = React.useState<string | null>(null);
+    const [justScanned, setJustScanned] = React.useState<string | null>(null);
     const scannerRef = React.useRef<any>(null);
     const lastScanRef = React.useRef<{ code: string; at: number }>({ code: '', at: 0 });
     const onScanRef = React.useRef(onScan);
@@ -51,6 +52,7 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
         let cancelled = false;
         setError(null);
         setLastCode(null);
+        setJustScanned(null);
 
         const stop = async () => {
             const scanner = scannerRef.current;
@@ -95,15 +97,15 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
                     { facingMode: 'environment' },
                     {
                         fps: 10,
-                        // منطقة أوسع وأقل ارتفاعاً لتناسب شكل الباركود الشريطي (1D)
-                        qrbox: { width: 300, height: 140 },
-                        // طلب دقة عالية — الباركود الشريطي يحتاج دقة أعلى بكثير من QR
-                        // لتمييز الأعمدة الرفيعة، والدقة الافتراضية (640×480) تُفشل القراءة
+                        // بدون qrbox — مسح كامل الإطار: قصّ المنطقة كان يُسقط منطقة الأمان
+                        // حول الباركود الشريطي ويمنع قراءته، وكامل الإطار أكثر نجاحاً
                         videoConstraints: {
                             facingMode: 'environment',
                             width: { ideal: 1920 },
                             height: { ideal: 1080 },
-                        },
+                            // تركيز تلقائي مستمر — مهم للمسافات القريبة من الورقة
+                            advanced: [{ focusMode: 'continuous' } as any],
+                        } as MediaTrackConstraints,
                     },
                     (decodedText: string) => {
                         const now = Date.now();
@@ -114,10 +116,19 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
 
                         playBeep();
                         setLastCode(decodedText);
+                        // وميض أخضر كتأكيد بصري أن الباركود قُرئ
+                        setJustScanned(decodedText);
                         onScanRef.current(decodedText);
                         if (!continuous) {
-                            void stop();
-                            onClose();
+                            // مهلة قصيرة ليرى المستخدم تأكيد القراءة قبل إغلاق النافذة
+                            setTimeout(() => {
+                                void stop();
+                                onClose();
+                            }, 800);
+                        } else {
+                            setTimeout(() => {
+                                setJustScanned((prev) => (prev === decodedText ? null : prev));
+                            }, 700);
                         }
                     },
                     () => {
@@ -148,6 +159,22 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
 
     return (
         <AppModal isOpen={isOpen} onClose={onClose} title={title} size="md">
+            <style>{`
+                @keyframes barcode-scan-line-move {
+                    0%, 100% { top: 6%; }
+                    50% { top: 90%; }
+                }
+                .barcode-scan-line {
+                    position: absolute;
+                    left: 4%;
+                    right: 4%;
+                    height: 3px;
+                    border-radius: 9999px;
+                    background: #34d399;
+                    box-shadow: 0 0 10px 2px rgba(52, 211, 153, 0.8);
+                    animation: barcode-scan-line-move 1.6s ease-in-out infinite;
+                }
+            `}</style>
             <div className="space-y-4">
                 {error ? (
                     <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-center text-sm font-bold text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
@@ -155,14 +182,39 @@ export function BarcodeScannerModal({ isOpen, onClose, onScan, title = 'مسح �
                     </div>
                 ) : (
                     <>
-                        <div
-                            id={SCANNER_ELEMENT_ID}
-                            className="mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-black dark:border-slate-700"
-                            style={{ minHeight: 260 }}
-                        />
+                        <div className="relative mx-auto w-full max-w-md">
+                            <div
+                                id={SCANNER_ELEMENT_ID}
+                                className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-black dark:border-slate-700"
+                                style={{ minHeight: 260 }}
+                            />
+
+                            {/* إطار إرشادي + خط مسح متحرك ليوضح أن المسح يعمل */}
+                            {!justScanned && (
+                                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                    <div className="relative h-[45%] w-[85%]">
+                                        <span className="absolute right-0 top-0 h-6 w-6 rounded-tr-lg border-r-4 border-t-4 border-emerald-400" />
+                                        <span className="absolute left-0 top-0 h-6 w-6 rounded-tl-lg border-l-4 border-t-4 border-emerald-400" />
+                                        <span className="absolute bottom-0 right-0 h-6 w-6 rounded-br-lg border-b-4 border-r-4 border-emerald-400" />
+                                        <span className="absolute bottom-0 left-0 h-6 w-6 rounded-bl-lg border-b-4 border-l-4 border-emerald-400" />
+                                        <span className="barcode-scan-line" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* تأكيد القراءة — وميض أخضر مع قيمة الباركود */}
+                            {justScanned && (
+                                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-2xl bg-emerald-500/40">
+                                    <CheckCircle2 size={48} className="text-white drop-shadow" />
+                                    <span className="rounded-lg bg-black/60 px-3 py-1 font-mono text-sm font-bold text-white" dir="ltr">
+                                        {justScanned}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                         <div className="flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                             <Camera size={16} />
-                            وجّه الكاميرا نحو الباركود بإضاءة جيدة
+                            ضع الباركود داخل الإطار بإضاءة جيدة
                         </div>
                     </>
                 )}
