@@ -27,6 +27,7 @@ The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-fac
 | Forms | React Hook Form + Zod |
 | Charts | Recharts + Tremor |
 | PDF/Print | `jspdf`, `jspdf-autotable`, `html2canvas`, `react-to-print` |
+| Barcode | Code39 SVG (`lib/barcode.ts`, `components/ui/barcode.tsx`), camera scanning via `html5-qrcode` (`components/ui/barcode-scanner.tsx`), label printing at `/dashboard/barcode-labels` |
 | PWA | `@ducanh2912/next-pwa` |
 | Image Storage | `@vercel/blob` |
 | Cron | `node-cron` (server-side monthly target freeze) |

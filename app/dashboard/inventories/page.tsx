@@ -1,6 +1,7 @@
 'use client';
 import { DynamicForm } from '@/components/shared/dynamic-form';
 import { AppModal } from '@/components/ui/app-modal';
+import { BarcodeScannerModal } from '@/components/ui/barcode-scanner';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
 import { FormSelect } from '@/components/ui/select-form';
@@ -11,7 +12,7 @@ import { createCity, deleteCity, getCities, updateCity } from '@/server/city';
 import { createWarehouse, deleteWarehouse, getWarehouse, getWarehouseDetails, updateWarehouse } from '@/server/warehouse';
 import { createMovementAction, getInventoryData } from '@/server/move';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2, ShieldCheck, Search, Building2, Trash } from 'lucide-react';
+import { Edit, Trash2, Eye, Package, FileText, ArrowRightLeft, Plus, X, Loader2, ShieldCheck, Search, Building2, Trash, ScanLine } from 'lucide-react';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 import z from 'zod';
@@ -92,6 +93,7 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
     const [productSearch, setProductSearch] = React.useState<Record<string, string>>({});
     const [productDropdownOpen, setProductDropdownOpen] = React.useState<Record<string, boolean>>({});
     const [movementReason, setMovementReason] = React.useState('');
+    const [isScannerOpen, setIsScannerOpen] = React.useState(false);
 
     const handleWarehouseClose = () => {
         setIsWarehouseOpen(false);
@@ -426,6 +428,33 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
         return normalized
             ? movementProductOptions.filter((p: any) => String(p.name || '').toLowerCase().includes(normalized))
             : movementProductOptions;
+    };
+
+    // مسح الباركود: يضيف المنتج لبنود الحركة أو يزيد كميته بمقدار 1
+    const handleMovementScan = (code: string) => {
+        const product = movementProductOptions.find((p: any) => String(p?.barcode || '') === code);
+        if (!product) {
+            toast.error('لم يتم العثور على منتج بهذا الباركود');
+            return;
+        }
+
+        const productId = String(product.id);
+        const existingItem = movementItems.find((item) => item.productId === productId);
+        if (existingItem) {
+            updateMovementItem(existingItem.id, { quantity: String(Number(existingItem.quantity || 0) + 1) });
+        } else {
+            const emptyItem = movementItems.find((item) => !item.productId);
+            if (emptyItem) {
+                updateMovementItem(emptyItem.id, { productId, productName: product.name, quantity: '1' });
+                setProductSearch((prev) => ({ ...prev, [emptyItem.id]: product.name }));
+                setProductDropdownOpen((prev) => ({ ...prev, [emptyItem.id]: false }));
+            } else {
+                const newId = String(Date.now() + Math.random());
+                setMovementItems((prev) => [...prev, { id: newId, productId, productName: product.name, quantity: '1' }]);
+                setProductSearch((prev) => ({ ...prev, [newId]: product.name }));
+            }
+        }
+        toast.success(`تم مسح: ${product.name}`);
     };
 
     return (
@@ -914,14 +943,24 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <label className="text-xs font-bold dark:text-slate-500 uppercase">المنتجات</label>
-                                        <button
-                                            type="button"
-                                            onClick={addMovementItem}
-                                            className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:text-blue-700 transition"
-                                        >
-                                            <Plus size={16} />
-                                            إضافة منتج
-                                        </button>
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsScannerOpen(true)}
+                                                className="flex items-center gap-1 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition"
+                                            >
+                                                <ScanLine size={16} />
+                                                مسح بالباركود
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={addMovementItem}
+                                                className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:text-blue-700 transition"
+                                            >
+                                                <Plus size={16} />
+                                                إضافة منتج
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {movementItems.map((item, index) => (
@@ -1019,6 +1058,17 @@ const CategoriesLayout: React.FunctionComponent<ICategoriesLayoutProps> = (props
                     </div>
                 </div>
             )}
+
+            {/* ماسح الباركود — يظهر فوق مودال حركة المخزون */}
+            <div className="relative z-[100]">
+                <BarcodeScannerModal
+                    isOpen={isScannerOpen}
+                    onClose={() => setIsScannerOpen(false)}
+                    onScan={handleMovementScan}
+                    title="مسح باركود المنتجات"
+                    continuous
+                />
+            </div>
 
             <AppModal
                 title={warehouseEditId ? "تعديل بيانات المستودع" : "إضافة مستودع جديدة"}

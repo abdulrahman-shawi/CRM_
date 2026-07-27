@@ -7,8 +7,9 @@ import { createOrder, updateOrder } from "@/server/order";
 import { getshipping } from "@/server/shipping";
 import { getWarehouse } from "@/server/warehouse";
 import { useOrderStore } from "@/store/customer";
+import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
 import { AnimatePresence, motion } from "framer-motion";
-import { Save, Trash2 } from "lucide-react";
+import { Save, Trash2, ScanLine } from "lucide-react";
 import React from "react";
 import toast from "react-hot-toast";
 import PhoneInput from 'react-phone-number-input'
@@ -176,6 +177,49 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
 }, [initialData, isOpenOrder]);
   const addNewItem = () => {
     setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+  };
+
+  const [isScannerOpen, setIsScannerOpen] = React.useState(false);
+
+  // مسح الباركود: يضيف المنتج للطلب أو يزيد كميته بمقدار 1 (مسح مستمر)
+  const handleBarcodeScan = (code: string) => {
+    const product = products?.find((p: any) => String(p?.barcode || '') === code);
+    if (!product) {
+      toast.error('لم يتم العثور على منتج بهذا الباركود');
+      return;
+    }
+
+    const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+    const existingIndex = items.findIndex((item: any) => String(item.productId) === String(product.id));
+    if (existingIndex !== -1) {
+      const newItems = [...items];
+      const item = newItems[existingIndex];
+      item.quantity = Number(item.quantity || 0) + 1;
+      item.total = getEffectivePrice(item.price, item.discount) * item.quantity;
+      setItems(newItems);
+    } else {
+      const newItem = {
+        productId: String(product.id),
+        name: product?.name || "",
+        price: pricing.price,
+        quantity: 1,
+        discount: pricing.discount,
+        note: "",
+        total: getEffectivePrice(pricing.price, pricing.discount),
+        modelNumber: product?.modelNumber || "",
+      };
+      const emptyIndex = items.findIndex((item: any) => !item.productId);
+      if (emptyIndex !== -1) {
+        const newItems = [...items];
+        newItems[emptyIndex] = newItem;
+        setItems(newItems);
+        setSearchQueries({ ...searchQueries, [emptyIndex]: newItem.name });
+        setShowDropdown({ ...showDropdown, [emptyIndex]: false });
+      } else {
+        setItems([...items, newItem]);
+      }
+    }
+    toast.success(`تمت إضافة: ${product.name}`);
   };
 
   const getEffectivePrice = (price: number, discount: number) => {
@@ -588,7 +632,17 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                 </div>
               </div>
             ))}
-            <button onClick={addNewItem} className="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all">+ إضافة بند جديد</button>
+            <div className="flex gap-2">
+              <button onClick={addNewItem} className="flex-1 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all">+ إضافة بند جديد</button>
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                title="مسح الباركود بالكاميرا"
+                className="px-4 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 hover:border-blue-500 hover:text-blue-500 transition-all"
+              >
+                <ScanLine size={18} />
+              </button>
+            </div>
           </div>
           <div className="space-y-8" dir="rtl">
             {/* القسم الأول: بيانات العميل والطلب */}
@@ -733,6 +787,14 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
 
         </div>
       </AppModal>
+
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleBarcodeScan}
+        title="مسح باركود المنتجات"
+        continuous
+      />
 
     </div>
   )

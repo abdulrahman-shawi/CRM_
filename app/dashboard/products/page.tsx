@@ -16,11 +16,12 @@ import { deleteProductFromWarehouse, saveProductWithFiles, updateProductWithFile
 import { getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
 import { getWarehouse } from '@/server/warehouse';
 import { Barcode } from '@/components/ui/barcode';
+import { BarcodeScannerModal } from '@/components/ui/barcode-scanner';
 import { generateBarcodeValue } from '@/lib/barcode';
 import Link from 'next/link';
 import { error } from 'console';
 import { image } from 'framer-motion/client';
-import { FileDown, Mail, Plus, Warehouse, FileText } from 'lucide-react';
+import { FileDown, Mail, Plus, Warehouse, FileText, ScanLine } from 'lucide-react';
 import * as React from 'react';
 import { Controller, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -374,6 +375,7 @@ const ProductLayout = () => {
     const [selectedWarehouseFilter, setSelectedWarehouseFilter] = React.useState<string>('all');
     const [nameFilter, setNameFilter] = React.useState('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
+    const [isScannerOpen, setIsScannerOpen] = React.useState(false);
     const { user } = useAuth()
     const PAGE_SIZE = 10;
 
@@ -585,7 +587,9 @@ const ProductLayout = () => {
         return products.flatMap((product: any) => {
             const stocks = Array.isArray(product?.stocks) ? product.stocks : [];
 
-            const matchesName = !normalizedNameFilter || String(product?.name || '').toLowerCase().includes(normalizedNameFilter);
+            const matchesName = !normalizedNameFilter
+                || String(product?.name || '').toLowerCase().includes(normalizedNameFilter)
+                || String(product?.barcode || '').toLowerCase().includes(normalizedNameFilter);
             const matchesCategory = categoryFilter === 'all' || String(product?.categoryId || '') === categoryFilter;
             if (!matchesName || !matchesCategory) {
                 return [];
@@ -710,8 +714,9 @@ const ProductLayout = () => {
                 <div className="flex items-center gap-3">
                     <div className="mb-4 max-w-xs">
                     <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">
-                        بحث بالاسم
+                        بحث بالاسم أو الباركود
                     </label>
+                    <div className="flex items-center gap-2">
                     <input
                         type="text"
                         value={nameFilter}
@@ -722,6 +727,15 @@ const ProductLayout = () => {
                         placeholder="اسم المنتج"
                         className="h-10 w-full border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     />
+                    <button
+                        type="button"
+                        onClick={() => setIsScannerOpen(true)}
+                        title="مسح الباركود بالكاميرا"
+                        className="h-10 w-10 shrink-0 flex items-center justify-center border rounded-md bg-white dark:bg-slate-950 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-500 transition-all"
+                    >
+                        <ScanLine size={18} />
+                    </button>
+                    </div>
                 </div>
 
                 <div className="mb-4 max-w-xs">
@@ -1471,6 +1485,16 @@ const ProductLayout = () => {
                     </DynamicForm>
                 </div>
             </AppModal>
+
+            <BarcodeScannerModal
+                isOpen={isScannerOpen}
+                onClose={() => setIsScannerOpen(false)}
+                onScan={(code) => {
+                    setNameFilter(code);
+                    setPage(1);
+                }}
+                title="مسح باركود المنتج"
+            />
         </div>
     );
 };

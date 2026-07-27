@@ -764,6 +764,7 @@ export async function getProductCatalog() {
             id: true,
             name: true,
             modelNumber: true,
+            barcode: true,
             wholesalePrice: true,
             wholesalePricingTiers: {
                 orderBy: { minQuantity: 'asc' },

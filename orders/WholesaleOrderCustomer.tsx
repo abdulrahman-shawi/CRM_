@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Save, Trash2 } from "lucide-react";
+import { Save, ScanLine, Trash2 } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import toast from "react-hot-toast";
 import { AppModal } from "@/components/ui/app-modal";
+import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
 import { MapPicker } from "@/components/ui/MapPicker";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
 import { getCountries } from "@/server/country";
@@ -133,6 +134,7 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
   const [items, setItems] = React.useState<WholesaleOrderItem[]>([createEmptyItem()]);
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
+  const [isScannerOpen, setIsScannerOpen] = React.useState(false);
 
   const [receiverName, setReceiverName] = React.useState("");
   const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
@@ -274,6 +276,41 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
     });
   };
 
+  const handleBarcodeScan = (code: string) => {
+    const product = products.find((currentProduct: any) => String(currentProduct?.barcode || "").trim() === String(code).trim());
+    if (!product) {
+      toast.error("لم يتم العثور على منتج بهذا الباركود");
+      return;
+    }
+
+    const existingIndex = items.findIndex((item) => String(item.productId) === String(product.id));
+    if (existingIndex >= 0) {
+      // المنتج مضاف مسبقاً — نزيد الكمية فقط (يُعاد حساب شريحة السعر تلقائياً)
+      updateItem(existingIndex, "quantity", items[existingIndex].quantity + 1);
+    } else {
+      const emptyIndex = items.findIndex((item) => !item.productId);
+      if (emptyIndex >= 0) {
+        updateItem(emptyIndex, "productId", product.id.toString());
+      } else {
+        const price = resolveWholesaleUnitPrice(product, 1, warehouseId);
+        setItems((currentItems) => [
+          ...currentItems,
+          {
+            productId: String(product.id),
+            name: product?.name || "",
+            modelNumber: product?.modelNumber || "",
+            quantity: 1,
+            price,
+            discount: 0,
+            total: getEffectivePrice(price, 0),
+            note: "",
+          },
+        ]);
+      }
+    }
+    toast.success(`تمت إضافة: ${product.name}`);
+  };
+
   const handleWarehouseChange = (value: string) => {
     setWarehouseId(value);
     setItems([createEmptyItem()]);
@@ -372,6 +409,7 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
   };
 
   return (
+    <>
     <AppModal
       isOpen={isOpen}
       onClose={onClose}
@@ -575,13 +613,24 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
             );
           })}
 
-          <button
-            type="button"
-            onClick={addNewItem}
-            className="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all"
-          >
-            + إضافة بند جديد
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={addNewItem}
+              className="flex-1 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all"
+            >
+              + إضافة بند جديد
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              title="مسح باركود بالكاميرا"
+              className="px-4 py-3 border-2 border-dashed border-emerald-300 dark:border-emerald-800 rounded-2xl text-emerald-500 hover:border-emerald-500 hover:text-emerald-600 transition-all flex items-center gap-1 font-bold text-xs"
+            >
+              <ScanLine size={18} />
+              مسح
+            </button>
+          </div>
         </div>
 
         {/* بيانات المستلم والعنوان */}
@@ -749,5 +798,16 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
         </div>
       </div>
     </AppModal>
+
+      <div className="relative z-[100]">
+        <BarcodeScannerModal
+          isOpen={isScannerOpen}
+          onClose={() => setIsScannerOpen(false)}
+          onScan={handleBarcodeScan}
+          title="مسح باركود المنتج"
+          continuous
+        />
+      </div>
+    </>
   );
 }
