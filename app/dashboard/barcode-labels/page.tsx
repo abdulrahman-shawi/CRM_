@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Printer, Trash2 } from 'lucide-react';
+import { Download, Plus, Printer, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Barcode } from '@/components/ui/barcode';
+import { buildCode39SvgString } from '@/lib/barcode';
 import { formatSiteCurrency, useSiteCurrency } from '@/lib/currency';
 import { getProduct } from '@/server/product';
 
@@ -97,6 +98,96 @@ export default function BarcodeLabelsPage() {
     const totalLabels = selected.reduce((sum, item) => sum + item.copies, 0);
     const size = LABEL_SIZES[sizeKey];
 
+    // ─── حفظ الملصق كصورة PNG (بدقة 300 DPI مناسبة للطباعة) ───
+    const PX_PER_MM = 300 / 25.4;
+
+    const renderLabelToPngBlob = async (item: LabelItem): Promise<Blob | null> => {
+        const widthPx = Math.round(parseFloat(size.width) * PX_PER_MM);
+        const heightPx = Math.round(parseFloat(size.height) * PX_PER_MM);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = widthPx;
+        canvas.height = heightPx;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+
+        // خلفية بيضاء وإطار
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, widthPx, heightPx);
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, widthPx - 2, heightPx - 2);
+
+        const centerX = widthPx / 2;
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'center';
+
+        // اسم المنتج
+        ctx.direction = 'rtl';
+        ctx.font = `bold ${Math.round(heightPx * 0.11)}px sans-serif`;
+        ctx.fillText(item.name, centerX, Math.round(heightPx * 0.16), widthPx - 24);
+
+        // السعر
+        ctx.font = `${Math.round(heightPx * 0.09)}px sans-serif`;
+        ctx.fillText(formatSiteCurrency(item.price, currencySettings), centerX, Math.round(heightPx * 0.29), widthPx - 24);
+
+        // الباركود
+        const svg = buildCode39SvgString(item.barcode, 100, 3);
+        if (svg) {
+            const img = new Image();
+            await new Promise<void>((resolve) => {
+                img.onload = () => resolve();
+                img.onerror = () => resolve();
+                img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            });
+            if (img.width > 0) {
+                const maxBarWidth = widthPx - 40;
+                const barTop = Math.round(heightPx * 0.35);
+                const barAreaHeight = Math.round(heightPx * 0.42);
+                const scale = Math.min(maxBarWidth / img.width, barAreaHeight / img.height);
+                const drawWidth = img.width * scale;
+                const drawHeight = img.height * scale;
+                ctx.drawImage(img, centerX - drawWidth / 2, barTop, drawWidth, drawHeight);
+            }
+        }
+
+        // قيمة الباركود
+        ctx.direction = 'ltr';
+        ctx.font = `${Math.round(heightPx * 0.09)}px monospace`;
+        ctx.fillText(item.barcode, centerX, Math.round(heightPx * 0.92));
+
+        return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    };
+
+    const saveBlobAsFile = (blob: Blob, fileName: string) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    const downloadLabelImage = async (item: LabelItem) => {
+        const blob = await renderLabelToPngBlob(item);
+        if (!blob) {
+            toast.error('تعذر توليد صورة الملصق');
+            return;
+        }
+        saveBlobAsFile(blob, `label-${item.barcode}.png`);
+    };
+
+    const downloadAllLabelImages = async () => {
+        if (selected.length === 0) return;
+        toast.success('جاري تحميل صورة PNG لكل منتج...');
+        for (const item of selected) {
+            await downloadLabelImage(item);
+            await new Promise((resolve) => setTimeout(resolve, 400));
+        }
+    };
+
     const labels = React.useMemo(() => {
         const out: LabelItem[] = [];
         for (const item of selected) {
@@ -125,10 +216,16 @@ export default function BarcodeLabelsPage() {
             <div className="no-print space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <h1 className="text-xl font-bold">طباعة ملصقات الباركود</h1>
-                    <Button onClick={() => window.print()} disabled={totalLabels === 0}>
-                        <Printer size={16} className="ml-2" />
-                        طباعة ({totalLabels} ملصق)
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" onClick={() => void downloadAllLabelImages()} disabled={selected.length === 0}>
+                            <Download size={16} className="ml-2" />
+                            حفظ كصور PNG
+                        </Button>
+                        <Button onClick={() => window.print()} disabled={totalLabels === 0}>
+                            <Printer size={16} className="ml-2" />
+                            طباعة ({totalLabels} ملصق)
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
@@ -196,6 +293,15 @@ export default function BarcodeLabelsPage() {
                                             onChange={(e) => updateCopies(item.id, Number(e.target.value))}
                                             className="w-20 rounded-lg border border-slate-300 bg-white p-2 text-center text-sm dark:border-slate-700 dark:bg-slate-900"
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => void downloadLabelImage(item)}
+                                            className="rounded-lg p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+                                            aria-label="حفظ كصورة"
+                                            title="حفظ الملصق كصورة PNG"
+                                        >
+                                            <Download size={16} />
+                                        </button>
                                         <button
                                             type="button"
                                             onClick={() => removeItem(item.id)}

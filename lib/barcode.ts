@@ -62,3 +62,25 @@ export function encodeCode39(value: string): BarcodeSegment[] | null {
 
     return segments;
 }
+
+/**
+ * بناء باركود Code39 كسلسلة SVG نصية — تستخدم لتوليد صورة PNG للطباعة أو الحفظ
+ */
+export function buildCode39SvgString(value: string, barHeight = 80, moduleWidth = 3): string | null {
+    const segments = encodeCode39(value);
+    if (!segments) return null;
+
+    const totalModules = segments.reduce((sum, segment) => sum + segment.width, 0);
+    const svgWidth = totalModules * moduleWidth;
+
+    let x = 0;
+    let rects = "";
+    for (const segment of segments) {
+        if (segment.isBar) {
+            rects += `<rect x="${x}" y="0" width="${segment.width * moduleWidth}" height="${barHeight}" fill="#000"/>`;
+        }
+        x += segment.width * moduleWidth;
+    }
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${barHeight}" viewBox="0 0 ${svgWidth} ${barHeight}">${rects}</svg>`;
+}
