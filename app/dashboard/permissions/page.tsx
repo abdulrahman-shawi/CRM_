@@ -213,6 +213,7 @@ export default function PermissionsPage() {
                                         <PermissionRow title="الصفحات الثابتة" suffix="Pages" role={selectedRole} onToggle={togglePermission} />
                                         <PermissionRow title="التسويق" suffix="Marketing" role={selectedRole} onToggle={togglePermission} />
                                         <PermissionRow title="المرتجعات" suffix="Returns" role={selectedRole} onToggle={togglePermission} />
+                                        <PermissionRow title="المصاريف" suffix="Expenses" role={selectedRole} onToggle={togglePermission} />
 
                                         {/* ملاحظة: إحصائيات النظام تملك حقلاً واحداً فقط (viewAnalytics) */}
                                         {/* إذا كان PermissionRow مصمماً لعرض 4 مربعات اختيار، فقد تحتاج لمكون بسيط أو تخصيص لهذا الحقل */}

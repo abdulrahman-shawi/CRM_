@@ -205,6 +205,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
         (user && hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"])) &&
         { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
+        (user && hasAnyPermission(user, ["viewExpenses", "addExpenses", "editExpenses", "deleteExpenses"])) &&
+        { icon: Wallet, label: "المصاريف", href: "/dashboard/expenses" },
         (user && hasAnyPermission(user, ["viewLoyalty", "editLoyalty"])) &&
         { icon: Award, label: "نقاط الولاء", href: "/dashboard/loyalty" },
       ].filter(Boolean) as MenuItem[]

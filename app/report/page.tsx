@@ -386,9 +386,68 @@ export default function SystemReportPage() {
                                 how="تجلب المراجعات من server/review (getReviews) والحذف عبر deleteReview؛ المحتوى يأتي من المتجر العام." />
                         </PageGuideGroup>
                         <PageGuideGroup title="الإدارة والنظام">
-                            <PageGuideCard title="التحليلات والتقارير" path="/dashboard/analytics"
-                                points={['قسم مستقل ومفصّل أدناه']}
-                                how="انظر القسم المخصص لصفحة التحليلات في الأسفل." />
+                            <PageGuideCard title="الموظفون والأهداف" path="/dashboard/users"
+                                points={[
+                                    'جدول الموظفين مع أدوارهم وإضافة وتعديل وحذف',
+                                    'إسناد موظف مسؤول لكل موظف (نطاق الرؤية الهرمي)',
+                                    'أهداف مبيعات ونشاط لكل موظف مع تقرير إنجاز مفصّل',
+                                    'تصدير تقرير أداء الموظف PDF ومعاينة النظام بعينه (انتحال)',
+                                ]}
+                                how="تعمل عبر server/user (إدارة المستخدمين والأهداف والانتحال) وGetUserTargetProgress من server/analytics لتقارير الإنجاز والعمولات." />
+                            <PageGuideCard title="الصلاحيات" path="/dashboard/permissions"
+                                points={[
+                                    'إنشاء أدوار مخصصة بأسماء حرة (مثل: مستودع، مبيعات)',
+                                    'أكثر من 60 صلاحية دقيقة: عرض/إضافة/تعديل/حذف لكل موديول',
+                                    'ربط كل دور بالموظفين وتُفرض على الواجهة والخادم',
+                                ]}
+                                how="تُخزَّن الصلاحيات في نموذج Permission وتُفحص عبر hasPermission/isAdmin من lib/utils في كل server action وصفحة." />
+                            <PageGuideCard title="رواتب الموظفين" path="/dashboard/employee-salaries"
+                                points={[
+                                    'كشف رواتب شهري لكل موظف: أساسي + عمولات + مكافآت − جزاءات',
+                                    'احتساب تلقائي من أداء المبيعات وأهداف الشهر',
+                                    'اعتماد ودفع الرواتب وتوثيق حالة كل كشف',
+                                ]}
+                                how="تعمل عبر server/employee-salaries مع بيانات الأداء من server/analytics، وتُجمَّد الأهداف شهرياً بمهمة cron (lib/cron)." />
+                            <PageGuideCard title="المهام والمواعيد" path="/dashboard/tasks"
+                                points={[
+                                    'مهام لكل موظف: زيارة، اتصال، اجتماع مع تاريخ وتذكير',
+                                    'متابعة حالة الإنجاز وربط المهمة بعميل',
+                                ]}
+                                how="تعمل عبر server/task وتظهر التذكيرات ضمن نظام الإشعارات." />
+                            <PageGuideCard title="الإشعارات" path="/dashboard/notifications"
+                                points={[
+                                    'كل تنبيهات النظام: تغيّر حالات الطلبات، مهام، مخزون منخفض',
+                                    'تحديد كمقروء وحذف فردي أو جماعي',
+                                ]}
+                                how="تعمل عبر server/notification — تُنشأ الإشعارات تلقائياً من الأحداث (مثل createOrderStatusChangeNotification عند تغيّر حالة طلب)." />
+                            <PageGuideCard title="الإعدادات" path="/dashboard/settings"
+                                points={[
+                                    'عملة الموقع وسعر صرفها مقابل الدولار وصندوق النقد',
+                                    'إعدادات واتساب Cloud API والبريد والمفاتيح',
+                                    'نسخ احتياطي واستعادة قاعدة البيانات',
+                                    'نقل البيانات بين البيئات',
+                                ]}
+                                how="تعمل عبر server/general-settings (upsertGeneralSettings) وserver/backup؛ العملة وسعر الصرف يقودان عرض الأسعار في كل النظام." />
+                            <PageGuideCard title="الأفلييت (المسوّقون)" path="/dashboard/affiliate"
+                                points={[
+                                    'إدارة حسابات المسوّقين وروابط الإحالة الخاصة بهم',
+                                    'العمولات: اعتماد عند التسليم وإلغاء عند الإرجاع',
+                                    'محافظ مالية وتحويلات للمسوّقين',
+                                ]}
+                                how="تعمل عبر server/affiliate — ربط الطلب بالمسوّق يتم عبر كوكي affiliate-code عند إنشاء الطلب من رابط الإحالة." />
+                            <PageGuideCard title="الحملات التسويقية" path="/dashboard/marketing/campaigns"
+                                points={[
+                                    'حملات واتساب (قوالب معتمدة أو نص حر) وبريد إلكتروني',
+                                    'استهداف شرائح: كل العملاء، الجملة، المندوبون، أو مخصص',
+                                    'جدولة الحملة وتتبع الإرسال والتحويلات',
+                                ]}
+                                how="تعمل عبر server/marketing — الإرسال الفعلي عبر WhatsApp Cloud API (lib/whatsapp) وResend للبريد." />
+                            <PageGuideCard title="تحليلات التسويق" path="/dashboard/marketing/analytics"
+                                points={[
+                                    'أداء الحملات: معدلات الإرسال والفتح والتحويل',
+                                    'مقارنة الحملات وقياس عائد كل قناة',
+                                ]}
+                                how="تجمع إحصاءاتها من بيانات الحملات والتحويلات في server/marketing." />
                         </PageGuideGroup>
                     </div>
                 </Section>

@@ -73,6 +73,11 @@ export interface Permission {
   addCustomerPayments: boolean;
   deleteCustomerPayments: boolean;
 
+  viewExpenses: boolean;
+  addExpenses: boolean;
+  editExpenses: boolean;
+  deleteExpenses: boolean;
+
   // Phase 2+3 permissions
   viewLoyalty: boolean;
   editLoyalty: boolean;
