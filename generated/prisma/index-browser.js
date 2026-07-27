@@ -666,6 +666,9 @@ exports.Prisma.GeneralSettingScalarFieldEnum = {
   resendFromEmail: 'resendFromEmail',
   resendApiKey: 'resendApiKey',
   nextPublicAppUrl: 'nextPublicAppUrl',
+  whatsappCloudApiToken: 'whatsappCloudApiToken',
+  whatsappPhoneNumberId: 'whatsappPhoneNumberId',
+  whatsappApiVersion: 'whatsappApiVersion',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

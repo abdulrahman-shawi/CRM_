@@ -47637,6 +47637,9 @@ export namespace Prisma {
     resendFromEmail: string | null
     resendApiKey: string | null
     nextPublicAppUrl: string | null
+    whatsappCloudApiToken: string | null
+    whatsappPhoneNumberId: string | null
+    whatsappApiVersion: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -47661,6 +47664,9 @@ export namespace Prisma {
     resendFromEmail: string | null
     resendApiKey: string | null
     nextPublicAppUrl: string | null
+    whatsappCloudApiToken: string | null
+    whatsappPhoneNumberId: string | null
+    whatsappApiVersion: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -47685,6 +47691,9 @@ export namespace Prisma {
     resendFromEmail: number
     resendApiKey: number
     nextPublicAppUrl: number
+    whatsappCloudApiToken: number
+    whatsappPhoneNumberId: number
+    whatsappApiVersion: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -47729,6 +47738,9 @@ export namespace Prisma {
     resendFromEmail?: true
     resendApiKey?: true
     nextPublicAppUrl?: true
+    whatsappCloudApiToken?: true
+    whatsappPhoneNumberId?: true
+    whatsappApiVersion?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -47753,6 +47765,9 @@ export namespace Prisma {
     resendFromEmail?: true
     resendApiKey?: true
     nextPublicAppUrl?: true
+    whatsappCloudApiToken?: true
+    whatsappPhoneNumberId?: true
+    whatsappApiVersion?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -47777,6 +47792,9 @@ export namespace Prisma {
     resendFromEmail?: true
     resendApiKey?: true
     nextPublicAppUrl?: true
+    whatsappCloudApiToken?: true
+    whatsappPhoneNumberId?: true
+    whatsappApiVersion?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -47888,6 +47906,9 @@ export namespace Prisma {
     resendFromEmail: string | null
     resendApiKey: string | null
     nextPublicAppUrl: string | null
+    whatsappCloudApiToken: string | null
+    whatsappPhoneNumberId: string | null
+    whatsappApiVersion: string | null
     createdAt: Date
     updatedAt: Date
     _count: GeneralSettingCountAggregateOutputType | null
@@ -47931,6 +47952,9 @@ export namespace Prisma {
     resendFromEmail?: boolean
     resendApiKey?: boolean
     nextPublicAppUrl?: boolean
+    whatsappCloudApiToken?: boolean
+    whatsappPhoneNumberId?: boolean
+    whatsappApiVersion?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -47955,6 +47979,9 @@ export namespace Prisma {
     resendFromEmail?: boolean
     resendApiKey?: boolean
     nextPublicAppUrl?: boolean
+    whatsappCloudApiToken?: boolean
+    whatsappPhoneNumberId?: boolean
+    whatsappApiVersion?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -47979,6 +48006,9 @@ export namespace Prisma {
     resendFromEmail?: boolean
     resendApiKey?: boolean
     nextPublicAppUrl?: boolean
+    whatsappCloudApiToken?: boolean
+    whatsappPhoneNumberId?: boolean
+    whatsappApiVersion?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["generalSetting"]>
@@ -48003,11 +48033,14 @@ export namespace Prisma {
     resendFromEmail?: boolean
     resendApiKey?: boolean
     nextPublicAppUrl?: boolean
+    whatsappCloudApiToken?: boolean
+    whatsappPhoneNumberId?: boolean
+    whatsappApiVersion?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
+  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "whatsappCloudApiToken" | "whatsappPhoneNumberId" | "whatsappApiVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
 
   export type $GeneralSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GeneralSetting"
@@ -48032,6 +48065,9 @@ export namespace Prisma {
       resendFromEmail: string | null
       resendApiKey: string | null
       nextPublicAppUrl: string | null
+      whatsappCloudApiToken: string | null
+      whatsappPhoneNumberId: string | null
+      whatsappApiVersion: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["generalSetting"]>
@@ -48476,6 +48512,9 @@ export namespace Prisma {
     readonly resendFromEmail: FieldRef<"GeneralSetting", 'String'>
     readonly resendApiKey: FieldRef<"GeneralSetting", 'String'>
     readonly nextPublicAppUrl: FieldRef<"GeneralSetting", 'String'>
+    readonly whatsappCloudApiToken: FieldRef<"GeneralSetting", 'String'>
+    readonly whatsappPhoneNumberId: FieldRef<"GeneralSetting", 'String'>
+    readonly whatsappApiVersion: FieldRef<"GeneralSetting", 'String'>
     readonly createdAt: FieldRef<"GeneralSetting", 'DateTime'>
     readonly updatedAt: FieldRef<"GeneralSetting", 'DateTime'>
   }
@@ -75489,6 +75528,9 @@ export namespace Prisma {
     resendFromEmail: 'resendFromEmail',
     resendApiKey: 'resendApiKey',
     nextPublicAppUrl: 'nextPublicAppUrl',
+    whatsappCloudApiToken: 'whatsappCloudApiToken',
+    whatsappPhoneNumberId: 'whatsappPhoneNumberId',
+    whatsappApiVersion: 'whatsappApiVersion',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -79826,6 +79868,9 @@ export namespace Prisma {
     resendFromEmail?: StringNullableFilter<"GeneralSetting"> | string | null
     resendApiKey?: StringNullableFilter<"GeneralSetting"> | string | null
     nextPublicAppUrl?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappCloudApiToken?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappPhoneNumberId?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappApiVersion?: StringNullableFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeFilter<"GeneralSetting"> | Date | string
   }
@@ -79850,6 +79895,9 @@ export namespace Prisma {
     resendFromEmail?: SortOrderInput | SortOrder
     resendApiKey?: SortOrderInput | SortOrder
     nextPublicAppUrl?: SortOrderInput | SortOrder
+    whatsappCloudApiToken?: SortOrderInput | SortOrder
+    whatsappPhoneNumberId?: SortOrderInput | SortOrder
+    whatsappApiVersion?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -79877,6 +79925,9 @@ export namespace Prisma {
     resendFromEmail?: StringNullableFilter<"GeneralSetting"> | string | null
     resendApiKey?: StringNullableFilter<"GeneralSetting"> | string | null
     nextPublicAppUrl?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappCloudApiToken?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappPhoneNumberId?: StringNullableFilter<"GeneralSetting"> | string | null
+    whatsappApiVersion?: StringNullableFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeFilter<"GeneralSetting"> | Date | string
   }, "id">
@@ -79901,6 +79952,9 @@ export namespace Prisma {
     resendFromEmail?: SortOrderInput | SortOrder
     resendApiKey?: SortOrderInput | SortOrder
     nextPublicAppUrl?: SortOrderInput | SortOrder
+    whatsappCloudApiToken?: SortOrderInput | SortOrder
+    whatsappPhoneNumberId?: SortOrderInput | SortOrder
+    whatsappApiVersion?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: GeneralSettingCountOrderByAggregateInput
@@ -79933,6 +79987,9 @@ export namespace Prisma {
     resendFromEmail?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     resendApiKey?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     nextPublicAppUrl?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    whatsappCloudApiToken?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    whatsappPhoneNumberId?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    whatsappApiVersion?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"GeneralSetting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GeneralSetting"> | Date | string
   }
@@ -85763,6 +85820,9 @@ export namespace Prisma {
     resendFromEmail?: string | null
     resendApiKey?: string | null
     nextPublicAppUrl?: string | null
+    whatsappCloudApiToken?: string | null
+    whatsappPhoneNumberId?: string | null
+    whatsappApiVersion?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -85787,6 +85847,9 @@ export namespace Prisma {
     resendFromEmail?: string | null
     resendApiKey?: string | null
     nextPublicAppUrl?: string | null
+    whatsappCloudApiToken?: string | null
+    whatsappPhoneNumberId?: string | null
+    whatsappApiVersion?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -85810,6 +85873,9 @@ export namespace Prisma {
     resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
     resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
     nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappCloudApiToken?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhoneNumberId?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappApiVersion?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85834,6 +85900,9 @@ export namespace Prisma {
     resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
     resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
     nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappCloudApiToken?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhoneNumberId?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappApiVersion?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85858,6 +85927,9 @@ export namespace Prisma {
     resendFromEmail?: string | null
     resendApiKey?: string | null
     nextPublicAppUrl?: string | null
+    whatsappCloudApiToken?: string | null
+    whatsappPhoneNumberId?: string | null
+    whatsappApiVersion?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -85881,6 +85953,9 @@ export namespace Prisma {
     resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
     resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
     nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappCloudApiToken?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhoneNumberId?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappApiVersion?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85905,6 +85980,9 @@ export namespace Prisma {
     resendFromEmail?: NullableStringFieldUpdateOperationsInput | string | null
     resendApiKey?: NullableStringFieldUpdateOperationsInput | string | null
     nextPublicAppUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappCloudApiToken?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappPhoneNumberId?: NullableStringFieldUpdateOperationsInput | string | null
+    whatsappApiVersion?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -91004,6 +91082,9 @@ export namespace Prisma {
     resendFromEmail?: SortOrder
     resendApiKey?: SortOrder
     nextPublicAppUrl?: SortOrder
+    whatsappCloudApiToken?: SortOrder
+    whatsappPhoneNumberId?: SortOrder
+    whatsappApiVersion?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -91037,6 +91118,9 @@ export namespace Prisma {
     resendFromEmail?: SortOrder
     resendApiKey?: SortOrder
     nextPublicAppUrl?: SortOrder
+    whatsappCloudApiToken?: SortOrder
+    whatsappPhoneNumberId?: SortOrder
+    whatsappApiVersion?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -91061,6 +91145,9 @@ export namespace Prisma {
     resendFromEmail?: SortOrder
     resendApiKey?: SortOrder
     nextPublicAppUrl?: SortOrder
+    whatsappCloudApiToken?: SortOrder
+    whatsappPhoneNumberId?: SortOrder
+    whatsappApiVersion?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }

@@ -1,6 +1,9 @@
 // WhatsApp Cloud API helpers (Meta Graph API)
 // المستخدم في الحملات التسويقية الجماعية ومشاركة الفواتير
-// المتغيرات المطلوبة: WHATSAPP_CLOUD_API_TOKEN (أو WHATSAPP_TOKEN), WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_API_VERSION (اختياري)
+// الأولوية للقيم المخزنة في صفحة الإعدادات (GeneralSetting) ثم متغيرات البيئة:
+// WHATSAPP_CLOUD_API_TOKEN (أو WHATSAPP_TOKEN), WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_API_VERSION (اختياري)
+
+import { prisma } from "@/lib/prisma";
 
 type WhatsAppConfig = {
   token: string;
@@ -8,10 +11,29 @@ type WhatsAppConfig = {
   apiVersion: string;
 };
 
-export function getWhatsAppConfig(): WhatsAppConfig | null {
-  const token = process.env.WHATSAPP_CLOUD_API_TOKEN || process.env.WHATSAPP_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const apiVersion = process.env.WHATSAPP_API_VERSION || "v21.0";
+export async function getWhatsAppConfig(): Promise<WhatsAppConfig | null> {
+  let settings: {
+    whatsappCloudApiToken: string | null;
+    whatsappPhoneNumberId: string | null;
+    whatsappApiVersion: string | null;
+  } | null = null;
+
+  try {
+    settings = await prisma.generalSetting.findFirst({
+      orderBy: { id: "asc" },
+      select: {
+        whatsappCloudApiToken: true,
+        whatsappPhoneNumberId: true,
+        whatsappApiVersion: true,
+      },
+    });
+  } catch (error) {
+    console.error("getWhatsAppConfig settings error:", error);
+  }
+
+  const token = settings?.whatsappCloudApiToken || process.env.WHATSAPP_CLOUD_API_TOKEN || process.env.WHATSAPP_TOKEN;
+  const phoneNumberId = settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const apiVersion = settings?.whatsappApiVersion || process.env.WHATSAPP_API_VERSION || "v21.0";
 
   if (!token || !phoneNumberId) return null;
   return { token, phoneNumberId, apiVersion };
@@ -74,9 +96,9 @@ async function postWhatsAppMessage(config: WhatsAppConfig, payload: Record<strin
  * إرسال رسالة نصية حرة — تصل فقط ضمن نافذة 24 ساعة بعد آخر رسالة من العميل
  */
 export async function sendWhatsAppTextMessage(to: string, text: string) {
-  const config = getWhatsAppConfig();
+  const config = await getWhatsAppConfig();
   if (!config) {
-    throw new Error("WhatsApp Cloud API غير مهيأ. أضف WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID");
+    throw new Error("WhatsApp Cloud API غير مهيأ. أضف بيانات الاتصال من صفحة الإعدادات أو عبر WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID");
   }
 
   return postWhatsAppMessage(config, {
@@ -95,9 +117,9 @@ export async function sendWhatsAppTemplateMessage(
   languageCode: string = "ar",
   bodyParams: string[] = []
 ) {
-  const config = getWhatsAppConfig();
+  const config = await getWhatsAppConfig();
   if (!config) {
-    throw new Error("WhatsApp Cloud API غير مهيأ. أضف WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID");
+    throw new Error("WhatsApp Cloud API غير مهيأ. أضف بيانات الاتصال من صفحة الإعدادات أو عبر WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID");
   }
 
   const components =

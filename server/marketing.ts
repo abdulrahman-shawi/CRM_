@@ -548,8 +548,8 @@ export async function launchCampaign(id: string | number) {
     }
 
     if (campaign.type === "WHATSAPP" && nextStatus === "RUNNING") {
-      if (!getWhatsAppConfig()) {
-        return { success: false, error: "WhatsApp Cloud API غير مهيأ. أضف WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID في متغيرات البيئة" };
+      if (!(await getWhatsAppConfig())) {
+        return { success: false, error: "WhatsApp Cloud API غير مهيأ. أضف بيانات الاتصال من صفحة الإعدادات أو عبر WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID" };
       }
 
       const channelDetails = (campaign.channelDetails || {}) as Record<string, any>;

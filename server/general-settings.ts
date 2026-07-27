@@ -20,6 +20,9 @@ type GeneralSettingsInput = {
   resendFromEmail?: string;
   resendApiKey?: string;
   nextPublicAppUrl?: string;
+  whatsappCloudApiToken?: string;
+  whatsappPhoneNumberId?: string;
+  whatsappApiVersion?: string;
 };
 
 function sanitizeFileName(fileName: string) {
@@ -102,6 +105,9 @@ export async function upsertGeneralSettings(formData: FormData) {
     const resendFromEmail = String(formData.get('resendFromEmail') || '').trim() || null;
     const resendApiKey = String(formData.get('resendApiKey') || '').trim() || null;
     const nextPublicAppUrl = String(formData.get('nextPublicAppUrl') || '').trim() || null;
+    const whatsappCloudApiToken = String(formData.get('whatsappCloudApiToken') || '').trim() || null;
+    const whatsappPhoneNumberId = String(formData.get('whatsappPhoneNumberId') || '').trim() || null;
+    const whatsappApiVersion = String(formData.get('whatsappApiVersion') || '').trim() || null;
 
     let logoUrl: string | undefined;
     const logoFile = formData.get('logo');
@@ -133,6 +139,9 @@ export async function upsertGeneralSettings(formData: FormData) {
       resendFromEmail,
       resendApiKey,
       nextPublicAppUrl,
+      whatsappCloudApiToken,
+      whatsappPhoneNumberId,
+      whatsappApiVersion,
       ...(logoUrl ? { logo: logoUrl } : {}),
     };
 

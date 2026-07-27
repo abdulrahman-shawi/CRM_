@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getWhatsAppConfig } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -26,19 +27,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "ملف PDF مفقود" }, { status: 400 });
     }
 
-    const token = process.env.WHATSAPP_CLOUD_API_TOKEN || process.env.WHATSAPP_TOKEN;
-    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-    const apiVersion = process.env.WHATSAPP_API_VERSION || "v21.0";
+    const config = await getWhatsAppConfig();
 
-    if (!token || !phoneNumberId) {
+    if (!config) {
       return NextResponse.json(
         {
           success: false,
-          error: "WhatsApp Cloud API غير مهيأ. أضف WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID",
+          error: "WhatsApp Cloud API غير مهيأ. أضف بيانات الاتصال من صفحة الإعدادات أو عبر WHATSAPP_CLOUD_API_TOKEN و WHATSAPP_PHONE_NUMBER_ID",
         },
         { status: 500 }
       );
     }
+
+    const { token, phoneNumberId, apiVersion } = config;
 
     const pureBase64 = body.pdfBase64.includes(",")
       ? body.pdfBase64.split(",").pop() || ""

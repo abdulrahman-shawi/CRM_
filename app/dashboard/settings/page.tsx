@@ -24,6 +24,9 @@ type FormState = {
   resendFromEmail: string;
   resendApiKey: string;
   nextPublicAppUrl: string;
+  whatsappCloudApiToken: string;
+  whatsappPhoneNumberId: string;
+  whatsappApiVersion: string;
 };
 
 const initialForm: FormState = {
@@ -42,6 +45,9 @@ const initialForm: FormState = {
   resendFromEmail: "",
   resendApiKey: "",
   nextPublicAppUrl: "",
+  whatsappCloudApiToken: "",
+  whatsappPhoneNumberId: "",
+  whatsappApiVersion: "",
 };
 
 const CURRENCIES = [
@@ -247,6 +253,9 @@ export default function GeneralSettingsPage() {
         resendFromEmail: data.resendFromEmail || "",
         resendApiKey: data.resendApiKey || "",
         nextPublicAppUrl: data.nextPublicAppUrl || "",
+        whatsappCloudApiToken: data.whatsappCloudApiToken || "",
+        whatsappPhoneNumberId: data.whatsappPhoneNumberId || "",
+        whatsappApiVersion: data.whatsappApiVersion || "",
       });
 
       if (data.logo) {
@@ -287,6 +296,9 @@ export default function GeneralSettingsPage() {
       formData.append("resendFromEmail", form.resendFromEmail);
       formData.append("resendApiKey", form.resendApiKey);
       formData.append("nextPublicAppUrl", form.nextPublicAppUrl);
+      formData.append("whatsappCloudApiToken", form.whatsappCloudApiToken);
+      formData.append("whatsappPhoneNumberId", form.whatsappPhoneNumberId);
+      formData.append("whatsappApiVersion", form.whatsappApiVersion);
 
       const logoFile = logoFiles[0]?.rawFile;
       if (logoFile instanceof File && logoFile.size > 0) {
@@ -612,6 +624,50 @@ export default function GeneralSettingsPage() {
                 onChange={(e) => handleChange("nextPublicAppUrl", e.target.value)}
                 className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
                 placeholder={process.env.NEXT_PUBLIC_APP_URL || "https://example.com"}
+                disabled={loading}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="mb-4">
+            <h2 className="text-base font-black text-slate-900 dark:text-white">إعدادات واتساب (WhatsApp Cloud API)</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">اترك الحقول فارغة لاستخدام قيم ملف <code>.env</code> تلقائيًا.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">WhatsApp Cloud API Token</label>
+              <input
+                type="password"
+                value={form.whatsappCloudApiToken}
+                onChange={(e) => handleChange("whatsappCloudApiToken", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.WHATSAPP_CLOUD_API_TOKEN || process.env.WHATSAPP_TOKEN ? "••••••••••••••••••••••••" : "EAAxxxxxxxx"}
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Phone Number ID</label>
+              <input
+                type="text"
+                dir="ltr"
+                value={form.whatsappPhoneNumberId}
+                onChange={(e) => handleChange("whatsappPhoneNumberId", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.WHATSAPP_PHONE_NUMBER_ID || "123456789012345"}
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-200">API Version (اختياري)</label>
+              <input
+                type="text"
+                dir="ltr"
+                value={form.whatsappApiVersion}
+                onChange={(e) => handleChange("whatsappApiVersion", e.target.value)}
+                className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                placeholder={process.env.WHATSAPP_API_VERSION || "v21.0"}
                 disabled={loading}
               />
             </div>
