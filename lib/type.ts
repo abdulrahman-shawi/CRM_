@@ -64,21 +64,6 @@ export interface Permission {
   editMarketing: boolean;
   deleteMarketing: boolean;
 
-  viewSuppliers: boolean;
-  addSuppliers: boolean;
-  editSuppliers: boolean;
-  deleteSuppliers: boolean;
-
-  viewPurchaseInvoices: boolean;
-  addPurchaseInvoices: boolean;
-  editPurchaseInvoices: boolean;
-  deletePurchaseInvoices: boolean;
-
-  viewCoupons: boolean;
-  addCoupons: boolean;
-  editCoupons: boolean;
-  deleteCoupons: boolean;
-
   viewReturns: boolean;
   addReturns: boolean;
   editReturns: boolean;

@@ -73,8 +73,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
   const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [overallDiscount, setOverallDiscount] = React.useState(0);
   const [additionalNotes, setAdditionalNotes] = React.useState("");
-  const [couponCode, setCouponCode] = React.useState("");
-  const [couponDiscount, setCouponDiscount] = React.useState(0);
   const [manualCreatedAt, setManualCreatedAt] = React.useState("");
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -216,7 +214,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
   const setGrandTotal = useOrderStore((state) => state.setGrandTotal);
 
   const subTotal = items.reduce((sum, item) => sum + ((item.price - item.discount) * item.quantity), 0);
-  const grandTotal = subTotal - overallDiscount - couponDiscount;
+  const grandTotal = subTotal - overallDiscount;
   // تحديث المخزن العالمي عند تغير المجموع أو المبلغ المدفوع
   React.useEffect(() => {
     setGrandTotal(grandTotal);
@@ -338,7 +336,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
       subTotal: Number(subTotal),
-      couponCode: couponCode.trim(),
       ...(isAdminUser && isEditMode ? { manualCreatedAt: manualCreatedAt || null } : {})
     };
 
@@ -385,31 +382,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                 <input type="number" value={overallDiscount} onChange={(e) => setOverallDiscount(Number(e.target.value))} className="w-32 bg-red-50 dark:bg-red-900/10 p-3 rounded-2xl border border-red-100 dark:border-red-900/20 outline-none font-bold text-red-600 text-center" placeholder="0" />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400"> {currencySymbol}</span>
               </div>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-amber-600 uppercase px-1">كوبون خصم</label>
-              <div className="relative flex gap-2">
-                <input
-                  type="text"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  className="w-32 bg-amber-50 dark:bg-amber-900/10 p-3 rounded-2xl border border-amber-100 dark:border-amber-900/20 outline-none font-bold text-amber-600 text-center uppercase"
-                  placeholder="CODE"
-                />
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (!couponCode.trim() || !customerId) { toast.error('اختر عميلاً وأدخل كود الكوبون'); return; }
-                    const res = await import('@/server/coupon').then((m) => m.validateCoupon({ code: couponCode, customerId, subTotal: Number(subTotal) }));
-                    if (res.success && res.data) { setCouponDiscount(res.data.discount); toast.success(`خصم الكوبون: ${res.data.discount}`); }
-                    else { setCouponDiscount(0); toast.error(res.error || 'الكوبون غير صالح'); }
-                  }}
-                  className="px-3 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold"
-                >
-                  تطبيق
-                </button>
-              </div>
-              {couponDiscount > 0 && <p className="text-[10px] text-amber-600 font-bold">خصم الكوبون: {couponDiscount}</p>}
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/20 px-8 py-4 rounded-3xl">
               <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">الإجمالي النهائي</p>

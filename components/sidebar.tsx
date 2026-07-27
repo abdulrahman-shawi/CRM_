@@ -201,12 +201,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       colorClass: "text-rose-600",
       collapsible: true,
       items: [
-        (user && hasAnyPermission(user, ["viewSuppliers", "addSuppliers", "editSuppliers", "deleteSuppliers"])) &&
-        { icon: Store, label: "الموردين", href: "/dashboard/suppliers" },
-        (user && hasAnyPermission(user, ["viewPurchaseInvoices", "addPurchaseInvoices", "editPurchaseInvoices", "deletePurchaseInvoices"])) &&
-        { icon: Receipt, label: "فواتير الشراء", href: "/dashboard/purchase-invoices" },
-        (user && hasAnyPermission(user, ["viewCoupons", "addCoupons", "editCoupons", "deleteCoupons"])) &&
-        { icon: BadgePercent, label: "الكوبونات", href: "/dashboard/coupons" },
         (user && hasAnyPermission(user, ["viewReturns", "addReturns", "editReturns", "deleteReturns"])) &&
         { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
         (user && hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"])) &&

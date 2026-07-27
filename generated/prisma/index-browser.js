@@ -199,18 +199,6 @@ exports.Prisma.PermissionScalarFieldEnum = {
   addMarketing: 'addMarketing',
   editMarketing: 'editMarketing',
   deleteMarketing: 'deleteMarketing',
-  viewSuppliers: 'viewSuppliers',
-  addSuppliers: 'addSuppliers',
-  editSuppliers: 'editSuppliers',
-  deleteSuppliers: 'deleteSuppliers',
-  viewPurchaseInvoices: 'viewPurchaseInvoices',
-  addPurchaseInvoices: 'addPurchaseInvoices',
-  editPurchaseInvoices: 'editPurchaseInvoices',
-  deletePurchaseInvoices: 'deletePurchaseInvoices',
-  viewCoupons: 'viewCoupons',
-  addCoupons: 'addCoupons',
-  editCoupons: 'editCoupons',
-  deleteCoupons: 'deleteCoupons',
   viewReturns: 'viewReturns',
   addReturns: 'addReturns',
   editReturns: 'editReturns',
@@ -257,8 +245,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   showInAds: 'showInAds',
   affiliatePrice: 'affiliatePrice',
   affiliateCommissionRate: 'affiliateCommissionRate',
-  wholesalePrice: 'wholesalePrice',
-  costPrice: 'costPrice'
+  wholesalePrice: 'wholesalePrice'
 };
 
 exports.Prisma.AdPageVisitScalarFieldEnum = {
@@ -339,7 +326,6 @@ exports.Prisma.ProductStockScalarFieldEnum = {
   quantity: 'quantity',
   price: 'price',
   wholesalePrice: 'wholesalePrice',
-  costPrice: 'costPrice',
   discount: 'discount'
 };
 
@@ -592,7 +578,6 @@ exports.Prisma.OrderScalarFieldEnum = {
   userId: 'userId',
   warehouseId: 'warehouseId',
   shippingId: 'shippingId',
-  couponId: 'couponId',
   paidAmount: 'paidAmount',
   remainingAmount: 'remainingAmount',
   trackingNumber: 'trackingNumber',
@@ -791,74 +776,6 @@ exports.Prisma.CampaignScalarFieldEnum = {
   sentAt: 'sentAt',
   metrics: 'metrics',
   createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SupplierScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  phone: 'phone',
-  email: 'email',
-  address: 'address',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ProductSupplierScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  supplierId: 'supplierId',
-  costPrice: 'costPrice',
-  sku: 'sku',
-  notes: 'notes',
-  isDefault: 'isDefault',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.PurchaseInvoiceScalarFieldEnum = {
-  id: 'id',
-  invoiceNumber: 'invoiceNumber',
-  supplierId: 'supplierId',
-  totalAmount: 'totalAmount',
-  paidAmount: 'paidAmount',
-  remainingAmount: 'remainingAmount',
-  invoiceDate: 'invoiceDate',
-  notes: 'notes',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.PurchaseInvoiceItemScalarFieldEnum = {
-  id: 'id',
-  purchaseInvoiceId: 'purchaseInvoiceId',
-  productId: 'productId',
-  quantity: 'quantity',
-  costPrice: 'costPrice',
-  totalPrice: 'totalPrice',
-  warehouseId: 'warehouseId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CouponScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  title: 'title',
-  discountType: 'discountType',
-  discountValue: 'discountValue',
-  maxDiscountValue: 'maxDiscountValue',
-  minOrderAmount: 'minOrderAmount',
-  usageLimit: 'usageLimit',
-  usedCount: 'usedCount',
-  perCustomerLimit: 'perCustomerLimit',
-  startsAt: 'startsAt',
-  endsAt: 'endsAt',
-  isActive: 'isActive',
-  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -1125,12 +1042,6 @@ exports.CampaignAudience = exports.$Enums.CampaignAudience = {
   CUSTOM: 'CUSTOM'
 };
 
-exports.CouponStatus = exports.$Enums.CouponStatus = {
-  ACTIVE: 'ACTIVE',
-  EXPIRED: 'EXPIRED',
-  DISABLED: 'DISABLED'
-};
-
 exports.PaymentType = exports.$Enums.PaymentType = {
   CASH: 'CASH',
   BANK_TRANSFER: 'BANK_TRANSFER',
@@ -1224,11 +1135,6 @@ exports.Prisma.ModelName = {
   Commission: 'Commission',
   AffiliateWalletTransfer: 'AffiliateWalletTransfer',
   Campaign: 'Campaign',
-  Supplier: 'Supplier',
-  ProductSupplier: 'ProductSupplier',
-  PurchaseInvoice: 'PurchaseInvoice',
-  PurchaseInvoiceItem: 'PurchaseInvoiceItem',
-  Coupon: 'Coupon',
   OrderReturn: 'OrderReturn',
   OrderReturnItem: 'OrderReturnItem',
   CustomerPayment: 'CustomerPayment',

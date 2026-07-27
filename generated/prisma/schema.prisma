@@ -137,7 +137,7 @@ enum CampaignAudience {
 }
 
 // ============================================
-// Phase 1 Enums: Suppliers, Returns, Coupons, Debts
+// Phase 1 Enums: Returns, Debts
 // ============================================
 
 enum ReturnReason {
@@ -146,12 +146,6 @@ enum ReturnReason {
   CUSTOMER_RETURN
   EXPIRED
   OTHER
-}
-
-enum CouponStatus {
-  ACTIVE
-  EXPIRED
-  DISABLED
 }
 
 enum PaymentType {
@@ -259,7 +253,6 @@ model User {
   salaryAdjustments EmployeeSalaryAdjustment[]
   expenses          Expense[]
   stockMovements    StockMovement[]
-  purchaseInvoices  PurchaseInvoice[]
   customerPayments  CustomerPayment[]
 
   // ─── NEW: E-commerce Affiliate Relations ───
@@ -351,21 +344,6 @@ model Permission {
   deleteMarketing Boolean @default(false)
 
   // ─── Phase 1 Permissions ───
-  viewSuppliers   Boolean @default(false)
-  addSuppliers    Boolean @default(false)
-  editSuppliers   Boolean @default(false)
-  deleteSuppliers Boolean @default(false)
-
-  viewPurchaseInvoices   Boolean @default(false)
-  addPurchaseInvoices    Boolean @default(false)
-  editPurchaseInvoices   Boolean @default(false)
-  deletePurchaseInvoices Boolean @default(false)
-
-  viewCoupons   Boolean @default(false)
-  addCoupons    Boolean @default(false)
-  editCoupons   Boolean @default(false)
-  deleteCoupons Boolean @default(false)
-
   viewReturns   Boolean @default(false)
   addReturns    Boolean @default(false)
   editReturns   Boolean @default(false)
@@ -434,9 +412,6 @@ model Product {
   affiliateCommissionRate Float?  @default(10.00)
   wholesalePrice          Float   @default(0)
 
-  // ─── NEW: Cost/Supplier tracking columns ───
-  costPrice Float @default(0)
-
   // ─── Existing Relations ───
   orderItems          OrderItem[]
   category            Category?       @relation(fields: [categoryId], references: [id])
@@ -456,8 +431,6 @@ model Product {
   wholesaleOrderItems   WholesaleOrderItem[]
 
   // ─── Phase 1 Relations ───
-  suppliers            ProductSupplier[]
-  purchaseItems        PurchaseInvoiceItem[]
   returnItems          OrderReturnItem[]
   wholesaleReturnItems WholesaleOrderReturnItem[]
 }
@@ -591,7 +564,6 @@ model Warehouse {
   wholesaleOrders  WholesaleOrder[]
   movements        StockMovement[]
   warranties       Warranty[]
-  purchaseItems    PurchaseInvoiceItem[]
   returns          OrderReturn[]
   wholesaleReturns WholesaleOrderReturn[]
 
@@ -610,7 +582,6 @@ model ProductStock {
   quantity       Int       @default(0)
   price          Float     @default(0)
   wholesalePrice Float     @default(0)
-  costPrice      Float     @default(0)
   discount       Float     @default(0)
   product        Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   warehouse      Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
@@ -999,7 +970,6 @@ model Order {
   userId                          String?
   warehouseId                     Int?
   shippingId                      Int?
-  couponId                        String?
   paidAmount                      Float          @default(0)
   remainingAmount                 Float          @default(0)
   trackingNumber                  String?
@@ -1016,7 +986,6 @@ model Order {
   warehouse           Warehouse?           @relation(fields: [warehouseId], references: [id])
   shipping            shipping?            @relation(fields: [shippingId], references: [id])
   warranties          Warranty[]
-  coupon              Coupon?              @relation(fields: [couponId], references: [id])
   returns             OrderReturn[]
   payments            CustomerPayment[]
   loyaltyTransactions LoyaltyTransaction[]
@@ -1359,133 +1328,8 @@ model Campaign {
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  Phase 1: Suppliers, Purchase Prices, Returns, Coupons, Debts ║
+// ║  Phase 1: Returns, Debts ║
 // ╚══════════════════════════════════════════════════════════════╝
-
-// ============================================
-// Supplier
-// ============================================
-
-model Supplier {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  phone     String?
-  email     String?
-  address   String?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  products ProductSupplier[]
-  invoices PurchaseInvoice[]
-
-  @@map("suppliers")
-}
-
-// ============================================
-// ProductSupplier (links products to suppliers with cost prices)
-// ============================================
-
-model ProductSupplier {
-  id         String   @id @default(uuid())
-  productId  Int
-  supplierId String
-  costPrice  Float    @default(0)
-  sku        String?
-  notes      String?
-  isDefault  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-
-  @@unique([productId, supplierId])
-  @@index([productId])
-  @@index([supplierId])
-  @@map("product_suppliers")
-}
-
-// ============================================
-// PurchaseInvoice
-// ============================================
-
-model PurchaseInvoice {
-  id              String   @id @default(uuid())
-  invoiceNumber   String   @unique
-  supplierId      String
-  totalAmount     Float    @default(0)
-  paidAmount      Float    @default(0)
-  remainingAmount Float    @default(0)
-  invoiceDate     DateTime @default(now())
-  notes           String?
-  createdById     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  supplier  Supplier              @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-  createdBy User?                 @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  items     PurchaseInvoiceItem[]
-
-  @@index([supplierId])
-  @@index([createdById])
-  @@index([invoiceDate])
-  @@map("purchase_invoices")
-}
-
-// ============================================
-// PurchaseInvoiceItem
-// ============================================
-
-model PurchaseInvoiceItem {
-  id                String   @id @default(uuid())
-  purchaseInvoiceId String
-  productId         Int
-  quantity          Int      @default(1)
-  costPrice         Float    @default(0)
-  totalPrice        Float    @default(0)
-  warehouseId       Int?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  purchaseInvoice PurchaseInvoice @relation(fields: [purchaseInvoiceId], references: [id], onDelete: Cascade)
-  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse       Warehouse?      @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
-
-  @@index([purchaseInvoiceId])
-  @@index([productId])
-  @@index([warehouseId])
-  @@map("purchase_invoice_items")
-}
-
-// ============================================
-// Coupon (order-level promo codes)
-// ============================================
-
-model Coupon {
-  id               String       @id @default(cuid())
-  code             String       @unique
-  title            String?
-  discountType     DiscountType @default(PERCENTAGE)
-  discountValue    Float        @default(0)
-  maxDiscountValue Float?
-  minOrderAmount   Float?
-  usageLimit       Int?
-  usedCount        Int          @default(0)
-  perCustomerLimit Int?
-  startsAt         DateTime?
-  endsAt           DateTime?
-  isActive         Boolean      @default(true)
-  status           CouponStatus @default(ACTIVE)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-
-  orders Order[]
-
-  @@index([isActive, status])
-  @@index([startsAt, endsAt])
-  @@map("coupons")
-}
 
 // ============================================
 // OrderReturn
