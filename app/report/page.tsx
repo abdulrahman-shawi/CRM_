@@ -64,6 +64,42 @@ function Stat({ value, label }: { value: string; label: string }) {
     );
 }
 
+function PageGuideGroup({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div className="space-y-4">
+            <h3 className="flex items-center gap-2 text-lg font-black text-slate-800 dark:text-white">
+                <span className="h-6 w-1.5 rounded-full bg-gradient-to-b from-blue-500 to-indigo-600" />
+                {title}
+            </h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">{children}</div>
+        </div>
+    );
+}
+
+function PageGuideCard({ title, path, points, how }: {
+    title: string; path: string; points: string[]; how: string;
+}) {
+    return (
+        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <h4 className="text-base font-black text-slate-800 dark:text-white">{title}</h4>
+                <code className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400" dir="ltr">{path}</code>
+            </div>
+            <ul className="mb-4 space-y-1.5">
+                {points.map((point) => (
+                    <li key={point} className="flex items-start gap-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                        <CheckCircle2 size={14} className="mt-1 shrink-0 text-blue-500" />
+                        {point}
+                    </li>
+                ))}
+            </ul>
+            <p className="rounded-2xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
+                <strong className="text-slate-700 dark:text-slate-200">آلية العمل: </strong>{how}
+            </p>
+        </div>
+    );
+}
+
 /* ───────── الصفحة ───────── */
 
 export default function SystemReportPage() {
@@ -181,6 +217,265 @@ export default function SystemReportPage() {
                                 'كشف رواتب شهري بالعمولات تلقائياً',
                                 'إمكانية معاينة النظام بعين أي موظف',
                             ]} />
+                    </div>
+                </Section>
+
+                {/* ═══ شرح صفحات النظام ═══ */}
+                <Section id="pages-guide" icon={ClipboardList} title="شرح صفحات النظام" subtitle="ماذا تفعل كل صفحة وكيف تعمل">
+                    <div className="space-y-10">
+                        <PageGuideGroup title="الرئيسية والمبيعات">
+                            <PageGuideCard title="لوحة التحكم" path="/dashboard"
+                                points={[
+                                    'ملخص نشاطك مع العملاء (رسائل، طلبات، عملاء جدد) مع فلتر زمني',
+                                    'تقدم أهداف المبيعات (التاركت) لكل موظف مع نسب الإنجاز والمكافآت',
+                                    'إنشاء وتعديل وحذف أهداف الموظفين (للأدمن)',
+                                    'قسم خاص بأداء الأفلييت لمن لديه حساب مسوّق',
+                                ]}
+                                how="تجلب البيانات من GetEmployeeActivitySummary وGetUserTargetProgress (server/analytics) وأكشنز الأهداف من server/user حسب المستخدم الحالي." />
+                            <PageGuideCard title="إدارة الطلبات" path="/dashboard/orders"
+                                points={[
+                                    'جدول الطلبات مع بطاقات حالات وفلاتر (بحث، مدينة، مستودع، شركة شحن، شهر)',
+                                    'إنشاء وتعديل الطلبات مع المنتجات والخصومات وطرق الدفع',
+                                    'تغيير الحالة ينعكس فوراً على المخزون (حجز/استرجاع)',
+                                    'تصدير واستيراد Excel ومشاركة الفاتورة PDF عبر واتساب',
+                                ]}
+                                how="تعمل عبر server/order (createOrder, updateOrder, updateStaus) مع هوك useOrderData للجلب وuseOrderFilters للفلترة، والمخزون يُعدّل داخل معاملة واحدة مع الطلب." />
+                            <PageGuideCard title="إدارة العملاء (CRM)" path="/dashboard/customers"
+                                points={[
+                                    'عرض العملاء بجدول أو بطاقات مع فلاتر حالة وجنس وفترة وبحث',
+                                    'مراحل بيع متدرجة: فرصة جديدة، مهتم، تم البيع...',
+                                    'إسناد العملاء للموظفين وإنشاء طلب من بطاقة العميل',
+                                    'استيراد/تصدير Excel وإرسال واتساب أو بريد مباشر',
+                                ]}
+                                how="تجلب القائمة عبر getCustomerList من server/customer، وغير الأدمن يرى فقط العملاء المسندين إليه. الإيميل عبر sendEmailToRecipient والحملات من server/marketing." />
+                            <PageGuideCard title="العملاء المكتملون" path="/dashboard/customers-complated"
+                                points={[
+                                    'نفس صفحة العملاء لكن مقيّدة على حالة "تم البيع" فقط',
+                                    'إدارة كاملة: تعديل، ربط موظفين، إنشاء طلب جديد',
+                                    'فتح محادثة رسائل مع العميل',
+                                ]}
+                                how="نفس بنية صفحة العملاء مع حالة مثبتة FORCE_STATUS = تم البيع عند الجلب من server/customer." />
+                            <PageGuideCard title="عملاء الجملة والمندوبون" path="/dashboard/wholesale-customers"
+                                points={[
+                                    'ملفات عملاء جملة (صيدلية، محل...) مع موقع GPS وخريطة',
+                                    'تسجيل زيارات المندوبين بنتيجة وسبب رفض وموعد متابعة',
+                                    'إحصائيات: العملاء، زيارات اليوم، الفرص الساخنة، مبيعات الشهر',
+                                    'إنشاء طلب جملة من ملف العميل وإرسال حملات',
+                                ]}
+                                how="تعمل عبر server/wholesale-customer مع خريطة OpenStreetMap وGeolocation API، والدول والمدن تُجلب ديناميكياً من getCountriesWithCities." />
+                            <PageGuideCard title="طلبات الجملة" path="/dashboard/wholesale-orders"
+                                points={[
+                                    'إنشاء وتعديل طلبات الجملة بتسعير تلقائي حسب شرائح الكمية',
+                                    'جدول مع بطاقات حالات وفلاتر وتغيير حالة مباشر',
+                                    'تصدير Excel وتوليد PDF لكل طلب',
+                                    'فتح مودال إنشاء لعميل محدد عبر ?customerId=',
+                                ]}
+                                how="تعمل عبر server/wholesale-order مع شرائح أسعار لكل منتج/مستودع، والتصدير عبر wholesaleOrderExport." />
+                            <PageGuideCard title="مرتجعات المندوبين" path="/dashboard/rep-returns"
+                                points={[
+                                    'جدول مرتجعات طلبات الجملة مع السبب والمبلغ المسترد',
+                                    'إنشاء مرتجع بتحديد كميات الأصناف والسبب',
+                                ]}
+                                how="تجلب عبر getRepReturns/getRepOrders من server/rep-return والإنشاء عبر createRepReturn." />
+                            <PageGuideCard title="إدارة المرتجعات" path="/dashboard/returns"
+                                points={[
+                                    'جدول مرتجعات الطلبات العادية مع بحث',
+                                    'إنشاء مرتجع بتحديد الكميات والسبب والمستودع',
+                                    'حذف مرتجع بصلاحية خاصة',
+                                ]}
+                                how="تعمل عبر server/return (getOrderReturns, createOrderReturn, deleteOrderReturn) وتُعاد الكميات للمستودع المختار." />
+                            <PageGuideCard title="إدارة الكفالة" path="/dashboard/warranty"
+                                points={[
+                                    'ثلاثة جداول: تبديل، صيانة، تالف',
+                                    'إضافة حركة كفالة بالمنتج والمستودع والكمية والأجور',
+                                    'التبديل ينشئ طلباً مرتبطاً برقم ظاهر',
+                                ]}
+                                how="تجلب كل البيانات دفعة واحدة عبر getWarrantyData من server/warranty، وكل حركة تعدّل المخزون وتسجّل StockMovement (OUT/RETURN)." />
+                            <PageGuideCard title="الفواتير والدفعات" path="/dashboard/customer-payments"
+                                points={[
+                                    'بطاقات العملاء المتأخرين بالسداد مع إجمالي الدين',
+                                    'تسجيل دفعة (نقدي/حوالة/تقسيط/شيك) مرتبطة بفاتورة',
+                                    'كشف حساب تفصيلي لكل عميل في صفحة مستقلة',
+                                ]}
+                                how="تعمل عبر server/customer-payment (getCustomerPayments, getOverdueCustomers, createCustomerPayment)، وكشف الحساب على مسار فرعي statement." />
+                            <PageGuideCard title="شركات الشحن" path="/dashboard/shipping"
+                                points={[
+                                    'بطاقات شركات الشحن مع السعر وعدد الطلبات',
+                                    'إضافة وتعديل وحذف شركة (اسم + سعر)',
+                                    'مودال تفاصيل: إجماليات وملخص حالات وجدول الطلبات',
+                                ]}
+                                how="تجلب عبر getshippingWithOrders من server/shipping (كل شركة مع طلباتها وإجمالياتها)." />
+                            <PageGuideCard title="تتبع الشحنات" path="/dashboard/tracking"
+                                points={[
+                                    'جدول الطلبات مع رقم التتبع وحالة الشحنة (6 حالات)',
+                                    'تحديث رقم التتبع والحالة ورابط المتابعة',
+                                    'فتح رابط التتبع الخارجي مباشرة',
+                                ]}
+                                how="تعمل عبر server/tracking (getOrdersWithTracking, updateOrderTracking) مع ترجمة الحالات من lib/utils." />
+                        </PageGuideGroup>
+
+                        <PageGuideGroup title="المنتجات والمخزون">
+                            <PageGuideCard title="إدارة المنتجات" path="/dashboard/products"
+                                points={[
+                                    'عرض بنمطين (بطاقات/جدول) مع بحث ومسح باركود بالكاميرا',
+                                    'إضافة وتعديل منتج بصور متعددة ووصف غني وباركود تلقائي',
+                                    'سعر وكمية مستقلة لكل منتج في كل مستودع',
+                                    'تفعيل/تعطيل وإظهار في الإعلانات وصفحة هبوط لكل منتج',
+                                ]}
+                                how="تجلب عبر getProduct وgetWarehouse، والحفظ عبر saveProductWithFiles مع رفع الصور إلى Vercel Blob، والأزرار مقيدة بصلاحيات المنتجات." />
+                            <PageGuideCard title="إدارة الفئات" path="/dashboard/categories"
+                                points={[
+                                    'بطاقات الفئات مع الصورة وعدد المنتجات وحالة الظهور',
+                                    'إضافة وتعديل فئة بصورة وخيار إظهار في المتجر',
+                                    'حذف مع تأكيد وصلاحيات مستقلة',
+                                ]}
+                                how="تعمل عبر server/category (getallcategory, createcategory, updatecategory, deletecategory) بنماذج DynamicForm + Zod." />
+                            <PageGuideCard title="المستودعات والبلدان والمدن" path="/dashboard/inventories"
+                                points={[
+                                    'إدارة البلدان والمدن والمستودعات وربطها ببعضها',
+                                    'عرض مخزون وكميات كل مستودع',
+                                    'حركات مخزون موثقة: توريد، صرف، تحويل، جرد',
+                                    'مسح باركود لإضافة المنتجات لبنود الحركة',
+                                ]}
+                                how="تجمع server/country وserver/city وserver/warehouse وserver/move في شاشة واحدة، وكل حركة تُسجّل عبر createMovementAction وتعدّل الكميات فوراً." />
+                            <PageGuideCard title="طباعة ملصقات الباركود" path="/dashboard/barcode-labels"
+                                points={[
+                                    'البحث عن منتج وإضافته لقائمة الملصقات',
+                                    'عدد نسخ لكل منتج وحجمان للملصق (صغير/كبير)',
+                                    'طباعة مباشرة أو تنزيل PNG بدقة 300 DPI',
+                                ]}
+                                how="صفحة عميل بالكامل: الباركود Code39 يُولّد محلياً من lib/barcode والسعر يُنسّق بعملة الموقع، بلا أي كتابة على الخادم." />
+                            <PageGuideCard title="نقاط الولاء" path="/dashboard/loyalty"
+                                points={[
+                                    'قواعد كسب واستبدال النقاط (نقاط/عملة، قيمة النقطة)',
+                                    'سجل حركات النقاط (كسب، استبدال، مكافأة)',
+                                    'استبدال نقاط عميل بخصم أو إضافة مكافأة يدوية',
+                                ]}
+                                how="تعمل عبر server/loyalty، والكسب التلقائي يحدث في الخادم عند إنشاء الطلبات حسب القاعدة المفعّلة." />
+                            <PageGuideCard title="إدارة العروض" path="/dashboard/offers"
+                                points={[
+                                    'جدول العروض مع العنوان والزر وفترة الصلاحية',
+                                    'إضافة عرض بصورة وعد تنازلي وترتيب ظهور',
+                                ]}
+                                how="تعمل عبر server/offer (getOffers, createOffer, updateOffer, deleteOffer) ومتاحة للأدمن فقط." />
+                            <PageGuideCard title="قواعد خصومات العروض" path="/dashboard/offer-discounts"
+                                points={[
+                                    'ربط خصم (نسبة/مبلغ) بعرض ومنتج أو تصنيف',
+                                    'حدود: أقصى خصم، أدنى طلب، حد استخدام، صلاحية',
+                                    'استهداف هرمي: تصنيف ← مستودع ← منتج',
+                                ]}
+                                how="تجلب القواعد وبيانات النموذج من server/offer (getOfferDiscounts, getOfferDiscountFormMeta) وتُدار للأدمن فقط." />
+                            <PageGuideCard title="سلايدر الرئيسية" path="/dashboard/hero-slides"
+                                points={[
+                                    'إدارة سلايدات الصفحة الرئيسية للمتجر',
+                                    'صورة وعنوان وزر وترتيب وتفعيل لكل سلايد',
+                                ]}
+                                how="تعمل عبر server/hero-slide مع رفع الصور، والسلايدات النشطة تظهر في واجهة المتجر العامة." />
+                            <PageGuideCard title="الصفحات الثابتة" path="/dashboard/pages"
+                                points={[
+                                    'إنشاء صفحات مثل: من نحن، سياسة الخصوصية',
+                                    'محرر نصوص غني وحقول SEO ورابط slug تلقائي',
+                                    'نشر أو مسودة لكل صفحة',
+                                ]}
+                                how="تعمل عبر server/page، والصفحات المنشورة تُعرض للزوار على المسار /[slug]." />
+                            <PageGuideCard title="إدارة التعليقات" path="/dashboard/comments"
+                                points={[
+                                    'جدول مراجعات المنتجات مع التقييم والنص',
+                                    'حذف التعليقات المسيئة (للأدمن فقط)',
+                                ]}
+                                how="تجلب المراجعات من server/review (getReviews) والحذف عبر deleteReview؛ المحتوى يأتي من المتجر العام." />
+                        </PageGuideGroup>
+                        <PageGuideGroup title="الإدارة والنظام">
+                            <PageGuideCard title="التحليلات والتقارير" path="/dashboard/analytics"
+                                points={['قسم مستقل ومفصّل أدناه']}
+                                how="انظر القسم المخصص لصفحة التحليلات في الأسفل." />
+                        </PageGuideGroup>
+                    </div>
+                </Section>
+
+                {/* ═══ صفحة التحليلات بالتفصيل ═══ */}
+                <Section id="analytics-guide" icon={BarChart3} title="صفحة التحليلات بالتفصيل" subtitle="كل بطاقة ورسم بياني في الصفحة وما تعنيه">
+                    <div className="mb-6 rounded-3xl border border-slate-100 bg-white p-6 leading-loose text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                        <p>
+                            صفحة <strong className="text-slate-800 dark:text-white">التحليلات</strong> (<code dir="ltr">/dashboard/analytics</code>) هي مركز الأرقام في النظام.
+                            تجمع كل مؤشرات الأداء في شاشة واحدة، مع فلاتر عليا تتحكم بكل الأقسام دفعة واحدة:
+                            <strong> الفترة الزمنية</strong> (اليوم، الأسبوع، الشهر الحالي/الماضي، أو نطاق مخصص بتاريخين)
+                            و<strong>المستودع</strong> (قائمة ديناميكية بكل المستودعات الفعلية — اختيار مستودع يقيّد كل الأرقام بطلباته).
+                            كل المبالغ محسوبة بالدولار من عناصر الطلبات مباشرة (السعر بعد الخصم × الكمية)، وتُعرض بعملة الموقع حسب الإعدادات.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <PageGuideCard title="المبيعات حسب الحالة" path="#analytics-guide"
+                            points={[
+                                'بطاقات لكل حالة طلب (جديد، مرسل، مسلّم، ملغي، مرتجع...)',
+                                'عدد الطلبات وإجمالي المبلغ لكل حالة',
+                                'ملخص الإيراد (المبيعات الفعلية) مقابل المفقود (ملغي + مرتجع)',
+                                'الضغط على أي بطاقة يعرض طلباتها بالتفصيل',
+                            ]}
+                            how="عبر GetSalesByStatusAction: تجميع الطلبات حسب الحالة ضمن الفترة والمستودع المختارين، والمبلغ يُحسب من عناصر كل طلب بالدولار." />
+                        <PageGuideCard title="الخط الزمني للمبيعات" path="#analytics-guide"
+                            points={[
+                                'رسم بياني شهري للمبيعات عبر الزمن',
+                                'يميّز بين المبيعات المحتسبة وغير المحتسبة كإيراد',
+                            ]}
+                            how="عبر GetSalesTimelineAction: تجميع الطلبات شهرياً باستخدام التاريخ الفعلي للطلب (اليدوي إن وُجد وإلا تاريخ الإنشاء)." />
+                        <PageGuideCard title="توزيع الطلبات حسب مدينة المستودع" path="#analytics-guide"
+                            points={[
+                                'رسم دائري بنسبة كل مدينة من إجمالي المبيعات',
+                                'مفتاح ألوان بجانب الرسم: اسم المدينة وعدد الطلبات والمبلغ',
+                            ]}
+                            how="عبر GetSalesByCity: تجميع حسب مدينة المستودع المرتبطة بكل طلب (مدينة المستودع الفعلية من قاعدة البيانات)." />
+                        <PageGuideCard title="الطلبات حسب مدينة العميل" path="#analytics-guide"
+                            points={[
+                                'عدد الطلبات وإجماليها حسب مدينة العميل كما كُتبت في الطلب',
+                            ]}
+                            how="عبر GetOrdersByCity: تجميع حسب حقل المدينة النصي في الطلب نفسه (وجهة التوصيل)." />
+                        <PageGuideCard title="أفضل المنتجات مبيعاً" path="#analytics-guide"
+                            points={[
+                                'ترتيب المنتجات حسب الكمية المباعة في الفترة',
+                            ]}
+                            how="عبر GetBestSellingProducts: جمع كميات عناصر الطلبات لكل منتج وترتيبها تنازلياً." />
+                        <PageGuideCard title="رؤى المنتجات" path="#analytics-guide"
+                            points={[
+                                'تحليل شامل لكل منتج: إيراد، خصومات، تكاليف موزعة، صافي ربح',
+                                'عمولات الأفلييت وزيارات صفحات الإعلانات لكل منتج',
+                                'أرقام الكفالة (تالف/تبديل/صيانة) مؤثرة على التكلفة',
+                            ]}
+                            how="عبر GetProductInsightsAction: أعقد تحليل في النظام — يوزّع تكاليف الشحن والعمولات على عناصر الطلبات ويخصمها من الإيراد لإخراج صافي ربح كل منتج." />
+                        <PageGuideCard title="المخزون المنخفض" path="#analytics-guide"
+                            points={[
+                                'المنتجات التي قاربت على النفاد مع الكمية المتبقية والمستودع',
+                            ]}
+                            how="عبر GetLowStockProducts: فحص كميات المخزون في كل المستودعات مقابل حد التنبيه." />
+                        <PageGuideCard title="حالة الكفالة" path="#analytics-guide"
+                            points={[
+                                'بطاقات لأنواع الكفالة الثلاثة (تالف، تبديل، صيانة) مع الأعداد',
+                                'الضغط على أي بطاقة يعرض المنتجات والتفاصيل',
+                            ]}
+                            how="عبر GetWarrantyStatusProducts: تجميع سجلات الكفالة حسب النوع والمنتج والمستودع." />
+                        <PageGuideCard title="أفضل الموظفين مبيعاً" path="#analytics-guide"
+                            points={[
+                                'ترتيب الموظفين حسب مبلغ المبيعات في الفترة',
+                                'عرض تفصيلي لطلبات كل موظف وعناصرها',
+                            ]}
+                            how="عبر GetTopSellingUsersByPermission: جمع مبالغ الطلبات (من عناصرها بالدولار) لكل موظف." />
+                        <PageGuideCard title="تقرير الموظفين والعملاء" path="#analytics-guide"
+                            points={[
+                                'أعداد العملاء والطلبات لكل موظف بفترة (يوم/أسبوع/شهر/مخصص)',
+                                'تصدير التقرير كاملاً بصيغة PDF',
+                            ]}
+                            how="عبر GetEmployeeCustomerReport: إحصاءات لكل موظف، والتصدير يتم من المتصفح عبر jsPDF." />
+                        <PageGuideCard title="المناطق النشطة لعملاء الجملة" path="#analytics-guide"
+                            points={[
+                                'توزيع عملاء الجملة والزيارات حسب المدينة والمنطقة',
+                            ]}
+                            how="عبر GetWholesaleActiveRegions: تجميع عملاء الجملة وزياراتهم جغرافياً." />
+                        <PageGuideCard title="تحليل صفحات الإعلانات" path="#analytics-guide"
+                            points={[
+                                'زيارات وأداء صفحات هبوط المنتجات الإعلانية',
+                                'ظاهر للأدمن فقط',
+                            ]}
+                            how="قسم مستقل (AdPagesAnalyticsSection) يتبع زيارات صفحات /ad الإعلانية ويربطها بالمنتجات." />
                     </div>
                 </Section>
 
