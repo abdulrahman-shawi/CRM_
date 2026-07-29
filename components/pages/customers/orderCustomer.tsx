@@ -4,6 +4,7 @@ import { getCities } from "@/server/city";
 import { getCountries } from "@/server/country";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
 import { createOrder } from "@/server/order";
+import { getCustomerLoyaltySummary } from "@/server/loyalty";
 import { getshipping } from "@/server/shipping";
 import { getWarehouse } from "@/server/warehouse";
 import { useOrderStore } from "@/store/customer";
@@ -67,6 +68,8 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
   const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [overallDiscount, setOverallDiscount] = React.useState(0);
   const [loyaltyPoints, setLoyaltyPoints] = React.useState(0);
+  const [redeemPoints, setRedeemPoints] = React.useState(0);
+  const [loyaltySummary, setLoyaltySummary] = React.useState<{ balance: number; redeemValue: number; minPointsToRedeem: number } | null>(null);
   const [additionalNotes, setAdditionalNotes] = React.useState("");
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -219,6 +222,39 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
 
   const subTotal = items.reduce((sum, i) => sum + i.total, 0);
   const grandTotal = subTotal - overallDiscount;
+
+  // جلب رصيد نقاط الولاء وقاعدة الاستبدال عند اختيار العميل
+  React.useEffect(() => {
+    setRedeemPoints(0);
+    if (!customerId) {
+      setLoyaltySummary(null);
+      return;
+    }
+    let isMounted = true;
+    getCustomerLoyaltySummary(String(customerId))
+      .then((res) => {
+        if (!isMounted) return;
+        if (res.success && res.data?.customer) {
+          setLoyaltySummary({
+            balance: Number(res.data.customer.loyaltyPoints || 0),
+            redeemValue: Number(res.data.rule?.redeemValue || 0),
+            minPointsToRedeem: Number(res.data.rule?.minPointsToRedeem || 0),
+          });
+        } else {
+          setLoyaltySummary(null);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [customerId]);
+
+  // خصم الاستبدال (معاينة فقط — الحسم النهائي يتم في الخادم)
+  const loyaltyRedeemDiscount = loyaltySummary && redeemPoints > 0
+    ? Math.min(redeemPoints * loyaltySummary.redeemValue, grandTotal)
+    : 0;
+  const finalTotalAfterLoyalty = Math.max(0, grandTotal - loyaltyRedeemDiscount);
   // تحديث المخزن العالمي عند تغير المجموع أو المبلغ المدفوع
   React.useEffect(() => {
     setGrandTotal(grandTotal);
@@ -236,6 +272,8 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     setShowDropdown({});
     setOverallDiscount(0);
     setLoyaltyPoints(0);
+    setRedeemPoints(0);
+    setLoyaltySummary(null);
 
     // إعادة بيانات العميل
     setCustomerId("");
@@ -308,6 +346,22 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       }
     }
 
+    // التحقق من استبدال نقاط الولاء
+    if (redeemPoints > 0) {
+      if (!loyaltySummary || loyaltySummary.redeemValue <= 0) {
+        toast.error("لا توجد قاعدة ولاء مفعّلة للاستبدال");
+        return;
+      }
+      if (redeemPoints < loyaltySummary.minPointsToRedeem) {
+        toast.error(`الحد الأدنى للاستبدال ${loyaltySummary.minPointsToRedeem} نقطة`);
+        return;
+      }
+      if (redeemPoints > loyaltySummary.balance) {
+        toast.error("رصيد نقاط الولاء غير كافٍ");
+        return;
+      }
+    }
+
 
 
     // تفعيل حالة التحم
@@ -332,13 +386,14 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       shippingId: shippingId || null,
       deliveryMethod,
       amount,
-      amountBank: Number(grandTotal - Number(amount)),
+      amountBank: Number(finalTotalAfterLoyalty - Number(amount)),
       deliveryNotes,
       paymentMethod,
       additionalNotes,
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
       loyaltyPoints: Math.max(0, Math.floor(Number(loyaltyPoints) || 0)),
+      redeemPoints: Math.max(0, Math.floor(Number(redeemPoints) || 0)),
       subTotal: Number(subTotal)
     };
 
@@ -397,9 +452,28 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                 placeholder="0"
               />
             </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-amber-600 uppercase px-1">استبدال نقاط الولاء</label>
+              <input
+                type="number"
+                min="0"
+                value={redeemPoints}
+                disabled={!loyaltySummary || loyaltySummary.balance <= 0}
+                onChange={(e) => setRedeemPoints(Math.max(0, Math.floor(Number(e.target.value))))}
+                className="w-32 bg-amber-50 dark:bg-amber-900/10 p-3 rounded-2xl border border-amber-100 dark:border-amber-900/20 outline-none font-bold text-amber-600 text-center disabled:opacity-50"
+                placeholder="0"
+              />
+              <p className="text-[10px] text-slate-400 px-1">
+                {loyaltySummary ? `الرصيد: ${loyaltySummary.balance} نقطة` : 'لا يوجد رصيد نقاط'}
+                {loyaltyRedeemDiscount > 0 && ` — خصم ${formatSiteCurrency(loyaltyRedeemDiscount, settings)}`}
+              </p>
+            </div>
             <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 md:px-8 md:py-4 rounded-3xl">
               <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">الإجمالي النهائي</p>
-              <h3 className="text-2xl md:text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(grandTotal, settings)}</h3>
+              <h3 className="text-2xl md:text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(finalTotalAfterLoyalty, settings)}</h3>
+              {loyaltyRedeemDiscount > 0 && (
+                <p className="text-[10px] font-bold text-amber-600 mt-1">شامل خصم الولاء: -{formatSiteCurrency(loyaltyRedeemDiscount, settings)}</p>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap gap-4 justify-center">
@@ -643,7 +717,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي</label>
-                    <input type="text" value={grandTotal - Number(amount)} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
+                    <input type="text" value={finalTotalAfterLoyalty - Number(amount)} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
                   </div>
                 </div>
               ) : (

@@ -657,7 +657,29 @@ export async function createOrder(data: any, items: any[], user: any) {
                 : null;
 
             const baseFinalAmount = Number(data.grandTotal || 0);
-            const finalAmount = Math.max(0, roundToTwoDecimals(baseFinalAmount));
+
+            // استبدال نقاط الولاء: التحقق من القاعدة والرصيد والحسم داخل المعاملة نفسها
+            const redeemPoints = Math.max(0, Math.floor(Number(data.redeemPoints || 0)));
+            let loyaltyDiscount = 0;
+            if (redeemPoints > 0) {
+                const loyaltyRule = await tx.loyaltyRule.findFirst({ where: { isActive: true } });
+                if (!loyaltyRule || Number(loyaltyRule.redeemValue) <= 0) {
+                    throw new Error("لا توجد قاعدة ولاء مفعّلة للاستبدال");
+                }
+                if (redeemPoints < Number(loyaltyRule.minPointsToRedeem)) {
+                    throw new Error(`الحد الأدنى لاستبدال النقاط هو ${loyaltyRule.minPointsToRedeem} نقطة`);
+                }
+                const loyaltyCustomer = await tx.customer.findUnique({
+                    where: { id: data.customerId },
+                    select: { loyaltyPoints: true },
+                });
+                if (!loyaltyCustomer || redeemPoints > Number(loyaltyCustomer.loyaltyPoints || 0)) {
+                    throw new Error("رصيد نقاط الولاء غير كافٍ");
+                }
+                loyaltyDiscount = roundToTwoDecimals(Math.min(redeemPoints * Number(loyaltyRule.redeemValue), baseFinalAmount));
+            }
+
+            const finalAmount = Math.max(0, roundToTwoDecimals(baseFinalAmount - loyaltyDiscount));
             const isPaidNow = data.paymentMethod === "مدفوعة" || data.paymentMethod === "Paid";
             const paidAmount = isPaidNow ? finalAmount : (Number(data.amount || 0) || 0);
             const remainingAmount = roundToTwoDecimals(finalAmount - paidAmount);
@@ -668,7 +690,7 @@ export async function createOrder(data: any, items: any[], user: any) {
                     orderNumber,
                     usdToTryRateAtOrder,
                     totalAmount: baseFinalAmount + Number(data.overallDiscount || 0),
-                    discount: Number(data.overallDiscount || 0),
+                    discount: Number(data.overallDiscount || 0) + loyaltyDiscount,
                     finalAmount,
                     paidAmount,
                     remainingAmount,
@@ -717,6 +739,24 @@ export async function createOrder(data: any, items: any[], user: any) {
             });
 
             await applyAffiliateAttribution(tx, newOrder.id, items, affiliateCode);
+
+            // خصم النقاط المستبدلة من رصيد العميل وتسجيل حركة REDEEM مرتبطة بالطلب
+            if (redeemPoints > 0) {
+                await tx.customer.update({
+                    where: { id: data.customerId },
+                    data: { loyaltyPoints: { decrement: redeemPoints } },
+                });
+                await tx.loyaltyTransaction.create({
+                    data: {
+                        customerId: data.customerId,
+                        orderId: newOrder.id,
+                        type: 'REDEEM',
+                        points: -redeemPoints,
+                        value: loyaltyDiscount,
+                        notes: `استبدال ${redeemPoints} نقطة على طلب #${newOrder.id}`,
+                    },
+                });
+            }
 
             return newOrder;
         });
