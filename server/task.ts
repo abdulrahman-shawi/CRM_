@@ -6,6 +6,47 @@ import { cookies } from 'next/headers';
 import { hasPermission, isAdmin } from '@/lib/utils';
 import type { PermissionKey } from '@/lib/type';
 import { revalidatePath } from 'next/cache';
+import { createNotification } from '@/server/notification';
+
+const statusLabels: Record<string, string> = {
+    PENDING: 'معلّقة',
+    IN_PROGRESS: 'قيد التنفيذ',
+    COMPLETED: 'مكتملة',
+    CANCELLED: 'ملغاة',
+};
+
+// إشعار فوري للمسؤول عند إسناد مهمة أو قرب استحقاقها (خلال 24 ساعة)
+async function notifyTaskReminder(task: { id: string; title: string; assignedUserId: string; dueDate: Date; status: string }, customMessage?: string) {
+    try {
+        if (!['PENDING', 'IN_PROGRESS'].includes(task.status)) return;
+        const now = new Date();
+        const upcoming = new Date(now);
+        upcoming.setDate(upcoming.getDate() + 1);
+        const due = new Date(task.dueDate);
+        if (due < now || due > upcoming) return;
+
+        // لا تكرر التذكير لنفس المهمة في نفس اليوم
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const existing = await prisma.notification.findFirst({
+            where: { entityType: 'task', entityId: String(task.id), createdAt: { gte: startOfDay } },
+            select: { id: true },
+        });
+        if (existing) return;
+
+        await createNotification({
+            type: 'TASK_REMINDER',
+            channel: 'IN_APP',
+            userId: task.assignedUserId,
+            title: 'تذكير بمهمة',
+            message: customMessage || `المهمة "${task.title}" مستحقة بتاريخ ${due.toLocaleDateString('ar-EG')}`,
+            entityType: 'task',
+            entityId: String(task.id),
+        });
+    } catch (error) {
+        console.error('notifyTaskReminder error:', error);
+    }
+}
 
 async function getCurrentSessionUser() {
     try {
@@ -134,6 +175,7 @@ export async function createTask(data: {
                 createdById: user.id,
             },
         });
+        await notifyTaskReminder(task as any, `أُسندت إليك مهمة جديدة "${task.title}" مستحقة بتاريخ ${new Date(task.dueDate).toLocaleDateString('ar-EG')}`);
         revalidatePath('/dashboard/tasks');
         return { success: true, data: task };
     } catch (error: any) {
@@ -188,6 +230,7 @@ export async function updateTask(
         if (data.longitude !== undefined) updateData.longitude = data.longitude || null;
 
         const updated = await prisma.task.update({ where: { id }, data: updateData });
+        await notifyTaskReminder(updated as any);
         revalidatePath('/dashboard/tasks');
         return { success: true, data: updated };
     } catch (error: any) {

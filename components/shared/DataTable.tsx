@@ -18,7 +18,8 @@ export interface TableAction<T> {
   label: string;
   icon?: React.ReactNode;
   onClick: (item: T) => void;
-  variant?: "default" | "danger";
+  variant?: "default" | "danger" | "success";
+  hidden?: (item: T) => boolean;
 }
 
 export interface Column<T> {
@@ -171,11 +172,13 @@ export function DataTable<T extends { id: string | number }>({
 
 // مكون قائمة الإجراءات
 function ActionMenu<T>({ actions, item  , actiondir}: { actions: TableAction<T>[], item: T , actiondir?:boolean }) {
+  const visibleActions = actions.filter((a) => !a.hidden?.(item));
+  if (visibleActions.length === 0) return null;
   return (
     <div className="">
       {actiondir === true ? (
         <div className="flex items-center gap-2">
-          {actions.map((e , i) => (
+          {visibleActions.map((e , i) => (
             <button key={i} className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-all" onClick={() =>  e.onClick(item)}>{e.icon}</button>
           ))}
         </div>
@@ -188,13 +191,17 @@ function ActionMenu<T>({ actions, item  , actiondir}: { actions: TableAction<T>[
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content align="start" className="min-w-[140px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-1 shadow-lg z-50">
-          {actions.map((action, idx) => (
+          {visibleActions.map((action, idx) => (
             <DropdownMenu.Item
               key={idx}
               onClick={() => action.onClick(item)}
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm cursor-pointer rounded-md outline-none",
-                action.variant === "danger" ? "text-red-500 focus:bg-red-50" : "text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800"
+                action.variant === "danger"
+                  ? "text-red-500 focus:bg-red-50"
+                  : action.variant === "success"
+                    ? "text-green-600 focus:bg-green-50 dark:focus:bg-green-950/30"
+                    : "text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800"
               )}
             >
               {action.icon}

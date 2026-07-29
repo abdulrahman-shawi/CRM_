@@ -3,13 +3,13 @@
 import * as React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { hasPermission } from '@/lib/utils';
-import { getTasks, createTask, updateTask, deleteTask, getTaskAssignees, getTaskCustomers } from '@/server/task';
+import { getTasks, createTask, updateTask, deleteTask, getTaskAssignees, getTaskCustomers, markTaskCompleted } from '@/server/task';
 import { DataTable } from '@/components/shared/DataTable';
 import { DynamicForm } from '@/components/shared/dynamic-form';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
-import { Edit, Trash2, Plus, MapPin } from 'lucide-react';
+import { Edit, Trash2, Plus, MapPin, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
 
@@ -21,6 +21,7 @@ const taskSchema = z.object({
     customerId: z.string().optional(),
     wholesaleCustomerId: z.string().optional(),
     dueDate: z.string().min(1, 'التاريخ المستحق مطلوب'),
+    status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).optional(),
 });
 
 const typeLabels: Record<string, string> = {
@@ -76,11 +77,12 @@ export default function TasksPage() {
 
     const handleSave = async (values: z.infer<typeof taskSchema>) => {
         const loading = toast.loading(editTask ? 'جاري التحديث...' : 'جاري الإنشاء...');
-        const payload = {
+        const payload: any = {
             ...values,
             customerId: values.customerId || undefined,
             wholesaleCustomerId: values.wholesaleCustomerId || undefined,
         };
+        if (!editTask) delete payload.status;
         const res = editTask
             ? await updateTask(editTask.id, payload)
             : await createTask(payload as any);
@@ -91,6 +93,26 @@ export default function TasksPage() {
             setEditTask(null);
             load();
         } else toast.error(res.error || 'تعذر الحفظ');
+    };
+
+    const handleComplete = async (row: any) => {
+        if (!window.confirm('تأكيد إكمال المهمة؟ سيتم تسجيل موقعك الحالي.')) return;
+        const loading = toast.loading('جاري تحديد الموقع...');
+        const finish = async (lat?: number, lng?: number) => {
+            const res = await markTaskCompleted(row.id, undefined, lat, lng);
+            toast.dismiss(loading);
+            if (res.success) { toast.success('تم إكمال المهمة'); load(); }
+            else toast.error(res.error || 'تعذر إكمال المهمة');
+        };
+        if (!navigator.geolocation) {
+            await finish();
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => { finish(pos.coords.latitude, pos.coords.longitude); },
+            () => { finish(); },
+            { timeout: 8000 }
+        );
     };
 
     const handleDelete = async (data: any) => {
@@ -111,6 +133,7 @@ export default function TasksPage() {
 
     const actions = [
         ...(canEdit ? [{ label: 'تعديل', icon: <Edit size={14} />, onClick: (row: any) => { setEditTask(row); setIsOpen(true); } }] : []),
+        { label: 'إكمال', icon: <CheckCircle size={14} />, variant: 'success' as const, onClick: handleComplete, hidden: (row: any) => row.status === 'COMPLETED' || row.status === 'CANCELLED' },
         ...(canDelete ? [{ label: 'حذف', icon: <Trash2 size={14} />, variant: 'danger' as const, onClick: handleDelete }] : []),
     ];
 
@@ -126,7 +149,7 @@ export default function TasksPage() {
         <div className="p-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <h1 className="text-xl font-bold flex items-center gap-2"><MapPin size={20} /> المهام والمواعيد</h1>
-                <div className="flex gap-2">
+                <div className="flex items-end gap-2">
                     <FormInput
                         label="بحث"
                         className="text-gray-800 dark:text-white"
@@ -135,7 +158,7 @@ export default function TasksPage() {
                         onChange={(e) => setFilter(e.target.value)}
                     />
                     {canAdd && (
-                        <Button onClick={() => { setEditTask(null); setIsOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Button onClick={() => { setEditTask(null); setIsOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap">
                             <Plus size={16} className="ml-1" /> جديد
                         </Button>
                     )}
@@ -156,6 +179,7 @@ export default function TasksPage() {
                             customerId: editTask.customerId || '',
                             wholesaleCustomerId: editTask.wholesaleCustomerId || '',
                             dueDate: editTask.dueDate ? new Date(editTask.dueDate).toISOString().slice(0, 16) : '',
+                            status: editTask.status,
                         } : { title: '', type: 'VISIT', description: '', assignedUserId: '', customerId: '', wholesaleCustomerId: '', dueDate: '' }}
                         submitLabel={editTask ? 'تحديث' : 'إنشاء'}
                     >
@@ -182,6 +206,14 @@ export default function TasksPage() {
                                     </select>
                                 </div>
                                 <FormInput className="text-gray-800 dark:text-white" type="datetime-local" label="التاريخ المستحق" {...register('dueDate')} error={errors.dueDate?.message as string} />
+                                {editTask && (
+                                    <div>
+                                        <label className="block text-sm font-bold mb-2">الحالة</label>
+                                        <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" {...register('status')}>
+                                            {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                                        </select>
+                                    </div>
+                                )}
                                 <FormInput className="text-gray-800 dark:text-white" label="الوصف" {...register('description')} />
                             </div>
                         )}
