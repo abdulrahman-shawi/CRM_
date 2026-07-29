@@ -239,15 +239,32 @@ export async function createWholesaleFollowUpNotifications() {
                 nextFollowUpAt: true,
             },
         });
-        const notifications = customers.map((customer) => ({
-            type: 'WHOLESALE_FOLLOW_UP' as const,
-            channel: 'IN_APP' as const,
-            userId: customer.assignedUserId as string,
-            title: 'متابعة عميل جملة',
-            message: `موعد متابعة ${customer.name} بتاريخ ${new Date(customer.nextFollowUpAt as Date).toLocaleDateString('ar-EG')}`,
-            entityType: 'wholesaleCustomer',
-            entityId: String(customer.id),
-        }));
+        if (customers.length === 0) return { success: true, count: 0 };
+
+        // تجنب التكرار: لا تنشئ إشعارًا جديدًا إذا وُجد إشعار لنفس العميل اليوم
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const existing = await prisma.notification.findMany({
+            where: {
+                entityType: 'wholesaleCustomer',
+                entityId: { in: customers.map((c) => String(c.id)) },
+                createdAt: { gte: startOfDay },
+            },
+            select: { entityId: true },
+        });
+        const alreadyNotified = new Set(existing.map((n) => n.entityId));
+
+        const notifications = customers
+            .filter((customer) => !alreadyNotified.has(String(customer.id)))
+            .map((customer) => ({
+                type: 'WHOLESALE_FOLLOW_UP' as const,
+                channel: 'IN_APP' as const,
+                userId: customer.assignedUserId as string,
+                title: 'متابعة عميل جملة',
+                message: `موعد متابعة ${customer.name} بتاريخ ${new Date(customer.nextFollowUpAt as Date).toLocaleDateString('ar-EG')}`,
+                entityType: 'wholesaleCustomer',
+                entityId: String(customer.id),
+            }));
         if (notifications.length > 0) {
             await prisma.notification.createMany({ data: notifications });
         }
@@ -270,15 +287,32 @@ export async function createTaskReminderNotifications() {
             },
             select: { id: true, title: true, assignedUserId: true, dueDate: true },
         });
-        const notifications = tasks.map((task) => ({
-            type: 'TASK_REMINDER' as const,
-            channel: 'IN_APP' as const,
-            userId: task.assignedUserId,
-            title: 'تذكير بمهمة',
-            message: `المهمة "${task.title}" مستحقة بتاريخ ${new Date(task.dueDate).toLocaleDateString('ar-EG')}`,
-            entityType: 'task',
-            entityId: String(task.id),
-        }));
+        if (tasks.length === 0) return { success: true, count: 0 };
+
+        // تجنب التكرار: لا تنشئ تذكيرًا جديدًا إذا وُجد تذكير لنفس المهمة اليوم
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const existing = await prisma.notification.findMany({
+            where: {
+                entityType: 'task',
+                entityId: { in: tasks.map((t) => String(t.id)) },
+                createdAt: { gte: startOfDay },
+            },
+            select: { entityId: true },
+        });
+        const alreadyNotified = new Set(existing.map((n) => n.entityId));
+
+        const notifications = tasks
+            .filter((task) => !alreadyNotified.has(String(task.id)))
+            .map((task) => ({
+                type: 'TASK_REMINDER' as const,
+                channel: 'IN_APP' as const,
+                userId: task.assignedUserId,
+                title: 'تذكير بمهمة',
+                message: `المهمة "${task.title}" مستحقة بتاريخ ${new Date(task.dueDate).toLocaleDateString('ar-EG')}`,
+                entityType: 'task',
+                entityId: String(task.id),
+            }));
         if (notifications.length > 0) {
             await prisma.notification.createMany({ data: notifications });
         }

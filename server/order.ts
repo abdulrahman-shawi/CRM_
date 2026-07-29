@@ -1072,10 +1072,15 @@ export async function updateStaus(status:any , id:any){
                 });
             }
 
-            return nextOrder;
+            return { nextOrder, previousStatus };
         });
 
-        return {success :true , data:updatedStatus}
+        if (updatedStatus.previousStatus !== nextStatus) {
+            await syncTrackingStatusFromOrderStatus(orderId, nextStatus);
+            await createOrderStatusChangeNotification(orderId, nextStatus);
+        }
+
+        return {success :true , data:updatedStatus.nextOrder}
     } catch (error: any) {
         return { success: false, error: error?.message || "فشل تحديث حالة الطلب" };
     }

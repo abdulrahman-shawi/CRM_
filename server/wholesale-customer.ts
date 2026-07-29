@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { hasPermission, isAdmin } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/server/notification";
 
 type WholesaleCustomerPayload = {
   name: string;
@@ -692,7 +693,7 @@ export async function createWholesaleVisit(payload: WholesaleVisitPayload) {
         },
       });
 
-      await tx.wholesaleCustomer.update({
+      const customer = await tx.wholesaleCustomer.update({
         where: { id: payload.wholesaleCustomerId },
         data: {
           lastVisitAt: visitedAt,
@@ -700,13 +701,32 @@ export async function createWholesaleVisit(payload: WholesaleVisitPayload) {
           nextFollowUpAt: isFollowUpResult ? nextFollowUpAt : null,
           visitStatus: status,
         },
+        select: { id: true, name: true, assignedUserId: true },
       });
 
-      return visit;
+      return { visit, customer };
     });
 
+    // إنشاء إشعار فوري بموعد المتابعة للمستخدم المسؤول عن العميل
+    if (isFollowUpResult && nextFollowUpAt) {
+      const targetUserId =
+        result.customer.assignedUserId ||
+        (isAdmin(currentUser) ? normalizeString(payload.userId) : currentUser.id);
+      if (targetUserId) {
+        await createNotification({
+          type: 'WHOLESALE_FOLLOW_UP',
+          channel: 'IN_APP',
+          userId: targetUserId,
+          title: 'متابعة عميل جملة',
+          message: `موعد متابعة ${result.customer.name} بتاريخ ${new Date(nextFollowUpAt).toLocaleDateString('ar-EG')}`,
+          entityType: 'wholesaleCustomer',
+          entityId: String(result.customer.id),
+        });
+      }
+    }
+
     revalidatePath('/dashboard/wholesale-customers');
-    return { success: true, data: result };
+    return { success: true, data: result.visit };
   } catch (error) {
     console.error('Error creating wholesale visit:', error);
     return { success: false, error: 'تعذر حفظ الزيارة' };

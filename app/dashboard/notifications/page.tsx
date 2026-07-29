@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { hasPermission } from '@/lib/utils';
-import { getNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification, createLowStockNotifications } from '@/server/notification';
+import { getNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification, createLowStockNotifications, createTaskReminderNotifications, createWholesaleFollowUpNotifications } from '@/server/notification';
 import { Button } from '@/components/ui/button';
 import { Bell, Check, Trash2, Package, AlertTriangle, Users, Calendar, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -31,6 +31,11 @@ export default function NotificationsPage() {
     const canView = user && hasPermission(user, 'viewNotifications');
 
     const load = React.useCallback(async () => {
+        // توليد تذكيرات المهام ومواعيد متابعة الجملة المستحقة قبل جلب الإشعارات
+        await Promise.all([
+            createTaskReminderNotifications(),
+            createWholesaleFollowUpNotifications(),
+        ]);
         const res = await getNotifications(undefined, filter === 'unread');
         if (res.success) setNotifications(res.data || []);
         else toast.error((res as any).error || 'تعذر تحميل الإشعارات');
