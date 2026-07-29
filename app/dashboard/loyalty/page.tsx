@@ -14,11 +14,8 @@ import {
     updateLoyaltyRule,
     deleteLoyaltyRule,
     getLoyaltyTransactions,
-    redeemLoyaltyPoints,
-    addBonusPoints,
 } from '@/server/loyalty';
-import { getCustomerList } from '@/server/customer';
-import { Edit, Trash2, Gift, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
 
@@ -30,23 +27,11 @@ const ruleSchema = z.object({
     isActive: z.boolean().default(true),
 });
 
-const redeemSchema = z.object({
-    customerId: z.string().min(1, 'اختر العميل'),
-    points: z.number().min(1, 'عدد النقاط مطلوب'),
-});
-
-const bonusSchema = z.object({
-    customerId: z.string().min(1, 'اختر العميل'),
-    points: z.number().min(1, 'عدد النقاط مطلوب'),
-    notes: z.string().optional(),
-});
-
 export default function LoyaltyPage() {
     const { user } = useAuth();
-    const [tab, setTab] = React.useState<'rules' | 'transactions' | 'redeem'>('rules');
+    const [tab, setTab] = React.useState<'rules' | 'transactions'>('rules');
     const [rules, setRules] = React.useState<any[]>([]);
     const [transactions, setTransactions] = React.useState<any[]>([]);
-    const [customers, setCustomers] = React.useState<any[]>([]);
     const [isRuleOpen, setIsRuleOpen] = React.useState(false);
     const [editRule, setEditRule] = React.useState<any>(null);
 
@@ -66,15 +51,9 @@ export default function LoyaltyPage() {
         else toast.error(res.error || 'تعذر تحميل الحركات');
     };
 
-    const loadCustomers = async () => {
-        const res = await getCustomerList();
-        if (res.success) setCustomers(res.data || []);
-    };
-
     React.useEffect(() => {
         if (!canView) return;
         loadRules();
-        loadCustomers();
         loadTransactions();
     }, [canView]);
 
@@ -99,24 +78,6 @@ export default function LoyaltyPage() {
         const res = await deleteLoyaltyRule(data.id);
         if (res.success) { toast.success('تم الحذف'); loadRules(); }
         else toast.error((res as any).error || 'تعذر الحذف');
-    };
-
-    const handleRedeem = async (values: z.infer<typeof redeemSchema>) => {
-        const loading = toast.loading('جاري استبدال النقاط...');
-        const res = await redeemLoyaltyPoints(values.customerId, values.points);
-        toast.dismiss(loading);
-        if (res.success) {
-            toast.success(`تم استبدال ${values.points} نقطة بخصم ${(res.data as any)?.discount}`);
-            loadTransactions();
-        } else toast.error((res as any).error || 'تعذر الاستبدال');
-    };
-
-    const handleBonus = async (values: z.infer<typeof bonusSchema>) => {
-        const loading = toast.loading('جاري إضافة المكافأة...');
-        const res = await addBonusPoints(values.customerId, values.points, values.notes);
-        toast.dismiss(loading);
-        if (res.success) { toast.success('تم إضافة المكافأة'); loadTransactions(); }
-        else toast.error((res as any).error || 'تعذر الإضافة');
     };
 
     const ruleColumns = [
@@ -158,7 +119,6 @@ export default function LoyaltyPage() {
             <div className="flex gap-2 mb-4">
                 <button onClick={() => setTab('rules')} className={`px-4 py-2 rounded-lg text-sm font-bold ${tab === 'rules' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-900'}`}>القواعد</button>
                 <button onClick={() => setTab('transactions')} className={`px-4 py-2 rounded-lg text-sm font-bold ${tab === 'transactions' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-900'}`}>الحركات</button>
-                <button onClick={() => setTab('redeem')} className={`px-4 py-2 rounded-lg text-sm font-bold ${tab === 'redeem' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-900'}`}><Gift size={14} className="inline ml-1" /> استبدال / مكافأة</button>
             </div>
 
             <div className="mb-4 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/20 p-4 text-sm leading-7 text-slate-700 dark:text-slate-300">
@@ -167,12 +127,12 @@ export default function LoyaltyPage() {
                     <li><b>الكسب التلقائي:</b> عند إنشاء طلب يحصل العميل على نقاط = (القيمة النهائية للطلب بعد الخصومات) × (نقطة لكل عملة).
                         {activeRule ? <> مثال بالقاعدة المفعّلة حالياً: طلب بقيمة 100 يعطي <b>{100 * Number(activeRule.pointsPerCurrency || 0)}</b> نقطة.</> : null}
                     </li>
-                    <li><b>الاستبدال:</b> قيمة الخصم = عدد النقاط المستبدلة × قيمة الاستبدال، وبشرط بلوغ الحد الأدنى للاستبدال.
+                    <li><b>الاستبدال:</b> يتم من نموذج إنشاء الطلب — تُدخل عدد النقاط فيُحسب الخصم = عدد النقاط × قيمة الاستبدال ويُخصم من الإجمالي النهائي تلقائياً، بشرط بلوغ الحد الأدنى للاستبدال.
                         {activeRule ? <> مثال: استبدال 100 نقطة = خصم <b>{100 * Number(activeRule.redeemValue || 0)}</b>، والحد الأدنى <b>{Number(activeRule.minPointsToRedeem || 0)}</b> نقطة.</> : null}
                     </li>
                     <li>لا تُحتسب نقاط للطلبات الملغاة أو المرتجعة (فشل التسليم مرتجع).</li>
                     <li>يُعمل بقاعدة واحدة مفعّلة فقط — عند تفعيل أكثر من قاعدة تُستخدم الأولى ويُتجاهل الباقي.</li>
-                    <li>يمكن للموظف إضافة نقاط يدوية عند إنشاء الطلب، ويمكنك إضافة مكافأة أو إنهاء نقاط من تبويب «استبدال / مكافأة».</li>
+                    <li>يمكن للموظف إضافة نقاط يدوية للعميل من نموذج إنشاء الطلب.</li>
                 </ul>
             </div>
 
@@ -182,40 +142,6 @@ export default function LoyaltyPage() {
 
             {tab === 'transactions' && (
                 <DataTable data={transactions} columns={transactionColumns} totalCount={transactions.length} pageSize={10} currentPage={1} onPageChange={() => {}} />
-            )}
-
-            {tab === 'redeem' && (
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-                        <h2 className="font-bold mb-4">استبدال النقاط بخصم</h2>
-                        <DynamicForm schema={redeemSchema} onSubmit={handleRedeem} defaultValues={{ customerId: '', points: 0 }} submitLabel="استبدال">
-                            {({ register, formState: { errors } }) => (
-                                <div className="grid gap-4">
-                                    <select className="rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" {...register('customerId')}>
-                                        <option value="">اختر العميل</option>
-                                        {customers.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
-                                    <FormInput className="text-gray-800 dark:text-white" type="number" label="عدد النقاط" {...register('points', { valueAsNumber: true })} error={errors.points?.message as string} />
-                                </div>
-                            )}
-                        </DynamicForm>
-                    </div>
-                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-                        <h2 className="font-bold mb-4">إضافة مكافأة نقاط</h2>
-                        <DynamicForm schema={bonusSchema} onSubmit={handleBonus} defaultValues={{ customerId: '', points: 0, notes: '' }} submitLabel="إضافة مكافأة">
-                            {({ register, formState: { errors } }) => (
-                                <div className="grid gap-4">
-                                    <select className="rounded-lg border border-slate-200 dark:border-slate-800 p-3 bg-white dark:bg-slate-900 text-sm" {...register('customerId')}>
-                                        <option value="">اختر العميل</option>
-                                        {customers.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
-                                    <FormInput className="text-gray-800 dark:text-white" type="number" label="عدد النقاط" {...register('points', { valueAsNumber: true })} error={errors.points?.message as string} />
-                                    <FormInput className="text-gray-800 dark:text-white" label="ملاحظات" {...register('notes')} />
-                                </div>
-                            )}
-                        </DynamicForm>
-                    </div>
-                </div>
             )}
 
             <AppModal title={editRule ? 'تعديل قاعدة' : 'قاعدة ولاء جديدة'} isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)}>
