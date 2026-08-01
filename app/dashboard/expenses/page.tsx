@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { formatSiteCurrency, useSiteCurrency } from '@/lib/currency';
 import { hasPermission } from '@/lib/utils';
 import { createExpense, deleteExpense, getExpenses, updateExpense } from '@/server/expenses';
-import { Pencil, Trash2, Wallet, ReceiptText, CalendarDays, BadgeDollarSign } from 'lucide-react';
+import { Pencil, Trash2, Wallet, ReceiptText, CalendarDays, BadgeDollarSign, PiggyBank } from 'lucide-react';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
@@ -44,7 +44,7 @@ export default function ExpensesPage() {
     const { settings: currencySettings } = useSiteCurrency();
 
     const [expenses, setExpenses] = React.useState<any[]>([]);
-    const [summary, setSummary] = React.useState<{ totalUSD: number; count: number }>({ totalUSD: 0, count: 0 });
+    const [summary, setSummary] = React.useState<{ totalUSD: number; count: number; cashboxUsd: number }>({ totalUSD: 0, count: 0, cashboxUsd: 0 });
     const [users, setUsers] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(true);
 
@@ -69,7 +69,7 @@ export default function ExpensesPage() {
             });
             if (res.success) {
                 setExpenses(res.data || []);
-                setSummary(res.summary || { totalUSD: 0, count: 0 });
+                setSummary(res.summary || { totalUSD: 0, count: 0, cashboxUsd: 0 });
             } else {
                 toast.error((res as any).error || 'تعذر تحميل المصاريف');
             }
@@ -238,7 +238,18 @@ export default function ExpensesPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex items-center gap-3">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950/50">
+                        <PiggyBank size={20} />
+                    </span>
+                    <div>
+                        <div className="text-xs text-slate-500">رصيد صندوق الدولار</div>
+                        <div className="text-lg font-black text-slate-800 dark:text-white">
+                            {formatSiteCurrency(summary.cashboxUsd, currencySettings)}
+                        </div>
+                    </div>
+                </div>
                 <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex items-center gap-3">
                     <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/50">
                         <Wallet size={20} />
@@ -348,6 +359,12 @@ export default function ExpensesPage() {
                             onChange={(e) => setForm({ ...form, amount: e.target.value })}
                         />
                     </div>
+
+                    {form.type === 'DAILY' && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 rounded-lg px-3 py-2">
+                            سيتم خصم هذا المبلغ تلقائياً من صندوق الدولار عند الحفظ.
+                        </p>
+                    )}
 
                     {form.type === 'STAFF_SALARY' && (
                         <div className="flex flex-col gap-1">

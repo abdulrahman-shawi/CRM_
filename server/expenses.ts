@@ -3,6 +3,7 @@
 import { decrypt } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { hasPermission, isAdmin } from '@/lib/utils';
 import type { PermissionKey } from '@/lib/type';
 
@@ -24,6 +25,20 @@ async function getCurrentSessionUser() {
 function requirePermission(user: any, permission: PermissionKey) {
     if (!isAdmin(user) && !hasPermission(user, permission)) {
         throw new Error('غير مصرح لك بتنفيذ هذا الإجراء');
+    }
+}
+
+// تعديل رصيد صندوق الدولار في الإعدادات العامة (delta سالب = خصم، موجب = إرجاع)
+async function adjustCashboxUsd(tx: any, delta: number) {
+    const settings = await tx.generalSetting.findFirst({
+        orderBy: { id: 'asc' },
+        select: { id: true, cashboxUsd: true },
+    });
+    const next = Number(((settings?.cashboxUsd ?? 0) + delta).toFixed(2));
+    if (settings) {
+        await tx.generalSetting.update({ where: { id: settings.id }, data: { cashboxUsd: next } });
+    } else {
+        await tx.generalSetting.create({ data: { cashboxUsd: next } });
     }
 }
 
@@ -95,15 +110,29 @@ export async function getExpenses(filters?: { month?: string; type?: ExpenseType
             }
         }
 
-        const expenses = await prisma.expense.findMany({
-            where,
-            orderBy: { createdAt: 'desc' },
-            include: expenseInclude,
-        });
+        const [expenses, settings] = await Promise.all([
+            prisma.expense.findMany({
+                where,
+                orderBy: { createdAt: 'desc' },
+                include: expenseInclude,
+            }),
+            prisma.generalSetting.findFirst({
+                orderBy: { id: 'asc' },
+                select: { cashboxUsd: true },
+            }),
+        ]);
 
         const totalUSD = expenses.reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
 
-        return { success: true, data: expenses, summary: { totalUSD: Number(totalUSD.toFixed(2)), count: expenses.length } };
+        return {
+            success: true,
+            data: expenses,
+            summary: {
+                totalUSD: Number(totalUSD.toFixed(2)),
+                count: expenses.length,
+                cashboxUsd: Number(settings?.cashboxUsd ?? 0),
+            },
+        };
     } catch (error) {
         console.error('getExpenses error:', error);
         return { success: false, error: 'تعذر تحميل المصاريف' };
@@ -125,14 +154,24 @@ export async function createExpense(data: ExpenseInput) {
             if (!employee) return { success: false, error: 'الموظف المحدد غير موجود' };
         }
 
-        const expense = await prisma.expense.create({
-            data: {
-                ...values,
-                ...(employeeId ? { employee: { connect: { id: employeeId } } } : {}),
-            },
-            include: expenseInclude,
+        const expense = await prisma.$transaction(async (tx) => {
+            const created = await tx.expense.create({
+                data: {
+                    ...values,
+                    ...(employeeId ? { employee: { connect: { id: employeeId } } } : {}),
+                },
+                include: expenseInclude,
+            });
+
+            // خصم المصروف اليومي تلقائياً من صندوق الدولار
+            if (values.type === 'DAILY') {
+                await adjustCashboxUsd(tx, -values.amount);
+            }
+
+            return created;
         });
 
+        revalidatePath('/dashboard/settings');
         return { success: true, data: expense };
     } catch (error: any) {
         console.error('createExpense error:', error);
@@ -158,15 +197,34 @@ export async function updateExpense(id: number, data: ExpenseInput) {
             if (!employee) return { success: false, error: 'الموظف المحدد غير موجود' };
         }
 
-        const expense = await prisma.expense.update({
+        const existing = await prisma.expense.findUnique({
             where: { id: expenseId },
-            data: {
-                ...values,
-                employee: employeeId ? { connect: { id: employeeId } } : { disconnect: true },
-            },
-            include: expenseInclude,
+            select: { type: true, amount: true },
+        });
+        if (!existing) return { success: false, error: 'المصروف غير موجود' };
+
+        const expense = await prisma.$transaction(async (tx) => {
+            const updated = await tx.expense.update({
+                where: { id: expenseId },
+                data: {
+                    ...values,
+                    employee: employeeId ? { connect: { id: employeeId } } : { disconnect: true },
+                },
+                include: expenseInclude,
+            });
+
+            // تصحيح رصيد الصندوق: إرجاع القديم وخصم الجديد (للمصاريف اليومية فقط)
+            if (existing.type === 'DAILY') {
+                await adjustCashboxUsd(tx, Number(existing.amount) || 0);
+            }
+            if (values.type === 'DAILY') {
+                await adjustCashboxUsd(tx, -values.amount);
+            }
+
+            return updated;
         });
 
+        revalidatePath('/dashboard/settings');
         return { success: true, data: expense };
     } catch (error: any) {
         console.error('updateExpense error:', error);
@@ -184,7 +242,22 @@ export async function deleteExpense(id: number) {
         const expenseId = Number(id);
         if (!expenseId) return { success: false, error: 'المصروف غير موجود' };
 
-        await prisma.expense.delete({ where: { id: expenseId } });
+        const existing = await prisma.expense.findUnique({
+            where: { id: expenseId },
+            select: { type: true, amount: true },
+        });
+        if (!existing) return { success: false, error: 'المصروف غير موجود' };
+
+        await prisma.$transaction(async (tx) => {
+            await tx.expense.delete({ where: { id: expenseId } });
+
+            // إرجاع المبلغ إلى الصندوق عند حذف مصروف يومي
+            if (existing.type === 'DAILY') {
+                await adjustCashboxUsd(tx, Number(existing.amount) || 0);
+            }
+        });
+
+        revalidatePath('/dashboard/settings');
         return { success: true };
     } catch (error: any) {
         console.error('deleteExpense error:', error);
