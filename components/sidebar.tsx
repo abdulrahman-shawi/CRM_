@@ -12,7 +12,6 @@ import {
   Box,
   FileText,
   ShieldCheck,
-  HelpCircle,
   LogOut,
   Users2,
   Warehouse,
@@ -26,9 +25,7 @@ import {
   LayoutGrid,
   Package,
   Store,
-  Briefcase,
   MessageCircle,
-  Settings2,
   CircleDollarSign,
   Globe,
   PanelsTopLeft,
@@ -48,17 +45,12 @@ import { useState, useEffect } from "react";
 type MenuItem = {
   icon: any;
   label: string;
-  href?: string;
-  children?: MenuItem[];
+  href: string;
 };
 
-type MenuGroup = {
-  group: string;
-  icon: any;
-  colorClass: string;
-  items: MenuItem[];
-  collapsible?: boolean;
-};
+type SidebarEntry =
+  | { type: "section"; label: string; icon: any; items: MenuItem[] }
+  | { type: "link"; icon: any; label: string; href: string };
 
 export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; setIsCollapsed: (val: boolean) => void }) => {
   const pathname = usePathname();
@@ -66,8 +58,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [canInstall, setCanInstall] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const isAppleOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -122,186 +113,138 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
   };
 
   const isItemActive = (item: MenuItem): boolean => {
-    if (item.href) {
-      return pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
-    }
-    return item.children?.some(isItemActive) ?? false;
+    return pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
   };
 
-  const isItemExpanded = (item: MenuItem) => {
-    if (!item.children?.length) return false;
-    return expandedItems[item.label] ?? isItemActive(item);
+  const isSectionActive = (items: MenuItem[]) => items.some(isItemActive);
+
+  const isSectionExpanded = (label: string, items: MenuItem[]) => {
+    return expandedSections[label] ?? isSectionActive(items);
   };
 
-  const toggleItem = (label: string) => {
-    setExpandedItems((current) => ({
+  const toggleSection = (label: string) => {
+    setExpandedSections((current) => ({
       ...current,
       [label]: !(current[label] ?? false),
     }));
   };
 
-  const isGroupExpanded = (group: MenuGroup) => {
-    if (!group.collapsible) return true;
-    return expandedGroups[group.group] ?? false;
-  };
-
-  const toggleGroup = (groupName: string) => {
-    setExpandedGroups((current) => ({
-      ...current,
-      [groupName]: !(current[groupName] ?? false),
-    }));
-  };
-
-  const menuGroups: MenuGroup[] = user ? [
+  const entries: SidebarEntry[] = user ? ([
     {
-      group: "الرئيسية",
-      icon: LayoutGrid,
-      colorClass: "text-blue-600",
-      collapsible: false,
+      type: "section",
+      label: "الرئيسية",
+      icon: Home,
       items: [
-        { icon: Home, label: "لوحة التحكم", href: "/dashboard" },
-        (user && hasAnyPermission(user, ["viewAnalytics"])) &&
+        { icon: LayoutGrid, label: "لوحة التحكم", href: "/dashboard" },
+        hasAnyPermission(user, ["viewAnalytics"]) &&
         { icon: BarChart2, label: "التحليلات", href: "/dashboard/analytics" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "إدارة المخزون والمنتجات",
+      type: "section",
+      label: "الأقسام الرئيسية",
       icon: Package,
-      colorClass: "text-amber-600",
-      collapsible: false,
       items: [
-        (user && hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"])) &&
+        hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"]) &&
         { icon: Receipt, label: "الأقسام", href: "/dashboard/categories" },
-        (user && hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"])) &&
-        { icon: Warehouse, label: "المستودعات والدول", href: "/dashboard/inventories" },
-        (user && hasAnyPermission(user, ["viewProducts", "addProducts", "editProducts", "deleteProducts"])) &&
+        hasAnyPermission(user, ["viewProducts", "addProducts", "editProducts", "deleteProducts"]) &&
         { icon: Box, label: "المنتجات", href: "/dashboard/products" },
+        hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"]) &&
+        { icon: Warehouse, label: "المستودعات والدول", href: "/dashboard/inventories" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "المبيعات والطلبات",
+      type: "section",
+      label: "المبيعات والطلبات",
       icon: Store,
-      colorClass: "text-emerald-600",
-      collapsible: false,
       items: [
-        (user && hasAnyPermission(user, ["viewOrders", "addOrders", "editOrders", "deleteOrders"])) &&
+        hasAnyPermission(user, ["viewOrders", "addOrders", "editOrders", "deleteOrders"]) &&
         { icon: FileText, label: "الطلبات", href: "/dashboard/orders" },
-        (user && hasAnyPermission(user, ["viewWholesaleOrders", "addWholesaleOrders", "editWholesaleOrders", "deleteWholesaleOrders"])) &&
+        hasAnyPermission(user, ["viewWholesaleOrders", "addWholesaleOrders", "editWholesaleOrders", "deleteWholesaleOrders"]) &&
         { icon: FileText, label: "طلبات الجملة", href: "/dashboard/wholesale-orders" },
-        (user && hasPermission(user, "viewWarranty")) &&
+        hasAnyPermission(user, ["viewReturns", "addReturns", "editReturns", "deleteReturns"]) &&
+        { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
+        hasAnyPermission(user, ["viewOrders", "viewWholesaleCustomers", "viewReturns", "addReturns"]) &&
+        { icon: ArrowRightLeft, label: "مرتجعات المندوبين", href: "/dashboard/rep-returns" },
+        hasPermission(user, "viewWarranty") &&
         { icon: ShieldCheck, label: "الكفالة", href: "/dashboard/warranty" },
-        (user && isAdmin(user)) &&
+        isAdmin(user) &&
         { icon: Truck, label: "شركات الشحن", href: "/dashboard/shipping" },
-        (user && hasAnyPermission(user, ["viewTracking", "editTracking"])) &&
+        hasAnyPermission(user, ["viewTracking", "editTracking"]) &&
         { icon: MapPin, label: "تتبع الشحنات", href: "/dashboard/tracking" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "المبيعات والمالية المتقدمة",
-      icon: CircleDollarSign,
-      colorClass: "text-rose-600",
-      collapsible: true,
+      type: "section",
+      label: "العملاء والمندوبين",
+      icon: Users,
       items: [
-        (user && hasAnyPermission(user, ["viewReturns", "addReturns", "editReturns", "deleteReturns"])) &&
-        { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
-        (user && hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"])) &&
-        { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
-        (user && hasAnyPermission(user, ["viewExpenses", "addExpenses", "editExpenses", "deleteExpenses"])) &&
-        { icon: Wallet, label: "المصاريف", href: "/dashboard/expenses" },
-        (user && hasAnyPermission(user, ["viewLoyalty", "editLoyalty"])) &&
+        hasAnyPermission(user, ["viewCustomers", "addCustomers", "editCustomers", "deleteCustomers"]) &&
+        { icon: Users, label: "العملاء", href: "/dashboard/customers" },
+        hasAnyPermission(user, ["viewWholesaleCustomers", "addWholesaleCustomers", "editWholesaleCustomers", "deleteWholesaleCustomers"]) &&
+        { icon: Users2, label: "المندوبين", href: "/dashboard/wholesale-customers" },
+        hasAnyPermission(user, ["viewTasks", "addTasks", "editTasks", "deleteTasks"]) &&
+        { icon: ClipboardList, label: "المهام والمواعيد", href: "/dashboard/tasks" },
+        hasAnyPermission(user, ["viewLoyalty", "editLoyalty"]) &&
         { icon: Award, label: "نقاط الولاء", href: "/dashboard/loyalty" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "العملاء والمندوبين",
-      icon: Users,
-      colorClass: "text-purple-600",
-      collapsible: false,
+      type: "section",
+      label: "المالية",
+      icon: Wallet,
       items: [
-        (user && hasAnyPermission(user, ["viewCustomers", "addCustomers", "editCustomers", "deleteCustomers"])) &&
-        { icon: Users, label: "العملاء", href: "/dashboard/customers" },
-        (user && hasAnyPermission(user, ["viewWholesaleCustomers", "addWholesaleCustomers", "editWholesaleCustomers", "deleteWholesaleCustomers"])) &&
-        { icon: Users2, label: "المندوبين", href: "/dashboard/wholesale-customers" },
-        (user && hasAnyPermission(user, ["viewTasks", "addTasks", "editTasks", "deleteTasks"])) &&
-        { icon: ClipboardList, label: "المهام والمواعيد", href: "/dashboard/tasks" },
-        (user && hasAnyPermission(user, ["viewOrders", "viewWholesaleCustomers", "viewReturns", "addReturns"])) &&
-        { icon: ArrowRightLeft, label: "مرتجعات المندوبين", href: "/dashboard/rep-returns" },
+        hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"]) &&
+        { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
+        hasAnyPermission(user, ["viewExpenses", "addExpenses", "editExpenses", "deleteExpenses"]) &&
+        { icon: Wallet, label: "المصاريف", href: "/dashboard/expenses" },
+        isAdmin(user) &&
+        { icon: ArrowRightLeft, label: "تحويلات المحفظة", href: "/dashboard/affiliate/wallet-transfers" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "التسويق",
+      type: "section",
+      label: "التسويق",
       icon: Megaphone,
-      colorClass: "text-rose-600",
-      collapsible: true,
       items: [
-        (user && hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"])) &&
+        hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"]) &&
         { icon: Megaphone, label: "الحملات الإعلانية", href: "/dashboard/marketing/campaigns" },
-        (user && hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"])) &&
+        hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"]) &&
         { icon: BarChart2, label: "تحليلات التسويق", href: "/dashboard/marketing/analytics" },
+        isAdmin(user) &&
+        { icon: Ticket, label: "العروض", href: "/dashboard/offers" },
+        isAdmin(user) &&
+        { icon: BadgePercent, label: "خصومات العروض", href: "/dashboard/offer-discounts" },
+        isAdmin(user) &&
+        { icon: ImageIcon, label: "سلايدر الرئيسية", href: "/dashboard/hero-slides" },
+        isAdmin(user) &&
+        { icon: MessageCircle, label: "التعليقات", href: "/dashboard/comments" },
       ].filter(Boolean) as MenuItem[]
     },
     {
-      group: "الموارد البشرية",
-      icon: Briefcase,
-      colorClass: "text-cyan-600",
-      collapsible: true,
+      type: "section",
+      label: "المستخدمين والأدوار",
+      icon: Users2,
       items: [
-        (user && hasAnyPermission(user, ["viewEmployees", "addEmployees", "editEmployees", "deleteEmployees"])) &&
+        hasAnyPermission(user, ["viewEmployees", "addEmployees", "editEmployees", "deleteEmployees"]) &&
         { icon: Users, label: "المستخدمين", href: "/dashboard/users" },
-        (user && isAdmin(user)) &&
+        isAdmin(user) &&
         { icon: CircleDollarSign, label: "رواتب الموظفين", href: "/dashboard/employee-salaries" },
-        (user && hasAnyPermission(user, ["viewPermissions", "addPermissions", "editPermissions", "deletePermissions"])) &&
+        hasAnyPermission(user, ["viewPermissions", "addPermissions", "editPermissions", "deletePermissions"]) &&
         { icon: ShieldCheck, label: "الأدوار والصلاحيات", href: "/dashboard/permissions" },
       ].filter(Boolean) as MenuItem[]
     },
-    {
-      group: "الإعدادات والنظام",
-      icon: Settings,
-      colorClass: "text-slate-600",
-      collapsible: true,
-      items: [
-        (user && hasAnyPermission(user, ["viewNotifications"])) &&
-        { icon: Bell, label: "الإشعارات", href: "/dashboard/notifications" },
-        {
-          icon: Settings2,
-          label: "الإعدادات",
-          children: [
-            (user && isAdmin(user)) &&
-            { icon: Settings, label: "الإعدادات العامة", href: "/dashboard/settings" },
-            (user && isAdmin(user)) &&
-            { icon: MessageCircle, label: "التعليقات", href: "/dashboard/comments" },
-            (user && isAdmin(user)) &&
-            { icon: ImageIcon, label: "سلايدر الرئيسية", href: "/dashboard/hero-slides" },
-            (user && isAdmin(user)) &&
-            { icon: Ticket, label: "العروض", href: "/dashboard/offers" },
-            (user && isAdmin(user)) &&
-            { icon: BadgePercent, label: "خصومات العروض", href: "/dashboard/offer-discounts" },
-          ].filter(Boolean) as MenuItem[]
-        },
-        {
-          icon: PanelsTopLeft,
-          label: "صفحات الموقع",
-          children: [
-            (user && hasAnyPermission(user, ["viewPages", "addPages", "editPages", "deletePages"])) &&
-            { icon: FileText, label: "الصفحات", href: "/dashboard/pages" },
-          ].filter(Boolean) as MenuItem[]
-        },
-        {
-          icon: Globe,
-          label: "سفراء skynova",
-          children: [
-            (user && isAdmin(user)) &&
-            { icon: Ticket, label: "سفراء skynova", href: "/dashboard/affiliate" },
-            (user && isAdmin(user)) &&
-            { icon: Users2, label: "مستخدمو سفراء skynova", href: "/dashboard/affiliate/users" },
-            (user && isAdmin(user)) &&
-            { icon: ArrowRightLeft, label: "تحويلات المحفظة", href: "/dashboard/affiliate/wallet-transfers" },
-          ].filter(Boolean) as MenuItem[]
-        },
-      ].filter(Boolean)
-        .filter((item) => item.children ? item.children.length > 0 : true)
-    },
-  ].filter(group => group.items.length > 0) : [];
+    // ─── روابط مباشرة بدون dropdown ───
+    hasPermission(user, "viewNotifications") &&
+    { type: "link", icon: Bell, label: "الإشعارات", href: "/dashboard/notifications" },
+    isAdmin(user) &&
+    { type: "link", icon: Settings, label: "الإعدادات", href: "/dashboard/settings" },
+    hasAnyPermission(user, ["viewPages", "addPages", "editPages", "deletePages"]) &&
+    { type: "link", icon: PanelsTopLeft, label: "صفحات الموقع", href: "/dashboard/pages" },
+    isAdmin(user) &&
+    { type: "link", icon: Globe, label: "سفراء skynova", href: "/dashboard/affiliate" },
+  ].filter(Boolean) as SidebarEntry[])
+    .filter((entry) => entry.type === "link" || entry.items.length > 0) : [];
 
   const handleLogout = async () => {
     try {
@@ -316,6 +259,42 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
     } catch (error) {
       toast.error("حدث خطأ أثناء محاولة تسجيل الخروج");
     }
+  };
+
+  const renderLink = (icon: any, label: string, href: string) => {
+    const isActive = pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
+    const Icon = icon;
+    return (
+      <Link
+        key={href}
+        href={href}
+        onClick={() => window.innerWidth < 768 && setIsCollapsed(true)}
+        className={`
+            relative flex items-center gap-3 h-11 px-3 rounded-xl transition-all duration-300 group
+            ${isActive
+            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+            : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
+          `}
+      >
+        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isActive ? "bg-blue-500/30 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"}`}>
+          <Icon size={18} />
+        </div>
+
+        <span className={`font-bold text-sm whitespace-nowrap transition-all duration-300 ${isCollapsed ? "md:opacity-0 md:translate-x-10" : "opacity-100"}`}>
+          {label}
+        </span>
+
+        {isActive && (
+          <span className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 bg-blue-400 rounded-r-full" />
+        )}
+
+        {isCollapsed && (
+          <div className="hidden md:block absolute right-full mr-4 px-3 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none shadow-2xl whitespace-nowrap">
+            {label}
+          </div>
+        )}
+      </Link>
+    );
   };
 
   return (
@@ -348,124 +327,69 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       </div>
 
       {user && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 custom-scrollbar no-scrollbar space-y-5">
-          {menuGroups.map((group, idx) => (
-            <div key={idx} className="space-y-2">
-              <div className="flex items-center justify-between">
-                {group.collapsible ? (
-                  <button
-                    type="button"
-                    onClick={() => toggleGroup(group.group)}
-                    className={`flex flex-1 items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-300 ${isCollapsed ? "md:opacity-0" : "opacity-100"}`}
-                  >
-                    <group.icon size={14} className={group.colorClass} />
-                    <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      {group.group}
-                    </span>
-                    <ChevronDown size={14} className={`mr-auto text-slate-400 transition-transform duration-300 ${isGroupExpanded(group) ? "rotate-180" : ""}`} />
-                  </button>
-                ) : (
-                  <div className={`flex items-center gap-2 px-3 py-2 transition-opacity duration-300 ${isCollapsed ? "md:opacity-0" : "opacity-100"}`}>
-                    <group.icon size={14} className={group.colorClass} />
-                    <span className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      {group.group}
-                    </span>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 custom-scrollbar no-scrollbar space-y-1">
+          {entries.map((entry) => {
+            if (entry.type === "link") {
+              return renderLink(entry.icon, entry.label, entry.href);
+            }
+
+            const isExpanded = isSectionExpanded(entry.label, entry.items);
+            const isActive = isSectionActive(entry.items);
+
+            return (
+              <div key={entry.label} className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => isCollapsed ? setIsCollapsed(false) : toggleSection(entry.label)}
+                  className={`
+                      relative flex w-full items-center gap-3 h-11 px-3 rounded-xl transition-all duration-300 group
+                      ${isActive
+                      ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
+                    `}
+                >
+                  <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isActive ? "bg-blue-100 dark:bg-blue-900/40" : "bg-slate-100 dark:bg-slate-800"}`}>
+                    <entry.icon size={18} className={isActive ? "text-blue-600" : "text-slate-500 dark:text-slate-400"} />
+                  </div>
+                  <span className={`font-bold text-sm whitespace-nowrap transition-all duration-300 ${isCollapsed ? "md:opacity-0 md:translate-x-10" : "opacity-100"}`}>
+                    {entry.label}
+                  </span>
+                  {!isCollapsed && (
+                    <ChevronDown size={16} className={`mr-auto text-slate-400 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                  )}
+                  {isCollapsed && (
+                    <div className="hidden md:block absolute right-full mr-4 px-3 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none shadow-2xl whitespace-nowrap">
+                      {entry.label}
+                    </div>
+                  )}
+                </button>
+
+                {!isCollapsed && isExpanded && (
+                  <div className="mr-4 space-y-1 border-r-2 border-blue-100 dark:border-blue-900/30 pr-3">
+                    {entry.items.map((item) => {
+                      const isChildActive = isItemActive(item);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => window.innerWidth < 768 && setIsCollapsed(true)}
+                          className={`
+                              flex items-center gap-3 h-10 rounded-xl px-3 text-sm font-bold transition-all duration-300
+                              ${isChildActive
+                              ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                              : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
+                            `}
+                        >
+                          <item.icon size={16} className="shrink-0" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
-
-              <div className={`space-y-1 ${group.collapsible && !isGroupExpanded(group) ? "hidden" : ""}`}>
-                {group.items.map((item) => {
-                  const isActive = pathname === item.href;
-                  const isExpanded = isItemExpanded(item);
-                  const hasChildren = item.children && item.children.length > 0;
-
-                  if (hasChildren) {
-                    return (
-                      <div key={item.label} className="space-y-1">
-                        <button
-                          type="button"
-                          onClick={() => toggleItem(item.label)}
-                          className={`
-                              relative flex w-full items-center gap-3 h-11 px-3 rounded-xl transition-all duration-300 group
-                              ${isItemActive(item)
-                              ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
-                              : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
-                            `}
-                        >
-                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isItemActive(item) ? "bg-blue-100 dark:bg-blue-900/40" : "bg-slate-100 dark:bg-slate-800"}`}>
-                            <item.icon size={18} className={isItemActive(item) ? "text-blue-600" : "text-slate-500 dark:text-slate-400"} />
-                          </div>
-                          <span className={`font-bold text-sm whitespace-nowrap transition-all duration-300 ${isCollapsed ? "md:opacity-0 md:translate-x-10" : "opacity-100"}`}>
-                            {item.label}
-                          </span>
-                          {!isCollapsed && (
-                            <ChevronDown size={16} className={`mr-auto text-slate-400 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                          )}
-                        </button>
-
-                        {!isCollapsed && isExpanded && (
-                          <div className="mr-4 space-y-1 border-r-2 border-blue-100 dark:border-blue-900/30 pr-3">
-                            {item.children?.map((child: MenuItem) => {
-                              const isChildActive = isItemActive(child);
-                              return (
-                                <Link
-                                  key={child.href}
-                                  href={child.href!}
-                                  onClick={() => window.innerWidth < 768 && setIsCollapsed(true)}
-                                  className={`
-                                      flex items-center gap-3 h-10 rounded-xl px-3 text-sm font-bold transition-all duration-300
-                                      ${isChildActive
-                                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
-                                    `}
-                                >
-                                  <child.icon size={16} className="shrink-0" />
-                                  <span>{child.label}</span>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href!}
-                      onClick={() => window.innerWidth < 768 && setIsCollapsed(true)}
-                      className={`
-                          relative flex items-center gap-3 h-11 px-3 rounded-xl transition-all duration-300 group
-                          ${isActive
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"}
-                        `}
-                    >
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isActive ? "bg-blue-500/30 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"}`}>
-                        <item.icon size={18} />
-                      </div>
-
-                      <span className={`font-bold text-sm whitespace-nowrap transition-all duration-300 ${isCollapsed ? "md:opacity-0 md:translate-x-10" : "opacity-100"}`}>
-                        {item.label}
-                      </span>
-
-                      {isActive && (
-                        <span className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 bg-blue-400 rounded-r-full" />
-                      )}
-
-                      {isCollapsed && (
-                        <div className="hidden md:block absolute right-full mr-4 px-3 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none shadow-2xl whitespace-nowrap">
-                          {item.label}
-                        </div>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
