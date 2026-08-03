@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { hasPermission, isAdmin } from '@/lib/utils';
+import { applyRecurringExpenses } from '@/lib/recurring-expenses';
 import type { PermissionKey } from '@/lib/type';
 
 async function getCurrentSessionUser() {
@@ -42,8 +43,12 @@ async function adjustCashboxUsd(tx: any, delta: number) {
     }
 }
 
-const EXPENSE_TYPES = ['DAILY', 'STAFF_SALARY', 'RENT'] as const;
+const EXPENSE_TYPES = ['DAILY', 'MONTHLY', 'STAFF_SALARY', 'RENT'] as const;
 type ExpenseTypeInput = (typeof EXPENSE_TYPES)[number];
+
+// الأنواع التي تُخصم من صندوق الدولار فور الحفظ
+const CASHBOX_TYPES: readonly ExpenseTypeInput[] = ['DAILY', 'MONTHLY'];
+const deductsFromCashbox = (type: string) => CASHBOX_TYPES.includes(type as ExpenseTypeInput);
 
 type ExpenseInput = {
     type?: ExpenseTypeInput;
@@ -52,6 +57,7 @@ type ExpenseInput = {
     employeeId?: string | null;
     scheduledDate?: string | null;
     notes?: string;
+    isRecurring?: boolean;
 };
 
 const expenseInclude = {
@@ -81,6 +87,8 @@ function validateExpenseInput(data: ExpenseInput) {
             description: String(data.description || '').trim() || null,
             notes: String(data.notes || '').trim() || null,
             scheduledDate,
+            // التكرار التلقائي متاح للمصاريف اليومية والشهرية فقط
+            isRecurring: Boolean(data.isRecurring) && deductsFromCashbox(type),
             // العملة الافتراضية دولار — التحويل لعملة الموقع يتم عند العرض فقط
             currency: 'USD' as const,
         },
@@ -95,6 +103,13 @@ export async function getExpenses(filters?: { month?: string; type?: ExpenseType
     }
 
     try {
+        // تطبيق المصاريف المتكررة المستحقة (خصم تلقائي من الصندوق) قبل العرض
+        try {
+            await applyRecurringExpenses();
+        } catch (recurringError) {
+            console.error('applyRecurringExpenses error:', recurringError);
+        }
+
         const where: any = {};
 
         if (filters?.type && EXPENSE_TYPES.includes(filters.type)) {
@@ -158,13 +173,15 @@ export async function createExpense(data: ExpenseInput) {
             const created = await tx.expense.create({
                 data: {
                     ...values,
+                    // الخصم الفوري عند الإنشاء يُحتسب كتطبيق للفترة الحالية
+                    ...(values.isRecurring ? { lastRecurringAppliedAt: new Date() } : {}),
                     ...(employeeId ? { employee: { connect: { id: employeeId } } } : {}),
                 },
                 include: expenseInclude,
             });
 
-            // خصم المصروف اليومي تلقائياً من صندوق الدولار
-            if (values.type === 'DAILY') {
+            // خصم المصروف اليومي/الشهري تلقائياً من صندوق الدولار
+            if (deductsFromCashbox(values.type)) {
                 await adjustCashboxUsd(tx, -values.amount);
             }
 
@@ -199,25 +216,34 @@ export async function updateExpense(id: number, data: ExpenseInput) {
 
         const existing = await prisma.expense.findUnique({
             where: { id: expenseId },
-            select: { type: true, amount: true },
+            select: { type: true, amount: true, isRecurring: true },
         });
         if (!existing) return { success: false, error: 'المصروف غير موجود' };
+
+        // ضبط نقطة بداية التكرار: تُصفَّر عند إيقافه، وتُعاد للحظة الحالية عند تفعيله أو تغيير النوع
+        let lastRecurringAppliedAt: Date | null | undefined;
+        if (!values.isRecurring) {
+            lastRecurringAppliedAt = null;
+        } else if (!existing.isRecurring || existing.type !== values.type) {
+            lastRecurringAppliedAt = new Date();
+        }
 
         const expense = await prisma.$transaction(async (tx) => {
             const updated = await tx.expense.update({
                 where: { id: expenseId },
                 data: {
                     ...values,
+                    ...(lastRecurringAppliedAt !== undefined ? { lastRecurringAppliedAt } : {}),
                     employee: employeeId ? { connect: { id: employeeId } } : { disconnect: true },
                 },
                 include: expenseInclude,
             });
 
-            // تصحيح رصيد الصندوق: إرجاع القديم وخصم الجديد (للمصاريف اليومية فقط)
-            if (existing.type === 'DAILY') {
+            // تصحيح رصيد الصندوق: إرجاع القديم وخصم الجديد (للمصاريف اليومية والشهرية)
+            if (deductsFromCashbox(existing.type)) {
                 await adjustCashboxUsd(tx, Number(existing.amount) || 0);
             }
-            if (values.type === 'DAILY') {
+            if (deductsFromCashbox(values.type)) {
                 await adjustCashboxUsd(tx, -values.amount);
             }
 
@@ -251,8 +277,8 @@ export async function deleteExpense(id: number) {
         await prisma.$transaction(async (tx) => {
             await tx.expense.delete({ where: { id: expenseId } });
 
-            // إرجاع المبلغ إلى الصندوق عند حذف مصروف يومي
-            if (existing.type === 'DAILY') {
+            // إرجاع المبلغ إلى الصندوق عند حذف مصروف يومي أو شهري
+            if (deductsFromCashbox(existing.type)) {
                 await adjustCashboxUsd(tx, Number(existing.amount) || 0);
             }
         });

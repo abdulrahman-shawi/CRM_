@@ -533,7 +533,7 @@ export default function GeneralSettingsPage() {
         <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/40">
           <div className="mb-4">
             <h2 className="text-base font-black text-slate-900 dark:text-white">الصناديق</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">يتم خصم المصاريف اليومية تلقائيًا من صندوق الدولار.</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">يتم خصم المصاريف اليومية والشهرية تلقائيًا من صندوق الدولار، والمصاريف المتكررة تُخصم مع بداية كل يوم أو كل شهر حسب نوعها.</p>
           </div>
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">

@@ -599,6 +599,8 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   employeeId: 'employeeId',
   scheduledDate: 'scheduledDate',
   notes: 'notes',
+  isRecurring: 'isRecurring',
+  lastRecurringAppliedAt: 'lastRecurringAppliedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -990,6 +992,7 @@ exports.TrackingStatus = exports.$Enums.TrackingStatus = {
 
 exports.ExpenseType = exports.$Enums.ExpenseType = {
   DAILY: 'DAILY',
+  MONTHLY: 'MONTHLY',
   STAFF_SALARY: 'STAFF_SALARY',
   RENT: 'RENT'
 };

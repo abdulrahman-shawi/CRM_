@@ -306,6 +306,7 @@ export type WarrantyType = (typeof WarrantyType)[keyof typeof WarrantyType]
 
 export const ExpenseType: {
   DAILY: 'DAILY',
+  MONTHLY: 'MONTHLY',
   STAFF_SALARY: 'STAFF_SALARY',
   RENT: 'RENT'
 };
@@ -42098,6 +42099,8 @@ export namespace Prisma {
     employeeId: string | null
     scheduledDate: Date | null
     notes: string | null
+    isRecurring: boolean | null
+    lastRecurringAppliedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -42113,6 +42116,8 @@ export namespace Prisma {
     employeeId: string | null
     scheduledDate: Date | null
     notes: string | null
+    isRecurring: boolean | null
+    lastRecurringAppliedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -42128,6 +42133,8 @@ export namespace Prisma {
     employeeId: number
     scheduledDate: number
     notes: number
+    isRecurring: number
+    lastRecurringAppliedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -42157,6 +42164,8 @@ export namespace Prisma {
     employeeId?: true
     scheduledDate?: true
     notes?: true
+    isRecurring?: true
+    lastRecurringAppliedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -42172,6 +42181,8 @@ export namespace Prisma {
     employeeId?: true
     scheduledDate?: true
     notes?: true
+    isRecurring?: true
+    lastRecurringAppliedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -42187,6 +42198,8 @@ export namespace Prisma {
     employeeId?: true
     scheduledDate?: true
     notes?: true
+    isRecurring?: true
+    lastRecurringAppliedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -42289,6 +42302,8 @@ export namespace Prisma {
     employeeId: string | null
     scheduledDate: Date | null
     notes: string | null
+    isRecurring: boolean
+    lastRecurringAppliedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: ExpenseCountAggregateOutputType | null
@@ -42323,6 +42338,8 @@ export namespace Prisma {
     employeeId?: boolean
     scheduledDate?: boolean
     notes?: boolean
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | Expense$employeeArgs<ExtArgs>
@@ -42339,6 +42356,8 @@ export namespace Prisma {
     employeeId?: boolean
     scheduledDate?: boolean
     notes?: boolean
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | Expense$employeeArgs<ExtArgs>
@@ -42355,6 +42374,8 @@ export namespace Prisma {
     employeeId?: boolean
     scheduledDate?: boolean
     notes?: boolean
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | Expense$employeeArgs<ExtArgs>
@@ -42371,11 +42392,13 @@ export namespace Prisma {
     employeeId?: boolean
     scheduledDate?: boolean
     notes?: boolean
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "amount" | "salaryBaseWage" | "description" | "currency" | "paidFromOffice" | "employeeId" | "scheduledDate" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["expense"]>
+  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "amount" | "salaryBaseWage" | "description" | "currency" | "paidFromOffice" | "employeeId" | "scheduledDate" | "notes" | "isRecurring" | "lastRecurringAppliedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["expense"]>
   export type ExpenseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | Expense$employeeArgs<ExtArgs>
   }
@@ -42402,6 +42425,8 @@ export namespace Prisma {
       employeeId: string | null
       scheduledDate: Date | null
       notes: string | null
+      isRecurring: boolean
+      lastRecurringAppliedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["expense"]>
@@ -42838,6 +42863,8 @@ export namespace Prisma {
     readonly employeeId: FieldRef<"Expense", 'String'>
     readonly scheduledDate: FieldRef<"Expense", 'DateTime'>
     readonly notes: FieldRef<"Expense", 'String'>
+    readonly isRecurring: FieldRef<"Expense", 'Boolean'>
+    readonly lastRecurringAppliedAt: FieldRef<"Expense", 'DateTime'>
     readonly createdAt: FieldRef<"Expense", 'DateTime'>
     readonly updatedAt: FieldRef<"Expense", 'DateTime'>
   }
@@ -68545,6 +68572,8 @@ export namespace Prisma {
     employeeId: 'employeeId',
     scheduledDate: 'scheduledDate',
     notes: 'notes',
+    isRecurring: 'isRecurring',
+    lastRecurringAppliedAt: 'lastRecurringAppliedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -72466,6 +72495,8 @@ export namespace Prisma {
     employeeId?: StringNullableFilter<"Expense"> | string | null
     scheduledDate?: DateTimeNullableFilter<"Expense"> | Date | string | null
     notes?: StringNullableFilter<"Expense"> | string | null
+    isRecurring?: BoolFilter<"Expense"> | boolean
+    lastRecurringAppliedAt?: DateTimeNullableFilter<"Expense"> | Date | string | null
     createdAt?: DateTimeFilter<"Expense"> | Date | string
     updatedAt?: DateTimeFilter<"Expense"> | Date | string
     employee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -72482,6 +72513,8 @@ export namespace Prisma {
     employeeId?: SortOrderInput | SortOrder
     scheduledDate?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    isRecurring?: SortOrder
+    lastRecurringAppliedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     employee?: UserOrderByWithRelationInput
@@ -72501,6 +72534,8 @@ export namespace Prisma {
     employeeId?: StringNullableFilter<"Expense"> | string | null
     scheduledDate?: DateTimeNullableFilter<"Expense"> | Date | string | null
     notes?: StringNullableFilter<"Expense"> | string | null
+    isRecurring?: BoolFilter<"Expense"> | boolean
+    lastRecurringAppliedAt?: DateTimeNullableFilter<"Expense"> | Date | string | null
     createdAt?: DateTimeFilter<"Expense"> | Date | string
     updatedAt?: DateTimeFilter<"Expense"> | Date | string
     employee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -72517,6 +72552,8 @@ export namespace Prisma {
     employeeId?: SortOrderInput | SortOrder
     scheduledDate?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    isRecurring?: SortOrder
+    lastRecurringAppliedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ExpenseCountOrderByAggregateInput
@@ -72540,6 +72577,8 @@ export namespace Prisma {
     employeeId?: StringNullableWithAggregatesFilter<"Expense"> | string | null
     scheduledDate?: DateTimeNullableWithAggregatesFilter<"Expense"> | Date | string | null
     notes?: StringNullableWithAggregatesFilter<"Expense"> | string | null
+    isRecurring?: BoolWithAggregatesFilter<"Expense"> | boolean
+    lastRecurringAppliedAt?: DateTimeNullableWithAggregatesFilter<"Expense"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
   }
@@ -77858,6 +77897,8 @@ export namespace Prisma {
     paidFromOffice?: $Enums.PaidFromOffice | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     employee?: UserCreateNestedOneWithoutExpensesInput
@@ -77874,6 +77915,8 @@ export namespace Prisma {
     employeeId?: string | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -77887,6 +77930,8 @@ export namespace Prisma {
     paidFromOffice?: NullableEnumPaidFromOfficeFieldUpdateOperationsInput | $Enums.PaidFromOffice | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     employee?: UserUpdateOneWithoutExpensesNestedInput
@@ -77903,6 +77948,8 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -77918,6 +77965,8 @@ export namespace Prisma {
     employeeId?: string | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -77931,6 +77980,8 @@ export namespace Prisma {
     paidFromOffice?: NullableEnumPaidFromOfficeFieldUpdateOperationsInput | $Enums.PaidFromOffice | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -77946,6 +77997,8 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -82645,6 +82698,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     scheduledDate?: SortOrder
     notes?: SortOrder
+    isRecurring?: SortOrder
+    lastRecurringAppliedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -82666,6 +82721,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     scheduledDate?: SortOrder
     notes?: SortOrder
+    isRecurring?: SortOrder
+    lastRecurringAppliedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -82681,6 +82738,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     scheduledDate?: SortOrder
     notes?: SortOrder
+    isRecurring?: SortOrder
+    lastRecurringAppliedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -90004,6 +90063,8 @@ export namespace Prisma {
     paidFromOffice?: $Enums.PaidFromOffice | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -90018,6 +90079,8 @@ export namespace Prisma {
     paidFromOffice?: $Enums.PaidFromOffice | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -91143,6 +91206,8 @@ export namespace Prisma {
     employeeId?: StringNullableFilter<"Expense"> | string | null
     scheduledDate?: DateTimeNullableFilter<"Expense"> | Date | string | null
     notes?: StringNullableFilter<"Expense"> | string | null
+    isRecurring?: BoolFilter<"Expense"> | boolean
+    lastRecurringAppliedAt?: DateTimeNullableFilter<"Expense"> | Date | string | null
     createdAt?: DateTimeFilter<"Expense"> | Date | string
     updatedAt?: DateTimeFilter<"Expense"> | Date | string
   }
@@ -105095,6 +105160,8 @@ export namespace Prisma {
     paidFromOffice?: $Enums.PaidFromOffice | null
     scheduledDate?: Date | string | null
     notes?: string | null
+    isRecurring?: boolean
+    lastRecurringAppliedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -105787,6 +105854,8 @@ export namespace Prisma {
     paidFromOffice?: NullableEnumPaidFromOfficeFieldUpdateOperationsInput | $Enums.PaidFromOffice | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -105801,6 +105870,8 @@ export namespace Prisma {
     paidFromOffice?: NullableEnumPaidFromOfficeFieldUpdateOperationsInput | $Enums.PaidFromOffice | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -105815,6 +105886,8 @@ export namespace Prisma {
     paidFromOffice?: NullableEnumPaidFromOfficeFieldUpdateOperationsInput | $Enums.PaidFromOffice | null
     scheduledDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    isRecurring?: BoolFieldUpdateOperationsInput | boolean
+    lastRecurringAppliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

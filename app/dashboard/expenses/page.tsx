@@ -15,15 +15,20 @@ import toast from 'react-hot-toast';
 
 const TYPE_LABELS: Record<string, string> = {
     DAILY: 'يومية',
+    MONTHLY: 'شهرية',
     STAFF_SALARY: 'راتب موظف',
     RENT: 'إيجار',
 };
 
 const TYPE_TONES: Record<string, string> = {
     DAILY: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
+    MONTHLY: 'bg-violet-50 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     STAFF_SALARY: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     RENT: 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
 };
+
+// الأنواع التي تُخصم من الصندوق وتدعم التكرار التلقائي
+const CASHBOX_TYPES = ['DAILY', 'MONTHLY'];
 
 const getCurrentMonthKey = () => {
     const now = new Date();
@@ -37,6 +42,7 @@ const emptyForm = {
     employeeId: '',
     scheduledDate: '',
     notes: '',
+    isRecurring: false,
 };
 
 export default function ExpensesPage() {
@@ -102,6 +108,7 @@ export default function ExpensesPage() {
             employeeId: row.employee?.id || '',
             scheduledDate: row.scheduledDate ? new Date(row.scheduledDate).toISOString().slice(0, 10) : '',
             notes: row.notes || '',
+            isRecurring: Boolean(row.isRecurring),
         });
         setIsOpen(true);
     };
@@ -124,6 +131,7 @@ export default function ExpensesPage() {
             employeeId: form.employeeId || null,
             scheduledDate: form.scheduledDate || null,
             notes: form.notes,
+            isRecurring: form.isRecurring,
         };
 
         const loadingToast = toast.loading(editing ? 'جاري تعديل المصروف...' : 'جاري إنشاء المصروف...');
@@ -185,8 +193,15 @@ export default function ExpensesPage() {
         {
             header: 'النوع',
             accessor: (row: any) => (
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${TYPE_TONES[row.type] || TYPE_TONES.DAILY}`}>
-                    {TYPE_LABELS[row.type] || row.type}
+                <span className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${TYPE_TONES[row.type] || TYPE_TONES.DAILY}`}>
+                        {TYPE_LABELS[row.type] || row.type}
+                    </span>
+                    {row.isRecurring && (
+                        <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                            متكرر
+                        </span>
+                    )}
                 </span>
             ),
         },
@@ -286,9 +301,9 @@ export default function ExpensesPage() {
                         <CalendarDays size={20} />
                     </span>
                     <div>
-                        <div className="text-xs text-slate-500">مصاريف يومية وإيجار</div>
+                        <div className="text-xs text-slate-500">مصاريف يومية وشهرية وإيجار</div>
                         <div className="text-lg font-black text-slate-800 dark:text-white">
-                            {formatSiteCurrency((totalByType.DAILY || 0) + (totalByType.RENT || 0), currencySettings)}
+                            {formatSiteCurrency((totalByType.DAILY || 0) + (totalByType.MONTHLY || 0) + (totalByType.RENT || 0), currencySettings)}
                         </div>
                     </div>
                 </div>
@@ -313,6 +328,7 @@ export default function ExpensesPage() {
                     >
                         <option value="">كل الأنواع</option>
                         <option value="DAILY">يومية</option>
+                        <option value="MONTHLY">شهرية</option>
                         <option value="STAFF_SALARY">راتب موظف</option>
                         <option value="RENT">إيجار</option>
                     </select>
@@ -342,10 +358,16 @@ export default function ExpensesPage() {
                             <label className="text-xs font-bold text-slate-500">نوع المصروف</label>
                             <select
                                 value={form.type}
-                                onChange={(e) => setForm({ ...form, type: e.target.value, employeeId: e.target.value === 'STAFF_SALARY' ? form.employeeId : '' })}
+                                onChange={(e) => setForm({
+                                    ...form,
+                                    type: e.target.value,
+                                    employeeId: e.target.value === 'STAFF_SALARY' ? form.employeeId : '',
+                                    isRecurring: CASHBOX_TYPES.includes(e.target.value) ? form.isRecurring : false,
+                                })}
                                 className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm"
                             >
                                 <option value="DAILY">يومية</option>
+                                <option value="MONTHLY">شهرية</option>
                                 <option value="STAFF_SALARY">راتب موظف</option>
                                 <option value="RENT">إيجار</option>
                             </select>
@@ -360,10 +382,26 @@ export default function ExpensesPage() {
                         />
                     </div>
 
-                    {form.type === 'DAILY' && (
-                        <p className="text-xs text-slate-500 dark:text-slate-400 bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 rounded-lg px-3 py-2">
-                            سيتم خصم هذا المبلغ تلقائياً من صندوق الدولار عند الحفظ.
-                        </p>
+                    {CASHBOX_TYPES.includes(form.type) && (
+                        <>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 rounded-lg px-3 py-2">
+                                سيتم خصم هذا المبلغ تلقائياً من صندوق الدولار عند الحفظ.
+                            </p>
+                            <label className="flex items-start gap-2 cursor-pointer bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isRecurring}
+                                    onChange={(e) => setForm({ ...form, isRecurring: e.target.checked })}
+                                    className="mt-1 accent-blue-600"
+                                />
+                                <span className="text-xs text-slate-600 dark:text-slate-300">
+                                    <span className="font-bold block">تكرار تلقائي من الصندوق</span>
+                                    {form.type === 'DAILY'
+                                        ? 'سيُخصم هذا المبلغ من صندوق الدولار مع بداية كل يوم جديد.'
+                                        : 'سيُخصم هذا المبلغ من صندوق الدولار مع بداية كل شهر جديد.'}
+                                </span>
+                            </label>
+                        </>
                     )}
 
                     {form.type === 'STAFF_SALARY' && (
