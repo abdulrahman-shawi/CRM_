@@ -259,7 +259,7 @@ export default function ExpensesPage() {
                         <PiggyBank size={20} />
                     </span>
                     <div>
-                        <div className="text-xs text-slate-500">رصيد صندوق الدولار</div>
+                        <div className="text-xs text-slate-500">رصيد صندوق</div>
                         <div className="text-lg font-black text-slate-800 dark:text-white">
                             {formatSiteCurrency(summary.cashboxUsd, currencySettings)}
                         </div>
@@ -352,7 +352,7 @@ export default function ExpensesPage() {
             />
 
             <AppModal title={editing ? 'تعديل مصروف' : 'إضافة مصروف'} isOpen={isOpen} onClose={() => setIsOpen(false)} size="lg">
-                <div className="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+                <div className="p-4 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
                             <label className="text-xs font-bold text-slate-500">نوع المصروف</label>
@@ -373,7 +373,7 @@ export default function ExpensesPage() {
                             </select>
                         </div>
                         <FormInput
-                            label="المبلغ (بالدولار)"
+                            label="المبلغ"
                             type="number"
                             className="text-gray-800 dark:text-white"
                             placeholder="0.00"
@@ -385,7 +385,7 @@ export default function ExpensesPage() {
                     {CASHBOX_TYPES.includes(form.type) && (
                         <>
                             <p className="text-xs text-slate-500 dark:text-slate-400 bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 rounded-lg px-3 py-2">
-                                سيتم خصم هذا المبلغ تلقائياً من صندوق الدولار عند الحفظ.
+                                سيتم خصم هذا المبلغ تلقائياً من الصندوق عند الحفظ.
                             </p>
                             <label className="flex items-start gap-2 cursor-pointer bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2">
                                 <input
@@ -397,8 +397,8 @@ export default function ExpensesPage() {
                                 <span className="text-xs text-slate-600 dark:text-slate-300">
                                     <span className="font-bold block">تكرار تلقائي من الصندوق</span>
                                     {form.type === 'DAILY'
-                                        ? 'سيُخصم هذا المبلغ من صندوق الدولار مع بداية كل يوم جديد.'
-                                        : 'سيُخصم هذا المبلغ من صندوق الدولار مع بداية كل شهر جديد.'}
+                                        ? 'سيُخصم هذا المبلغ من الصندوق مع بداية كل يوم جديد.'
+                                        : 'سيُخصم هذا المبلغ من الصندوق مع بداية كل شهر جديد.'}
                                 </span>
                             </label>
                         </>
