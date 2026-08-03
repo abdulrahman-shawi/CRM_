@@ -1028,12 +1028,15 @@ model Expense {
 // ============================================
 
 model shipping {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  price       Float
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  orders      Order[]
+  id               Int       @id @default(autoincrement())
+  name             String    @unique
+  price            Float
+  // مبالغ يدوية: مستحق لنا من الشركة / مستحق للشركة علينا (تسويات إضافية)
+  manualReceivable Float     @default(0)
+  manualPayable    Float     @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  orders           Order[]
 }
 
 // ============================================

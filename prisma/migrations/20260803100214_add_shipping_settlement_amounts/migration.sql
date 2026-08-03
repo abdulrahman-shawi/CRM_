@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "shipping" ADD COLUMN     "manualPayable" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN     "manualReceivable" DOUBLE PRECISION NOT NULL DEFAULT 0;

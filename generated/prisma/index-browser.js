@@ -607,6 +607,8 @@ exports.Prisma.ShippingScalarFieldEnum = {
   id: 'id',
   name: 'name',
   price: 'price',
+  manualReceivable: 'manualReceivable',
+  manualPayable: 'manualPayable',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

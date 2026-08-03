@@ -12,6 +12,8 @@ export async function getshipping() {
                 id: true,
                 name: true,
                 price: true,
+                manualReceivable: true,
+                manualPayable: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -33,6 +35,8 @@ export async function getshippingWithOrders() {
                 id: true,
                 name: true,
                 price: true,
+                manualReceivable: true,
+                manualPayable: true,
                 createdAt: true,
                 updatedAt: true,
                 orders: {
@@ -50,6 +54,9 @@ export async function getshippingWithOrders() {
                         shippingPrice: true,
                         moneyTransferCommission: true,
                         otherCommissions: true,
+                        paymentMethod: true,
+                        amount: true,
+                        amountBank: true,
                         customer: {
                             select: {
                                 id: true,
@@ -86,7 +93,9 @@ export async function createshipping(data: any) {
         const res = await prisma.shipping.create({
             data: {
                 name: data.name,
-                price: data.price
+                price: data.price,
+                manualReceivable: Number(data.manualReceivable || 0),
+                manualPayable: Number(data.manualPayable || 0)
             }
         });
         return { success: true, data: res };
@@ -102,7 +111,9 @@ export async function updateshipping(id: string, data: any) {
             where: { id: Number(id) },
             data: {
                 name: data.name,
-                price: data.price
+                price: data.price,
+                manualReceivable: Number(data.manualReceivable || 0),
+                manualPayable: Number(data.manualPayable || 0)
             }
         });
         return { success: true, data: res };

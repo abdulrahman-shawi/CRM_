@@ -4,7 +4,7 @@ import { AppModal } from "@/components/ui/app-modal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { hasPermission } from "@/lib/utils";
-import { getOrderCurrencySymbol, getOrderDisplayDate, getOrderNetAmountAfterShipping, getOrderTotalShippingExpenses } from "@/orders/orderHelpers";
+import { getOrderAmountToCollect, getOrderCurrencySymbol, getOrderDisplayDate, getOrderNetAmountAfterShipping, getOrderTotalShippingExpenses } from "@/orders/orderHelpers";
 import { createshipping, deletshipping, getshippingWithOrders, updateshipping } from "@/server/shipping";
 import { AnimatePresence, motion } from "framer-motion";
 import { Edit, Trash2 } from "lucide-react";
@@ -16,7 +16,34 @@ import { FormInput } from "@/components/ui/form-input";
 const shippingSchema = z.object({
     name: z.string().min(3, "اسم شركة الشحن مطلوب"),
     price: z.number().min(0, "السعر لا يمكن أن يكون سالب"),
+    manualReceivable: z.number().min(0, "المبلغ لا يمكن أن يكون سالب"),
+    manualPayable: z.number().min(0, "المبلغ لا يمكن أن يكون سالب"),
 });
+
+// حالات الطلبات التي تُعتبر مسلَّمة (تدخل في حساب المستحقات)
+const DELIVERED_ORDER_STATUSES = new Set(["تم تسليم الطلب", "تم التسليم", "مدفوعة", "تم البيع"]);
+
+// حساب المستحقات: ما نريده من شركة الشحن وما تريده منا (طلبات مسلَّمة + مبالغ يدوية)
+const getShippingSettlement = (shippingEntry: any) => {
+    const orders = Array.isArray(shippingEntry?.orders) ? shippingEntry.orders : [];
+    const deliveredOrders = orders.filter((order: any) => DELIVERED_ORDER_STATUSES.has(String(order?.status || "")));
+
+    const autoReceivable = deliveredOrders.reduce((sum: number, order: any) => sum + getOrderAmountToCollect(order), 0);
+    const autoPayable = deliveredOrders.reduce((sum: number, order: any) => sum + getOrderTotalShippingExpenses(order), 0);
+    const manualReceivable = Number(shippingEntry?.manualReceivable || 0);
+    const manualPayable = Number(shippingEntry?.manualPayable || 0);
+
+    return {
+        deliveredCount: deliveredOrders.length,
+        autoReceivable,
+        autoPayable,
+        manualReceivable,
+        manualPayable,
+        receivable: autoReceivable + manualReceivable,
+        payable: autoPayable + manualPayable,
+        net: (autoReceivable + manualReceivable) - (autoPayable + manualPayable),
+    };
+};
 export default function ShippingPage() {
     const [isOpen, setIsOpen] = React.useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
@@ -57,6 +84,10 @@ export default function ShippingPage() {
         );
     }, [selectedShippingOrders]);
 
+    const selectedShippingSettlement = React.useMemo(() => {
+        return selectedShipping ? getShippingSettlement(selectedShipping) : null;
+    }, [selectedShipping]);
+
 
     const getData = async () => {
         try {
@@ -88,7 +119,9 @@ export default function ShippingPage() {
         setEditId(data.id);
         setFormData({
             name: data.name,
-            price: data.price
+            price: data.price,
+            manualReceivable: Number(data.manualReceivable || 0),
+            manualPayable: Number(data.manualPayable || 0)
         });
         setIsOpen(true);
     }
@@ -146,7 +179,7 @@ export default function ShippingPage() {
                     {
                         user && hasPermission(user, "addCategories") && (
                             <Button
-                                onClick={() => { setEditId(null); setFormData(null); setIsOpen(true); }}
+                                onClick={() => { setEditId(null); setFormData({ manualReceivable: 0, manualPayable: 0 }); setIsOpen(true); }}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6"
                             >
                                 إضافة شركة شحن جديدة
@@ -157,7 +190,9 @@ export default function ShippingPage() {
 
                 <AnimatePresence>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {shipping.map((e: any) => (
+                        {shipping.map((e: any) => {
+                            const settlement = getShippingSettlement(e);
+                            return (
                             <motion.div
                                 key={e.id}
                                 initial={{ opacity: 0, y: 10 }}
@@ -182,6 +217,14 @@ export default function ShippingPage() {
                                         <p className="text-xs text-slate-400 mt-2">
                                             عدد الطلبات المرتبطة: {Array.isArray(e.orders) ? e.orders.length : 0}
                                         </p>
+                                        <div className="mt-3 space-y-1 border-t border-slate-100 pt-2 dark:border-slate-800">
+                                            <p className="text-xs text-slate-500">
+                                                مستحق لنا من الشركة: <span className="font-bold text-emerald-600">{settlement.receivable.toLocaleString()}</span>
+                                            </p>
+                                            <p className="text-xs text-slate-500">
+                                                مستحق للشركة علينا: <span className="font-bold text-amber-600">{settlement.payable.toLocaleString()}</span>
+                                            </p>
+                                        </div>
                                     </div>
 
                                     <div className="flex gap-2">
@@ -204,7 +247,8 @@ export default function ShippingPage() {
                                     </div>
                                 </div>
                             </motion.div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </AnimatePresence>
                 <AppModal
@@ -235,6 +279,22 @@ export default function ShippingPage() {
                                         step="0.01"
                                         {...register("price", { valueAsNumber: true })}
                                         error={errors.price?.message as string}
+                                    />
+                                    <FormInput
+                                        className='text-gray-800 dark:text-white'
+                                        label="مبلغ مستحق لنا من الشركة (يدوي)"
+                                        type="number"
+                                        step="0.01"
+                                        {...register("manualReceivable", { valueAsNumber: true })}
+                                        error={errors.manualReceivable?.message as string}
+                                    />
+                                    <FormInput
+                                        className='text-gray-800 dark:text-white'
+                                        label="مبلغ مستحق للشركة علينا (يدوي)"
+                                        type="number"
+                                        step="0.01"
+                                        {...register("manualPayable", { valueAsNumber: true })}
+                                        error={errors.manualPayable?.message as string}
                                     />
                                 </div>
                             )}
@@ -282,6 +342,40 @@ export default function ShippingPage() {
                                         <div className="mt-1 text-lg font-black text-violet-600">{selectedShippingTotals.totalNetAmount.toLocaleString()}</div>
                                     </div>
                                 </div>
+
+                                {selectedShippingSettlement && (
+                                    <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+                                        <div className="mb-3 font-black text-slate-800 dark:text-white">
+                                            المستحقات مع شركة الشحن
+                                            <span className="mr-2 text-xs font-normal text-slate-500">(محسوبة من الطلبات المسلَّمة: {selectedShippingSettlement.deliveredCount.toLocaleString()} طلب + المبالغ اليدوية)</span>
+                                        </div>
+                                        <div className="grid gap-3 sm:grid-cols-3">
+                                            <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-900/50 dark:bg-emerald-950/20">
+                                                <div className="text-xs text-slate-500">ما نريده من الشركة (مستحق لنا)</div>
+                                                <div className="mt-1 text-lg font-black text-emerald-600">{selectedShippingSettlement.receivable.toLocaleString()}</div>
+                                                <div className="mt-1 text-[11px] text-slate-400">
+                                                    من الطلبات: {selectedShippingSettlement.autoReceivable.toLocaleString()} + يدوي: {selectedShippingSettlement.manualReceivable.toLocaleString()}
+                                                </div>
+                                            </div>
+                                            <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-900/50 dark:bg-amber-950/20">
+                                                <div className="text-xs text-slate-500">ما تريده الشركة منا (مستحق علينا)</div>
+                                                <div className="mt-1 text-lg font-black text-amber-600">{selectedShippingSettlement.payable.toLocaleString()}</div>
+                                                <div className="mt-1 text-[11px] text-slate-400">
+                                                    من الطلبات: {selectedShippingSettlement.autoPayable.toLocaleString()} + يدوي: {selectedShippingSettlement.manualPayable.toLocaleString()}
+                                                </div>
+                                            </div>
+                                            <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 dark:border-blue-900/50 dark:bg-blue-950/20">
+                                                <div className="text-xs text-slate-500">صافي الرصيد</div>
+                                                <div className={`mt-1 text-lg font-black ${selectedShippingSettlement.net >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                                                    {selectedShippingSettlement.net.toLocaleString()}
+                                                </div>
+                                                <div className="mt-1 text-[11px] text-slate-400">
+                                                    {selectedShippingSettlement.net >= 0 ? "الرصيد لصالحنا" : "الرصيد لصالح الشركة"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
                                     <div className="mb-3 font-black text-slate-800 dark:text-white">ملخص الحالات</div>
