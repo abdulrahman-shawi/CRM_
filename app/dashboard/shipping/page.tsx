@@ -3,6 +3,7 @@ import { DynamicForm } from "@/components/shared/dynamic-form";
 import { AppModal } from "@/components/ui/app-modal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { formatSiteCurrency, useSiteCurrency } from "@/lib/currency";
 import { hasPermission } from "@/lib/utils";
 import { getOrderAmountToCollect, getOrderCurrencySymbol, getOrderDisplayDate, getOrderNetAmountAfterShipping, getOrderTotalShippingExpenses } from "@/orders/orderHelpers";
 import { createshipping, deletshipping, getshippingWithOrders, updateshipping } from "@/server/shipping";
@@ -52,6 +53,7 @@ export default function ShippingPage() {
     const [shipping, setshipping] = React.useState<any[]>([]);
     const [selectedShipping, setSelectedShipping] = React.useState<any>(null);
     const { user } = useAuth()
+    const { settings: currencySettings } = useSiteCurrency();
 
     const selectedShippingOrders = React.useMemo(() => {
         return Array.isArray(selectedShipping?.orders) ? selectedShipping.orders : [];
@@ -219,10 +221,10 @@ export default function ShippingPage() {
                                         </p>
                                         <div className="mt-3 space-y-1 border-t border-slate-100 pt-2 dark:border-slate-800">
                                             <p className="text-xs text-slate-500">
-                                                مستحق لنا من الشركة: <span className="font-bold text-emerald-600">{settlement.receivable.toLocaleString()}</span>
+                                                مستحق لنا من الشركة: <span className="font-bold text-emerald-600">{formatSiteCurrency(settlement.receivable, currencySettings)}</span>
                                             </p>
                                             <p className="text-xs text-slate-500">
-                                                مستحق للشركة علينا: <span className="font-bold text-amber-600">{settlement.payable.toLocaleString()}</span>
+                                                مستحق للشركة علينا: <span className="font-bold text-amber-600">{formatSiteCurrency(settlement.payable, currencySettings)}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -352,22 +354,22 @@ export default function ShippingPage() {
                                         <div className="grid gap-3 sm:grid-cols-3">
                                             <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-900/50 dark:bg-emerald-950/20">
                                                 <div className="text-xs text-slate-500">ما نريده من الشركة (مستحق لنا)</div>
-                                                <div className="mt-1 text-lg font-black text-emerald-600">{selectedShippingSettlement.receivable.toLocaleString()}</div>
+                                                <div className="mt-1 text-lg font-black text-emerald-600">{formatSiteCurrency(selectedShippingSettlement.receivable, currencySettings)}</div>
                                                 <div className="mt-1 text-[11px] text-slate-400">
-                                                    من الطلبات: {selectedShippingSettlement.autoReceivable.toLocaleString()} + يدوي: {selectedShippingSettlement.manualReceivable.toLocaleString()}
+                                                    من الطلبات: {formatSiteCurrency(selectedShippingSettlement.autoReceivable, currencySettings)} + يدوي: {formatSiteCurrency(selectedShippingSettlement.manualReceivable, currencySettings)}
                                                 </div>
                                             </div>
                                             <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-900/50 dark:bg-amber-950/20">
                                                 <div className="text-xs text-slate-500">ما تريده الشركة منا (مستحق علينا)</div>
-                                                <div className="mt-1 text-lg font-black text-amber-600">{selectedShippingSettlement.payable.toLocaleString()}</div>
+                                                <div className="mt-1 text-lg font-black text-amber-600">{formatSiteCurrency(selectedShippingSettlement.payable, currencySettings)}</div>
                                                 <div className="mt-1 text-[11px] text-slate-400">
-                                                    من الطلبات: {selectedShippingSettlement.autoPayable.toLocaleString()} + يدوي: {selectedShippingSettlement.manualPayable.toLocaleString()}
+                                                    من الطلبات: {formatSiteCurrency(selectedShippingSettlement.autoPayable, currencySettings)} + يدوي: {formatSiteCurrency(selectedShippingSettlement.manualPayable, currencySettings)}
                                                 </div>
                                             </div>
                                             <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 dark:border-blue-900/50 dark:bg-blue-950/20">
                                                 <div className="text-xs text-slate-500">صافي الرصيد</div>
                                                 <div className={`mt-1 text-lg font-black ${selectedShippingSettlement.net >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                                                    {selectedShippingSettlement.net.toLocaleString()}
+                                                    {formatSiteCurrency(selectedShippingSettlement.net, currencySettings)}
                                                 </div>
                                                 <div className="mt-1 text-[11px] text-slate-400">
                                                     {selectedShippingSettlement.net >= 0 ? "الرصيد لصالحنا" : "الرصيد لصالح الشركة"}
