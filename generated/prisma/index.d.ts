@@ -46733,6 +46733,8 @@ export namespace Prisma {
   export type GeneralSettingMinAggregateOutputType = {
     id: number | null
     siteName: string | null
+    siteTitle: string | null
+    siteDescription: string | null
     companyEmail: string | null
     companyPhone: string | null
     siteCurrency: string | null
@@ -46760,6 +46762,8 @@ export namespace Prisma {
   export type GeneralSettingMaxAggregateOutputType = {
     id: number | null
     siteName: string | null
+    siteTitle: string | null
+    siteDescription: string | null
     companyEmail: string | null
     companyPhone: string | null
     siteCurrency: string | null
@@ -46787,6 +46791,8 @@ export namespace Prisma {
   export type GeneralSettingCountAggregateOutputType = {
     id: number
     siteName: number
+    siteTitle: number
+    siteDescription: number
     companyEmail: number
     companyPhone: number
     siteCurrency: number
@@ -46834,6 +46840,8 @@ export namespace Prisma {
   export type GeneralSettingMinAggregateInputType = {
     id?: true
     siteName?: true
+    siteTitle?: true
+    siteDescription?: true
     companyEmail?: true
     companyPhone?: true
     siteCurrency?: true
@@ -46861,6 +46869,8 @@ export namespace Prisma {
   export type GeneralSettingMaxAggregateInputType = {
     id?: true
     siteName?: true
+    siteTitle?: true
+    siteDescription?: true
     companyEmail?: true
     companyPhone?: true
     siteCurrency?: true
@@ -46888,6 +46898,8 @@ export namespace Prisma {
   export type GeneralSettingCountAggregateInputType = {
     id?: true
     siteName?: true
+    siteTitle?: true
+    siteDescription?: true
     companyEmail?: true
     companyPhone?: true
     siteCurrency?: true
@@ -47002,6 +47014,8 @@ export namespace Prisma {
   export type GeneralSettingGroupByOutputType = {
     id: number
     siteName: string | null
+    siteTitle: string | null
+    siteDescription: string | null
     companyEmail: string | null
     companyPhone: string | null
     siteCurrency: string | null
@@ -47048,6 +47062,8 @@ export namespace Prisma {
   export type GeneralSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     siteName?: boolean
+    siteTitle?: boolean
+    siteDescription?: boolean
     companyEmail?: boolean
     companyPhone?: boolean
     siteCurrency?: boolean
@@ -47075,6 +47091,8 @@ export namespace Prisma {
   export type GeneralSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     siteName?: boolean
+    siteTitle?: boolean
+    siteDescription?: boolean
     companyEmail?: boolean
     companyPhone?: boolean
     siteCurrency?: boolean
@@ -47102,6 +47120,8 @@ export namespace Prisma {
   export type GeneralSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     siteName?: boolean
+    siteTitle?: boolean
+    siteDescription?: boolean
     companyEmail?: boolean
     companyPhone?: boolean
     siteCurrency?: boolean
@@ -47129,6 +47149,8 @@ export namespace Prisma {
   export type GeneralSettingSelectScalar = {
     id?: boolean
     siteName?: boolean
+    siteTitle?: boolean
+    siteDescription?: boolean
     companyEmail?: boolean
     companyPhone?: boolean
     siteCurrency?: boolean
@@ -47153,7 +47175,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "whatsappCloudApiToken" | "whatsappPhoneNumberId" | "whatsappApiVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
+  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTitle" | "siteDescription" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "whatsappCloudApiToken" | "whatsappPhoneNumberId" | "whatsappApiVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
 
   export type $GeneralSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GeneralSetting"
@@ -47161,6 +47183,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       siteName: string | null
+      siteTitle: string | null
+      siteDescription: string | null
       companyEmail: string | null
       companyPhone: string | null
       siteCurrency: string | null
@@ -47608,6 +47632,8 @@ export namespace Prisma {
   interface GeneralSettingFieldRefs {
     readonly id: FieldRef<"GeneralSetting", 'Int'>
     readonly siteName: FieldRef<"GeneralSetting", 'String'>
+    readonly siteTitle: FieldRef<"GeneralSetting", 'String'>
+    readonly siteDescription: FieldRef<"GeneralSetting", 'String'>
     readonly companyEmail: FieldRef<"GeneralSetting", 'String'>
     readonly companyPhone: FieldRef<"GeneralSetting", 'String'>
     readonly siteCurrency: FieldRef<"GeneralSetting", 'String'>
@@ -68623,6 +68649,8 @@ export namespace Prisma {
   export const GeneralSettingScalarFieldEnum: {
     id: 'id',
     siteName: 'siteName',
+    siteTitle: 'siteTitle',
+    siteDescription: 'siteDescription',
     companyEmail: 'companyEmail',
     companyPhone: 'companyPhone',
     siteCurrency: 'siteCurrency',
@@ -72796,6 +72824,8 @@ export namespace Prisma {
     NOT?: GeneralSettingWhereInput | GeneralSettingWhereInput[]
     id?: IntFilter<"GeneralSetting"> | number
     siteName?: StringNullableFilter<"GeneralSetting"> | string | null
+    siteTitle?: StringNullableFilter<"GeneralSetting"> | string | null
+    siteDescription?: StringNullableFilter<"GeneralSetting"> | string | null
     companyEmail?: StringNullableFilter<"GeneralSetting"> | string | null
     companyPhone?: StringNullableFilter<"GeneralSetting"> | string | null
     siteCurrency?: StringNullableFilter<"GeneralSetting"> | string | null
@@ -72823,6 +72853,8 @@ export namespace Prisma {
   export type GeneralSettingOrderByWithRelationInput = {
     id?: SortOrder
     siteName?: SortOrderInput | SortOrder
+    siteTitle?: SortOrderInput | SortOrder
+    siteDescription?: SortOrderInput | SortOrder
     companyEmail?: SortOrderInput | SortOrder
     companyPhone?: SortOrderInput | SortOrder
     siteCurrency?: SortOrderInput | SortOrder
@@ -72853,6 +72885,8 @@ export namespace Prisma {
     OR?: GeneralSettingWhereInput[]
     NOT?: GeneralSettingWhereInput | GeneralSettingWhereInput[]
     siteName?: StringNullableFilter<"GeneralSetting"> | string | null
+    siteTitle?: StringNullableFilter<"GeneralSetting"> | string | null
+    siteDescription?: StringNullableFilter<"GeneralSetting"> | string | null
     companyEmail?: StringNullableFilter<"GeneralSetting"> | string | null
     companyPhone?: StringNullableFilter<"GeneralSetting"> | string | null
     siteCurrency?: StringNullableFilter<"GeneralSetting"> | string | null
@@ -72880,6 +72914,8 @@ export namespace Prisma {
   export type GeneralSettingOrderByWithAggregationInput = {
     id?: SortOrder
     siteName?: SortOrderInput | SortOrder
+    siteTitle?: SortOrderInput | SortOrder
+    siteDescription?: SortOrderInput | SortOrder
     companyEmail?: SortOrderInput | SortOrder
     companyPhone?: SortOrderInput | SortOrder
     siteCurrency?: SortOrderInput | SortOrder
@@ -72915,6 +72951,8 @@ export namespace Prisma {
     NOT?: GeneralSettingScalarWhereWithAggregatesInput | GeneralSettingScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"GeneralSetting"> | number
     siteName?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    siteTitle?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    siteDescription?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     companyEmail?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     companyPhone?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     siteCurrency?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
@@ -78214,6 +78252,8 @@ export namespace Prisma {
 
   export type GeneralSettingCreateInput = {
     siteName?: string | null
+    siteTitle?: string | null
+    siteDescription?: string | null
     companyEmail?: string | null
     companyPhone?: string | null
     siteCurrency?: string | null
@@ -78241,6 +78281,8 @@ export namespace Prisma {
   export type GeneralSettingUncheckedCreateInput = {
     id?: number
     siteName?: string | null
+    siteTitle?: string | null
+    siteDescription?: string | null
     companyEmail?: string | null
     companyPhone?: string | null
     siteCurrency?: string | null
@@ -78267,6 +78309,8 @@ export namespace Prisma {
 
   export type GeneralSettingUpdateInput = {
     siteName?: NullableStringFieldUpdateOperationsInput | string | null
+    siteTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    siteDescription?: NullableStringFieldUpdateOperationsInput | string | null
     companyEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyPhone?: NullableStringFieldUpdateOperationsInput | string | null
     siteCurrency?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78294,6 +78338,8 @@ export namespace Prisma {
   export type GeneralSettingUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     siteName?: NullableStringFieldUpdateOperationsInput | string | null
+    siteTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    siteDescription?: NullableStringFieldUpdateOperationsInput | string | null
     companyEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyPhone?: NullableStringFieldUpdateOperationsInput | string | null
     siteCurrency?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78321,6 +78367,8 @@ export namespace Prisma {
   export type GeneralSettingCreateManyInput = {
     id?: number
     siteName?: string | null
+    siteTitle?: string | null
+    siteDescription?: string | null
     companyEmail?: string | null
     companyPhone?: string | null
     siteCurrency?: string | null
@@ -78347,6 +78395,8 @@ export namespace Prisma {
 
   export type GeneralSettingUpdateManyMutationInput = {
     siteName?: NullableStringFieldUpdateOperationsInput | string | null
+    siteTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    siteDescription?: NullableStringFieldUpdateOperationsInput | string | null
     companyEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyPhone?: NullableStringFieldUpdateOperationsInput | string | null
     siteCurrency?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78374,6 +78424,8 @@ export namespace Prisma {
   export type GeneralSettingUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     siteName?: NullableStringFieldUpdateOperationsInput | string | null
+    siteTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    siteDescription?: NullableStringFieldUpdateOperationsInput | string | null
     companyEmail?: NullableStringFieldUpdateOperationsInput | string | null
     companyPhone?: NullableStringFieldUpdateOperationsInput | string | null
     siteCurrency?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82923,6 +82975,8 @@ export namespace Prisma {
   export type GeneralSettingCountOrderByAggregateInput = {
     id?: SortOrder
     siteName?: SortOrder
+    siteTitle?: SortOrder
+    siteDescription?: SortOrder
     companyEmail?: SortOrder
     companyPhone?: SortOrder
     siteCurrency?: SortOrder
@@ -82959,6 +83013,8 @@ export namespace Prisma {
   export type GeneralSettingMaxOrderByAggregateInput = {
     id?: SortOrder
     siteName?: SortOrder
+    siteTitle?: SortOrder
+    siteDescription?: SortOrder
     companyEmail?: SortOrder
     companyPhone?: SortOrder
     siteCurrency?: SortOrder
@@ -82986,6 +83042,8 @@ export namespace Prisma {
   export type GeneralSettingMinOrderByAggregateInput = {
     id?: SortOrder
     siteName?: SortOrder
+    siteTitle?: SortOrder
+    siteDescription?: SortOrder
     companyEmail?: SortOrder
     companyPhone?: SortOrder
     siteCurrency?: SortOrder

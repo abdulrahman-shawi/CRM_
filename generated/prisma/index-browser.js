@@ -638,6 +638,8 @@ exports.Prisma.TrakingCompanyScalarFieldEnum = {
 exports.Prisma.GeneralSettingScalarFieldEnum = {
   id: 'id',
   siteName: 'siteName',
+  siteTitle: 'siteTitle',
+  siteDescription: 'siteDescription',
   companyEmail: 'companyEmail',
   companyPhone: 'companyPhone',
   siteCurrency: 'siteCurrency',

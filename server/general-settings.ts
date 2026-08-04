@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache";
 
 type GeneralSettingsInput = {
   siteName?: string;
+  siteTitle?: string;
+  siteDescription?: string;
   companyEmail?: string;
   companyPhone?: string;
   siteCurrency?: string;
@@ -92,6 +94,8 @@ export async function upsertGeneralSettings(formData: FormData) {
     });
 
     const siteName = String(formData.get('siteName') || '').trim() || null;
+    const siteTitle = String(formData.get('siteTitle') || '').trim() || null;
+    const siteDescription = String(formData.get('siteDescription') || '').trim() || null;
     const companyEmail = String(formData.get('companyEmail') || '').trim() || null;
     const companyPhone = String(formData.get('companyPhone') || '').trim() || null;
     const siteCurrency = String(formData.get('siteCurrency') || 'USD').trim() || 'USD';
@@ -126,6 +130,8 @@ export async function upsertGeneralSettings(formData: FormData) {
 
     const data: any = {
       siteName,
+      siteTitle,
+      siteDescription,
       companyEmail,
       companyPhone,
       siteCurrency,
@@ -155,7 +161,8 @@ export async function upsertGeneralSettings(formData: FormData) {
         });
 
     revalidatePath('/dashboard/settings');
-    revalidatePath('/');
+    // تحديث الكاش على مستوى الـ layout حتى تنعكس تغييرات metadata (العنوان/الوصف) فورًا
+    revalidatePath('/', 'layout');
     return { success: true, data: saved };
   } catch (error) {
     console.error("upsertGeneralSettings error:", error);

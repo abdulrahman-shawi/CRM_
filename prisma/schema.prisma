@@ -1094,6 +1094,8 @@ model TrakingCompany {
 model GeneralSetting {
   id              Int      @id @default(autoincrement())
   siteName        String?
+  siteTitle       String?
+  siteDescription String?
   companyEmail    String?
   companyPhone    String?
   siteCurrency    String?  @default("USD")

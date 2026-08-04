@@ -10,6 +10,8 @@ import { Download, RotateCcw, Trash2, Loader2 } from "lucide-react";
 
 type FormState = {
   siteName: string;
+  siteTitle: string;
+  siteDescription: string;
   companyEmail: string;
   companyPhone: string;
   siteCurrency: string;
@@ -31,6 +33,8 @@ type FormState = {
 
 const initialForm: FormState = {
   siteName: "",
+  siteTitle: "",
+  siteDescription: "",
   companyEmail: "",
   companyPhone: "",
   siteCurrency: "USD",
@@ -238,6 +242,8 @@ export default function GeneralSettingsPage() {
     if (data) {
       setForm({
         siteName: data.siteName || "",
+        siteTitle: data.siteTitle || "",
+        siteDescription: data.siteDescription || "",
         companyEmail: data.companyEmail || "",
         companyPhone: data.companyPhone || "",
         siteCurrency: data.siteCurrency || "USD",
@@ -282,6 +288,8 @@ export default function GeneralSettingsPage() {
     try {
       const formData = new FormData();
       formData.append("siteName", form.siteName);
+      formData.append("siteTitle", form.siteTitle);
+      formData.append("siteDescription", form.siteDescription);
       formData.append("companyEmail", form.companyEmail);
       formData.append("companyPhone", form.companyPhone);
       formData.append("siteCurrency", form.siteCurrency);
@@ -472,6 +480,31 @@ export default function GeneralSettingsPage() {
             onChange={(e) => handleChange("siteName", e.target.value)}
             className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
             placeholder="Skynova"
+            disabled={loading}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700 dark:text-slate-200">عنوان الموقع (Metadata Title)</label>
+          <input
+            type="text"
+            value={form.siteTitle}
+            onChange={(e) => handleChange("siteTitle", e.target.value)}
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+            placeholder="SKYNOVA CRM"
+            disabled={loading}
+          />
+          <p className="text-xs text-slate-400">يظهر في تبويب المتصفح ونتائج البحث. إن تُرك فارغًا يُستخدم SKYNOVA CRM.</p>
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-sm font-bold text-slate-700 dark:text-slate-200">وصف الموقع (Metadata Description)</label>
+          <textarea
+            value={form.siteDescription}
+            onChange={(e) => handleChange("siteDescription", e.target.value)}
+            className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+            placeholder="SKYNOVA CRM"
+            rows={2}
             disabled={loading}
           />
         </div>
