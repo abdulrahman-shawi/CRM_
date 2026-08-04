@@ -13,6 +13,7 @@ type CustomersFiltersProps = {
   setCreatedFrom: React.Dispatch<React.SetStateAction<string>>;
   createdTo: string;
   setCreatedTo: React.Dispatch<React.SetStateAction<string>>;
+  statusCounts: Record<string, number>;
 };
 
 const filterTabs = [
@@ -38,6 +39,7 @@ export const CustomersFilters: React.FC<CustomersFiltersProps> = ({
   setCreatedFrom,
   createdTo,
   setCreatedTo,
+  statusCounts,
 }) => {
   return (
     <div className="flex flex-col gap-3">
@@ -65,6 +67,15 @@ export const CustomersFilters: React.FC<CustomersFiltersProps> = ({
                 }`}
             >
               {tab.label}
+              <span
+                className={`mr-1.5 inline-flex min-w-[1.5rem] items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-black ${
+                  dateFilter === tab.id
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                }`}
+              >
+                {statusCounts[tab.id] ?? 0}
+              </span>
             </button>
           ))}
           </div>

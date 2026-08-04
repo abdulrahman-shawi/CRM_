@@ -27,7 +27,7 @@ const getRangeForPreset = (preset: string) => {
   return { start: "", end: "" };
 };
 
-const normalizeStatus = (value: unknown) =>
+export const normalizeStatus = (value: unknown) =>
   String(value ?? "")
     .replace(/[\u064B-\u065F\u0670]/g, "")
     .replace(/\u0640/g, "")

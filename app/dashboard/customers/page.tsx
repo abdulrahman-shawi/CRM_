@@ -20,7 +20,7 @@ import ViewOrderCustomer from "@/components/pages/customers/viewOrder";
 import AssignUserModal from "@/components/pages/customers/assignuser";
 import GetCustomerSingle from "@/components/pages/customers/gitSingleCustomer";
 import OrderCustomer from "@/components/pages/customers/orderCustomer";
-import { useCustomerFilters } from "./hooks/useCustomerFilters";
+import { useCustomerFilters, normalizeStatus } from "./hooks/useCustomerFilters";
 import { useCustomerSelection } from "./hooks/useCustomerSelection";
 import { useCustomerBulkActions } from "./hooks/useCustomerBulkActions";
 import { CustomersHeader } from "./components/CustomersHeader";
@@ -126,6 +126,34 @@ const CustomrLayout: React.FC = () => {
   const customerDetailsRequestRef = React.useRef(0);
 
   const filterCustomer = useCustomerFilters(customers, search, dateFilter, genderFilter, createdPreset, createdFrom, createdTo);
+  // قائمة بكل الحالات (بدون فلتر الحالة) لحساب عدد العملاء بجانب كل تبويب
+  const customersAllStatuses = useCustomerFilters(customers, search, "الكل", genderFilter, createdPreset, createdFrom, createdTo);
+
+  const statusCounts = React.useMemo(() => {
+    const counts: Record<string, number> = Object.fromEntries(
+      STATUS_OPTIONS.map((option) => [option.value, 0])
+    );
+    let total = 0;
+
+    customersAllStatuses.forEach((customer: any) => {
+      if (user && !isAdmin(user)) {
+        const isAssigned = Array.isArray(customer.users) && customer.users.some((u: any) => u.id === user.id);
+        if (!isAssigned) return;
+      }
+
+      total += 1;
+      const matchedStatus = STATUS_OPTIONS.find(
+        (option) => normalizeStatus(option.value) === normalizeStatus(customer?.status)
+      );
+      if (matchedStatus) {
+        counts[matchedStatus.value] += 1;
+      }
+    });
+
+    counts["الكل"] = total;
+    return counts;
+  }, [customersAllStatuses, user]);
+
   const {
     selectedCustomers,
     setSelectedCustomers,
@@ -1243,6 +1271,7 @@ const CustomrLayout: React.FC = () => {
         setCreatedFrom={setCreatedFrom}
         createdTo={createdTo}
         setCreatedTo={setCreatedTo}
+        statusCounts={statusCounts}
       />
       <div className="flex items-center gap-2 mb-4">
         <button
