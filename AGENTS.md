@@ -77,6 +77,7 @@ server/                 # Server Actions (`'use server'`)
   warranty.ts
   move.ts
   general-settings.ts
+  variants.ts             # Colors & Sizes CRUD, product variants (color/size + price)
 
 components/             # React components
   pages/                # Page-specific sections
@@ -161,7 +162,7 @@ npx prisma migrate deploy
 
 Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file is also present for Prisma's new configuration format.
 
-**Important models:** `User`, `Permission`, `Order`, `OrderItem`, `Product`, `ProductStock`, `Warehouse`, `Customer`, `Expense`, `Shipping`, `Warranty`, `Page`, `AffiliateLink`, `Commission`, `WholesaleOrder`, `WholesaleOrderReturn`.
+**Important models:** `User`, `Permission`, `Order`, `OrderItem`, `Product`, `ProductStock`, `Warehouse`, `Customer`, `Expense`, `Shipping`, `Warranty`, `Page`, `AffiliateLink`, `Commission`, `WholesaleOrder`, `WholesaleOrderReturn`, `Color`, `Size`, `ProductVariant`.
 
 ---
 

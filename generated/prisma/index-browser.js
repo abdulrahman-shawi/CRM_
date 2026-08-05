@@ -248,6 +248,25 @@ exports.Prisma.ProductScalarFieldEnum = {
   wholesalePrice: 'wholesalePrice'
 };
 
+exports.Prisma.ColorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  hexCode: 'hexCode'
+};
+
+exports.Prisma.SizeScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.ProductVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  colorId: 'colorId',
+  sizeId: 'sizeId',
+  price: 'price'
+};
+
 exports.Prisma.AdPageVisitScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -1105,6 +1124,9 @@ exports.Prisma.ModelName = {
   Permission: 'Permission',
   Category: 'Category',
   Product: 'Product',
+  Color: 'Color',
+  Size: 'Size',
+  ProductVariant: 'ProductVariant',
   AdPageVisit: 'AdPageVisit',
   ProductLandingPage: 'ProductLandingPage',
   Review: 'Review',

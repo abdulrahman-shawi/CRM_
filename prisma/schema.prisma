@@ -436,6 +436,36 @@ model Product {
   // ─── Phase 1 Relations ───
   returnItems    OrderReturnItem[]
   wholesaleReturnItems WholesaleOrderReturnItem[]
+
+  // ─── Variants (Colors & Sizes) ───
+  variants       ProductVariant[]
+}
+
+model Color {
+  id       Int              @id @default(autoincrement())
+  name     String           @unique
+  hexCode  String?
+  variants ProductVariant[]
+}
+
+model Size {
+  id       Int              @id @default(autoincrement())
+  name     String           @unique
+  variants ProductVariant[]
+}
+
+model ProductVariant {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  colorId   Int?
+  sizeId    Int?
+  price     Float    @default(0)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     Color?   @relation(fields: [colorId], references: [id], onDelete: SetNull)
+  size      Size?    @relation(fields: [sizeId], references: [id], onDelete: SetNull)
+
+  @@unique([productId, colorId, sizeId])
+  @@index([productId])
 }
 
 model AdPageVisit {

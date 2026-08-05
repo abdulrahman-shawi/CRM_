@@ -14,6 +14,7 @@ import { formatSiteCurrency, useSiteCurrency } from '@/lib/currency';
 import { getallcategory } from '@/server/category';
 import { deleteProductFromWarehouse, saveProductWithFiles, updateProductWithFiles } from '@/server/image';
 import { getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
+import { getColors, getSizes, createColor, createSize } from '@/server/variants';
 import { getWarehouse } from '@/server/warehouse';
 import { Barcode } from '@/components/ui/barcode';
 import { BarcodeScannerModal } from '@/components/ui/barcode-scanner';
@@ -23,7 +24,7 @@ import { error } from 'console';
 import { image } from 'framer-motion/client';
 import { FileDown, Mail, Plus, Warehouse, FileText, ScanLine } from 'lucide-react';
 import * as React from 'react';
-import { Controller, useFieldArray } from 'react-hook-form';
+import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import z from 'zod';
 import { ta } from 'zod/v4/locales';
@@ -71,6 +72,22 @@ const productschama = z.object({
             ),
             price: z.coerce.number().min(0, "سعر الشريحة يجب أن يكون صفر أو أكثر"),
         })
+    ).optional().default([]),
+    variants: z.array(
+        z.object({
+            colorId: z.preprocess(
+                (value) => value === '' || value == null ? null : Number(value),
+                z.number().min(1, "يرجى اختيار لون صحيح").nullable().optional()
+            ),
+            sizeId: z.preprocess(
+                (value) => value === '' || value == null ? null : Number(value),
+                z.number().min(1, "يرجى اختيار مقاس صحيح").nullable().optional()
+            ),
+            price: z.coerce.number().min(0, "يرجى إدخال سعر صحيح"),
+        }).refine(
+            (variant) => variant.colorId != null || variant.sizeId != null,
+            { message: "اختر لوناً أو مقاساً على الأقل" }
+        )
     ).optional().default([]),
     isActive: z.boolean().optional().default(true),
     files: z.array(z.any()).optional().default([]), // استخدام any هنا لتسهيل التعامل مع File objects
@@ -357,6 +374,207 @@ const WholesalePricingTiersFields = ({ control, register, errors }: any) => {
     );
 };
 
+const VariantColorSwatch = ({ control, index, colors }: any) => {
+    const colorId = useWatch({ control, name: `variants.${index}.colorId` });
+    const color = colors.find((c: any) => String(c.id) === String(colorId));
+    if (!color?.hexCode) return null;
+    return (
+        <span
+            className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 shrink-0"
+            style={{ backgroundColor: color.hexCode }}
+        />
+    );
+};
+
+const VariantsFields = ({ control, register, errors, colors, sizes, onCreateColor, onCreateSize }: any) => {
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'variants'
+    });
+    const [showColorForm, setShowColorForm] = React.useState(false);
+    const [showSizeForm, setShowSizeForm] = React.useState(false);
+    const [newColorName, setNewColorName] = React.useState('');
+    const [newColorHex, setNewColorHex] = React.useState('#000000');
+    const [newSizeName, setNewSizeName] = React.useState('');
+    const [isSaving, setIsSaving] = React.useState(false);
+
+    const handleCreateColor = async () => {
+        if (!newColorName.trim() || isSaving) return;
+        setIsSaving(true);
+        const created = await onCreateColor(newColorName.trim(), newColorHex);
+        setIsSaving(false);
+        if (created) {
+            setNewColorName('');
+            setNewColorHex('#000000');
+            setShowColorForm(false);
+        }
+    };
+
+    const handleCreateSize = async () => {
+        if (!newSizeName.trim() || isSaving) return;
+        setIsSaving(true);
+        const created = await onCreateSize(newSizeName.trim());
+        setIsSaving(false);
+        if (created) {
+            setNewSizeName('');
+            setShowSizeForm(false);
+        }
+    };
+
+    return (
+        <div className="md:col-span-2 border rounded-lg p-3 border-slate-200 dark:border-slate-800">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <h3 className="font-medium text-slate-800 dark:text-slate-200">الألوان والمقاسات</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">حدد سعراً مختلفاً لكل تركيبة لون/مقاس (اختياري).</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => { setShowColorForm((v: boolean) => !v); setShowSizeForm(false); }}
+                    >
+                        لون جديد
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => { setShowSizeForm((v: boolean) => !v); setShowColorForm(false); }}
+                    >
+                        مقاس جديد
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => append({ colorId: '', sizeId: '', price: 0 })}
+                    >
+                        إضافة متغير
+                    </Button>
+                </div>
+            </div>
+
+            {showColorForm && (
+                <div className="flex flex-wrap items-end gap-2 border border-slate-200 dark:border-slate-800 rounded-md p-2 mb-3 bg-slate-50 dark:bg-slate-900/40">
+                    <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اسم اللون</label>
+                        <input
+                            type="text"
+                            value={newColorName}
+                            onChange={(e) => setNewColorName(e.target.value)}
+                            placeholder="مثال: أحمر"
+                            className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">كود اللون</label>
+                        <input
+                            type="color"
+                            value={newColorHex}
+                            onChange={(e) => setNewColorHex(e.target.value)}
+                            className="h-10 w-14 cursor-pointer rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-1"
+                        />
+                    </div>
+                    <Button type="button" onClick={handleCreateColor} disabled={isSaving || !newColorName.trim()}>
+                        حفظ اللون
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setShowColorForm(false)}>
+                        إلغاء
+                    </Button>
+                </div>
+            )}
+
+            {showSizeForm && (
+                <div className="flex flex-wrap items-end gap-2 border border-slate-200 dark:border-slate-800 rounded-md p-2 mb-3 bg-slate-50 dark:bg-slate-900/40">
+                    <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اسم المقاس</label>
+                        <input
+                            type="text"
+                            value={newSizeName}
+                            onChange={(e) => setNewSizeName(e.target.value)}
+                            placeholder="مثال: XL"
+                            className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        />
+                    </div>
+                    <Button type="button" onClick={handleCreateSize} disabled={isSaving || !newSizeName.trim()}>
+                        حفظ المقاس
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setShowSizeForm(false)}>
+                        إلغاء
+                    </Button>
+                </div>
+            )}
+
+            <div className="grid gap-3">
+                {fields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end border border-slate-200 dark:border-slate-800 rounded-md p-2">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اللون (اختياري)</label>
+                            <div className="flex items-center gap-2">
+                                <VariantColorSwatch control={control} index={index} colors={colors} />
+                                <select
+                                    {...register(`variants.${index}.colorId`)}
+                                    className="h-10 flex-1 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                >
+                                    <option value="">بدون لون</option>
+                                    {colors.map((color: any) => (
+                                        <option key={color.id} value={color.id}>
+                                            {color.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            {errors?.variants?.[index]?.colorId && (
+                                <p className="text-xs text-red-500">{errors.variants[index].colorId.message as string}</p>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">المقاس (اختياري)</label>
+                            <select
+                                {...register(`variants.${index}.sizeId`)}
+                                className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            >
+                                <option value="">بدون مقاس</option>
+                                {sizes.map((size: any) => (
+                                    <option key={size.id} value={size.id}>
+                                        {size.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors?.variants?.[index]?.sizeId && (
+                                <p className="text-xs text-red-500">{errors.variants[index].sizeId.message as string}</p>
+                            )}
+                        </div>
+
+                        <FormInput
+                            className='text-slate-900 dark:text-slate-100'
+                            type="number"
+                            step="0.01"
+                            label="السعر"
+                            {...register(`variants.${index}.price`)}
+                            error={errors?.variants?.[index]?.price?.message as string}
+                        />
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => remove(index)}
+                        >
+                            حذف
+                        </Button>
+                        {errors?.variants?.[index]?.root?.message && (
+                            <p className="text-xs text-red-500 md:col-span-4">{errors.variants[index].root.message as string}</p>
+                        )}
+                    </div>
+                ))}
+                {fields.length === 0 && (
+                    <p className="text-sm text-slate-500 dark:text-slate-400">لا توجد ألوان أو مقاسات مضافة.</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
 
 const ProductLayout = () => {
     const { settings } = useSiteCurrency();
@@ -365,6 +583,8 @@ const ProductLayout = () => {
     const [categories, setCategories] = React.useState<any[]>([]);
     const [products, setProducts] = React.useState<any[]>([]);
     const [warehouses, setWarehouses] = React.useState<any[]>([]);
+    const [colors, setColors] = React.useState<any[]>([]);
+    const [sizes, setSizes] = React.useState<any[]>([]);
     const [tab, setTab] = React.useState<'table' | "grid">('table');
     const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
     const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
@@ -388,8 +608,32 @@ const ProductLayout = () => {
             console.log("Products loaded:", products);
         }).catch(console.error);
         getWarehouse().then(setWarehouses).catch(console.error);
+        getColors().then(setColors).catch(console.error);
+        getSizes().then(setSizes).catch(console.error);
 
     }, []);
+
+    const handleCreateColor = async (name: string, hexCode: string) => {
+        const res = await createColor(name, hexCode);
+        if (res.success) {
+            toast.success("تم إضافة اللون");
+            setColors((prev) => [...prev, res.data].sort((a, b) => String(a.name).localeCompare(String(b.name))));
+            return true;
+        }
+        toast.error(res.error || "فشل في إنشاء اللون");
+        return false;
+    };
+
+    const handleCreateSize = async (name: string) => {
+        const res = await createSize(name);
+        if (res.success) {
+            toast.success("تم إضافة المقاس");
+            setSizes((prev) => [...prev, res.data].sort((a, b) => String(a.name).localeCompare(String(b.name))));
+            return true;
+        }
+        toast.error(res.error || "فشل في إنشاء المقاس");
+        return false;
+    };
 
     const warehouseOptions = React.useMemo(() => {
         return warehouses
@@ -456,6 +700,7 @@ const ProductLayout = () => {
                 formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
                 formData.append('warehouseStocks', JSON.stringify(data.warehouseStocks || []));
                 formData.append('wholesalePricingTiers', JSON.stringify(data.wholesalePricingTiers || []));
+                formData.append('variants', JSON.stringify(data.variants || []));
 
                 const fileManifest = Array.isArray(data.files)
                     ? data.files.map((fileItem: any) => ({
@@ -503,6 +748,7 @@ const ProductLayout = () => {
                 formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
                 formData.append('warehouseStocks', JSON.stringify(data.warehouseStocks || []));
                 formData.append('wholesalePricingTiers', JSON.stringify(data.wholesalePricingTiers || []));
+                formData.append('variants', JSON.stringify(data.variants || []));
 
                 // معالجة الملفات - استخراج الملف الحقيقي rawFile
                 if (data.files && data.files.length > 0) {
@@ -564,6 +810,13 @@ const ProductLayout = () => {
                     minQuantity: Number(tier?.minQuantity ?? 1),
                     maxQuantity: tier?.maxQuantity == null ? '' : Number(tier.maxQuantity),
                     price: Number(tier?.price ?? 0),
+                }))
+                : [],
+            variants: Array.isArray(data.variants)
+                ? data.variants.map((variant: any) => ({
+                    colorId: variant.colorId ?? '',
+                    sizeId: variant.sizeId ?? '',
+                    price: Number(variant.price ?? 0),
                 }))
                 : [],
             isActive: data.isActive ?? true,
@@ -963,6 +1216,31 @@ const ProductLayout = () => {
                             </div>
                         </div>
 
+                        {/* الألوان والمقاسات */}
+                        {Array.isArray(selectedProduct?.variants) && selectedProduct.variants.length > 0 && (
+                            <div className="border rounded-xl p-4 mb-6 dark:border-slate-800">
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">الألوان والمقاسات</h3>
+                                <div className="space-y-2 text-sm">
+                                    {selectedProduct.variants.map((variant: any) => (
+                                        <div key={variant.id} className="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0 dark:border-slate-800">
+                                            <span className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                                {variant.color?.hexCode && (
+                                                    <span
+                                                        className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600"
+                                                        style={{ backgroundColor: variant.color.hexCode }}
+                                                    />
+                                                )}
+                                                {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ') || "متغير"}
+                                            </span>
+                                            <span className="font-medium text-slate-800 dark:text-slate-100">
+                                                {formatSiteCurrency(Number(variant.price || 0), settings)}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Description */}
                         <div className="border-t pt-4 dark:border-slate-800">
                             <h3 className="font-semibold mb-2 text-slate-800 dark:text-slate-100">الوصف:</h3>
@@ -1113,6 +1391,35 @@ const ProductLayout = () => {
                             accessor: (row: any) => Number(row?.__stock?.discount || 0) > 0 ? formatSiteCurrency(Number(row?.__stock?.discount || 0), settings) : "—"
                         },
                         {
+                            header: "الألوان والمقاسات",
+                            accessor: (row: any) => {
+                                const variants = Array.isArray(row?.variants) ? row.variants : [];
+                                if (!variants.length) return "—";
+                                return (
+                                    <div className="flex flex-wrap gap-1 max-w-[240px]">
+                                        {variants.map((variant: any) => (
+                                            <span
+                                                key={variant.id}
+                                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
+                                            >
+                                                {variant.color?.hexCode && (
+                                                    <span
+                                                        className="inline-block w-3 h-3 rounded-full border border-slate-300 dark:border-slate-600"
+                                                        style={{ backgroundColor: variant.color.hexCode }}
+                                                    />
+                                                )}
+                                                <span>
+                                                    {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ')}
+                                                </span>
+                                                <span className="text-slate-400">•</span>
+                                                <span>{formatSiteCurrency(Number(variant.price || 0), settings)}</span>
+                                            </span>
+                                        ))}
+                                    </div>
+                                );
+                            }
+                        },
+                        {
                             header: "المخزون",
                             accessor: (row: any) => Number(row?.__stock?.quantity || 0)
                         },
@@ -1198,7 +1505,7 @@ const ProductLayout = () => {
                     <DynamicForm
                         schema={productschama}
                         onSubmit={onSubmit}
-                        defaultValues={forData || { warehouseStocks: [{ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }], wholesalePricingTiers: [] }}
+                        defaultValues={forData || { warehouseStocks: [{ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }], wholesalePricingTiers: [], variants: [] }}
                         submitLabel={editId ? "تعديل المنتج" : "حفظ المنتج"}
                     >
                         {({ register, control, setValue, watch, formState: { errors } }) => (
@@ -1261,6 +1568,15 @@ const ProductLayout = () => {
                                     control={control}
                                     register={register}
                                     errors={errors}
+                                />
+                                <VariantsFields
+                                    control={control}
+                                    register={register}
+                                    errors={errors}
+                                    colors={colors}
+                                    sizes={sizes}
+                                    onCreateColor={handleCreateColor}
+                                    onCreateSize={handleCreateSize}
                                 />
                                 <div className="col-span-2">
                                     <Controller

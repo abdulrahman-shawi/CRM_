@@ -79,6 +79,12 @@ export async function getProduct() {
                 },
             },
             landingPage: true,
+            variants: {
+                include: {
+                    color: true,
+                    size: true,
+                },
+            },
             wholesalePricingTiers: {
                 orderBy: { minQuantity: 'asc' },
             },

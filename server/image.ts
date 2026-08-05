@@ -101,6 +101,49 @@ function parseWholesalePricingTiers(formData: FormData) {
     }
 }
 
+function parseVariants(formData: FormData) {
+    const raw = formData.get('variants') as string | null;
+    if (!raw) {
+        return { variants: [], error: null };
+    }
+
+    try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+            return { variants: [], error: "تنسيق بيانات المتغيرات غير صالح" };
+        }
+
+        const variants = parsed
+            .map((item: any) => {
+                const colorIdRaw = item?.colorId;
+                const sizeIdRaw = item?.sizeId;
+                const colorId = colorIdRaw === '' || colorIdRaw == null ? null : Number(colorIdRaw);
+                const sizeId = sizeIdRaw === '' || sizeIdRaw == null ? null : Number(sizeIdRaw);
+                const price = Number(item?.price ?? 0);
+                return { colorId, sizeId, price };
+            })
+            .filter((variant: any) => variant.colorId != null || variant.sizeId != null);
+
+        const hasInvalid = variants.some((variant: any) =>
+            (variant.colorId != null && (!Number.isInteger(variant.colorId) || variant.colorId <= 0)) ||
+            (variant.sizeId != null && (!Number.isInteger(variant.sizeId) || variant.sizeId <= 0)) ||
+            Number.isNaN(variant.price) || variant.price < 0
+        );
+        if (hasInvalid) {
+            return { variants: [], error: "تحقق من بيانات الألوان والمقاسات والأسعار" };
+        }
+
+        const keys = variants.map((variant: any) => `${variant.colorId ?? 'none'}-${variant.sizeId ?? 'none'}`);
+        if (new Set(keys).size !== keys.length) {
+            return { variants: [], error: "لا يمكن تكرار نفس تركيبة اللون والمقاس أكثر من مرة" };
+        }
+
+        return { variants, error: null };
+    } catch {
+        return { variants: [], error: "تنسيق بيانات المتغيرات غير صالح" };
+    }
+}
+
 export async function uploadUserAvatar(file: File) {
     const fileName = `users/${Date.now()}-${sanitizeFileName(file.name)}`;
     
@@ -156,6 +199,11 @@ export async function saveProductWithFiles(formData: FormData) {
         const { tiers: wholesalePricingTiers, error: tiersError } = parseWholesalePricingTiers(formData);
         if (tiersError) {
             return { success: false, error: tiersError };
+        }
+
+        const { variants, error: variantsError } = parseVariants(formData);
+        if (variantsError) {
+            return { success: false, error: variantsError };
         }
 
         if (!warehouseStocks.length) {
@@ -257,6 +305,13 @@ export async function saveProductWithFiles(formData: FormData) {
                         price: tier.price,
                     })),
                 },
+                variants: {
+                    create: variants.map((variant) => ({
+                        colorId: variant.colorId,
+                        sizeId: variant.sizeId,
+                        price: variant.price,
+                    })),
+                },
                 images: {
                     create: fileDataArray.map(file => ({
                         url: file.url,
@@ -320,6 +375,11 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
         const { tiers: wholesalePricingTiers, error: tiersError } = parseWholesalePricingTiers(formData);
         if (tiersError) {
             return { success: false, error: tiersError };
+        }
+
+        const { variants, error: variantsError } = parseVariants(formData);
+        if (variantsError) {
+            return { success: false, error: variantsError };
         }
 
         if (!warehouseStocks.length) {
@@ -484,6 +544,14 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
                         minQuantity: tier.minQuantity,
                         maxQuantity: tier.maxQuantity,
                         price: tier.price,
+                    })),
+                },
+                variants: {
+                    deleteMany: {},
+                    create: variants.map((variant) => ({
+                        colorId: variant.colorId,
+                        sizeId: variant.sizeId,
+                        price: variant.price,
                     })),
                 },
                 images: {
