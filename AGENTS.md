@@ -216,6 +216,9 @@ Orders affect stock in real time via `applyOrderStockChange` in `server/order.ts
 - Cancelled/returned statuses **restore** stock.
 - Warehouses are linked to dynamically managed `Country`/`City` records; stock lookups fall back by warehouse location name when `warehouseId` is absent.
 
+### Product Variants (Colors & Sizes)
+`Color` / `Size` / `ProductVariant` (`server/variants.ts`) hold per-product color/size combos, each with its own price, managed from `/dashboard/products` (`VariantsFields` in the product form). Order forms on `/dashboard/customers` (`components/pages/customers/orderCustomer.tsx`) and `/dashboard/wholesale-customers` (`orders/WholesaleOrderCustomer.tsx`) let the user pick a variant per item and choose a pricing mode: `sum` (product price + variant price), `product` (product price only), or `variant` (variant price only). The resulting unit price is snapshotted on `OrderItem.price` / `WholesaleOrderItem.price`, and the optional `variantId` FK links the item to the variant. Stock stays tracked per product+warehouse, **not** per variant.
+
 ### Warranty
 Warranty records (`server/warranty.ts`) now require a **warehouse** and **quantity** for every type:
 - Creating a warranty decrements stock from the selected warehouse and logs a `StockMovement` of type `OUT`.

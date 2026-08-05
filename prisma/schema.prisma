@@ -464,6 +464,9 @@ model ProductVariant {
   color     Color?   @relation(fields: [colorId], references: [id], onDelete: SetNull)
   size      Size?    @relation(fields: [sizeId], references: [id], onDelete: SetNull)
 
+  orderItems          OrderItem[]
+  wholesaleOrderItems WholesaleOrderItem[]
+
   @@unique([productId, colorId, sizeId])
   @@index([productId])
 }
@@ -876,9 +879,11 @@ model WholesaleOrderItem {
   discount  Float   @default(0)
   orderId   Int
   productId Int
+  variantId Int?
 
   order   WholesaleOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   returnItems WholesaleOrderReturnItem[]
 
@@ -1084,6 +1089,7 @@ model OrderItem {
   discount  Float
   orderId   Int
   productId Int
+  variantId Int?
 
   // ─── NEW: E-commerce Affiliate tracking ───
   affiliateLinkId String?
@@ -1091,6 +1097,7 @@ model OrderItem {
   // ─── Existing Relations ───
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   // ─── NEW: E-commerce Affiliate Relation ───
   affiliateLink AffiliateLink? @relation(fields: [affiliateLinkId], references: [id], onDelete: SetNull)

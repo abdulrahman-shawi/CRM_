@@ -796,6 +796,27 @@ export async function getProductCatalog() {
                     },
                 },
             },
+            variants: {
+                select: {
+                    id: true,
+                    price: true,
+                    colorId: true,
+                    sizeId: true,
+                    color: {
+                        select: {
+                            id: true,
+                            name: true,
+                            hexCode: true,
+                        },
+                    },
+                    size: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+            },
         },
     });
 

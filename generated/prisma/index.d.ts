@@ -6384,6 +6384,46 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ProductVariantCountOutputType
+   */
+
+  export type ProductVariantCountOutputType = {
+    orderItems: number
+    wholesaleOrderItems: number
+  }
+
+  export type ProductVariantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    orderItems?: boolean | ProductVariantCountOutputTypeCountOrderItemsArgs
+    wholesaleOrderItems?: boolean | ProductVariantCountOutputTypeCountWholesaleOrderItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductVariantCountOutputType without action
+   */
+  export type ProductVariantCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVariantCountOutputType
+     */
+    select?: ProductVariantCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductVariantCountOutputType without action
+   */
+  export type ProductVariantCountOutputTypeCountOrderItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
+  }
+
+  /**
+   * ProductVariantCountOutputType without action
+   */
+  export type ProductVariantCountOutputTypeCountWholesaleOrderItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WholesaleOrderItemWhereInput
+  }
+
+
+  /**
    * Count Type CountryCountOutputType
    */
 
@@ -16173,6 +16213,9 @@ export namespace Prisma {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     color?: boolean | ProductVariant$colorArgs<ExtArgs>
     size?: boolean | ProductVariant$sizeArgs<ExtArgs>
+    orderItems?: boolean | ProductVariant$orderItemsArgs<ExtArgs>
+    wholesaleOrderItems?: boolean | ProductVariant$wholesaleOrderItemsArgs<ExtArgs>
+    _count?: boolean | ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productVariant"]>
 
   export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -16210,6 +16253,9 @@ export namespace Prisma {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     color?: boolean | ProductVariant$colorArgs<ExtArgs>
     size?: boolean | ProductVariant$sizeArgs<ExtArgs>
+    orderItems?: boolean | ProductVariant$orderItemsArgs<ExtArgs>
+    wholesaleOrderItems?: boolean | ProductVariant$wholesaleOrderItemsArgs<ExtArgs>
+    _count?: boolean | ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -16228,6 +16274,8 @@ export namespace Prisma {
       product: Prisma.$ProductPayload<ExtArgs>
       color: Prisma.$ColorPayload<ExtArgs> | null
       size: Prisma.$SizePayload<ExtArgs> | null
+      orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
+      wholesaleOrderItems: Prisma.$WholesaleOrderItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -16632,6 +16680,8 @@ export namespace Prisma {
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     color<T extends ProductVariant$colorArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$colorArgs<ExtArgs>>): Prisma__ColorClient<$Result.GetResult<Prisma.$ColorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     size<T extends ProductVariant$sizeArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$sizeArgs<ExtArgs>>): Prisma__SizeClient<$Result.GetResult<Prisma.$SizePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    orderItems<T extends ProductVariant$orderItemsArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    wholesaleOrderItems<T extends ProductVariant$wholesaleOrderItemsArgs<ExtArgs> = {}>(args?: Subset<T, ProductVariant$wholesaleOrderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17097,6 +17147,54 @@ export namespace Prisma {
      */
     include?: SizeInclude<ExtArgs> | null
     where?: SizeWhereInput
+  }
+
+  /**
+   * ProductVariant.orderItems
+   */
+  export type ProductVariant$orderItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    cursor?: OrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * ProductVariant.wholesaleOrderItems
+   */
+  export type ProductVariant$wholesaleOrderItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WholesaleOrderItem
+     */
+    select?: WholesaleOrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WholesaleOrderItem
+     */
+    omit?: WholesaleOrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WholesaleOrderItemInclude<ExtArgs> | null
+    where?: WholesaleOrderItemWhereInput
+    orderBy?: WholesaleOrderItemOrderByWithRelationInput | WholesaleOrderItemOrderByWithRelationInput[]
+    cursor?: WholesaleOrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WholesaleOrderItemScalarFieldEnum | WholesaleOrderItemScalarFieldEnum[]
   }
 
   /**
@@ -38037,6 +38135,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type WholesaleOrderItemSumAggregateOutputType = {
@@ -38046,6 +38145,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type WholesaleOrderItemMinAggregateOutputType = {
@@ -38055,6 +38155,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type WholesaleOrderItemMaxAggregateOutputType = {
@@ -38064,6 +38165,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type WholesaleOrderItemCountAggregateOutputType = {
@@ -38073,6 +38175,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId: number
     _all: number
   }
 
@@ -38084,6 +38187,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type WholesaleOrderItemSumAggregateInputType = {
@@ -38093,6 +38197,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type WholesaleOrderItemMinAggregateInputType = {
@@ -38102,6 +38207,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type WholesaleOrderItemMaxAggregateInputType = {
@@ -38111,6 +38217,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type WholesaleOrderItemCountAggregateInputType = {
@@ -38120,6 +38227,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
     _all?: true
   }
 
@@ -38216,6 +38324,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId: number | null
     _count: WholesaleOrderItemCountAggregateOutputType | null
     _avg: WholesaleOrderItemAvgAggregateOutputType | null
     _sum: WholesaleOrderItemSumAggregateOutputType | null
@@ -38244,8 +38353,10 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
     returnItems?: boolean | WholesaleOrderItem$returnItemsArgs<ExtArgs>
     _count?: boolean | WholesaleOrderItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wholesaleOrderItem"]>
@@ -38257,8 +38368,10 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["wholesaleOrderItem"]>
 
   export type WholesaleOrderItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -38268,8 +38381,10 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["wholesaleOrderItem"]>
 
   export type WholesaleOrderItemSelectScalar = {
@@ -38279,22 +38394,26 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
   }
 
-  export type WholesaleOrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "discount" | "orderId" | "productId", ExtArgs["result"]["wholesaleOrderItem"]>
+  export type WholesaleOrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "discount" | "orderId" | "productId" | "variantId", ExtArgs["result"]["wholesaleOrderItem"]>
   export type WholesaleOrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
     returnItems?: boolean | WholesaleOrderItem$returnItemsArgs<ExtArgs>
     _count?: boolean | WholesaleOrderItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WholesaleOrderItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
   }
   export type WholesaleOrderItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | WholesaleOrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | WholesaleOrderItem$variantArgs<ExtArgs>
   }
 
   export type $WholesaleOrderItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -38302,6 +38421,7 @@ export namespace Prisma {
     objects: {
       order: Prisma.$WholesaleOrderPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      variant: Prisma.$ProductVariantPayload<ExtArgs> | null
       returnItems: Prisma.$WholesaleOrderReturnItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -38311,6 +38431,7 @@ export namespace Prisma {
       discount: number
       orderId: number
       productId: number
+      variantId: number | null
     }, ExtArgs["result"]["wholesaleOrderItem"]>
     composites: {}
   }
@@ -38707,6 +38828,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     order<T extends WholesaleOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleOrderDefaultArgs<ExtArgs>>): Prisma__WholesaleOrderClient<$Result.GetResult<Prisma.$WholesaleOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    variant<T extends WholesaleOrderItem$variantArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleOrderItem$variantArgs<ExtArgs>>): Prisma__ProductVariantClient<$Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     returnItems<T extends WholesaleOrderItem$returnItemsArgs<ExtArgs> = {}>(args?: Subset<T, WholesaleOrderItem$returnItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WholesaleOrderReturnItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -38743,6 +38865,7 @@ export namespace Prisma {
     readonly discount: FieldRef<"WholesaleOrderItem", 'Float'>
     readonly orderId: FieldRef<"WholesaleOrderItem", 'Int'>
     readonly productId: FieldRef<"WholesaleOrderItem", 'Int'>
+    readonly variantId: FieldRef<"WholesaleOrderItem", 'Int'>
   }
     
 
@@ -39136,6 +39259,25 @@ export namespace Prisma {
      * Limit how many WholesaleOrderItems to delete.
      */
     limit?: number
+  }
+
+  /**
+   * WholesaleOrderItem.variant
+   */
+  export type WholesaleOrderItem$variantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVariant
+     */
+    select?: ProductVariantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVariant
+     */
+    omit?: ProductVariantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVariantInclude<ExtArgs> | null
+    where?: ProductVariantWhereInput
   }
 
   /**
@@ -48138,6 +48280,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type OrderItemSumAggregateOutputType = {
@@ -48147,6 +48290,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
   }
 
   export type OrderItemMinAggregateOutputType = {
@@ -48156,6 +48300,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
     affiliateLinkId: string | null
   }
 
@@ -48166,6 +48311,7 @@ export namespace Prisma {
     discount: number | null
     orderId: number | null
     productId: number | null
+    variantId: number | null
     affiliateLinkId: string | null
   }
 
@@ -48176,6 +48322,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId: number
     affiliateLinkId: number
     _all: number
   }
@@ -48188,6 +48335,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type OrderItemSumAggregateInputType = {
@@ -48197,6 +48345,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
   }
 
   export type OrderItemMinAggregateInputType = {
@@ -48206,6 +48355,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
     affiliateLinkId?: true
   }
 
@@ -48216,6 +48366,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
     affiliateLinkId?: true
   }
 
@@ -48226,6 +48377,7 @@ export namespace Prisma {
     discount?: true
     orderId?: true
     productId?: true
+    variantId?: true
     affiliateLinkId?: true
     _all?: true
   }
@@ -48323,6 +48475,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId: number | null
     affiliateLinkId: string | null
     _count: OrderItemCountAggregateOutputType | null
     _avg: OrderItemAvgAggregateOutputType | null
@@ -48352,9 +48505,11 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     affiliateLinkId?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
     returnItems?: boolean | OrderItem$returnItemsArgs<ExtArgs>
     _count?: boolean | OrderItemCountOutputTypeDefaultArgs<ExtArgs>
@@ -48367,9 +48522,11 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     affiliateLinkId?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
 
@@ -48380,9 +48537,11 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     affiliateLinkId?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
 
@@ -48393,13 +48552,15 @@ export namespace Prisma {
     discount?: boolean
     orderId?: boolean
     productId?: boolean
+    variantId?: boolean
     affiliateLinkId?: boolean
   }
 
-  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "discount" | "orderId" | "productId" | "affiliateLinkId", ExtArgs["result"]["orderItem"]>
+  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "discount" | "orderId" | "productId" | "variantId" | "affiliateLinkId", ExtArgs["result"]["orderItem"]>
   export type OrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
     returnItems?: boolean | OrderItem$returnItemsArgs<ExtArgs>
     _count?: boolean | OrderItemCountOutputTypeDefaultArgs<ExtArgs>
@@ -48407,11 +48568,13 @@ export namespace Prisma {
   export type OrderItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
   }
   export type OrderItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     affiliateLink?: boolean | OrderItem$affiliateLinkArgs<ExtArgs>
   }
 
@@ -48420,6 +48583,7 @@ export namespace Prisma {
     objects: {
       order: Prisma.$OrderPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      variant: Prisma.$ProductVariantPayload<ExtArgs> | null
       affiliateLink: Prisma.$AffiliateLinkPayload<ExtArgs> | null
       returnItems: Prisma.$OrderReturnItemPayload<ExtArgs>[]
     }
@@ -48430,6 +48594,7 @@ export namespace Prisma {
       discount: number
       orderId: number
       productId: number
+      variantId: number | null
       affiliateLinkId: string | null
     }, ExtArgs["result"]["orderItem"]>
     composites: {}
@@ -48827,6 +48992,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    variant<T extends OrderItem$variantArgs<ExtArgs> = {}>(args?: Subset<T, OrderItem$variantArgs<ExtArgs>>): Prisma__ProductVariantClient<$Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     affiliateLink<T extends OrderItem$affiliateLinkArgs<ExtArgs> = {}>(args?: Subset<T, OrderItem$affiliateLinkArgs<ExtArgs>>): Prisma__AffiliateLinkClient<$Result.GetResult<Prisma.$AffiliateLinkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     returnItems<T extends OrderItem$returnItemsArgs<ExtArgs> = {}>(args?: Subset<T, OrderItem$returnItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderReturnItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -48864,6 +49030,7 @@ export namespace Prisma {
     readonly discount: FieldRef<"OrderItem", 'Float'>
     readonly orderId: FieldRef<"OrderItem", 'Int'>
     readonly productId: FieldRef<"OrderItem", 'Int'>
+    readonly variantId: FieldRef<"OrderItem", 'Int'>
     readonly affiliateLinkId: FieldRef<"OrderItem", 'String'>
   }
     
@@ -49258,6 +49425,25 @@ export namespace Prisma {
      * Limit how many OrderItems to delete.
      */
     limit?: number
+  }
+
+  /**
+   * OrderItem.variant
+   */
+  export type OrderItem$variantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVariant
+     */
+    select?: ProductVariantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVariant
+     */
+    omit?: ProductVariantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVariantInclude<ExtArgs> | null
+    where?: ProductVariantWhereInput
   }
 
   /**
@@ -72182,7 +72368,8 @@ export namespace Prisma {
     price: 'price',
     discount: 'discount',
     orderId: 'orderId',
-    productId: 'productId'
+    productId: 'productId',
+    variantId: 'variantId'
   };
 
   export type WholesaleOrderItemScalarFieldEnum = (typeof WholesaleOrderItemScalarFieldEnum)[keyof typeof WholesaleOrderItemScalarFieldEnum]
@@ -72332,6 +72519,7 @@ export namespace Prisma {
     discount: 'discount',
     orderId: 'orderId',
     productId: 'productId',
+    variantId: 'variantId',
     affiliateLinkId: 'affiliateLinkId'
   };
 
@@ -74075,6 +74263,8 @@ export namespace Prisma {
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     color?: XOR<ColorNullableScalarRelationFilter, ColorWhereInput> | null
     size?: XOR<SizeNullableScalarRelationFilter, SizeWhereInput> | null
+    orderItems?: OrderItemListRelationFilter
+    wholesaleOrderItems?: WholesaleOrderItemListRelationFilter
   }
 
   export type ProductVariantOrderByWithRelationInput = {
@@ -74086,6 +74276,8 @@ export namespace Prisma {
     product?: ProductOrderByWithRelationInput
     color?: ColorOrderByWithRelationInput
     size?: SizeOrderByWithRelationInput
+    orderItems?: OrderItemOrderByRelationAggregateInput
+    wholesaleOrderItems?: WholesaleOrderItemOrderByRelationAggregateInput
   }
 
   export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -74101,6 +74293,8 @@ export namespace Prisma {
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     color?: XOR<ColorNullableScalarRelationFilter, ColorWhereInput> | null
     size?: XOR<SizeNullableScalarRelationFilter, SizeWhereInput> | null
+    orderItems?: OrderItemListRelationFilter
+    wholesaleOrderItems?: WholesaleOrderItemListRelationFilter
   }, "id" | "productId_colorId_sizeId">
 
   export type ProductVariantOrderByWithAggregationInput = {
@@ -75733,8 +75927,10 @@ export namespace Prisma {
     discount?: FloatFilter<"WholesaleOrderItem"> | number
     orderId?: IntFilter<"WholesaleOrderItem"> | number
     productId?: IntFilter<"WholesaleOrderItem"> | number
+    variantId?: IntNullableFilter<"WholesaleOrderItem"> | number | null
     order?: XOR<WholesaleOrderScalarRelationFilter, WholesaleOrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
     returnItems?: WholesaleOrderReturnItemListRelationFilter
   }
 
@@ -75745,8 +75941,10 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     order?: WholesaleOrderOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    variant?: ProductVariantOrderByWithRelationInput
     returnItems?: WholesaleOrderReturnItemOrderByRelationAggregateInput
   }
 
@@ -75760,8 +75958,10 @@ export namespace Prisma {
     discount?: FloatFilter<"WholesaleOrderItem"> | number
     orderId?: IntFilter<"WholesaleOrderItem"> | number
     productId?: IntFilter<"WholesaleOrderItem"> | number
+    variantId?: IntNullableFilter<"WholesaleOrderItem"> | number | null
     order?: XOR<WholesaleOrderScalarRelationFilter, WholesaleOrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
     returnItems?: WholesaleOrderReturnItemListRelationFilter
   }, "id">
 
@@ -75772,6 +75972,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     _count?: WholesaleOrderItemCountOrderByAggregateInput
     _avg?: WholesaleOrderItemAvgOrderByAggregateInput
     _max?: WholesaleOrderItemMaxOrderByAggregateInput
@@ -75789,6 +75990,7 @@ export namespace Prisma {
     discount?: FloatWithAggregatesFilter<"WholesaleOrderItem"> | number
     orderId?: IntWithAggregatesFilter<"WholesaleOrderItem"> | number
     productId?: IntWithAggregatesFilter<"WholesaleOrderItem"> | number
+    variantId?: IntNullableWithAggregatesFilter<"WholesaleOrderItem"> | number | null
   }
 
   export type WholesaleOrderReturnWhereInput = {
@@ -76549,9 +76751,11 @@ export namespace Prisma {
     discount?: FloatFilter<"OrderItem"> | number
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
+    variantId?: IntNullableFilter<"OrderItem"> | number | null
     affiliateLinkId?: StringNullableFilter<"OrderItem"> | string | null
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
     affiliateLink?: XOR<AffiliateLinkNullableScalarRelationFilter, AffiliateLinkWhereInput> | null
     returnItems?: OrderReturnItemListRelationFilter
   }
@@ -76563,9 +76767,11 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     affiliateLinkId?: SortOrderInput | SortOrder
     order?: OrderOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    variant?: ProductVariantOrderByWithRelationInput
     affiliateLink?: AffiliateLinkOrderByWithRelationInput
     returnItems?: OrderReturnItemOrderByRelationAggregateInput
   }
@@ -76580,9 +76786,11 @@ export namespace Prisma {
     discount?: FloatFilter<"OrderItem"> | number
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
+    variantId?: IntNullableFilter<"OrderItem"> | number | null
     affiliateLinkId?: StringNullableFilter<"OrderItem"> | string | null
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
     affiliateLink?: XOR<AffiliateLinkNullableScalarRelationFilter, AffiliateLinkWhereInput> | null
     returnItems?: OrderReturnItemListRelationFilter
   }, "id">
@@ -76594,6 +76802,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     affiliateLinkId?: SortOrderInput | SortOrder
     _count?: OrderItemCountOrderByAggregateInput
     _avg?: OrderItemAvgOrderByAggregateInput
@@ -76612,6 +76821,7 @@ export namespace Prisma {
     discount?: FloatWithAggregatesFilter<"OrderItem"> | number
     orderId?: IntWithAggregatesFilter<"OrderItem"> | number
     productId?: IntWithAggregatesFilter<"OrderItem"> | number
+    variantId?: IntNullableWithAggregatesFilter<"OrderItem"> | number | null
     affiliateLinkId?: StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   }
 
@@ -79432,6 +79642,8 @@ export namespace Prisma {
     product: ProductCreateNestedOneWithoutVariantsInput
     color?: ColorCreateNestedOneWithoutVariantsInput
     size?: SizeCreateNestedOneWithoutVariantsInput
+    orderItems?: OrderItemCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateInput = {
@@ -79440,6 +79652,8 @@ export namespace Prisma {
     colorId?: number | null
     sizeId?: number | null
     price?: number
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUpdateInput = {
@@ -79447,6 +79661,8 @@ export namespace Prisma {
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
     color?: ColorUpdateOneWithoutVariantsNestedInput
     size?: SizeUpdateOneWithoutVariantsNestedInput
+    orderItems?: OrderItemUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateInput = {
@@ -79455,6 +79671,8 @@ export namespace Prisma {
     colorId?: NullableIntFieldUpdateOperationsInput | number | null
     sizeId?: NullableIntFieldUpdateOperationsInput | number | null
     price?: FloatFieldUpdateOperationsInput | number
+    orderItems?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantCreateManyInput = {
@@ -81231,6 +81449,7 @@ export namespace Prisma {
     discount?: number
     order: WholesaleOrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutWholesaleOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutWholesaleOrderItemsInput
     returnItems?: WholesaleOrderReturnItemCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -81241,6 +81460,7 @@ export namespace Prisma {
     discount?: number
     orderId: number
     productId: number
+    variantId?: number | null
     returnItems?: WholesaleOrderReturnItemUncheckedCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -81250,6 +81470,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     order?: WholesaleOrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutWholesaleOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutWholesaleOrderItemsNestedInput
     returnItems?: WholesaleOrderReturnItemUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -81260,6 +81481,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     returnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -81270,6 +81492,7 @@ export namespace Prisma {
     discount?: number
     orderId: number
     productId: number
+    variantId?: number | null
   }
 
   export type WholesaleOrderItemUpdateManyMutationInput = {
@@ -81285,6 +81508,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type WholesaleOrderReturnCreateInput = {
@@ -82112,6 +82336,7 @@ export namespace Prisma {
     discount: number
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutOrderItemsInput
     affiliateLink?: AffiliateLinkCreateNestedOneWithoutOrderItemsInput
     returnItems?: OrderReturnItemCreateNestedManyWithoutOrderItemInput
   }
@@ -82123,6 +82348,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
     returnItems?: OrderReturnItemUncheckedCreateNestedManyWithoutOrderItemInput
   }
@@ -82133,6 +82359,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutOrderItemsNestedInput
     affiliateLink?: AffiliateLinkUpdateOneWithoutOrderItemsNestedInput
     returnItems?: OrderReturnItemUpdateManyWithoutOrderItemNestedInput
   }
@@ -82144,6 +82371,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutOrderItemNestedInput
   }
@@ -82155,6 +82383,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
   }
 
@@ -82171,6 +82400,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -86350,6 +86580,11 @@ export namespace Prisma {
     isNot?: WholesaleOrderWhereInput
   }
 
+  export type ProductVariantNullableScalarRelationFilter = {
+    is?: ProductVariantWhereInput | null
+    isNot?: ProductVariantWhereInput | null
+  }
+
   export type WholesaleOrderItemCountOrderByAggregateInput = {
     id?: SortOrder
     quantity?: SortOrder
@@ -86357,6 +86592,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type WholesaleOrderItemAvgOrderByAggregateInput = {
@@ -86366,6 +86602,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type WholesaleOrderItemMaxOrderByAggregateInput = {
@@ -86375,6 +86612,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type WholesaleOrderItemMinOrderByAggregateInput = {
@@ -86384,6 +86622,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type WholesaleOrderItemSumOrderByAggregateInput = {
@@ -86393,6 +86632,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type EnumReturnReasonFilter<$PrismaModel = never> = {
@@ -87002,6 +87242,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
     affiliateLinkId?: SortOrder
   }
 
@@ -87012,6 +87253,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type OrderItemMaxOrderByAggregateInput = {
@@ -87021,6 +87263,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
     affiliateLinkId?: SortOrder
   }
 
@@ -87031,6 +87274,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
     affiliateLinkId?: SortOrder
   }
 
@@ -87041,6 +87285,7 @@ export namespace Prisma {
     discount?: SortOrder
     orderId?: SortOrder
     productId?: SortOrder
+    variantId?: SortOrder
   }
 
   export type TrakingCompanyCountOrderByAggregateInput = {
@@ -90151,6 +90396,34 @@ export namespace Prisma {
     connect?: SizeWhereUniqueInput
   }
 
+  export type OrderItemCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type WholesaleOrderItemCreateNestedManyWithoutVariantInput = {
+    create?: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput> | WholesaleOrderItemCreateWithoutVariantInput[] | WholesaleOrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: WholesaleOrderItemCreateOrConnectWithoutVariantInput | WholesaleOrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: WholesaleOrderItemCreateManyVariantInputEnvelope
+    connect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+  }
+
+  export type OrderItemUncheckedCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput = {
+    create?: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput> | WholesaleOrderItemCreateWithoutVariantInput[] | WholesaleOrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: WholesaleOrderItemCreateOrConnectWithoutVariantInput | WholesaleOrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: WholesaleOrderItemCreateManyVariantInputEnvelope
+    connect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+  }
+
   export type ProductUpdateOneRequiredWithoutVariantsNestedInput = {
     create?: XOR<ProductCreateWithoutVariantsInput, ProductUncheckedCreateWithoutVariantsInput>
     connectOrCreate?: ProductCreateOrConnectWithoutVariantsInput
@@ -90177,6 +90450,62 @@ export namespace Prisma {
     delete?: SizeWhereInput | boolean
     connect?: SizeWhereUniqueInput
     update?: XOR<XOR<SizeUpdateToOneWithWhereWithoutVariantsInput, SizeUpdateWithoutVariantsInput>, SizeUncheckedUpdateWithoutVariantsInput>
+  }
+
+  export type OrderItemUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type WholesaleOrderItemUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput> | WholesaleOrderItemCreateWithoutVariantInput[] | WholesaleOrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: WholesaleOrderItemCreateOrConnectWithoutVariantInput | WholesaleOrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: WholesaleOrderItemUpsertWithWhereUniqueWithoutVariantInput | WholesaleOrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: WholesaleOrderItemCreateManyVariantInputEnvelope
+    set?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    disconnect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    delete?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    connect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    update?: WholesaleOrderItemUpdateWithWhereUniqueWithoutVariantInput | WholesaleOrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: WholesaleOrderItemUpdateManyWithWhereWithoutVariantInput | WholesaleOrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: WholesaleOrderItemScalarWhereInput | WholesaleOrderItemScalarWhereInput[]
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput> | WholesaleOrderItemCreateWithoutVariantInput[] | WholesaleOrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: WholesaleOrderItemCreateOrConnectWithoutVariantInput | WholesaleOrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: WholesaleOrderItemUpsertWithWhereUniqueWithoutVariantInput | WholesaleOrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: WholesaleOrderItemCreateManyVariantInputEnvelope
+    set?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    disconnect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    delete?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    connect?: WholesaleOrderItemWhereUniqueInput | WholesaleOrderItemWhereUniqueInput[]
+    update?: WholesaleOrderItemUpdateWithWhereUniqueWithoutVariantInput | WholesaleOrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: WholesaleOrderItemUpdateManyWithWhereWithoutVariantInput | WholesaleOrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: WholesaleOrderItemScalarWhereInput | WholesaleOrderItemScalarWhereInput[]
   }
 
   export type ProductCreateNestedOneWithoutAdPageVisitsInput = {
@@ -91652,6 +91981,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type ProductVariantCreateNestedOneWithoutWholesaleOrderItemsInput = {
+    create?: XOR<ProductVariantCreateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedCreateWithoutWholesaleOrderItemsInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutWholesaleOrderItemsInput
+    connect?: ProductVariantWhereUniqueInput
+  }
+
   export type WholesaleOrderReturnItemCreateNestedManyWithoutWholesaleOrderItemInput = {
     create?: XOR<WholesaleOrderReturnItemCreateWithoutWholesaleOrderItemInput, WholesaleOrderReturnItemUncheckedCreateWithoutWholesaleOrderItemInput> | WholesaleOrderReturnItemCreateWithoutWholesaleOrderItemInput[] | WholesaleOrderReturnItemUncheckedCreateWithoutWholesaleOrderItemInput[]
     connectOrCreate?: WholesaleOrderReturnItemCreateOrConnectWithoutWholesaleOrderItemInput | WholesaleOrderReturnItemCreateOrConnectWithoutWholesaleOrderItemInput[]
@@ -91680,6 +92015,16 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutWholesaleOrderItemsInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutWholesaleOrderItemsInput, ProductUpdateWithoutWholesaleOrderItemsInput>, ProductUncheckedUpdateWithoutWholesaleOrderItemsInput>
+  }
+
+  export type ProductVariantUpdateOneWithoutWholesaleOrderItemsNestedInput = {
+    create?: XOR<ProductVariantCreateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedCreateWithoutWholesaleOrderItemsInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutWholesaleOrderItemsInput
+    upsert?: ProductVariantUpsertWithoutWholesaleOrderItemsInput
+    disconnect?: ProductVariantWhereInput | boolean
+    delete?: ProductVariantWhereInput | boolean
+    connect?: ProductVariantWhereUniqueInput
+    update?: XOR<XOR<ProductVariantUpdateToOneWithWhereWithoutWholesaleOrderItemsInput, ProductVariantUpdateWithoutWholesaleOrderItemsInput>, ProductVariantUncheckedUpdateWithoutWholesaleOrderItemsInput>
   }
 
   export type WholesaleOrderReturnItemUpdateManyWithoutWholesaleOrderItemNestedInput = {
@@ -92331,6 +92676,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type ProductVariantCreateNestedOneWithoutOrderItemsInput = {
+    create?: XOR<ProductVariantCreateWithoutOrderItemsInput, ProductVariantUncheckedCreateWithoutOrderItemsInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutOrderItemsInput
+    connect?: ProductVariantWhereUniqueInput
+  }
+
   export type AffiliateLinkCreateNestedOneWithoutOrderItemsInput = {
     create?: XOR<AffiliateLinkCreateWithoutOrderItemsInput, AffiliateLinkUncheckedCreateWithoutOrderItemsInput>
     connectOrCreate?: AffiliateLinkCreateOrConnectWithoutOrderItemsInput
@@ -92365,6 +92716,16 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutOrderItemsInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOrderItemsInput, ProductUpdateWithoutOrderItemsInput>, ProductUncheckedUpdateWithoutOrderItemsInput>
+  }
+
+  export type ProductVariantUpdateOneWithoutOrderItemsNestedInput = {
+    create?: XOR<ProductVariantCreateWithoutOrderItemsInput, ProductVariantUncheckedCreateWithoutOrderItemsInput>
+    connectOrCreate?: ProductVariantCreateOrConnectWithoutOrderItemsInput
+    upsert?: ProductVariantUpsertWithoutOrderItemsInput
+    disconnect?: ProductVariantWhereInput | boolean
+    delete?: ProductVariantWhereInput | boolean
+    connect?: ProductVariantWhereUniqueInput
+    update?: XOR<XOR<ProductVariantUpdateToOneWithWhereWithoutOrderItemsInput, ProductVariantUpdateWithoutOrderItemsInput>, ProductVariantUncheckedUpdateWithoutOrderItemsInput>
   }
 
   export type AffiliateLinkUpdateOneWithoutOrderItemsNestedInput = {
@@ -96281,6 +96642,7 @@ export namespace Prisma {
     price: number
     discount: number
     order: OrderCreateNestedOneWithoutItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutOrderItemsInput
     affiliateLink?: AffiliateLinkCreateNestedOneWithoutOrderItemsInput
     returnItems?: OrderReturnItemCreateNestedManyWithoutOrderItemInput
   }
@@ -96291,6 +96653,7 @@ export namespace Prisma {
     price: number
     discount: number
     orderId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
     returnItems?: OrderReturnItemUncheckedCreateNestedManyWithoutOrderItemInput
   }
@@ -96691,6 +97054,7 @@ export namespace Prisma {
     price: number
     discount?: number
     order: WholesaleOrderCreateNestedOneWithoutItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutWholesaleOrderItemsInput
     returnItems?: WholesaleOrderReturnItemCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -96700,6 +97064,7 @@ export namespace Prisma {
     price: number
     discount?: number
     orderId: number
+    variantId?: number | null
     returnItems?: WholesaleOrderReturnItemUncheckedCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -96777,6 +97142,8 @@ export namespace Prisma {
     price?: number
     color?: ColorCreateNestedOneWithoutVariantsInput
     size?: SizeCreateNestedOneWithoutVariantsInput
+    orderItems?: OrderItemCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -96784,6 +97151,8 @@ export namespace Prisma {
     colorId?: number | null
     sizeId?: number | null
     price?: number
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -96822,6 +97191,7 @@ export namespace Prisma {
     discount?: FloatFilter<"OrderItem"> | number
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
+    variantId?: IntNullableFilter<"OrderItem"> | number | null
     affiliateLinkId?: StringNullableFilter<"OrderItem"> | string | null
   }
 
@@ -97172,6 +97542,7 @@ export namespace Prisma {
     discount?: FloatFilter<"WholesaleOrderItem"> | number
     orderId?: IntFilter<"WholesaleOrderItem"> | number
     productId?: IntFilter<"WholesaleOrderItem"> | number
+    variantId?: IntNullableFilter<"WholesaleOrderItem"> | number | null
   }
 
   export type OrderReturnItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -97265,6 +97636,8 @@ export namespace Prisma {
     price?: number
     product: ProductCreateNestedOneWithoutVariantsInput
     size?: SizeCreateNestedOneWithoutVariantsInput
+    orderItems?: OrderItemCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateWithoutColorInput = {
@@ -97272,6 +97645,8 @@ export namespace Prisma {
     productId: number
     sizeId?: number | null
     price?: number
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantCreateOrConnectWithoutColorInput = {
@@ -97304,6 +97679,8 @@ export namespace Prisma {
     price?: number
     product: ProductCreateNestedOneWithoutVariantsInput
     color?: ColorCreateNestedOneWithoutVariantsInput
+    orderItems?: OrderItemCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantUncheckedCreateWithoutSizeInput = {
@@ -97311,6 +97688,8 @@ export namespace Prisma {
     productId: number
     colorId?: number | null
     price?: number
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductVariantCreateOrConnectWithoutSizeInput = {
@@ -97443,6 +97822,66 @@ export namespace Prisma {
     create: XOR<SizeCreateWithoutVariantsInput, SizeUncheckedCreateWithoutVariantsInput>
   }
 
+  export type OrderItemCreateWithoutVariantInput = {
+    quantity?: number
+    price: number
+    discount: number
+    order: OrderCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOrderItemsInput
+    affiliateLink?: AffiliateLinkCreateNestedOneWithoutOrderItemsInput
+    returnItems?: OrderReturnItemCreateNestedManyWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateWithoutVariantInput = {
+    id?: number
+    quantity?: number
+    price: number
+    discount: number
+    orderId: number
+    productId: number
+    affiliateLinkId?: string | null
+    returnItems?: OrderReturnItemUncheckedCreateNestedManyWithoutOrderItemInput
+  }
+
+  export type OrderItemCreateOrConnectWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemCreateManyVariantInputEnvelope = {
+    data: OrderItemCreateManyVariantInput | OrderItemCreateManyVariantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WholesaleOrderItemCreateWithoutVariantInput = {
+    quantity?: number
+    price: number
+    discount?: number
+    order: WholesaleOrderCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutWholesaleOrderItemsInput
+    returnItems?: WholesaleOrderReturnItemCreateNestedManyWithoutWholesaleOrderItemInput
+  }
+
+  export type WholesaleOrderItemUncheckedCreateWithoutVariantInput = {
+    id?: number
+    quantity?: number
+    price: number
+    discount?: number
+    orderId: number
+    productId: number
+    returnItems?: WholesaleOrderReturnItemUncheckedCreateNestedManyWithoutWholesaleOrderItemInput
+  }
+
+  export type WholesaleOrderItemCreateOrConnectWithoutVariantInput = {
+    where: WholesaleOrderItemWhereUniqueInput
+    create: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type WholesaleOrderItemCreateManyVariantInputEnvelope = {
+    data: WholesaleOrderItemCreateManyVariantInput | WholesaleOrderItemCreateManyVariantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProductUpsertWithoutVariantsInput = {
     update: XOR<ProductUpdateWithoutVariantsInput, ProductUncheckedUpdateWithoutVariantsInput>
     create: XOR<ProductCreateWithoutVariantsInput, ProductUncheckedCreateWithoutVariantsInput>
@@ -97563,6 +98002,38 @@ export namespace Prisma {
   export type SizeUncheckedUpdateWithoutVariantsInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type OrderItemUpsertWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    update: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    data: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateManyWithWhereWithoutVariantInput = {
+    where: OrderItemScalarWhereInput
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutVariantInput>
+  }
+
+  export type WholesaleOrderItemUpsertWithWhereUniqueWithoutVariantInput = {
+    where: WholesaleOrderItemWhereUniqueInput
+    update: XOR<WholesaleOrderItemUpdateWithoutVariantInput, WholesaleOrderItemUncheckedUpdateWithoutVariantInput>
+    create: XOR<WholesaleOrderItemCreateWithoutVariantInput, WholesaleOrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type WholesaleOrderItemUpdateWithWhereUniqueWithoutVariantInput = {
+    where: WholesaleOrderItemWhereUniqueInput
+    data: XOR<WholesaleOrderItemUpdateWithoutVariantInput, WholesaleOrderItemUncheckedUpdateWithoutVariantInput>
+  }
+
+  export type WholesaleOrderItemUpdateManyWithWhereWithoutVariantInput = {
+    where: WholesaleOrderItemScalarWhereInput
+    data: XOR<WholesaleOrderItemUpdateManyMutationInput, WholesaleOrderItemUncheckedUpdateManyWithoutVariantInput>
   }
 
   export type ProductCreateWithoutAdPageVisitsInput = {
@@ -102070,6 +102541,7 @@ export namespace Prisma {
     price: number
     discount?: number
     product: ProductCreateNestedOneWithoutWholesaleOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutWholesaleOrderItemsInput
     returnItems?: WholesaleOrderReturnItemCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -102079,6 +102551,7 @@ export namespace Prisma {
     price: number
     discount?: number
     productId: number
+    variantId?: number | null
     returnItems?: WholesaleOrderReturnItemUncheckedCreateNestedManyWithoutWholesaleOrderItemInput
   }
 
@@ -102502,6 +102975,28 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutWholesaleOrderItemsInput, ProductUncheckedCreateWithoutWholesaleOrderItemsInput>
   }
 
+  export type ProductVariantCreateWithoutWholesaleOrderItemsInput = {
+    price?: number
+    product: ProductCreateNestedOneWithoutVariantsInput
+    color?: ColorCreateNestedOneWithoutVariantsInput
+    size?: SizeCreateNestedOneWithoutVariantsInput
+    orderItems?: OrderItemCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductVariantUncheckedCreateWithoutWholesaleOrderItemsInput = {
+    id?: number
+    productId: number
+    colorId?: number | null
+    sizeId?: number | null
+    price?: number
+    orderItems?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductVariantCreateOrConnectWithoutWholesaleOrderItemsInput = {
+    where: ProductVariantWhereUniqueInput
+    create: XOR<ProductVariantCreateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedCreateWithoutWholesaleOrderItemsInput>
+  }
+
   export type WholesaleOrderReturnItemCreateWithoutWholesaleOrderItemInput = {
     id?: string
     quantity?: number
@@ -102676,6 +103171,34 @@ export namespace Prisma {
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutProductNestedInput
     wholesaleReturnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductVariantUpsertWithoutWholesaleOrderItemsInput = {
+    update: XOR<ProductVariantUpdateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedUpdateWithoutWholesaleOrderItemsInput>
+    create: XOR<ProductVariantCreateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedCreateWithoutWholesaleOrderItemsInput>
+    where?: ProductVariantWhereInput
+  }
+
+  export type ProductVariantUpdateToOneWithWhereWithoutWholesaleOrderItemsInput = {
+    where?: ProductVariantWhereInput
+    data: XOR<ProductVariantUpdateWithoutWholesaleOrderItemsInput, ProductVariantUncheckedUpdateWithoutWholesaleOrderItemsInput>
+  }
+
+  export type ProductVariantUpdateWithoutWholesaleOrderItemsInput = {
+    price?: FloatFieldUpdateOperationsInput | number
+    product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
+    color?: ColorUpdateOneWithoutVariantsNestedInput
+    size?: SizeUpdateOneWithoutVariantsNestedInput
+    orderItems?: OrderItemUpdateManyWithoutVariantNestedInput
+  }
+
+  export type ProductVariantUncheckedUpdateWithoutWholesaleOrderItemsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    colorId?: NullableIntFieldUpdateOperationsInput | number | null
+    sizeId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
+    orderItems?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type WholesaleOrderReturnItemUpsertWithWhereUniqueWithoutWholesaleOrderItemInput = {
@@ -102977,6 +103500,7 @@ export namespace Prisma {
     discount?: number
     order: WholesaleOrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutWholesaleOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutWholesaleOrderItemsInput
   }
 
   export type WholesaleOrderItemUncheckedCreateWithoutReturnItemsInput = {
@@ -102986,6 +103510,7 @@ export namespace Prisma {
     discount?: number
     orderId: number
     productId: number
+    variantId?: number | null
   }
 
   export type WholesaleOrderItemCreateOrConnectWithoutReturnItemsInput = {
@@ -103117,6 +103642,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     order?: WholesaleOrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutWholesaleOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutWholesaleOrderItemsNestedInput
   }
 
   export type WholesaleOrderItemUncheckedUpdateWithoutReturnItemsInput = {
@@ -103126,6 +103652,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProductUpsertWithoutWholesaleReturnItemsInput = {
@@ -104227,6 +104754,7 @@ export namespace Prisma {
     price: number
     discount: number
     product: ProductCreateNestedOneWithoutOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutOrderItemsInput
     affiliateLink?: AffiliateLinkCreateNestedOneWithoutOrderItemsInput
     returnItems?: OrderReturnItemCreateNestedManyWithoutOrderItemInput
   }
@@ -104237,6 +104765,7 @@ export namespace Prisma {
     price: number
     discount: number
     productId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
     returnItems?: OrderReturnItemUncheckedCreateNestedManyWithoutOrderItemInput
   }
@@ -105299,6 +105828,28 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutOrderItemsInput, ProductUncheckedCreateWithoutOrderItemsInput>
   }
 
+  export type ProductVariantCreateWithoutOrderItemsInput = {
+    price?: number
+    product: ProductCreateNestedOneWithoutVariantsInput
+    color?: ColorCreateNestedOneWithoutVariantsInput
+    size?: SizeCreateNestedOneWithoutVariantsInput
+    wholesaleOrderItems?: WholesaleOrderItemCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
+    id?: number
+    productId: number
+    colorId?: number | null
+    sizeId?: number | null
+    price?: number
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductVariantCreateOrConnectWithoutOrderItemsInput = {
+    where: ProductVariantWhereUniqueInput
+    create: XOR<ProductVariantCreateWithoutOrderItemsInput, ProductVariantUncheckedCreateWithoutOrderItemsInput>
+  }
+
   export type AffiliateLinkCreateWithoutOrderItemsInput = {
     id?: string
     uniqueCode: string
@@ -105542,6 +106093,34 @@ export namespace Prisma {
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutProductNestedInput
     wholesaleReturnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutProductNestedInput
     variants?: ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductVariantUpsertWithoutOrderItemsInput = {
+    update: XOR<ProductVariantUpdateWithoutOrderItemsInput, ProductVariantUncheckedUpdateWithoutOrderItemsInput>
+    create: XOR<ProductVariantCreateWithoutOrderItemsInput, ProductVariantUncheckedCreateWithoutOrderItemsInput>
+    where?: ProductVariantWhereInput
+  }
+
+  export type ProductVariantUpdateToOneWithWhereWithoutOrderItemsInput = {
+    where?: ProductVariantWhereInput
+    data: XOR<ProductVariantUpdateWithoutOrderItemsInput, ProductVariantUncheckedUpdateWithoutOrderItemsInput>
+  }
+
+  export type ProductVariantUpdateWithoutOrderItemsInput = {
+    price?: FloatFieldUpdateOperationsInput | number
+    product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
+    color?: ColorUpdateOneWithoutVariantsNestedInput
+    size?: SizeUpdateOneWithoutVariantsNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUpdateManyWithoutVariantNestedInput
+  }
+
+  export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    colorId?: NullableIntFieldUpdateOperationsInput | number | null
+    sizeId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type AffiliateLinkUpsertWithoutOrderItemsInput = {
@@ -105954,6 +106533,7 @@ export namespace Prisma {
     discount: number
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutOrderItemsInput
     returnItems?: OrderReturnItemCreateNestedManyWithoutOrderItemInput
   }
 
@@ -105964,6 +106544,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId?: number | null
     returnItems?: OrderReturnItemUncheckedCreateNestedManyWithoutOrderItemInput
   }
 
@@ -107579,6 +108160,7 @@ export namespace Prisma {
     discount: number
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemsInput
+    variant?: ProductVariantCreateNestedOneWithoutOrderItemsInput
     affiliateLink?: AffiliateLinkCreateNestedOneWithoutOrderItemsInput
   }
 
@@ -107589,6 +108171,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
   }
 
@@ -107721,6 +108304,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutOrderItemsNestedInput
     affiliateLink?: AffiliateLinkUpdateOneWithoutOrderItemsNestedInput
   }
 
@@ -107731,6 +108315,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -111558,6 +112143,7 @@ export namespace Prisma {
     price: number
     discount: number
     orderId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
   }
 
@@ -111673,6 +112259,7 @@ export namespace Prisma {
     price: number
     discount?: number
     orderId: number
+    variantId?: number | null
   }
 
   export type OrderReturnItemCreateManyProductInput = {
@@ -111707,6 +112294,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutOrderItemsNestedInput
     affiliateLink?: AffiliateLinkUpdateOneWithoutOrderItemsNestedInput
     returnItems?: OrderReturnItemUpdateManyWithoutOrderItemNestedInput
   }
@@ -111717,6 +112305,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutOrderItemNestedInput
   }
@@ -111727,6 +112316,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -112055,6 +112645,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     order?: WholesaleOrderUpdateOneRequiredWithoutItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutWholesaleOrderItemsNestedInput
     returnItems?: WholesaleOrderReturnItemUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -112064,6 +112655,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     returnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -112073,6 +112665,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type OrderReturnItemUpdateWithoutProductInput = {
@@ -112139,6 +112732,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     color?: ColorUpdateOneWithoutVariantsNestedInput
     size?: SizeUpdateOneWithoutVariantsNestedInput
+    orderItems?: OrderItemUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -112146,6 +112741,8 @@ export namespace Prisma {
     colorId?: NullableIntFieldUpdateOperationsInput | number | null
     sizeId?: NullableIntFieldUpdateOperationsInput | number | null
     price?: FloatFieldUpdateOperationsInput | number
+    orderItems?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -112166,6 +112763,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
     size?: SizeUpdateOneWithoutVariantsNestedInput
+    orderItems?: OrderItemUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateWithoutColorInput = {
@@ -112173,6 +112772,8 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     sizeId?: NullableIntFieldUpdateOperationsInput | number | null
     price?: FloatFieldUpdateOperationsInput | number
+    orderItems?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateManyWithoutColorInput = {
@@ -112193,6 +112794,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
     color?: ColorUpdateOneWithoutVariantsNestedInput
+    orderItems?: OrderItemUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateWithoutSizeInput = {
@@ -112200,6 +112803,8 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     colorId?: NullableIntFieldUpdateOperationsInput | number | null
     price?: FloatFieldUpdateOperationsInput | number
+    orderItems?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    wholesaleOrderItems?: WholesaleOrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductVariantUncheckedUpdateManyWithoutSizeInput = {
@@ -112207,6 +112812,84 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     colorId?: NullableIntFieldUpdateOperationsInput | number | null
     price?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type OrderItemCreateManyVariantInput = {
+    id?: number
+    quantity?: number
+    price: number
+    discount: number
+    orderId: number
+    productId: number
+    affiliateLinkId?: string | null
+  }
+
+  export type WholesaleOrderItemCreateManyVariantInput = {
+    id?: number
+    quantity?: number
+    price: number
+    discount?: number
+    orderId: number
+    productId: number
+  }
+
+  export type OrderItemUpdateWithoutVariantInput = {
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
+    affiliateLink?: AffiliateLinkUpdateOneWithoutOrderItemsNestedInput
+    returnItems?: OrderReturnItemUpdateManyWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
+    returnItems?: OrderReturnItemUncheckedUpdateManyWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type WholesaleOrderItemUpdateWithoutVariantInput = {
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    order?: WholesaleOrderUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutWholesaleOrderItemsNestedInput
+    returnItems?: WholesaleOrderReturnItemUpdateManyWithoutWholesaleOrderItemNestedInput
+  }
+
+  export type WholesaleOrderItemUncheckedUpdateWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    returnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutWholesaleOrderItemNestedInput
+  }
+
+  export type WholesaleOrderItemUncheckedUpdateManyWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: FloatFieldUpdateOperationsInput | number
+    discount?: FloatFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
   }
 
   export type CityCreateManyCountryInput = {
@@ -113730,6 +114413,7 @@ export namespace Prisma {
     price: number
     discount?: number
     productId: number
+    variantId?: number | null
   }
 
   export type WholesaleOrderReturnCreateManyWholesaleOrderInput = {
@@ -113747,6 +114431,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     product?: ProductUpdateOneRequiredWithoutWholesaleOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutWholesaleOrderItemsNestedInput
     returnItems?: WholesaleOrderReturnItemUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -113756,6 +114441,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     returnItems?: WholesaleOrderReturnItemUncheckedUpdateManyWithoutWholesaleOrderItemNestedInput
   }
 
@@ -113765,6 +114451,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type WholesaleOrderReturnUpdateWithoutWholesaleOrderInput = {
@@ -113885,6 +114572,7 @@ export namespace Prisma {
     price: number
     discount: number
     productId: number
+    variantId?: number | null
     affiliateLinkId?: string | null
   }
 
@@ -113949,6 +114637,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutOrderItemsNestedInput
     affiliateLink?: AffiliateLinkUpdateOneWithoutOrderItemsNestedInput
     returnItems?: OrderReturnItemUpdateManyWithoutOrderItemNestedInput
   }
@@ -113959,6 +114648,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutOrderItemNestedInput
   }
@@ -113969,6 +114659,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     affiliateLinkId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -114368,6 +115059,7 @@ export namespace Prisma {
     discount: number
     orderId: number
     productId: number
+    variantId?: number | null
   }
 
   export type CommissionCreateManyAffiliateLinkInput = {
@@ -114385,6 +115077,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
+    variant?: ProductVariantUpdateOneWithoutOrderItemsNestedInput
     returnItems?: OrderReturnItemUpdateManyWithoutOrderItemNestedInput
   }
 
@@ -114395,6 +115088,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     returnItems?: OrderReturnItemUncheckedUpdateManyWithoutOrderItemNestedInput
   }
 
@@ -114405,6 +115099,7 @@ export namespace Prisma {
     discount?: FloatFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type CommissionUpdateWithoutAffiliateLinkInput = {

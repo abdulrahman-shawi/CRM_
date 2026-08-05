@@ -637,7 +637,25 @@ export async function createOrder(data: any, items: any[], user: any) {
                 quantity: parseInt(item.quantity),
                 price: parseFloat(item.price),
                 discount: parseFloat(item.discount || 0),
+                variantId: item.variantId ? parseInt(item.variantId) : null,
             }));
+
+            // التأكد أن المتغير (لون/مقاس) ينتمي فعلاً لنفس المنتج، وإلا يتم تجاهله
+            const variantIds = normalizedItems
+                .map((item: any) => item.variantId)
+                .filter((id: any): id is number => typeof id === 'number' && Number.isInteger(id) && id > 0);
+            if (variantIds.length) {
+                const variantRows = await tx.productVariant.findMany({
+                    where: { id: { in: variantIds } },
+                    select: { id: true, productId: true },
+                });
+                const variantProductMap = new Map(variantRows.map((row) => [row.id, row.productId]));
+                normalizedItems.forEach((item: any) => {
+                    if (item.variantId && variantProductMap.get(item.variantId) !== item.productId) {
+                        item.variantId = null;
+                    }
+                });
+            }
 
             const siteSettings = await tx.generalSetting.findFirst({
                 orderBy: { id: "asc" },
@@ -722,6 +740,7 @@ export async function createOrder(data: any, items: any[], user: any) {
                             quantity: item.quantity,
                             price: item.price,
                             discount: item.discount,
+                            variantId: item.variantId,
                         }))
                     }
                 }
@@ -825,7 +844,25 @@ export async function updateOrder(data: any, id: any, items: any) {
                 quantity: parseInt(item.quantity),
                 price: parseFloat(item.price),
                 discount: parseFloat(item.discount || 0),
+                variantId: item.variantId ? parseInt(item.variantId) : null,
             }));
+
+            // التأكد أن المتغير (لون/مقاس) ينتمي فعلاً لنفس المنتج، وإلا يتم تجاهله
+            const variantIds = normalizedItems
+                .map((item: any) => item.variantId)
+                .filter((id: any): id is number => typeof id === 'number' && Number.isInteger(id) && id > 0);
+            if (variantIds.length) {
+                const variantRows = await tx.productVariant.findMany({
+                    where: { id: { in: variantIds } },
+                    select: { id: true, productId: true },
+                });
+                const variantProductMap = new Map(variantRows.map((row) => [row.id, row.productId]));
+                normalizedItems.forEach((item: any) => {
+                    if (item.variantId && variantProductMap.get(item.variantId) !== item.productId) {
+                        item.variantId = null;
+                    }
+                });
+            }
 
             await applyOrderStockChange(tx, oldOrder, "restore");
 
@@ -871,6 +908,7 @@ export async function updateOrder(data: any, id: any, items: any) {
                             quantity: item.quantity,
                             price: item.price,
                             discount: item.discount,
+                            variantId: item.variantId,
                         }))
                     }
                 }

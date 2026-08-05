@@ -226,7 +226,7 @@ async function normalizeWholesaleItems(
   items: any[],
   warehouseId: number
 ) {
-  const normalizedItems = [] as Array<{ productId: number; quantity: number; price: number; discount: number }>;
+  const normalizedItems = [] as Array<{ productId: number; quantity: number; price: number; discount: number; variantId: number | null }>;
 
   for (const rawItem of items) {
     const productId = Number(rawItem?.productId || 0);
@@ -262,6 +262,12 @@ async function normalizeWholesaleItems(
             wholesalePrice: true,
           },
         },
+        variants: {
+          select: {
+            id: true,
+            price: true,
+          },
+        },
       },
     });
 
@@ -281,11 +287,30 @@ async function normalizeWholesaleItems(
           ? stockWholesalePrice
           : fallbackStockPrice;
 
+    // تطبيق تسعير المتغير (لون/مقاس) إن وُجد وكان ينتمي لنفس المنتج
+    const requestedVariantId = Number(rawItem?.variantId || 0);
+    const priceMode = String(rawItem?.priceMode || "sum");
+    const variant = Number.isInteger(requestedVariantId) && requestedVariantId > 0
+      ? (product.variants || []).find((currentVariant) => currentVariant.id === requestedVariantId) || null
+      : null;
+
+    let finalPrice = Number(resolvedPrice || 0);
+    if (variant) {
+      const variantPrice = Number(variant.price || 0);
+      if (priceMode === "variant") {
+        finalPrice = variantPrice; // اعتماد سعر اللون/المقاس فقط
+      } else if (priceMode === "sum") {
+        finalPrice = finalPrice + variantPrice; // جمع سعر المنتج مع سعر المتغير
+      }
+      // priceMode === "product" → يبقى سعر المنتج كما هو
+    }
+
     normalizedItems.push({
       productId,
       quantity,
-      price: Number(resolvedPrice || 0),
+      price: finalPrice,
       discount,
+      variantId: variant ? variant.id : null,
     });
   }
 
@@ -516,6 +541,7 @@ export async function createWholesaleOrder(data: any, items: any[]) {
               quantity: item.quantity,
               price: item.price,
               discount: item.discount,
+              variantId: item.variantId,
             })),
           },
         },
@@ -651,6 +677,7 @@ export async function updateWholesaleOrder(data: any, orderId: string | number, 
               quantity: item.quantity,
               price: item.price,
               discount: item.discount,
+              variantId: item.variantId,
             })),
           },
         },

@@ -38,6 +38,8 @@ interface WholesaleOrderItem {
   discount: number;
   total: number;
   note: string;
+  variantId: string;
+  priceMode: "sum" | "product" | "variant";
 }
 
 interface WholesaleOrderCustomerProps {
@@ -70,6 +72,8 @@ function createEmptyItem(): WholesaleOrderItem {
     discount: 0,
     total: 0,
     note: "",
+    variantId: "",
+    priceMode: "sum",
   };
 }
 
@@ -115,6 +119,23 @@ function resolveWholesaleUnitPrice(product: any, quantity: number, warehouseId: 
   if (productWholesalePrice > 0) return productWholesalePrice;
   if (stockWholesalePrice > 0) return stockWholesalePrice;
   return stockRegularPrice;
+}
+
+function findProductVariant(product: any, variantId: string) {
+  if (!Array.isArray(product?.variants) || !variantId) return null;
+  return product.variants.find((variant: any) => String(variant?.id) === String(variantId)) || null;
+}
+
+// سعر الوحدة النهائي حسب طريقة تسعير المتغير (لون/مقاس): جمع / سعر المنتج فقط / سعر المتغير فقط
+function computeWholesaleItemPrice(product: any, quantity: number, variantId: string, priceMode: string, warehouseId: string) {
+  if (!product) return 0;
+  const basePrice = resolveWholesaleUnitPrice(product, quantity, warehouseId);
+  const variant = findProductVariant(product, variantId);
+  if (!variant) return basePrice;
+  const variantPrice = Number(variant.price || 0);
+  if (priceMode === "product") return basePrice;
+  if (priceMode === "variant") return variantPrice;
+  return basePrice + variantPrice;
 }
 
 function getProductAvailableStockByWarehouse(product: any, warehouseId: string) {
@@ -230,26 +251,41 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
       const nextItems = [...currentItems];
       const currentItem = { ...nextItems[index] };
 
-      if (field === "productId") {
-        const isDuplicate = currentItems.some((item, itemIndex) => itemIndex !== index && String(item.productId) === String(value || ""));
+      if (field === "productId" || field === "variantId") {
+        const nextProductId = field === "productId" ? String(value || "") : currentItem.productId;
+        const nextVariantId = field === "variantId" ? String(value || "") : (currentItem.variantId || "");
+        const isDuplicate = currentItems.some((item, itemIndex) =>
+          itemIndex !== index &&
+          String(item.productId) === String(nextProductId) &&
+          String(item.variantId || "") === String(nextVariantId || "")
+        );
         if (isDuplicate) {
-          toast.error("هذا المنتج مضاف بالفعل داخل الطلب");
+          toast.error("هذا المنتج بنفس اللون/المقاس مضاف بالفعل داخل الطلب");
           return currentItems;
         }
+      }
 
+      if (field === "productId") {
         const product = products.find((currentProduct: any) => Number(currentProduct?.id) === Number(value || 0));
-        const price = product ? resolveWholesaleUnitPrice(product, currentItem.quantity, warehouseId) : 0;
         currentItem.productId = String(value || "");
         currentItem.name = product?.name || "";
         currentItem.modelNumber = product?.modelNumber || "";
-        currentItem.price = price;
+        currentItem.variantId = "";
+        currentItem.priceMode = "sum";
+        currentItem.price = computeWholesaleItemPrice(product, currentItem.quantity, currentItem.variantId, currentItem.priceMode, warehouseId);
         currentItem.discount = 0;
         setSearchQueries((current) => ({ ...current, [index]: currentItem.name }));
         setShowDropdown((current) => ({ ...current, [index]: false }));
       } else if (field === "quantity") {
         currentItem.quantity = Math.max(1, Number(value || 1));
         const product = products.find((currentProduct: any) => Number(currentProduct?.id) === Number(currentItem.productId || 0));
-        currentItem.price = product ? resolveWholesaleUnitPrice(product, currentItem.quantity, warehouseId) : currentItem.price;
+        currentItem.price = product
+          ? computeWholesaleItemPrice(product, currentItem.quantity, currentItem.variantId, currentItem.priceMode, warehouseId)
+          : currentItem.price;
+      } else if (field === "variantId" || field === "priceMode") {
+        (currentItem as any)[field] = String(value || "");
+        const product = products.find((currentProduct: any) => Number(currentProduct?.id) === Number(currentItem.productId || 0));
+        currentItem.price = computeWholesaleItemPrice(product, currentItem.quantity, currentItem.variantId, currentItem.priceMode, warehouseId);
       } else if (field === "discount") {
         currentItem.discount = Math.max(0, Number(value || 0));
       } else if (field === "note") {
@@ -310,6 +346,8 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
             discount: 0,
             total: getEffectivePrice(price, 0),
             note: "",
+            variantId: "",
+            priceMode: "sum" as const,
           },
         ]);
       }
@@ -393,6 +431,8 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
         productId: item.productId,
         quantity: Number(item.quantity || 1),
         discount: Number(item.discount || 0),
+        variantId: item.variantId || null,
+        priceMode: item.priceMode || "sum",
       }));
 
     setIsSubmitting(true);
@@ -605,6 +645,60 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
                       <Trash2 size={18} />
                     </button>
                   </div>
+                  {/* اختيار اللون/المقاس وطريقة التسعير */}
+                  {Array.isArray(product?.variants) && product.variants.length > 0 && (() => {
+                    const selectedVariant = findProductVariant(product, item.variantId);
+                    return (
+                      <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-slate-200 dark:border-slate-700 pt-3">
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-400 mb-1">اللون / المقاس</label>
+                          <div className="flex items-center gap-2">
+                            {selectedVariant?.color?.hexCode && (
+                              <span
+                                className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 shrink-0"
+                                style={{ backgroundColor: selectedVariant.color.hexCode }}
+                              />
+                            )}
+                            <select
+                              value={item.variantId || ""}
+                              onChange={(event) => updateItem(index, "variantId", event.target.value)}
+                              className="w-full text-slate-900 dark:text-slate-50 bg-white dark:bg-slate-900 p-3 rounded-xl border-none outline-none font-bold text-sm shadow-sm"
+                            >
+                              <option value="">بدون لون/مقاس (سعر المنتج)</option>
+                              {product.variants.map((variant: any) => (
+                                <option key={variant.id} value={String(variant.id)}>
+                                  {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ')} — {formatSiteCurrency(Number(variant.price || 0), settings)}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {selectedVariant && (
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-400 mb-1">طريقة التسعير</label>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
+                              {[
+                                { value: "sum", label: "جمع السعرين" },
+                                { value: "product", label: "سعر المنتج فقط" },
+                                { value: "variant", label: "سعر اللون/المقاس فقط" },
+                              ].map((option) => (
+                                <label key={option.value} className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-300">
+                                  <input
+                                    type="radio"
+                                    name={`wholesale-priceMode-${index}`}
+                                    checked={(item.priceMode || "sum") === option.value}
+                                    onChange={() => updateItem(index, "priceMode", option.value)}
+                                    className="accent-blue-600"
+                                  />
+                                  {option.label}
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
                 {tiers.length > 0 && (
                   <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-bold text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">

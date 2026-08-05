@@ -515,7 +515,8 @@ exports.Prisma.WholesaleOrderItemScalarFieldEnum = {
   price: 'price',
   discount: 'discount',
   orderId: 'orderId',
-  productId: 'productId'
+  productId: 'productId',
+  variantId: 'variantId'
 };
 
 exports.Prisma.WholesaleOrderReturnScalarFieldEnum = {
@@ -641,6 +642,7 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   discount: 'discount',
   orderId: 'orderId',
   productId: 'productId',
+  variantId: 'variantId',
   affiliateLinkId: 'affiliateLinkId'
 };
 
