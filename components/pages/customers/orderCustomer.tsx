@@ -82,6 +82,8 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     : [];
 
   const currencySymbol = settings?.code === "USD" ? "$" : getCurrencySymbol(settings?.code) || settings?.code || "$";
+  // معامل التحويل من الدولار إلى عملة الموقع (الأسعار الداخلية كلها بالدولار)
+  const currencyRate = settings && settings.code !== "USD" && Number(settings.exchangeRate) > 0 ? Number(settings.exchangeRate) : 1;
   const convertUsdToOrderCurrency = (value: number) => Number(value || 0);
 
   const getProductAvailableStockByWarehouse = (product: any, selectedWarehouseValue: string) => {
@@ -420,8 +422,8 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       googleMapsLink,
       shippingId: shippingId || null,
       deliveryMethod,
-      amount,
-      amountBank: Number(finalTotalAfterLoyalty - Number(amount)),
+      amount: paymentMethod === "مختلطة" ? String(Number(amount || 0) / currencyRate) : "",
+      amountBank: paymentMethod === "مختلطة" ? Number(finalTotalAfterLoyalty - Number(amount || 0) / currencyRate) : 0,
       deliveryNotes,
       paymentMethod,
       additionalNotes,
@@ -804,12 +806,12 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
               {paymentMethod === "مختلطة" ? (
                 <div className="grid md:col-span-2 grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المستلم</label>
-                    <input type="text" value={amount} onChange={(e) => setamount(e.target.value)} className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
+                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المستلم ({settings?.code || "USD"})</label>
+                    <input type="number" min="0" value={amount} onChange={(e) => setamount(e.target.value)} className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي</label>
-                    <input type="text" value={finalTotalAfterLoyalty - Number(amount)} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
+                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي ({settings?.code || "USD"})</label>
+                    <input type="text" value={Math.max(0, finalTotalAfterLoyalty * currencyRate - Number(amount || 0))} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
                   </div>
                 </div>
               ) : (

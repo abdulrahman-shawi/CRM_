@@ -170,6 +170,7 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
   const [municipality, setMunicipality] = React.useState("");
   const [fullAddress, setFullAddress] = React.useState("");
   const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
+  const [amount, setAmount] = React.useState("");
   const [status, setStatus] = React.useState("طلب جديد");
   const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [additionalNotes, setAdditionalNotes] = React.useState("");
@@ -179,6 +180,8 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
   const { settings } = useSiteCurrency();
   const selectedWarehouse = warehouses.find((warehouse) => String(warehouse.id) === warehouseId);
   const currencySymbol = settings?.code === "USD" ? "$" : getCurrencySymbol(settings?.code) || settings?.code || "$";
+  // معامل التحويل من الدولار إلى عملة الموقع (الأسعار الداخلية كلها بالدولار)
+  const currencyRate = settings && settings.code !== "USD" && Number(settings.exchangeRate) > 0 ? Number(settings.exchangeRate) : 1;
 
   const selectedCountryRow = countryRows.find((row) => row.name === country);
   const filteredCities = selectedCountryRow
@@ -237,6 +240,7 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
     setGoogleMapsLink(String(customer.googleMapsLink || ""));
     setAdditionalNotes(String(customer.notes || ""));
     setPaymentMethod("عند الاستلام");
+    setAmount("");
     setStatus("طلب جديد");
     setDeliveryNotes("");
     setOverallDiscount(0);
@@ -386,6 +390,11 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
       return;
     }
 
+    if (paymentMethod === "مختلطة" && !String(amount).trim()) {
+      toast.error("يرجى إدخال المبلغ المستلم");
+      return;
+    }
+
     const phones = normalizePhoneList(receiverPhone);
     if (phones.length === 0 || phones.some((phone) => phone.length < 10)) {
       toast.error("يرجى إدخال رقم هاتف صحيح");
@@ -417,6 +426,9 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
       municipality,
       fullAddress,
       paymentMethod,
+      // المبلغ المستلم يُدخل بعملة الموقع ويُحوّل للدولار قبل التخزين
+      amount: paymentMethod === "مختلطة" ? String(Number(amount || 0) / currencyRate) : "",
+      amountBank: paymentMethod === "مختلطة" ? String(grandTotal - Number(amount || 0) / currencyRate) : "",
       status,
       overallDiscount,
       deliveryNotes,
@@ -797,6 +809,31 @@ export default function WholesaleOrderCustomer({ customer, isOpen, onClose, onSu
                 ))}
               </select>
             </div>
+            {paymentMethod === "مختلطة" && (
+              <div className="grid md:col-span-2 grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المستلم ({settings?.code || "USD"})</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                    className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left"
+                    dir="ltr"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي ({settings?.code || "USD"})</label>
+                  <input
+                    type="text"
+                    value={Math.max(0, grandTotal * currencyRate - Number(amount || 0))}
+                    readOnly
+                    className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+            )}
             <div className="space-y-2 md:col-span-2">
               <label className="text-xs font-bold text-slate-500 mr-2">حالة الطلب</label>
               <select
