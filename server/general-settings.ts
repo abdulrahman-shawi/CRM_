@@ -90,7 +90,7 @@ export async function upsertGeneralSettings(formData: FormData) {
   try {
     const existing = await prisma.generalSetting.findFirst({
       orderBy: { id: "asc" },
-      select: { id: true, logo: true }
+      select: { id: true, logo: true, favicon: true }
     });
 
     const siteName = String(formData.get('siteName') || '').trim() || null;
@@ -128,6 +128,21 @@ export async function upsertGeneralSettings(formData: FormData) {
       }
     }
 
+    let faviconUrl: string | undefined;
+    const faviconFile = formData.get('favicon');
+    if (faviconFile instanceof File && faviconFile.size > 0) {
+      faviconUrl = await uploadSingleFile(faviconFile, 'favicons');
+
+      if (existing?.favicon) {
+        try { await del(existing.favicon); } catch (e) { console.error(e); }
+      }
+    } else {
+      const faviconText = formData.get('favicon') as string | null;
+      if (faviconText && faviconText.startsWith('http')) {
+        faviconUrl = faviconText;
+      }
+    }
+
     const data: any = {
       siteName,
       siteTitle,
@@ -149,6 +164,7 @@ export async function upsertGeneralSettings(formData: FormData) {
       whatsappPhoneNumberId,
       whatsappApiVersion,
       ...(logoUrl ? { logo: logoUrl } : {}),
+      ...(faviconUrl ? { favicon: faviconUrl } : {}),
     };
 
     const saved = existing

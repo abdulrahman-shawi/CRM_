@@ -18,6 +18,7 @@ type FormState = {
   usdToTryRate: string;
   cashboxUsd: string;
   logo: string;
+  favicon: string;
   facebookUrl: string;
   instagramUrl: string;
   topBannerText: string;
@@ -41,6 +42,7 @@ const initialForm: FormState = {
   usdToTryRate: "0",
   cashboxUsd: "0",
   logo: "",
+  favicon: "",
   facebookUrl: "",
   instagramUrl: "",
   topBannerText: "",
@@ -216,6 +218,7 @@ const CURRENCIES = [
 export default function GeneralSettingsPage() {
   const [form, setForm] = React.useState<FormState>(initialForm);
   const [logoFiles, setLogoFiles] = React.useState<FileItem[]>([]);
+  const [faviconFiles, setFaviconFiles] = React.useState<FileItem[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [exporting, setExporting] = React.useState(false);
@@ -250,6 +253,7 @@ export default function GeneralSettingsPage() {
         usdToTryRate: String(data.usdToTryRate ?? 0),
         cashboxUsd: String(data.cashboxUsd ?? 0),
         logo: data.logo || "",
+        favicon: data.favicon || "",
         facebookUrl: data.facebookUrl || "",
         instagramUrl: data.instagramUrl || "",
         topBannerText: data.topBannerText || "",
@@ -265,6 +269,9 @@ export default function GeneralSettingsPage() {
 
       if (data.logo) {
         setLogoFiles([{ url: data.logo, type: "image/*", name: "site-logo" }]);
+      }
+      if (data.favicon) {
+        setFaviconFiles([{ url: data.favicon, type: "image/*", name: "site-favicon" }]);
       }
     }
 
@@ -314,6 +321,15 @@ export default function GeneralSettingsPage() {
         // تم مسح اللوجو
       } else if (form.logo) {
         formData.append("logo", form.logo);
+      }
+
+      const faviconFile = faviconFiles[0]?.rawFile;
+      if (faviconFile instanceof File && faviconFile.size > 0) {
+        formData.append("favicon", faviconFile);
+      } else if (form.favicon && !faviconFiles.length) {
+        // تم مسح الأيقونة
+      } else if (form.favicon) {
+        formData.append("favicon", form.favicon);
       }
 
       const res = await upsertGeneralSettings(formData);
@@ -755,6 +771,16 @@ export default function GeneralSettingsPage() {
             value={logoFiles}
             onChange={(files) => setLogoFiles(files.slice(0, 1))}
           />
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-sm font-bold text-slate-700 dark:text-slate-200">أيقونة الموقع (Favicon)</label>
+          <MultiFileUpload
+            label=""
+            value={faviconFiles}
+            onChange={(files) => setFaviconFiles(files.slice(0, 1))}
+          />
+          <p className="text-xs text-slate-400">تظهر بجانب اسم الموقع في تبويب المتصفح. يُفضّل صورة مربعة (PNG أو ICO). قد يستغرق المتصفح بعض الوقت لتحديث الأيقونة بسبب الكاش.</p>
         </div>
       </div>
 

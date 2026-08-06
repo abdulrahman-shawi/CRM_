@@ -1139,6 +1139,7 @@ model GeneralSetting {
   cashboxTry            Float?   @default(0)
   cashboxUsd            Float?   @default(0)
   logo                  String?
+  favicon               String?
   facebookUrl           String?
   instagramUrl          String?
   topBannerText         String?

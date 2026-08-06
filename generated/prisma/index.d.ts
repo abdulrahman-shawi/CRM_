@@ -50607,6 +50607,7 @@ export namespace Prisma {
     cashboxTry: number | null
     cashboxUsd: number | null
     logo: string | null
+    favicon: string | null
     facebookUrl: string | null
     instagramUrl: string | null
     topBannerText: string | null
@@ -50636,6 +50637,7 @@ export namespace Prisma {
     cashboxTry: number | null
     cashboxUsd: number | null
     logo: string | null
+    favicon: string | null
     facebookUrl: string | null
     instagramUrl: string | null
     topBannerText: string | null
@@ -50665,6 +50667,7 @@ export namespace Prisma {
     cashboxTry: number
     cashboxUsd: number
     logo: number
+    favicon: number
     facebookUrl: number
     instagramUrl: number
     topBannerText: number
@@ -50714,6 +50717,7 @@ export namespace Prisma {
     cashboxTry?: true
     cashboxUsd?: true
     logo?: true
+    favicon?: true
     facebookUrl?: true
     instagramUrl?: true
     topBannerText?: true
@@ -50743,6 +50747,7 @@ export namespace Prisma {
     cashboxTry?: true
     cashboxUsd?: true
     logo?: true
+    favicon?: true
     facebookUrl?: true
     instagramUrl?: true
     topBannerText?: true
@@ -50772,6 +50777,7 @@ export namespace Prisma {
     cashboxTry?: true
     cashboxUsd?: true
     logo?: true
+    favicon?: true
     facebookUrl?: true
     instagramUrl?: true
     topBannerText?: true
@@ -50888,6 +50894,7 @@ export namespace Prisma {
     cashboxTry: number | null
     cashboxUsd: number | null
     logo: string | null
+    favicon: string | null
     facebookUrl: string | null
     instagramUrl: string | null
     topBannerText: string | null
@@ -50936,6 +50943,7 @@ export namespace Prisma {
     cashboxTry?: boolean
     cashboxUsd?: boolean
     logo?: boolean
+    favicon?: boolean
     facebookUrl?: boolean
     instagramUrl?: boolean
     topBannerText?: boolean
@@ -50965,6 +50973,7 @@ export namespace Prisma {
     cashboxTry?: boolean
     cashboxUsd?: boolean
     logo?: boolean
+    favicon?: boolean
     facebookUrl?: boolean
     instagramUrl?: boolean
     topBannerText?: boolean
@@ -50994,6 +51003,7 @@ export namespace Prisma {
     cashboxTry?: boolean
     cashboxUsd?: boolean
     logo?: boolean
+    favicon?: boolean
     facebookUrl?: boolean
     instagramUrl?: boolean
     topBannerText?: boolean
@@ -51023,6 +51033,7 @@ export namespace Prisma {
     cashboxTry?: boolean
     cashboxUsd?: boolean
     logo?: boolean
+    favicon?: boolean
     facebookUrl?: boolean
     instagramUrl?: boolean
     topBannerText?: boolean
@@ -51038,7 +51049,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTitle" | "siteDescription" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "whatsappCloudApiToken" | "whatsappPhoneNumberId" | "whatsappApiVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
+  export type GeneralSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTitle" | "siteDescription" | "companyEmail" | "companyPhone" | "siteCurrency" | "usdToTryRate" | "usdToSypRate" | "cashboxSyp" | "cashboxTry" | "cashboxUsd" | "logo" | "favicon" | "facebookUrl" | "instagramUrl" | "topBannerText" | "primaryColor" | "secondaryColor" | "resendFromEmail" | "resendApiKey" | "nextPublicAppUrl" | "whatsappCloudApiToken" | "whatsappPhoneNumberId" | "whatsappApiVersion" | "createdAt" | "updatedAt", ExtArgs["result"]["generalSetting"]>
 
   export type $GeneralSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GeneralSetting"
@@ -51057,6 +51068,7 @@ export namespace Prisma {
       cashboxTry: number | null
       cashboxUsd: number | null
       logo: string | null
+      favicon: string | null
       facebookUrl: string | null
       instagramUrl: string | null
       topBannerText: string | null
@@ -51506,6 +51518,7 @@ export namespace Prisma {
     readonly cashboxTry: FieldRef<"GeneralSetting", 'Float'>
     readonly cashboxUsd: FieldRef<"GeneralSetting", 'Float'>
     readonly logo: FieldRef<"GeneralSetting", 'String'>
+    readonly favicon: FieldRef<"GeneralSetting", 'String'>
     readonly facebookUrl: FieldRef<"GeneralSetting", 'String'>
     readonly instagramUrl: FieldRef<"GeneralSetting", 'String'>
     readonly topBannerText: FieldRef<"GeneralSetting", 'String'>
@@ -72553,6 +72566,7 @@ export namespace Prisma {
     cashboxTry: 'cashboxTry',
     cashboxUsd: 'cashboxUsd',
     logo: 'logo',
+    favicon: 'favicon',
     facebookUrl: 'facebookUrl',
     instagramUrl: 'instagramUrl',
     topBannerText: 'topBannerText',
@@ -76906,6 +76920,7 @@ export namespace Prisma {
     cashboxTry?: FloatNullableFilter<"GeneralSetting"> | number | null
     cashboxUsd?: FloatNullableFilter<"GeneralSetting"> | number | null
     logo?: StringNullableFilter<"GeneralSetting"> | string | null
+    favicon?: StringNullableFilter<"GeneralSetting"> | string | null
     facebookUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     instagramUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     topBannerText?: StringNullableFilter<"GeneralSetting"> | string | null
@@ -76935,6 +76950,7 @@ export namespace Prisma {
     cashboxTry?: SortOrderInput | SortOrder
     cashboxUsd?: SortOrderInput | SortOrder
     logo?: SortOrderInput | SortOrder
+    favicon?: SortOrderInput | SortOrder
     facebookUrl?: SortOrderInput | SortOrder
     instagramUrl?: SortOrderInput | SortOrder
     topBannerText?: SortOrderInput | SortOrder
@@ -76967,6 +76983,7 @@ export namespace Prisma {
     cashboxTry?: FloatNullableFilter<"GeneralSetting"> | number | null
     cashboxUsd?: FloatNullableFilter<"GeneralSetting"> | number | null
     logo?: StringNullableFilter<"GeneralSetting"> | string | null
+    favicon?: StringNullableFilter<"GeneralSetting"> | string | null
     facebookUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     instagramUrl?: StringNullableFilter<"GeneralSetting"> | string | null
     topBannerText?: StringNullableFilter<"GeneralSetting"> | string | null
@@ -76996,6 +77013,7 @@ export namespace Prisma {
     cashboxTry?: SortOrderInput | SortOrder
     cashboxUsd?: SortOrderInput | SortOrder
     logo?: SortOrderInput | SortOrder
+    favicon?: SortOrderInput | SortOrder
     facebookUrl?: SortOrderInput | SortOrder
     instagramUrl?: SortOrderInput | SortOrder
     topBannerText?: SortOrderInput | SortOrder
@@ -77033,6 +77051,7 @@ export namespace Prisma {
     cashboxTry?: FloatNullableWithAggregatesFilter<"GeneralSetting"> | number | null
     cashboxUsd?: FloatNullableWithAggregatesFilter<"GeneralSetting"> | number | null
     logo?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
+    favicon?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     facebookUrl?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     instagramUrl?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
     topBannerText?: StringNullableWithAggregatesFilter<"GeneralSetting"> | string | null
@@ -82487,6 +82506,7 @@ export namespace Prisma {
     cashboxTry?: number | null
     cashboxUsd?: number | null
     logo?: string | null
+    favicon?: string | null
     facebookUrl?: string | null
     instagramUrl?: string | null
     topBannerText?: string | null
@@ -82516,6 +82536,7 @@ export namespace Prisma {
     cashboxTry?: number | null
     cashboxUsd?: number | null
     logo?: string | null
+    favicon?: string | null
     facebookUrl?: string | null
     instagramUrl?: string | null
     topBannerText?: string | null
@@ -82544,6 +82565,7 @@ export namespace Prisma {
     cashboxTry?: NullableFloatFieldUpdateOperationsInput | number | null
     cashboxUsd?: NullableFloatFieldUpdateOperationsInput | number | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    favicon?: NullableStringFieldUpdateOperationsInput | string | null
     facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
     instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82573,6 +82595,7 @@ export namespace Prisma {
     cashboxTry?: NullableFloatFieldUpdateOperationsInput | number | null
     cashboxUsd?: NullableFloatFieldUpdateOperationsInput | number | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    favicon?: NullableStringFieldUpdateOperationsInput | string | null
     facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
     instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82602,6 +82625,7 @@ export namespace Prisma {
     cashboxTry?: number | null
     cashboxUsd?: number | null
     logo?: string | null
+    favicon?: string | null
     facebookUrl?: string | null
     instagramUrl?: string | null
     topBannerText?: string | null
@@ -82630,6 +82654,7 @@ export namespace Prisma {
     cashboxTry?: NullableFloatFieldUpdateOperationsInput | number | null
     cashboxUsd?: NullableFloatFieldUpdateOperationsInput | number | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    favicon?: NullableStringFieldUpdateOperationsInput | string | null
     facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
     instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
@@ -82659,6 +82684,7 @@ export namespace Prisma {
     cashboxTry?: NullableFloatFieldUpdateOperationsInput | number | null
     cashboxUsd?: NullableFloatFieldUpdateOperationsInput | number | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    favicon?: NullableStringFieldUpdateOperationsInput | string | null
     facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
     instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
     topBannerText?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87340,6 +87366,7 @@ export namespace Prisma {
     cashboxTry?: SortOrder
     cashboxUsd?: SortOrder
     logo?: SortOrder
+    favicon?: SortOrder
     facebookUrl?: SortOrder
     instagramUrl?: SortOrder
     topBannerText?: SortOrder
@@ -87378,6 +87405,7 @@ export namespace Prisma {
     cashboxTry?: SortOrder
     cashboxUsd?: SortOrder
     logo?: SortOrder
+    favicon?: SortOrder
     facebookUrl?: SortOrder
     instagramUrl?: SortOrder
     topBannerText?: SortOrder
@@ -87407,6 +87435,7 @@ export namespace Prisma {
     cashboxTry?: SortOrder
     cashboxUsd?: SortOrder
     logo?: SortOrder
+    favicon?: SortOrder
     facebookUrl?: SortOrder
     instagramUrl?: SortOrder
     topBannerText?: SortOrder

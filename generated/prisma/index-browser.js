@@ -670,6 +670,7 @@ exports.Prisma.GeneralSettingScalarFieldEnum = {
   cashboxTry: 'cashboxTry',
   cashboxUsd: 'cashboxUsd',
   logo: 'logo',
+  favicon: 'favicon',
   facebookUrl: 'facebookUrl',
   instagramUrl: 'instagramUrl',
   topBannerText: 'topBannerText',

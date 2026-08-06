@@ -20,18 +20,20 @@ const geistMono = localFont({
 const DEFAULT_TITLE = "SKYNOVA CRM";
 const DEFAULT_DESCRIPTION = "SKYNOVA CRM";
 
-// العنوان والوصف يُقرآن من الإعدادات العامة (قابلة للتعديل من /dashboard/settings)
+// العنوان والوصف والأيقونة تُقرأ من الإعدادات العامة (قابلة للتعديل من /dashboard/settings)
 export async function generateMetadata(): Promise<Metadata> {
   let siteTitle: string | null = null;
   let siteDescription: string | null = null;
+  let favicon: string | null = null;
 
   try {
     const settings = await prisma.generalSetting.findFirst({
       orderBy: { id: "asc" },
-      select: { siteTitle: true, siteDescription: true },
+      select: { siteTitle: true, siteDescription: true, favicon: true },
     });
     siteTitle = settings?.siteTitle?.trim() || null;
     siteDescription = settings?.siteDescription?.trim() || null;
+    favicon = settings?.favicon?.trim() || null;
   } catch (error) {
     console.error("generateMetadata settings error:", error);
   }
@@ -42,13 +44,19 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description: siteDescription || DEFAULT_DESCRIPTION,
     manifest: "/manifest.webmanifest",
-    icons: {
-      icon: [
-        { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
-        { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
-      ],
-      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-    },
+    icons: favicon
+      ? {
+          icon: [{ url: favicon }],
+          apple: [{ url: favicon }],
+          shortcut: [{ url: favicon }],
+        }
+      : {
+          icon: [
+            { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+            { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+          ],
+          apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+        },
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
