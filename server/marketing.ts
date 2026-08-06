@@ -156,14 +156,37 @@ async function getCampaignRecipientsForPickerInternal() {
 }
 
 async function getCampaignRecipients(audience: CampaignAudience, targetIds: any) {
+  // كل العملاء = العملاء العاديين + عملاء الجملة (مع إزالة التكرار حسب البريد)
   if (audience === "ALL_CUSTOMERS") {
-    const customers = await prisma.customer.findMany({
-      where: { email: { not: null } },
-      select: { id: true, email: true, name: true },
-    });
-    return customers
-      .filter((c): c is typeof c & { email: string } => c.email !== null && isValidEmail(c.email))
-      .map((c) => ({ id: c.id, email: c.email, name: c.name, type: "customer" as const }));
+    const [customers, wholesale] = await Promise.all([
+      prisma.customer.findMany({
+        where: { email: { not: null } },
+        select: { id: true, email: true, name: true },
+      }),
+      prisma.wholesaleCustomer.findMany({
+        where: { email: { not: null } },
+        select: { id: true, email: true, name: true },
+      }),
+    ]);
+
+    const recipients: { id: string; email: string; name: string | null; type: "customer" | "wholesale" }[] = [];
+    const seenEmails = new Set<string>();
+
+    for (const c of customers) {
+      if (!c.email || !isValidEmail(c.email)) continue;
+      const key = c.email.toLowerCase();
+      if (seenEmails.has(key)) continue;
+      seenEmails.add(key);
+      recipients.push({ id: c.id, email: c.email, name: c.name, type: "customer" });
+    }
+    for (const w of wholesale) {
+      if (!w.email || !isValidEmail(w.email)) continue;
+      const key = w.email.toLowerCase();
+      if (seenEmails.has(key)) continue;
+      seenEmails.add(key);
+      recipients.push({ id: w.id, email: w.email, name: w.name, type: "wholesale" });
+    }
+    return recipients;
   }
 
   if (audience === "ALL_WHOLESALE") {
@@ -176,22 +199,21 @@ async function getCampaignRecipients(audience: CampaignAudience, targetIds: any)
       .map((c) => ({ id: c.id, email: c.email, name: c.name, type: "wholesale" as const }));
   }
 
+  // ALL_REPS (يظهر في الواجهة باسم "العملاء") = العملاء العاديين من صفحة العملاء
   if (audience === "ALL_REPS") {
-    const reps = await prisma.user.findMany({
-      where: {
-        accountType: { in: ["STAFF", "MANAGER"] },
-      },
-      select: { id: true, email: true, username: true },
+    const customers = await prisma.customer.findMany({
+      where: { email: { not: null } },
+      select: { id: true, email: true, name: true },
     });
-    return reps
-      .filter((u) => isValidEmail(u.email))
-      .map((u) => ({ id: u.id, email: u.email, name: u.username, type: "rep" as const }));
+    return customers
+      .filter((c): c is typeof c & { email: string } => c.email !== null && isValidEmail(c.email))
+      .map((c) => ({ id: c.id, email: c.email, name: c.name, type: "customer" as const }));
   }
 
   return resolveCustomRecipients(parseTargetIds(targetIds));
 }
 
-type WhatsAppRecipient = { id: string; phone: string; name: string | null; type: "customer" | "wholesale" | "rep" };
+type WhatsAppRecipient = { id: string; phone: string; name: string | null; type: "customer" | "wholesale" };
 
 async function resolveCustomWhatsAppRecipients(ids: string[]) {
   const recipients: WhatsAppRecipient[] = [];
@@ -230,15 +252,32 @@ async function resolveCustomWhatsAppRecipients(ids: string[]) {
 }
 
 async function getWhatsAppCampaignRecipients(audience: CampaignAudience, targetIds: any) {
+  // كل العملاء = العملاء العاديين + عملاء الجملة (مع إزالة التكرار حسب رقم الهاتف)
   if (audience === "ALL_CUSTOMERS") {
-    const customers = await prisma.customer.findMany({
-      where: { phone: { isEmpty: false } },
-      select: { id: true, phone: true, countryCode: true, name: true },
-    });
+    const [customers, wholesale] = await Promise.all([
+      prisma.customer.findMany({
+        where: { phone: { isEmpty: false } },
+        select: { id: true, phone: true, countryCode: true, name: true },
+      }),
+      prisma.wholesaleCustomer.findMany({
+        select: { id: true, phone: true, whatsappPhone: true, name: true },
+      }),
+    ]);
+
     const recipients: WhatsAppRecipient[] = [];
+    const seenPhones = new Set<string>();
+
     for (const customer of customers) {
       const phone = normalizeWhatsAppPhone(customer.phone?.[0], customer.countryCode);
-      if (phone) recipients.push({ id: customer.id, phone, name: customer.name, type: "customer" });
+      if (!phone || seenPhones.has(phone)) continue;
+      seenPhones.add(phone);
+      recipients.push({ id: customer.id, phone, name: customer.name, type: "customer" });
+    }
+    for (const customer of wholesale) {
+      const phone = normalizeWhatsAppPhone(customer.whatsappPhone || customer.phone?.[0]);
+      if (!phone || seenPhones.has(phone)) continue;
+      seenPhones.add(phone);
+      recipients.push({ id: customer.id, phone, name: customer.name, type: "wholesale" });
     }
     return recipients;
   }
@@ -255,18 +294,16 @@ async function getWhatsAppCampaignRecipients(audience: CampaignAudience, targetI
     return recipients;
   }
 
+  // ALL_REPS (يظهر في الواجهة باسم "العملاء") = العملاء العاديين من صفحة العملاء
   if (audience === "ALL_REPS") {
-    const reps = await prisma.user.findMany({
-      where: {
-        accountType: { in: ["STAFF", "MANAGER"] },
-        phone: { not: null },
-      },
-      select: { id: true, phone: true, username: true },
+    const customers = await prisma.customer.findMany({
+      where: { phone: { isEmpty: false } },
+      select: { id: true, phone: true, countryCode: true, name: true },
     });
     const recipients: WhatsAppRecipient[] = [];
-    for (const rep of reps) {
-      const phone = normalizeWhatsAppPhone(rep.phone);
-      if (phone) recipients.push({ id: rep.id, phone, name: rep.username, type: "rep" });
+    for (const customer of customers) {
+      const phone = normalizeWhatsAppPhone(customer.phone?.[0], customer.countryCode);
+      if (phone) recipients.push({ id: customer.id, phone, name: customer.name, type: "customer" });
     }
     return recipients;
   }

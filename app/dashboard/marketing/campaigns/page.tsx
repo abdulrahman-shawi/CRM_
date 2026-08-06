@@ -48,7 +48,7 @@ const CAMPAIGN_STATUSES = [
 const CAMPAIGN_AUDIENCES = [
   { value: "ALL_CUSTOMERS", label: "كل العملاء" },
   { value: "ALL_WHOLESALE", label: "عملاء الجملة" },
-  { value: "ALL_REPS", label: "المندوبين" },
+  { value: "ALL_REPS", label: "العملاء" },
   { value: "CUSTOM", label: "قائمة مخصصة" },
 ];
 
