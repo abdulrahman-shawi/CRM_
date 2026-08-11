@@ -5,54 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
-}
-
-enum ActivityTargetCycle {
-  DAILY
-  MONTHLY
-}
-
-enum ActivityWeekDay {
-  SATURDAY
-  SUNDAY
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-}
-
-enum MovementType {
-  IN
-  OUT
-  TRANSFER
-  ADJUSTMENT
-  RETURN
-}
-
-enum WarrantyType {
-  REPLACEMENT
-  MAINTENANCE
-  DAMAGED
-}
-
-enum ExpenseType {
-  DAILY
-  MONTHLY
-  STAFF_SALARY
-  RENT
-}
-
-enum ExpenseCurrency {
-  SYP
-  TRY
-  USD
-}
-
-enum PaidFromOffice {
-  TURKEY
-  SYRIA
 }
 
 enum AccountType {
@@ -67,16 +19,6 @@ enum WalletTransferStatus {
   RECEIVED
 }
 
-// ============================================
-// NEW Enums (for E-commerce Affiliate)
-// ============================================
-
-enum EcommerceRole {
-  ADMIN
-  AFFILIATE
-  CUSTOMER
-}
-
 enum CommissionStatus {
   PENDING
   PAID
@@ -88,134 +30,8 @@ enum DiscountType {
   FIXED
 }
 
-enum WholesaleCustomerCategory {
-  PHARMACY
-  MARKET
-  CLINIC
-  DISTRIBUTOR
-  OTHER
-}
-
-enum WholesaleVisitResult {
-  VERY_INTERESTED
-  INTERESTED
-  THINKING
-  NOT_INTERESTED
-  PURCHASED
-}
-
-enum WholesaleVisitStatus {
-  PLANNED
-  VISITED
-  FOLLOW_UP_REQUIRED
-  CLOSED
-}
-
 // ============================================
-// Marketing Module Enums
-// ============================================
-
-enum CampaignType {
-  EMAIL
-  SOCIAL
-  SMS
-  CONTENT
-  WHATSAPP
-}
-
-enum CampaignStatus {
-  DRAFT
-  SCHEDULED
-  RUNNING
-  COMPLETED
-  CANCELLED
-}
-
-enum CampaignAudience {
-  ALL_CUSTOMERS
-  ALL_WHOLESALE
-  ALL_REPS
-  CUSTOM
-}
-
-// ============================================
-// Phase 1 Enums: Returns, Debts
-// ============================================
-
-enum ReturnReason {
-  DAMAGED
-  WRONG_PRODUCT
-  CUSTOMER_RETURN
-  EXPIRED
-  OTHER
-}
-
-enum PaymentType {
-  CASH
-  BANK_TRANSFER
-  INSTALLMENT
-  CHECK
-  OTHER
-}
-
-// ============================================
-// Phase 2+3 Enums: Loyalty, Notifications, Tasks, Backup
-// ============================================
-
-enum LoyaltyTransactionType {
-  EARN
-  REDEEM
-  BONUS
-  EXPIRE
-}
-
-enum NotificationType {
-  LOW_STOCK
-  ORDER_STATUS_CHANGE
-  WHOLESALE_FOLLOW_UP
-  TASK_REMINDER
-  SYSTEM
-}
-
-enum NotificationChannel {
-  IN_APP
-  EMAIL
-  WHATSAPP
-}
-
-enum TaskType {
-  VISIT
-  CALL
-  FOLLOW_UP
-  DELIVERY
-  MEETING
-  OTHER
-}
-
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-enum TrackingStatus {
-  PENDING
-  PICKED_UP
-  IN_TRANSIT
-  OUT_FOR_DELIVERY
-  DELIVERED
-  RETURNED
-}
-
-enum BackupStatus {
-  PENDING
-  SUCCESS
-  FAILED
-}
-
-// ============================================
-// User (Existing + New columns)
+// User
 // ============================================
 
 model User {
@@ -223,55 +39,36 @@ model User {
   username               String
   email                  String          @unique
   phone                  String?
-  notes                  String?
-  jobTitle               String?
   avatar                 String?
   accountType            AccountType     @default(STAFF)
   password               String
-  salesCommissionPercent Float           @default(0)
-  wage                   Int             @default(0)
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @updatedAt
   permissionId           String?
   parentId               String?
 
-  // ─── NEW: E-commerce Affiliate columns (nullable / with defaults) ───
+  // ─── E-commerce Affiliate columns ───
   isAffiliate            Boolean         @default(false)
   affiliateApproved      Boolean         @default(false)
   affiliateCode          String?         @unique
   affiliateRequestedAt   DateTime?
   affiliateApprovedAt    DateTime?
 
-  // ─── Existing Relations ───
+  // ─── Relations ───
   parent          User?    @relation("UserToSubordinates", fields: [parentId], references: [id])
   subordinates    User[]   @relation("UserToSubordinates")
   orders                 Order[]
   walletTransfers        AffiliateWalletTransfer[]
   permission             Permission?     @relation(fields: [permissionId], references: [id])
   customers              Customer[]      @relation("CustomerToUser")
-  message                Message[]
-  targets                UserTarget[]
-  activityTargets        UserActivityTarget[]
-  salaryAdjustments      EmployeeSalaryAdjustment[]
-  expenses               Expense[]
-  stockMovements         StockMovement[]
-  customerPayments       CustomerPayment[]
 
-  // ─── NEW: E-commerce Affiliate Relations ───
+  // ─── E-commerce Affiliate Relations ───
   affiliateLinks         AffiliateLink[]
   reviews                Review[]
-  assignedWholesaleCustomers WholesaleCustomer[] @relation("WholesaleCustomerAssignedUser")
-  wholesaleVisits           WholesaleVisit[]     @relation("WholesaleVisitUser")
-  wholesaleOrders          WholesaleOrder[]     @relation("WholesaleOrderUser")
-  campaigns                Campaign[]
-  notifications            Notification[]
-  assignedTasks            Task[]
-  createdTasks             Task[]     @relation("TaskCreatedBy")
-  backupLogs               BackupLog[]
 }
 
 // ============================================
-// Permission (Existing — Unchanged)
+// Permission
 // ============================================
 
 model Permission {
@@ -293,37 +90,10 @@ model Permission {
   editOrders   Boolean @default(false)
   deleteOrders Boolean @default(false)
 
-  viewWarranty   Boolean @default(false)
-  addWarranty    Boolean @default(false)
-  editWarranty   Boolean @default(false)
-  deleteWarranty Boolean @default(false)
-
   viewCustomers   Boolean @default(false)
   addCustomers    Boolean @default(false)
   editCustomers   Boolean @default(false)
   deleteCustomers Boolean @default(false)
-
-  viewWholesaleCustomers   Boolean @default(false)
-  addWholesaleCustomers    Boolean @default(false)
-  editWholesaleCustomers   Boolean @default(false)
-  deleteWholesaleCustomers Boolean @default(false)
-
-  viewWholesaleOrders      Boolean @default(false)
-  addWholesaleOrders       Boolean @default(false)
-  editWholesaleOrders      Boolean @default(false)
-  deleteWholesaleOrders    Boolean @default(false)
-
-  viewEmployees   Boolean @default(false)
-  addEmployees    Boolean @default(false)
-  editEmployees   Boolean @default(false)
-  deleteEmployees Boolean @default(false)
-
-  viewExpenses   Boolean @default(false)
-  addExpenses    Boolean @default(false)
-  editExpenses   Boolean @default(false)
-  deleteExpenses Boolean @default(false)
-
-  viewAnalytics Boolean @default(false)
 
   viewCategories   Boolean @default(false)
   addCategories    Boolean @default(false)
@@ -340,46 +110,18 @@ model Permission {
   editPages   Boolean @default(false)
   deletePages Boolean @default(false)
 
-  viewMarketing   Boolean @default(false)
-  addMarketing    Boolean @default(false)
-  editMarketing   Boolean @default(false)
-  deleteMarketing Boolean @default(false)
-
-  // ─── Phase 1 Permissions ───
-  viewReturns   Boolean @default(false)
-  addReturns    Boolean @default(false)
-  editReturns   Boolean @default(false)
-  deleteReturns Boolean @default(false)
-
-  viewCustomerPayments  Boolean @default(false)
-  addCustomerPayments   Boolean @default(false)
-  deleteCustomerPayments Boolean @default(false)
-
-  // ─── Phase 2+3 Permissions ───
-  viewLoyalty   Boolean @default(false)
-  editLoyalty   Boolean @default(false)
-  viewNotifications Boolean @default(false)
-  viewTasks     Boolean @default(false)
-  addTasks      Boolean @default(false)
-  editTasks     Boolean @default(false)
-  deleteTasks   Boolean @default(false)
-  viewTracking  Boolean @default(false)
-  editTracking  Boolean @default(false)
-  viewBackups   Boolean @default(false)
-  manageBackups Boolean @default(false)
-
   users        User[]
 }
 
 // ============================================
-// Category (Existing + New columns)
+// Category
 // ============================================
 
 model Category {
   id       Int       @id @default(autoincrement())
   name     String    @unique
 
-  // ─── NEW: E-commerce Affiliate columns ───
+  // ─── E-commerce columns ───
   image    String?
   slug     String?   @unique
   isVisible Boolean  @default(false)
@@ -390,9 +132,8 @@ model Category {
 }
 
 // ============================================
-// Product (Existing + New columns)
+// Product
 // ============================================
-
 
 model Product {
   id             Int             @id @default(autoincrement())
@@ -404,7 +145,7 @@ model Product {
   categoryId     Int?
   createdAt      DateTime        @default(now())
 
-  // ─── NEW: E-commerce Affiliate columns ───
+  // ─── E-commerce columns ───
   seoSlug               String?  @unique
   metaTitle             String?
   metaDescription       String?
@@ -413,29 +154,18 @@ model Product {
   showInAds             Boolean  @default(false)
   affiliatePrice        Float    @default(0)
   affiliateCommissionRate Float? @default(10.00)
-  wholesalePrice        Float    @default(0)
 
-  // ─── Existing Relations ───
+  // ─── Relations ───
   orderItems     OrderItem[]
   category       Category?       @relation(fields: [categoryId], references: [id])
   images         ProductImage[]
-  targetProducts TargetProduct[]
-  stocks         ProductStock[]
-  stockMovements StockMovement[]
-  warrantiesAsProduct     Warranty[] @relation("WarrantyOriginalProduct")
   adPageVisits   AdPageVisit[]
 
-  // ─── NEW: E-commerce Affiliate Relations ───
+  // ─── E-commerce Relations ───
   affiliateLinks AffiliateLink[]
   reviews        Review[]
   landingPage    ProductLandingPage?
   offerDiscounts OfferDiscount[]
-  wholesalePricingTiers ProductWholesalePriceTier[]
-  wholesaleOrderItems   WholesaleOrderItem[]
-
-  // ─── Phase 1 Relations ───
-  returnItems    OrderReturnItem[]
-  wholesaleReturnItems WholesaleOrderReturnItem[]
 
   // ─── Variants (Colors & Sizes) ───
   variants       ProductVariant[]
@@ -465,7 +195,6 @@ model ProductVariant {
   size      Size?    @relation(fields: [sizeId], references: [id], onDelete: SetNull)
 
   orderItems          OrderItem[]
-  wholesaleOrderItems WholesaleOrderItem[]
 
   @@unique([productId, colorId, sizeId])
   @@index([productId])
@@ -532,7 +261,7 @@ model ProductLandingPage {
 }
 
 // ============================================
-// Review (NEW TABLE)
+// Review
 // ============================================
 
 model Review {
@@ -555,156 +284,8 @@ model Review {
   @@map("reviews")
 }
 
-
 // ============================================
-// Country
-// ============================================
-
-model Country {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  cities     City[]
-  warehouses Warehouse[]
-}
-
-model City {
-  id        Int      @id @default(autoincrement())
-  name      String
-  countryId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  warehouses Warehouse[]
-
-  @@unique([name, countryId])
-  @@index([countryId])
-}
-
-// ============================================
-// Warehouse
-// ============================================
-
-model Warehouse {
-  id         Int             @id @default(autoincrement())
-  name       String          @unique
-  location   String
-  countryId  Int?
-  cityId     Int?
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-  country    Country?        @relation(fields: [countryId], references: [id], onDelete: SetNull)
-  city       City?           @relation(fields: [cityId], references: [id], onDelete: SetNull)
-  stocks     ProductStock[]
-  orders     Order[]
-  wholesaleOrders WholesaleOrder[]
-  movements  StockMovement[]
-  warranties Warranty[]
-  returns     OrderReturn[]
-  wholesaleReturns WholesaleOrderReturn[]
-
-  @@index([countryId])
-  @@index([cityId])
-}
-
-// ============================================
-// ProductStock (Existing — Unchanged)
-// ============================================
-
-model ProductStock {
-  id          Int       @id @default(autoincrement())
-  productId   Int
-  warehouseId Int
-  quantity    Int       @default(0)
-  price       Float     @default(0)
-  wholesalePrice Float   @default(0)
-  discount    Float     @default(0)
-  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-
-  @@unique([productId, warehouseId])
-}
-
-// ============================================
-// StockMovement (Existing — Unchanged)
-// ============================================
-
-model StockMovement {
-  id          String       @id @default(uuid())
-  productId   Int
-  warehouseId Int
-  userId      String?
-  quantity    Int
-  type        MovementType
-  reason      String?
-  createdAt   DateTime     @default(now())
-
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-  user      User?     @relation(fields: [userId], references: [id])
-}
-
-// ============================================
-// UserTarget (Existing — Unchanged)
-// ============================================
-
-model UserTarget {
-  id               String          @id @default(uuid())
-  userId           String
-  salesTargetValue Int[]           @default([])
-  salesRewardValue Int[]           @default([])
-  isActive         Boolean         @default(true)
-  endedAt          DateTime?
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products         TargetProduct[]
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-}
-
-// ============================================
-// UserActivityTarget (Existing — Unchanged)
-// ============================================
-
-model UserActivityTarget {
-  id                            String              @id @default(uuid())
-  userId                        String
-  cycle                         ActivityTargetCycle @default(DAILY)
-  activeWeekDays                ActivityWeekDay[]   @default([SATURDAY, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY])
-  requiredCustomers             Int                 @default(0)
-  customerReward                Float               @default(0)
-  customerMissPenaltyAmount     Float               @default(0)
-  requiredCommunications        Int                 @default(0)
-  communicationReward           Float               @default(0)
-  communicationMissPenaltyAmount Float              @default(0)
-  startsAt                      DateTime            @default(now())
-  endedAt                       DateTime?
-  isActive                      Boolean             @default(true)
-  createdAt                     DateTime            @default(now())
-  updatedAt                     DateTime            @updatedAt
-  user                          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, isActive, cycle])
-}
-
-// ============================================
-// TargetProduct (Existing — Unchanged)
-// ============================================
-
-model TargetProduct {
-  id          String     @id @default(uuid())
-  targetId    String
-  productId   Int
-  requiredQty Int[]
-  rewardValue Int[]
-  target      UserTarget @relation(fields: [targetId], references: [id], onDelete: Cascade)
-  product     Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([targetId, productId])
-}
-
-// ============================================
-// ProductImage (Existing — Unchanged)
+// ProductImage
 // ============================================
 
 model ProductImage {
@@ -716,7 +297,7 @@ model ProductImage {
 }
 
 // ============================================
-// Customer (Existing — Unchanged)
+// Customer
 // ============================================
 
 model Customer {
@@ -733,259 +314,22 @@ model Customer {
   city        String?
   rating      Int?
   status      String?
-  loyaltyPoints Int     @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   orders      Order[]
   users       User[]    @relation("CustomerToUser")
-  message     Message[]
-  warranties  Warranty[]
-  payments    CustomerPayment[]
-  loyaltyTransactions LoyaltyTransaction[]
-  notifications       Notification[]
-  tasks               Task[]
-}
-
-model WholesaleCustomer {
-  id               String                    @id @default(uuid())
-  name             String
-  category         WholesaleCustomerCategory @default(PHARMACY)
-  contactName      String?
-  contactRole      String?
-  contactRoleOther String?
-  phone            String[]
-  email            String?
-  whatsappPhone    String?
-  country          String?
-  city             String?
-  area             String?
-  address          String?
-  latitude         Float?
-  longitude        Float?
-  googleMapsLink   String?
-  assignedUserId   String?
-  notes            String?
-  preferredVisitAt DateTime?
-  lastVisitAt      DateTime?
-  nextFollowUpAt   DateTime?
-  lastVisitResult  WholesaleVisitResult?
-  visitStatus      WholesaleVisitStatus     @default(PLANNED)
-  isActive         Boolean                  @default(true)
-  createdAt        DateTime                 @default(now())
-  updatedAt        DateTime                 @updatedAt
-
-  assignedUser User?            @relation("WholesaleCustomerAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
-  visits       WholesaleVisit[]
-  orders       WholesaleOrder[]
-  tasks        Task[]
-
-  @@index([assignedUserId])
-  @@index([city, area])
-  @@index([visitStatus])
-  @@index([nextFollowUpAt])
-}
-
-model WholesaleVisit {
-  id                String               @id @default(uuid())
-  wholesaleCustomerId String
-  userId            String?
-  visitedAt         DateTime             @default(now())
-  result            WholesaleVisitResult
-  status            WholesaleVisitStatus @default(VISITED)
-  voiceNote         String?
-  notes             String?
-  photoUrls         String[]
-  latitude          Float?
-  longitude         Float?
-  nextFollowUpAt    DateTime?
-  followUpType      String?
-  followUpNotes     String?
-  orderPlaced       Boolean              @default(false)
-  syncedAt          DateTime?
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-
-  wholesaleCustomer WholesaleCustomer @relation(fields: [wholesaleCustomerId], references: [id], onDelete: Cascade)
-  user              User?             @relation("WholesaleVisitUser", fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([wholesaleCustomerId])
-  @@index([userId])
-  @@index([visitedAt])
-  @@index([result])
-  @@index([nextFollowUpAt])
-}
-
-model ProductWholesalePriceTier {
-  id          String   @id @default(uuid())
-  productId   Int
-  minQuantity Int
-  maxQuantity Int?
-  price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([productId])
-  @@index([productId, minQuantity])
-  @@unique([productId, minQuantity])
-  @@map("product_wholesale_price_tiers")
-}
-
-model WholesaleOrder {
-  id                 Int       @id @default(autoincrement())
-  orderNumber        String    @unique
-  totalAmount        Float
-  discount           Float     @default(0)
-  finalAmount        Float
-  paymentMethod      String
-  amount             String?
-  amountBank         String?
-  receiverName       String?
-  receiverPhone      String[]
-  country            String?
-  city               String?
-  municipality       String?
-  fullAddress        String?
-  deliveryNotes      String?
-  googleMapsLink     String?
-  additionalNotes    String?
-  status             String    @default("طلب جديد")
-  wholesaleCustomerId String
-  userId             String?
-  warehouseId        Int?
-  manualCreatedAt    DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  wholesaleCustomer WholesaleCustomer @relation(fields: [wholesaleCustomerId], references: [id], onDelete: Cascade)
-  user              User?             @relation("WholesaleOrderUser", fields: [userId], references: [id], onDelete: SetNull)
-  warehouse         Warehouse?        @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
-  items             WholesaleOrderItem[]
-  returns           WholesaleOrderReturn[]
-
-  @@index([createdAt])
-  @@index([wholesaleCustomerId, createdAt])
-  @@index([userId, createdAt])
-  @@index([warehouseId, createdAt])
-  @@index([status, createdAt])
-  @@map("wholesale_orders")
-}
-
-model WholesaleOrderItem {
-  id        Int     @id @default(autoincrement())
-  quantity  Int     @default(1)
-  price     Float
-  discount  Float   @default(0)
-  orderId   Int
-  productId Int
-  variantId Int?
-
-  order   WholesaleOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product        @relation(fields: [productId], references: [id])
-  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
-
-  returnItems WholesaleOrderReturnItem[]
-
-  @@index([orderId])
-  @@index([productId])
-  @@map("wholesale_order_items")
-}
-
-model WholesaleOrderReturn {
-  id               String       @id @default(uuid())
-  wholesaleOrderId Int
-  reason           ReturnReason @default(OTHER)
-  reasonNotes      String?
-  refundAmount     Float        @default(0)
-  warehouseId      Int?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-
-  wholesaleOrder WholesaleOrder @relation(fields: [wholesaleOrderId], references: [id], onDelete: Cascade)
-  warehouse      Warehouse?     @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
-  items          WholesaleOrderReturnItem[]
-
-  @@index([wholesaleOrderId])
-  @@index([warehouseId])
-  @@map("wholesale_order_returns")
-}
-
-model WholesaleOrderReturnItem {
-  id                     String   @id @default(uuid())
-  wholesaleOrderReturnId String
-  wholesaleOrderItemId   Int
-  productId              Int
-  quantity               Int      @default(1)
-  price                  Float    @default(0)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-
-  wholesaleOrderReturn WholesaleOrderReturn @relation(fields: [wholesaleOrderReturnId], references: [id], onDelete: Cascade)
-  wholesaleOrderItem   WholesaleOrderItem   @relation(fields: [wholesaleOrderItemId], references: [id], onDelete: Cascade)
-  product              Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([wholesaleOrderReturnId])
-  @@index([wholesaleOrderItemId])
-  @@index([productId])
-  @@map("wholesale_order_return_items")
 }
 
 // ============================================
-// Warranty (Existing — Unchanged)
-// ============================================
-
-model Warranty {
-  id                   String       @id @default(uuid())
-  type                 WarrantyType
-  productId            Int
-  customerId           String?
-  warehouseId          Int?
-  orderId              Int?
-  quantity             Int          @default(1)
-  maintenanceLaborCost Float?
-  shippingCost         Float?
-  notes                String?
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
-
-  product            Product   @relation("WarrantyOriginalProduct", fields: [productId], references: [id], onDelete: Cascade)
-  customer           Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  warehouse          Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
-  order              Order?     @relation(fields: [orderId], references: [id], onDelete: SetNull)
-
-  @@index([orderId])
-}
-
-// ============================================
-// Message (Existing — Unchanged)
-// ============================================
-
-model Message {
-  id         String   @id @default(uuid())
-  message    String?
-  customerId String
-  userId     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// ============================================
-// Order (Existing + New columns)
+// Order
 // ============================================
 
 model Order {
   id                              Int         @id @default(autoincrement())
   orderNumber                     String      @unique
   usdToTryRateAtOrder            Float?
-  shippingPrice                   Float?
   moneyTransferCommission         Float? @default(0)
   otherCommissions                Float? @default(0)
-  carrierCollectionReceivedAt    DateTime?
-  carrierCollectionReceivedAmount Float?
-  carrierCollectionNotes         String?
   totalAmount                     Float
   discount                        Float       @default(0)
   finalAmount                     Float
@@ -1007,79 +351,26 @@ model Order {
   status                          String      @default("PENDING")
   customerId                      String
   userId                          String?
-  warehouseId                     Int?
-  shippingId                      Int?
-  paidAmount                      Float       @default(0)
-  remainingAmount                 Float       @default(0)
-  trackingNumber                  String?
-  trackingStatus                  TrackingStatus @default(PENDING)
-  trackingUrl                     String?
   manualCreatedAt                 DateTime?
   createdAt                       DateTime    @default(now())
   updatedAt                       DateTime    @updatedAt
 
-  // ─── Existing Relations ───
+  // ─── Relations ───
   customer        Customer    @relation(fields: [customerId], references: [id])
   user            User?       @relation(fields: [userId], references: [id])
   items           OrderItem[]
-  warehouse       Warehouse?  @relation(fields: [warehouseId], references: [id])
-  shipping        shipping?   @relation(fields: [shippingId], references: [id])
-  warranties      Warranty[]
-  returns         OrderReturn[]
-  payments        CustomerPayment[]
-  loyaltyTransactions LoyaltyTransaction[]
 
-  // ─── NEW: E-commerce Affiliate Relations ───
+  // ─── E-commerce Affiliate Relations ───
   commissions     Commission[]
 
   @@index([createdAt])
   @@index([customerId, createdAt])
   @@index([status, createdAt])
   @@index([userId, createdAt])
-  @@index([warehouseId, createdAt])
 }
 
 // ============================================
-// Expense (Existing — Unchanged)
-// ============================================
-
-model Expense {
-  id             Int              @id @default(autoincrement())
-  type           ExpenseType      @default(DAILY)
-  amount         Float
-  salaryBaseWage Float?
-  description    String?
-  currency       ExpenseCurrency?
-  paidFromOffice PaidFromOffice?
-  employeeId     String?
-  scheduledDate  DateTime?
-  notes          String?
-  // تكرار تلقائي: خصم من الصندوق مع كل بداية يوم (DAILY) أو بداية شهر (MONTHLY)
-  isRecurring    Boolean          @default(false)
-  lastRecurringAppliedAt DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  employee       User?            @relation(fields: [employeeId], references: [id], onDelete: SetNull)
-}
-
-// ============================================
-// shipping (Existing — Unchanged)
-// ============================================
-
-model shipping {
-  id               Int       @id @default(autoincrement())
-  name             String    @unique
-  price            Float
-  // مبالغ يدوية: مستحق لنا من الشركة / مستحق للشركة علينا (تسويات إضافية)
-  manualReceivable Float     @default(0)
-  manualPayable    Float     @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  orders           Order[]
-}
-
-// ============================================
-// OrderItem (Existing + New columns)
+// OrderItem
 // ============================================
 
 model OrderItem {
@@ -1091,19 +382,16 @@ model OrderItem {
   productId Int
   variantId Int?
 
-  // ─── NEW: E-commerce Affiliate tracking ───
+  // ─── E-commerce Affiliate tracking ───
   affiliateLinkId String?
 
-  // ─── Existing Relations ───
+  // ─── Relations ───
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
   variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
-  // ─── NEW: E-commerce Affiliate Relation ───
+  // ─── E-commerce Affiliate Relation ───
   affiliateLink AffiliateLink? @relation(fields: [affiliateLinkId], references: [id], onDelete: SetNull)
-
-  // ─── Phase 1 Relations ───
-  returnItems   OrderReturnItem[]
 
   @@index([orderId])
   @@index([productId])
@@ -1111,21 +399,7 @@ model OrderItem {
 }
 
 // ============================================
-// TrakingCompany (Existing — Unchanged)
-// ============================================
-
-model TrakingCompany {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  city      String?
-  location  String?
-  price     Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// ============================================
-// GeneralSetting (Existing — Unchanged)
+// GeneralSetting
 // ============================================
 
 model GeneralSetting {
@@ -1138,9 +412,6 @@ model GeneralSetting {
   siteCurrency    String?  @default("USD")
   usdToTryRate    Float?   @default(0)
   usdToSypRate    Float?   @default(0)
-  cashboxSyp      Float?   @default(0)
-  cashboxTry      Float?   @default(0)
-  cashboxUsd      Float?   @default(0)
   logo            String?
   favicon         String?
   facebookUrl     String?
@@ -1148,31 +419,9 @@ model GeneralSetting {
   topBannerText   String?
   primaryColor    String?  @default("#10b981")
   secondaryColor  String?  @default("#0f766e")
-  resendFromEmail String?
-  resendApiKey    String?
   nextPublicAppUrl String?
-  whatsappCloudApiToken String?
-  whatsappPhoneNumberId String?
-  whatsappApiVersion    String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-}
-
-// ============================================
-// EmployeeSalaryAdjustment (Existing — Unchanged)
-// ============================================
-
-model EmployeeSalaryAdjustment {
-  id           String   @id @default(uuid())
-  userId       String
-  monthKey     String
-  editedSalary Float
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, monthKey])
 }
 
 // ============================================
@@ -1212,12 +461,8 @@ model HeroSlide {
   @@map("hero_slides")
 }
 
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  NEW TABLES: E-commerce Affiliate Platform                    ║
-// ╚══════════════════════════════════════════════════════════════╝
-
 // ============================================
-// AffiliateLink (NEW TABLE)
+// AffiliateLink
 // ============================================
 
 model AffiliateLink {
@@ -1305,7 +550,7 @@ model OfferDiscount {
 }
 
 // ============================================
-// Commission (NEW TABLE)
+// Commission
 // ============================================
 
 model Commission {
@@ -1346,237 +591,4 @@ model AffiliateWalletTransfer {
   @@index([status])
   @@index([transferredAt])
   @@map("affiliate_wallet_transfers")
-}
-// ============================================
-// Marketing Module
-// ============================================
-
-model Campaign {
-  id              Int              @id @default(autoincrement())
-  title           String
-  type            CampaignType
-  status          CampaignStatus @default(DRAFT)
-  subject         String?
-  content         String           @db.Text
-  channelDetails  Json?            @default("{}")
-  audience        CampaignAudience @default(ALL_CUSTOMERS)
-  targetIds       Json?            @default("[]")
-  scheduledAt     DateTime?
-  sentAt          DateTime?
-  metrics         Json?            @default("{\"sent\":0,\"opened\":0,\"clicked\":0,\"converted\":0}")
-  createdById     String
-  createdBy       User             @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  @@index([type])
-  @@index([status])
-  @@index([createdById])
-  @@index([scheduledAt])
-  @@map("campaigns")
-}
-
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  Phase 1: Returns, Debts ║
-// ╚══════════════════════════════════════════════════════════════╝
-
-// ============================================
-// OrderReturn
-// ============================================
-
-model OrderReturn {
-  id              String    @id @default(uuid())
-  orderId         Int
-  reason          ReturnReason @default(OTHER)
-  reasonNotes     String?
-  refundAmount    Float     @default(0)
-  warehouseId     Int?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  warehouse       Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
-  items           OrderReturnItem[]
-
-  @@index([orderId])
-  @@index([warehouseId])
-  @@map("order_returns")
-}
-
-// ============================================
-// OrderReturnItem
-// ============================================
-
-model OrderReturnItem {
-  id              String    @id @default(uuid())
-  orderReturnId   String
-  orderItemId     Int
-  productId       Int
-  quantity        Int       @default(1)
-  price           Float     @default(0)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  orderReturn     OrderReturn @relation(fields: [orderReturnId], references: [id], onDelete: Cascade)
-  orderItem       OrderItem   @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
-  product         Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([orderReturnId])
-  @@index([orderItemId])
-  @@index([productId])
-  @@map("order_return_items")
-}
-
-// ============================================
-// CustomerPayment (debt/installment payments)
-// ============================================
-
-model CustomerPayment {
-  id              String       @id @default(uuid())
-  customerId      String
-  orderId         Int?
-  amount          Float
-  paymentType     PaymentType  @default(CASH)
-  paymentDate     DateTime     @default(now())
-  notes           String?
-  createdById     String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  customer        Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  order           Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  createdBy       User?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
-
-  @@index([customerId])
-  @@index([orderId])
-  @@index([paymentDate])
-  @@map("customer_payments")
-}
-
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  Phase 2+3: Loyalty, Notifications, Tasks, Tracking, Backup  ║
-// ╚══════════════════════════════════════════════════════════════╝
-
-// ============================================
-// LoyaltyRule
-// ============================================
-
-model LoyaltyRule {
-  id              String    @id @default(uuid())
-  name            String?
-  pointsPerCurrency Float   @default(1)
-  redeemValue     Float     @default(0)
-  minPointsToRedeem Int     @default(0)
-  isActive        Boolean   @default(true)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@map("loyalty_rules")
-}
-
-// ============================================
-// LoyaltyTransaction
-// ============================================
-
-model LoyaltyTransaction {
-  id              String                @id @default(uuid())
-  customerId      String
-  orderId         Int?
-  type            LoyaltyTransactionType
-  points          Int
-  value           Float                 @default(0)
-  notes           String?
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-
-  customer        Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  order           Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
-
-  @@index([customerId])
-  @@index([orderId])
-  @@index([createdAt])
-  @@map("loyalty_transactions")
-}
-
-// ============================================
-// Notification
-// ============================================
-
-model Notification {
-  id              String              @id @default(uuid())
-  type            NotificationType
-  channel         NotificationChannel @default(IN_APP)
-  userId          String?
-  customerId      String?
-  title           String
-  message         String
-  entityType      String?
-  entityId        String?
-  readAt          DateTime?
-  sentAt          DateTime?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-
-  user            User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customer        Customer?           @relation(fields: [customerId], references: [id], onDelete: SetNull)
-
-  @@index([userId, readAt])
-  @@index([customerId, readAt])
-  @@index([type, createdAt])
-  @@map("notifications")
-}
-
-// ============================================
-// Task (Rep tasks/appointments)
-// ============================================
-
-model Task {
-  id              String    @id @default(uuid())
-  title           String
-  type            TaskType  @default(VISIT)
-  description     String?
-  assignedUserId  String
-  customerId      String?
-  wholesaleCustomerId String?
-  dueDate         DateTime
-  completedAt     DateTime?
-  status          TaskStatus @default(PENDING)
-  latitude        Float?
-  longitude       Float?
-  resultNotes     String?
-  createdById     String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  assignedUser    User      @relation(fields: [assignedUserId], references: [id], onDelete: Cascade)
-  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  wholesaleCustomer WholesaleCustomer? @relation(fields: [wholesaleCustomerId], references: [id], onDelete: SetNull)
-  createdBy       User?     @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-
-  @@index([assignedUserId, status])
-  @@index([dueDate])
-  @@index([customerId])
-  @@index([wholesaleCustomerId])
-  @@map("tasks")
-}
-
-// ============================================
-// BackupLog
-// ============================================
-
-model BackupLog {
-  id              String       @id @default(uuid())
-  name            String
-  fileUrl         String?
-  fileSize        Int?
-  status          BackupStatus @default(PENDING)
-  errorMessage    String?
-  createdById     String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  createdBy       User?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
-
-  @@index([createdAt])
-  @@map("backup_logs")
 }

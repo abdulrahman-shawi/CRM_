@@ -125,13 +125,9 @@ exports.Prisma.UserScalarFieldEnum = {
   username: 'username',
   email: 'email',
   phone: 'phone',
-  notes: 'notes',
-  jobTitle: 'jobTitle',
   avatar: 'avatar',
   accountType: 'accountType',
   password: 'password',
-  salesCommissionPercent: 'salesCommissionPercent',
-  wage: 'wage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   permissionId: 'permissionId',
@@ -158,31 +154,10 @@ exports.Prisma.PermissionScalarFieldEnum = {
   addOrders: 'addOrders',
   editOrders: 'editOrders',
   deleteOrders: 'deleteOrders',
-  viewWarranty: 'viewWarranty',
-  addWarranty: 'addWarranty',
-  editWarranty: 'editWarranty',
-  deleteWarranty: 'deleteWarranty',
   viewCustomers: 'viewCustomers',
   addCustomers: 'addCustomers',
   editCustomers: 'editCustomers',
   deleteCustomers: 'deleteCustomers',
-  viewWholesaleCustomers: 'viewWholesaleCustomers',
-  addWholesaleCustomers: 'addWholesaleCustomers',
-  editWholesaleCustomers: 'editWholesaleCustomers',
-  deleteWholesaleCustomers: 'deleteWholesaleCustomers',
-  viewWholesaleOrders: 'viewWholesaleOrders',
-  addWholesaleOrders: 'addWholesaleOrders',
-  editWholesaleOrders: 'editWholesaleOrders',
-  deleteWholesaleOrders: 'deleteWholesaleOrders',
-  viewEmployees: 'viewEmployees',
-  addEmployees: 'addEmployees',
-  editEmployees: 'editEmployees',
-  deleteEmployees: 'deleteEmployees',
-  viewExpenses: 'viewExpenses',
-  addExpenses: 'addExpenses',
-  editExpenses: 'editExpenses',
-  deleteExpenses: 'deleteExpenses',
-  viewAnalytics: 'viewAnalytics',
   viewCategories: 'viewCategories',
   addCategories: 'addCategories',
   editCategories: 'editCategories',
@@ -194,29 +169,7 @@ exports.Prisma.PermissionScalarFieldEnum = {
   viewPages: 'viewPages',
   addPages: 'addPages',
   editPages: 'editPages',
-  deletePages: 'deletePages',
-  viewMarketing: 'viewMarketing',
-  addMarketing: 'addMarketing',
-  editMarketing: 'editMarketing',
-  deleteMarketing: 'deleteMarketing',
-  viewReturns: 'viewReturns',
-  addReturns: 'addReturns',
-  editReturns: 'editReturns',
-  deleteReturns: 'deleteReturns',
-  viewCustomerPayments: 'viewCustomerPayments',
-  addCustomerPayments: 'addCustomerPayments',
-  deleteCustomerPayments: 'deleteCustomerPayments',
-  viewLoyalty: 'viewLoyalty',
-  editLoyalty: 'editLoyalty',
-  viewNotifications: 'viewNotifications',
-  viewTasks: 'viewTasks',
-  addTasks: 'addTasks',
-  editTasks: 'editTasks',
-  deleteTasks: 'deleteTasks',
-  viewTracking: 'viewTracking',
-  editTracking: 'editTracking',
-  viewBackups: 'viewBackups',
-  manageBackups: 'manageBackups'
+  deletePages: 'deletePages'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -244,8 +197,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   isActive: 'isActive',
   showInAds: 'showInAds',
   affiliatePrice: 'affiliatePrice',
-  affiliateCommissionRate: 'affiliateCommissionRate',
-  wholesalePrice: 'wholesalePrice'
+  affiliateCommissionRate: 'affiliateCommissionRate'
 };
 
 exports.Prisma.ColorScalarFieldEnum = {
@@ -313,89 +265,6 @@ exports.Prisma.ReviewScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.CountryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CityScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  countryId: 'countryId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WarehouseScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  location: 'location',
-  countryId: 'countryId',
-  cityId: 'cityId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ProductStockScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  warehouseId: 'warehouseId',
-  quantity: 'quantity',
-  price: 'price',
-  wholesalePrice: 'wholesalePrice',
-  discount: 'discount'
-};
-
-exports.Prisma.StockMovementScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  warehouseId: 'warehouseId',
-  userId: 'userId',
-  quantity: 'quantity',
-  type: 'type',
-  reason: 'reason',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.UserTargetScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  salesTargetValue: 'salesTargetValue',
-  salesRewardValue: 'salesRewardValue',
-  isActive: 'isActive',
-  endedAt: 'endedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.UserActivityTargetScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  cycle: 'cycle',
-  activeWeekDays: 'activeWeekDays',
-  requiredCustomers: 'requiredCustomers',
-  customerReward: 'customerReward',
-  customerMissPenaltyAmount: 'customerMissPenaltyAmount',
-  requiredCommunications: 'requiredCommunications',
-  communicationReward: 'communicationReward',
-  communicationMissPenaltyAmount: 'communicationMissPenaltyAmount',
-  startsAt: 'startsAt',
-  endedAt: 'endedAt',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.TargetProductScalarFieldEnum = {
-  id: 'id',
-  targetId: 'targetId',
-  productId: 'productId',
-  requiredQty: 'requiredQty',
-  rewardValue: 'rewardValue'
-};
-
 exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   url: 'url',
@@ -417,150 +286,6 @@ exports.Prisma.CustomerScalarFieldEnum = {
   city: 'city',
   rating: 'rating',
   status: 'status',
-  loyaltyPoints: 'loyaltyPoints',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WholesaleCustomerScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  category: 'category',
-  contactName: 'contactName',
-  contactRole: 'contactRole',
-  contactRoleOther: 'contactRoleOther',
-  phone: 'phone',
-  email: 'email',
-  whatsappPhone: 'whatsappPhone',
-  country: 'country',
-  city: 'city',
-  area: 'area',
-  address: 'address',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  googleMapsLink: 'googleMapsLink',
-  assignedUserId: 'assignedUserId',
-  notes: 'notes',
-  preferredVisitAt: 'preferredVisitAt',
-  lastVisitAt: 'lastVisitAt',
-  nextFollowUpAt: 'nextFollowUpAt',
-  lastVisitResult: 'lastVisitResult',
-  visitStatus: 'visitStatus',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WholesaleVisitScalarFieldEnum = {
-  id: 'id',
-  wholesaleCustomerId: 'wholesaleCustomerId',
-  userId: 'userId',
-  visitedAt: 'visitedAt',
-  result: 'result',
-  status: 'status',
-  voiceNote: 'voiceNote',
-  notes: 'notes',
-  photoUrls: 'photoUrls',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  nextFollowUpAt: 'nextFollowUpAt',
-  followUpType: 'followUpType',
-  followUpNotes: 'followUpNotes',
-  orderPlaced: 'orderPlaced',
-  syncedAt: 'syncedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ProductWholesalePriceTierScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  minQuantity: 'minQuantity',
-  maxQuantity: 'maxQuantity',
-  price: 'price',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WholesaleOrderScalarFieldEnum = {
-  id: 'id',
-  orderNumber: 'orderNumber',
-  totalAmount: 'totalAmount',
-  discount: 'discount',
-  finalAmount: 'finalAmount',
-  paymentMethod: 'paymentMethod',
-  amount: 'amount',
-  amountBank: 'amountBank',
-  receiverName: 'receiverName',
-  receiverPhone: 'receiverPhone',
-  country: 'country',
-  city: 'city',
-  municipality: 'municipality',
-  fullAddress: 'fullAddress',
-  deliveryNotes: 'deliveryNotes',
-  googleMapsLink: 'googleMapsLink',
-  additionalNotes: 'additionalNotes',
-  status: 'status',
-  wholesaleCustomerId: 'wholesaleCustomerId',
-  userId: 'userId',
-  warehouseId: 'warehouseId',
-  manualCreatedAt: 'manualCreatedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WholesaleOrderItemScalarFieldEnum = {
-  id: 'id',
-  quantity: 'quantity',
-  price: 'price',
-  discount: 'discount',
-  orderId: 'orderId',
-  productId: 'productId',
-  variantId: 'variantId'
-};
-
-exports.Prisma.WholesaleOrderReturnScalarFieldEnum = {
-  id: 'id',
-  wholesaleOrderId: 'wholesaleOrderId',
-  reason: 'reason',
-  reasonNotes: 'reasonNotes',
-  refundAmount: 'refundAmount',
-  warehouseId: 'warehouseId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WholesaleOrderReturnItemScalarFieldEnum = {
-  id: 'id',
-  wholesaleOrderReturnId: 'wholesaleOrderReturnId',
-  wholesaleOrderItemId: 'wholesaleOrderItemId',
-  productId: 'productId',
-  quantity: 'quantity',
-  price: 'price',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WarrantyScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  productId: 'productId',
-  customerId: 'customerId',
-  warehouseId: 'warehouseId',
-  orderId: 'orderId',
-  quantity: 'quantity',
-  maintenanceLaborCost: 'maintenanceLaborCost',
-  shippingCost: 'shippingCost',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MessageScalarFieldEnum = {
-  id: 'id',
-  message: 'message',
-  customerId: 'customerId',
-  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -569,12 +294,8 @@ exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
   usdToTryRateAtOrder: 'usdToTryRateAtOrder',
-  shippingPrice: 'shippingPrice',
   moneyTransferCommission: 'moneyTransferCommission',
   otherCommissions: 'otherCommissions',
-  carrierCollectionReceivedAt: 'carrierCollectionReceivedAt',
-  carrierCollectionReceivedAmount: 'carrierCollectionReceivedAmount',
-  carrierCollectionNotes: 'carrierCollectionNotes',
   totalAmount: 'totalAmount',
   discount: 'discount',
   finalAmount: 'finalAmount',
@@ -596,41 +317,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   customerId: 'customerId',
   userId: 'userId',
-  warehouseId: 'warehouseId',
-  shippingId: 'shippingId',
-  paidAmount: 'paidAmount',
-  remainingAmount: 'remainingAmount',
-  trackingNumber: 'trackingNumber',
-  trackingStatus: 'trackingStatus',
-  trackingUrl: 'trackingUrl',
   manualCreatedAt: 'manualCreatedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ExpenseScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  amount: 'amount',
-  salaryBaseWage: 'salaryBaseWage',
-  description: 'description',
-  currency: 'currency',
-  paidFromOffice: 'paidFromOffice',
-  employeeId: 'employeeId',
-  scheduledDate: 'scheduledDate',
-  notes: 'notes',
-  isRecurring: 'isRecurring',
-  lastRecurringAppliedAt: 'lastRecurringAppliedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ShippingScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  price: 'price',
-  manualReceivable: 'manualReceivable',
-  manualPayable: 'manualPayable',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -646,16 +333,6 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   affiliateLinkId: 'affiliateLinkId'
 };
 
-exports.Prisma.TrakingCompanyScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  city: 'city',
-  location: 'location',
-  price: 'price',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.GeneralSettingScalarFieldEnum = {
   id: 'id',
   siteName: 'siteName',
@@ -666,9 +343,6 @@ exports.Prisma.GeneralSettingScalarFieldEnum = {
   siteCurrency: 'siteCurrency',
   usdToTryRate: 'usdToTryRate',
   usdToSypRate: 'usdToSypRate',
-  cashboxSyp: 'cashboxSyp',
-  cashboxTry: 'cashboxTry',
-  cashboxUsd: 'cashboxUsd',
   logo: 'logo',
   favicon: 'favicon',
   facebookUrl: 'facebookUrl',
@@ -676,21 +350,7 @@ exports.Prisma.GeneralSettingScalarFieldEnum = {
   topBannerText: 'topBannerText',
   primaryColor: 'primaryColor',
   secondaryColor: 'secondaryColor',
-  resendFromEmail: 'resendFromEmail',
-  resendApiKey: 'resendApiKey',
   nextPublicAppUrl: 'nextPublicAppUrl',
-  whatsappCloudApiToken: 'whatsappCloudApiToken',
-  whatsappPhoneNumberId: 'whatsappPhoneNumberId',
-  whatsappApiVersion: 'whatsappApiVersion',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.EmployeeSalaryAdjustmentScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  monthKey: 'monthKey',
-  editedSalary: 'editedSalary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -790,129 +450,6 @@ exports.Prisma.AffiliateWalletTransferScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.CampaignScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  type: 'type',
-  status: 'status',
-  subject: 'subject',
-  content: 'content',
-  channelDetails: 'channelDetails',
-  audience: 'audience',
-  targetIds: 'targetIds',
-  scheduledAt: 'scheduledAt',
-  sentAt: 'sentAt',
-  metrics: 'metrics',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.OrderReturnScalarFieldEnum = {
-  id: 'id',
-  orderId: 'orderId',
-  reason: 'reason',
-  reasonNotes: 'reasonNotes',
-  refundAmount: 'refundAmount',
-  warehouseId: 'warehouseId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.OrderReturnItemScalarFieldEnum = {
-  id: 'id',
-  orderReturnId: 'orderReturnId',
-  orderItemId: 'orderItemId',
-  productId: 'productId',
-  quantity: 'quantity',
-  price: 'price',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CustomerPaymentScalarFieldEnum = {
-  id: 'id',
-  customerId: 'customerId',
-  orderId: 'orderId',
-  amount: 'amount',
-  paymentType: 'paymentType',
-  paymentDate: 'paymentDate',
-  notes: 'notes',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.LoyaltyRuleScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  pointsPerCurrency: 'pointsPerCurrency',
-  redeemValue: 'redeemValue',
-  minPointsToRedeem: 'minPointsToRedeem',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.LoyaltyTransactionScalarFieldEnum = {
-  id: 'id',
-  customerId: 'customerId',
-  orderId: 'orderId',
-  type: 'type',
-  points: 'points',
-  value: 'value',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.NotificationScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  channel: 'channel',
-  userId: 'userId',
-  customerId: 'customerId',
-  title: 'title',
-  message: 'message',
-  entityType: 'entityType',
-  entityId: 'entityId',
-  readAt: 'readAt',
-  sentAt: 'sentAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.TaskScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  type: 'type',
-  description: 'description',
-  assignedUserId: 'assignedUserId',
-  customerId: 'customerId',
-  wholesaleCustomerId: 'wholesaleCustomerId',
-  dueDate: 'dueDate',
-  completedAt: 'completedAt',
-  status: 'status',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  resultNotes: 'resultNotes',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.BackupLogScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  fileUrl: 'fileUrl',
-  fileSize: 'fileSize',
-  status: 'status',
-  errorMessage: 'errorMessage',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -945,93 +482,6 @@ exports.AccountType = exports.$Enums.AccountType = {
   AFFILIATE: 'AFFILIATE'
 };
 
-exports.MovementType = exports.$Enums.MovementType = {
-  IN: 'IN',
-  OUT: 'OUT',
-  TRANSFER: 'TRANSFER',
-  ADJUSTMENT: 'ADJUSTMENT',
-  RETURN: 'RETURN'
-};
-
-exports.ActivityTargetCycle = exports.$Enums.ActivityTargetCycle = {
-  DAILY: 'DAILY',
-  MONTHLY: 'MONTHLY'
-};
-
-exports.ActivityWeekDay = exports.$Enums.ActivityWeekDay = {
-  SATURDAY: 'SATURDAY',
-  SUNDAY: 'SUNDAY',
-  MONDAY: 'MONDAY',
-  TUESDAY: 'TUESDAY',
-  WEDNESDAY: 'WEDNESDAY',
-  THURSDAY: 'THURSDAY',
-  FRIDAY: 'FRIDAY'
-};
-
-exports.WholesaleCustomerCategory = exports.$Enums.WholesaleCustomerCategory = {
-  PHARMACY: 'PHARMACY',
-  MARKET: 'MARKET',
-  CLINIC: 'CLINIC',
-  DISTRIBUTOR: 'DISTRIBUTOR',
-  OTHER: 'OTHER'
-};
-
-exports.WholesaleVisitResult = exports.$Enums.WholesaleVisitResult = {
-  VERY_INTERESTED: 'VERY_INTERESTED',
-  INTERESTED: 'INTERESTED',
-  THINKING: 'THINKING',
-  NOT_INTERESTED: 'NOT_INTERESTED',
-  PURCHASED: 'PURCHASED'
-};
-
-exports.WholesaleVisitStatus = exports.$Enums.WholesaleVisitStatus = {
-  PLANNED: 'PLANNED',
-  VISITED: 'VISITED',
-  FOLLOW_UP_REQUIRED: 'FOLLOW_UP_REQUIRED',
-  CLOSED: 'CLOSED'
-};
-
-exports.ReturnReason = exports.$Enums.ReturnReason = {
-  DAMAGED: 'DAMAGED',
-  WRONG_PRODUCT: 'WRONG_PRODUCT',
-  CUSTOMER_RETURN: 'CUSTOMER_RETURN',
-  EXPIRED: 'EXPIRED',
-  OTHER: 'OTHER'
-};
-
-exports.WarrantyType = exports.$Enums.WarrantyType = {
-  REPLACEMENT: 'REPLACEMENT',
-  MAINTENANCE: 'MAINTENANCE',
-  DAMAGED: 'DAMAGED'
-};
-
-exports.TrackingStatus = exports.$Enums.TrackingStatus = {
-  PENDING: 'PENDING',
-  PICKED_UP: 'PICKED_UP',
-  IN_TRANSIT: 'IN_TRANSIT',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
-  DELIVERED: 'DELIVERED',
-  RETURNED: 'RETURNED'
-};
-
-exports.ExpenseType = exports.$Enums.ExpenseType = {
-  DAILY: 'DAILY',
-  MONTHLY: 'MONTHLY',
-  STAFF_SALARY: 'STAFF_SALARY',
-  RENT: 'RENT'
-};
-
-exports.ExpenseCurrency = exports.$Enums.ExpenseCurrency = {
-  SYP: 'SYP',
-  TRY: 'TRY',
-  USD: 'USD'
-};
-
-exports.PaidFromOffice = exports.$Enums.PaidFromOffice = {
-  TURKEY: 'TURKEY',
-  SYRIA: 'SYRIA'
-};
-
 exports.DiscountType = exports.$Enums.DiscountType = {
   PERCENTAGE: 'PERCENTAGE',
   FIXED: 'FIXED'
@@ -1048,80 +498,6 @@ exports.WalletTransferStatus = exports.$Enums.WalletTransferStatus = {
   RECEIVED: 'RECEIVED'
 };
 
-exports.CampaignType = exports.$Enums.CampaignType = {
-  EMAIL: 'EMAIL',
-  SOCIAL: 'SOCIAL',
-  SMS: 'SMS',
-  CONTENT: 'CONTENT',
-  WHATSAPP: 'WHATSAPP'
-};
-
-exports.CampaignStatus = exports.$Enums.CampaignStatus = {
-  DRAFT: 'DRAFT',
-  SCHEDULED: 'SCHEDULED',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.CampaignAudience = exports.$Enums.CampaignAudience = {
-  ALL_CUSTOMERS: 'ALL_CUSTOMERS',
-  ALL_WHOLESALE: 'ALL_WHOLESALE',
-  ALL_REPS: 'ALL_REPS',
-  CUSTOM: 'CUSTOM'
-};
-
-exports.PaymentType = exports.$Enums.PaymentType = {
-  CASH: 'CASH',
-  BANK_TRANSFER: 'BANK_TRANSFER',
-  INSTALLMENT: 'INSTALLMENT',
-  CHECK: 'CHECK',
-  OTHER: 'OTHER'
-};
-
-exports.LoyaltyTransactionType = exports.$Enums.LoyaltyTransactionType = {
-  EARN: 'EARN',
-  REDEEM: 'REDEEM',
-  BONUS: 'BONUS',
-  EXPIRE: 'EXPIRE'
-};
-
-exports.NotificationType = exports.$Enums.NotificationType = {
-  LOW_STOCK: 'LOW_STOCK',
-  ORDER_STATUS_CHANGE: 'ORDER_STATUS_CHANGE',
-  WHOLESALE_FOLLOW_UP: 'WHOLESALE_FOLLOW_UP',
-  TASK_REMINDER: 'TASK_REMINDER',
-  SYSTEM: 'SYSTEM'
-};
-
-exports.NotificationChannel = exports.$Enums.NotificationChannel = {
-  IN_APP: 'IN_APP',
-  EMAIL: 'EMAIL',
-  WHATSAPP: 'WHATSAPP'
-};
-
-exports.TaskType = exports.$Enums.TaskType = {
-  VISIT: 'VISIT',
-  CALL: 'CALL',
-  FOLLOW_UP: 'FOLLOW_UP',
-  DELIVERY: 'DELIVERY',
-  MEETING: 'MEETING',
-  OTHER: 'OTHER'
-};
-
-exports.TaskStatus = exports.$Enums.TaskStatus = {
-  PENDING: 'PENDING',
-  IN_PROGRESS: 'IN_PROGRESS',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.BackupStatus = exports.$Enums.BackupStatus = {
-  PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
   Permission: 'Permission',
@@ -1133,48 +509,18 @@ exports.Prisma.ModelName = {
   AdPageVisit: 'AdPageVisit',
   ProductLandingPage: 'ProductLandingPage',
   Review: 'Review',
-  Country: 'Country',
-  City: 'City',
-  Warehouse: 'Warehouse',
-  ProductStock: 'ProductStock',
-  StockMovement: 'StockMovement',
-  UserTarget: 'UserTarget',
-  UserActivityTarget: 'UserActivityTarget',
-  TargetProduct: 'TargetProduct',
   ProductImage: 'ProductImage',
   Customer: 'Customer',
-  WholesaleCustomer: 'WholesaleCustomer',
-  WholesaleVisit: 'WholesaleVisit',
-  ProductWholesalePriceTier: 'ProductWholesalePriceTier',
-  WholesaleOrder: 'WholesaleOrder',
-  WholesaleOrderItem: 'WholesaleOrderItem',
-  WholesaleOrderReturn: 'WholesaleOrderReturn',
-  WholesaleOrderReturnItem: 'WholesaleOrderReturnItem',
-  Warranty: 'Warranty',
-  Message: 'Message',
   Order: 'Order',
-  Expense: 'Expense',
-  shipping: 'shipping',
   OrderItem: 'OrderItem',
-  TrakingCompany: 'TrakingCompany',
   GeneralSetting: 'GeneralSetting',
-  EmployeeSalaryAdjustment: 'EmployeeSalaryAdjustment',
   Page: 'Page',
   HeroSlide: 'HeroSlide',
   AffiliateLink: 'AffiliateLink',
   Offer: 'Offer',
   OfferDiscount: 'OfferDiscount',
   Commission: 'Commission',
-  AffiliateWalletTransfer: 'AffiliateWalletTransfer',
-  Campaign: 'Campaign',
-  OrderReturn: 'OrderReturn',
-  OrderReturnItem: 'OrderReturnItem',
-  CustomerPayment: 'CustomerPayment',
-  LoyaltyRule: 'LoyaltyRule',
-  LoyaltyTransaction: 'LoyaltyTransaction',
-  Notification: 'Notification',
-  Task: 'Task',
-  BackupLog: 'BackupLog'
+  AffiliateWalletTransfer: 'AffiliateWalletTransfer'
 };
 
 /**
