@@ -189,6 +189,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   description: 'description',
   googleLink: 'googleLink',
   categoryId: 'categoryId',
+  price: 'price',
   createdAt: 'createdAt',
   seoSlug: 'seoSlug',
   metaTitle: 'metaTitle',

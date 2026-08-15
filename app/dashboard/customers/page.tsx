@@ -8,8 +8,6 @@ import { FormInput } from "@/components/ui/form-input";
 import PhoneInput from 'react-phone-number-input'
 import { AppModal } from "@/components/ui/app-modal";
 import { AssignUsers, createCustomerAction, deleteCustomer, getCustomerDetails, getCustomerList, updateCustomer, UpdateStusa } from "@/server/customer";
-import { getCampaigns } from "@/server/marketing";
-import { sendEmailToRecipient } from "@/server/email";
 import { useAuth } from "@/context/AuthContext";
 import { formatPhoneForDisplay, hasPermission, isAdmin } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -91,20 +89,9 @@ const CustomrLayout: React.FC = () => {
   const [search, setSearch] = React.useState("")
   const [isOpenordercustomer, setisOpenordercustomer] = React.useState(false)
   const [OpenAssignModal, setOpenAssignModal] = React.useState(false)
-  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = React.useState(false);
-  const [whatsAppCustomer, setWhatsAppCustomer] = React.useState<any>(null);
-  const [whatsAppCampaigns, setWhatsAppCampaigns] = React.useState<any[]>([]);
-  const [selectedWhatsAppCampaignId, setSelectedWhatsAppCampaignId] = React.useState<number | null>(null);
-  const [isLoadingWhatsAppCampaigns, setIsLoadingWhatsAppCampaigns] = React.useState(false);
   const [isBulkAssignOpen, setIsBulkAssignOpen] = React.useState(false)
   const [isCustomerDetailsLoading, setIsCustomerDetailsLoading] = React.useState(false)
   const [viewMode, setViewMode] = React.useState<"cards" | "table">("table");
-  // Email modal
-  const [isEmailModalOpen, setIsEmailModalOpen] = React.useState(false);
-  const [emailCustomer, setEmailCustomer] = React.useState<any>(null);
-  const [emailSubject, setEmailSubject] = React.useState("");
-  const [emailBody, setEmailBody] = React.useState("");
-  const [isSendingEmail, setIsSendingEmail] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const PAGE_SIZE = 10;
   const [sortState, setSortState] = React.useState<{
@@ -193,10 +180,6 @@ const CustomrLayout: React.FC = () => {
     }
   }
 
-  function buildWhatsAppMessageFromCampaign(campaign: any) {
-    return `*${campaign.title || "عرض خاص"}*\n\n${campaign.content || ""}`;
-  }
-
   function normalizePhoneForWhatsApp(rawPhone: string, countryCode?: string) {
     const digits = String(rawPhone || "").replace(/\D/g, "");
     if (!digits) return "";
@@ -206,90 +189,6 @@ const CustomrLayout: React.FC = () => {
     }
     return code ? `${code}${digits}` : digits;
   }
-
-  async function openCustomerWhatsAppModal(customer: any) {
-    setWhatsAppCustomer(customer);
-    setSelectedWhatsAppCampaignId(null);
-    setIsWhatsAppModalOpen(true);
-    setIsLoadingWhatsAppCampaigns(true);
-    try {
-      const response = await getCampaigns();
-      if (response.success && Array.isArray(response.data)) {
-        setWhatsAppCampaigns(response.data.filter((c: any) => c.type === "WHATSAPP"));
-      } else {
-        toast.error(response.error || "تعذر تحميل الحملات");
-      }
-    } catch (error) {
-      console.error("Load campaigns error:", error);
-      toast.error("حدث خطأ أثناء تحميل الحملات");
-    } finally {
-      setIsLoadingWhatsAppCampaigns(false);
-    }
-  }
-
-  function sendWhatsAppCampaignToCustomer() {
-    if (!whatsAppCustomer || !selectedWhatsAppCampaignId) return;
-    const campaign = whatsAppCampaigns.find((c) => c.id === selectedWhatsAppCampaignId);
-    if (!campaign) {
-      toast.error("الحملة غير موجودة");
-      return;
-    }
-    const phone = normalizePhoneForWhatsApp(
-      whatsAppCustomer.phone?.[0] || "",
-      whatsAppCustomer.countryCode || ""
-    );
-    if (!phone) {
-      toast.error("رقم واتساب غير صالح");
-      return;
-    }
-    const message = buildWhatsAppMessageFromCampaign(campaign);
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank", "noopener,noreferrer");
-    setIsWhatsAppModalOpen(false);
-  }
-
-  function openEmailModal(customer: any) {
-    if (!customer?.email) {
-      toast.error("العميل لا يملك بريد إلكتروني مسجل");
-      return;
-    }
-    setEmailCustomer(customer);
-    setEmailSubject("");
-    setEmailBody("");
-    setIsEmailModalOpen(true);
-  }
-
-  async function handleSendEmail() {
-    if (!emailCustomer || !emailSubject.trim() || !emailBody.trim()) {
-      toast.error("يرجى ملء عنوان الرسالة والمحتوى");
-      return;
-    }
-    setIsSendingEmail(true);
-    const loadingToast = toast.loading("جاري إرسال الإيميل...");
-    try {
-      const html = emailBody
-        .replace(/</g, "<")
-        .replace(/>/g, ">")
-        .replace(/\n/g, "<br/>");
-      const res = await sendEmailToRecipient({
-        to: emailCustomer.email,
-        subject: emailSubject,
-        html: `<div dir="rtl" style="text-align:right;font-family:Arial,sans-serif;line-height:1.6;">${html}</div>`,
-      });
-      if (res.success) {
-        toast.success("تم إرسال الإيميل بنجاح");
-        setIsEmailModalOpen(false);
-      } else {
-        toast.error(res.error || "فشل إرسال الإيميل");
-      }
-    } catch (error) {
-      toast.error("حدث خطأ أثناء إرسال الإيميل");
-    } finally {
-      toast.dismiss(loadingToast);
-      setIsSendingEmail(false);
-    }
-  }
-
 
   const getData = React.useCallback(async () => {
     const res = await getCustomerList();
@@ -1223,18 +1122,6 @@ const CustomrLayout: React.FC = () => {
       });
     }
 
-    actions.push({
-      label: "واتساب",
-      icon: <MessageCircle size={16} />,
-      onClick: (customer: any) => openCustomerWhatsAppModal(customer),
-    });
-
-    actions.push({
-      label: "إيميل",
-      icon: <Mail size={16} />,
-      onClick: (customer: any) => openEmailModal(customer),
-    });
-
     return actions;
   })();
 
@@ -1335,9 +1222,6 @@ const CustomrLayout: React.FC = () => {
                   }}
                   onOpenAssign={(selectedCustomer) => {
                     void openAssignModal(selectedCustomer);
-                  }}
-                  onOpenEmail={(selectedCustomer) => {
-                    openEmailModal(selectedCustomer);
                   }}
                 />
               ))}
@@ -1507,120 +1391,6 @@ const CustomrLayout: React.FC = () => {
       </AppModal>
       <AppModal size='lg' isOpen={isOpenordercustomer} onClose={() => setisOpenordercustomer(false)} title='طلبات العميل'>
         <ViewOrderCustomer orders={customerorder} />
-      </AppModal>
-
-      <AppModal
-        isOpen={isWhatsAppModalOpen}
-        onClose={() => setIsWhatsAppModalOpen(false)}
-        title={`إرسال حملة عبر واتساب: ${whatsAppCustomer?.name || ""}`}
-        size="md"
-        footer={
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setIsWhatsAppModalOpen(false)}
-              className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-            >
-              إلغاء
-            </button>
-            <button
-              type="button"
-              disabled={!selectedWhatsAppCampaignId}
-              onClick={sendWhatsAppCampaignToCustomer}
-              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
-            >
-              <MessageCircle size={16} />
-              فتح واتساب
-            </button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          {isLoadingWhatsAppCampaigns ? (
-            <div className="flex justify-center p-6">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
-            </div>
-          ) : whatsAppCampaigns.length === 0 ? (
-            <p className="text-center text-sm font-bold text-slate-500">لا توجد حملات متاحة</p>
-          ) : (
-            <div className="max-h-64 space-y-2 overflow-y-auto">
-              {whatsAppCampaigns.map((campaign) => (
-                <button
-                  key={campaign.id}
-                  type="button"
-                  onClick={() => setSelectedWhatsAppCampaignId(campaign.id)}
-                  className={`w-full rounded-2xl border p-4 text-right transition-colors ${
-                    selectedWhatsAppCampaignId === campaign.id
-                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
-                      : "border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:hover:bg-slate-900"
-                  }`}
-                >
-                  <p className="font-black text-slate-900 dark:text-white">{campaign.title}</p>
-                  <p className="mt-1 line-clamp-2 text-xs font-bold text-slate-500">{campaign.content}</p>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </AppModal>
-
-      <AppModal
-        isOpen={isEmailModalOpen}
-        onClose={() => setIsEmailModalOpen(false)}
-        title={`إرسال إيميل إلى: ${emailCustomer?.name || ""}`}
-        size="md"
-        footer={
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setIsEmailModalOpen(false)}
-              className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-            >
-              إلغاء
-            </button>
-            <button
-              type="button"
-              disabled={isSendingEmail || !emailSubject.trim() || !emailBody.trim()}
-              onClick={handleSendEmail}
-              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
-            >
-              <Mail size={16} />
-              {isSendingEmail ? "جاري الإرسال..." : "إرسال"}
-            </button>
-          </div>
-        }
-      >
-        <div className="space-y-4" dir="rtl">
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">إلى</label>
-            <input
-              type="email"
-              value={emailCustomer?.email || ""}
-              disabled
-              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">الموضوع</label>
-            <input
-              type="text"
-              value={emailSubject}
-              onChange={(e) => setEmailSubject(e.target.value)}
-              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
-              placeholder="عنوان الرسالة"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 dark:text-slate-200">المحتوى</label>
-            <textarea
-              value={emailBody}
-              onChange={(e) => setEmailBody(e.target.value)}
-              rows={6}
-              className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
-              placeholder="نص الرسالة..."
-            />
-          </div>
-        </div>
       </AppModal>
     </div>
   );

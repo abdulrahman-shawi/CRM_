@@ -15,7 +15,6 @@ const ADMIN = {
   email: "admin@skynova.com",
   password: "admin123",
   phone: "0000000000",
-  jobTitle: "مدير النظام",
 };
 
 async function main() {

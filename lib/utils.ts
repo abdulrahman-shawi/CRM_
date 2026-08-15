@@ -1,7 +1,6 @@
 import { ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { PermissionKey, User } from './type';
-import { resolvePermissionKey } from './wholesale-permissions';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,8 +11,7 @@ export function isAdmin(user?: User | null) {
 }
 
 export function hasPermission(user: User | null | undefined, permission: PermissionKey) {
-  const resolvedPermission = resolvePermissionKey(permission);
-  return isAdmin(user) || Boolean(user?.permission?.[permission]) || Boolean(user?.permission?.[resolvedPermission]);
+  return isAdmin(user) || Boolean(user?.permission?.[permission]);
 }
 
 export function hasAnyPermission(user: User | null | undefined, permissions: PermissionKey[]) {
@@ -36,17 +34,4 @@ export function formatPhoneForDisplay(phone: string) {
   }
 
   return digits.match(/.{1,3}/g)?.join(" ") ?? digits;
-}
-
-const TRACKING_STATUS_LABELS: Record<string, string> = {
-  PENDING: 'معلق',
-  PICKED_UP: 'تم الالتقاط',
-  IN_TRANSIT: 'في الطريق',
-  OUT_FOR_DELIVERY: 'خرج للتوصيل',
-  DELIVERED: 'تم التسليم',
-  RETURNED: 'مرتجع',
-};
-
-export function getTrackingStatusLabel(status?: string | null) {
-  return TRACKING_STATUS_LABELS[status || ''] || status || 'غير محدد';
 }

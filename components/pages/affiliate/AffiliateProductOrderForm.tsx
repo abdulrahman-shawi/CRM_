@@ -2,36 +2,29 @@
 
 import * as React from 'react';
 import { calculateQuantityDiscountPricing, normalizeQuantityDiscountTiers } from '@/lib/ad-pricing';
-import { getCountries } from '@/server/country';
 import toast from 'react-hot-toast';
 
 type ProductLike = {
   id: number;
   name: string;
+  price?: number | null;
   affiliatePrice?: number | null;
-  stocks?: Array<{
-    price?: number | null;
-    discount?: number | null;
-    quantity?: number | null;
-    warehouse?: { location?: string | null };
-  }>;
   landingPage?: {
     ctaText?: string | null;
     quantityDiscountTiers?: Array<{ minQuantity?: number | null; discountPercent?: number | null }> | null;
   } | null;
 };
 
-const createEmptyForm = (defaultCountry: string) => ({
+const createEmptyForm = () => ({
   customerName: '',
   phone: '',
   receiverName: '',
-  country: defaultCountry,
+  country: '',
   city: '',
   municipality: '',
   fullAddress: '',
   deliveryNotes: '',
   quantity: 1,
-  stockCountry: defaultCountry,
   paymentMethod: 'عند الاستلام',
 });
 
@@ -45,36 +38,9 @@ export default function AffiliateProductOrderForm({
   trafficSource?: 'ad' | 'affiliate' | 'product';
 }) {
   const [loading, setLoading] = React.useState(false);
-  const [countryOptions, setCountryOptions] = React.useState<string[]>([]);
-  const [form, setForm] = React.useState(() => createEmptyForm(''));
+  const [form, setForm] = React.useState(() => createEmptyForm());
 
-  React.useEffect(() => {
-    let isMounted = true;
-
-    getCountries()
-      .then((rows) => {
-        if (!isMounted) return;
-        const names = (Array.isArray(rows) ? (rows as Array<{ name?: string }>) : [])
-          .map((row) => String(row?.name || '').trim())
-          .filter(Boolean);
-        setCountryOptions(names);
-        setForm((prev) => ({
-          ...prev,
-          country: prev.country || names[0] || '',
-          stockCountry: prev.stockCountry || names[0] || '',
-        }));
-      })
-      .catch(() => {
-        // تعذر تحميل الدول — تبقى القوائم فارغة
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const fallbackPrice = Number(product.stocks?.[0]?.price || 0);
-  const unitPrice = Number(product.affiliatePrice || 0) > 0 ? Number(product.affiliatePrice) : fallbackPrice;
+  const unitPrice = Number(product.affiliatePrice || 0) > 0 ? Number(product.affiliatePrice) : Number(product.price || 0);
   const pricing = React.useMemo(
     () => calculateQuantityDiscountPricing(unitPrice, Number(form.quantity || 1), product.landingPage?.quantityDiscountTiers),
     [unitPrice, form.quantity, product.landingPage?.quantityDiscountTiers]
@@ -148,7 +114,6 @@ export default function AffiliateProductOrderForm({
           municipality: form.municipality,
           fullAddress: form.fullAddress,
           deliveryNotes: form.deliveryNotes,
-          stockCountry: form.stockCountry,
           paymentMethod: form.paymentMethod,
         }),
       });
@@ -160,7 +125,7 @@ export default function AffiliateProductOrderForm({
       }
 
       toast.success('تم إرسال الطلب بنجاح');
-      setForm(createEmptyForm(countryOptions[0] || ''));
+      setForm(createEmptyForm());
     } catch {
       toast.error('حدث خطأ غير متوقع أثناء إرسال الطلب');
     } finally {
@@ -237,21 +202,7 @@ export default function AffiliateProductOrderForm({
         </label>
         <label className="space-y-2 text-sm font-bold text-slate-700">
           <span>الدولة</span>
-          <select className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.country} onChange={(e) => updateField('country', e.target.value)}>
-            {countryOptions.length === 0 ? <option value="">اختر الدولة</option> : null}
-            {countryOptions.map((country) => (
-              <option key={country} value={country}>{country}</option>
-            ))}
-          </select>
-        </label>
-        <label className="space-y-2 text-sm font-bold text-slate-700">
-          <span>بلد المخزون</span>
-          <select className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.stockCountry} onChange={(e) => updateField('stockCountry', e.target.value)}>
-            {countryOptions.length === 0 ? <option value="">اختر الدولة</option> : null}
-            {countryOptions.map((country) => (
-              <option key={country} value={country}>{country}</option>
-            ))}
-          </select>
+          <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.country} onChange={(e) => updateField('country', e.target.value)} />
         </label>
         <label className="space-y-2 text-sm font-bold text-slate-700">
           <span>المدينة</span>

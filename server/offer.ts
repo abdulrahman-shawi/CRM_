@@ -168,7 +168,7 @@ export async function deleteOffer(id: string) {
 
 export async function getOfferDiscountFormMeta() {
   try {
-    const [offers, products, categories, warehouses] = await Promise.all([
+    const [offers, products, categories] = await Promise.all([
       prisma.offer.findMany({
         orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
         select: { id: true, title: true, subtitle: true },
@@ -179,20 +179,11 @@ export async function getOfferDiscountFormMeta() {
           id: true,
           name: true,
           categoryId: true,
-          stocks: {
-            select: {
-              warehouseId: true,
-            },
-          },
         },
       }),
       prisma.category.findMany({
         orderBy: { name: 'asc' },
         select: { id: true, name: true },
-      }),
-      prisma.warehouse.findMany({
-        orderBy: { name: 'asc' },
-        select: { id: true, name: true, location: true },
       }),
     ]);
 
@@ -203,7 +194,7 @@ export async function getOfferDiscountFormMeta() {
           offers,
           products,
           categories,
-          warehouses,
+          warehouses: [],
         })
       ),
     };

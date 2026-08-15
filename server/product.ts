@@ -4,6 +4,7 @@ import { decrypt } from '@/lib/auth';
 import { buildAdFullUrl, buildAffiliateFullUrl } from '@/lib/affiliate';
 import { prisma } from "@/lib/prisma";
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 
 async function getCurrentSessionUser() {
     try {
@@ -73,20 +74,12 @@ export async function getProduct() {
             images: {
                 orderBy: { id: 'asc' },
             },
-            stocks: {
-                include: {
-                    warehouse: true,
-                },
-            },
             landingPage: true,
             variants: {
                 include: {
                     color: true,
                     size: true,
                 },
-            },
-            wholesalePricingTiers: {
-                orderBy: { minQuantity: 'asc' },
             },
             affiliateLinks: {
                 include: {
@@ -132,14 +125,6 @@ export async function getPublicProductBySlug(slug: string) {
                 orderBy: { createdAt: 'desc' },
                 take: 12,
             },
-            stocks: {
-                include: {
-                    warehouse: true,
-                },
-                orderBy: {
-                    quantity: 'desc',
-                },
-            },
         },
     });
 
@@ -178,14 +163,6 @@ export async function getPublicAdProductById(productIdInput: number | string) {
                 where: { isApproved: true },
                 orderBy: { createdAt: 'desc' },
                 take: 12,
-            },
-            stocks: {
-                include: {
-                    warehouse: true,
-                },
-                orderBy: {
-                    quantity: 'desc',
-                },
             },
         },
     });
@@ -230,11 +207,6 @@ export async function getAdPagesDashboardAnalytics() {
         product: { id: number; name: string };
     }> = [];
     let adOrderItems: Array<{ productId: number; orderId: number }> = [];
-    let warrantyRows: Array<{
-        productId: number;
-        type: 'REPLACEMENT' | 'MAINTENANCE' | 'DAMAGED';
-        quantity: number | null;
-    }> = [];
 
     try {
         visits = await prisma.adPageVisit.findMany({
@@ -284,23 +256,6 @@ export async function getAdPagesDashboardAnalytics() {
         });
     } catch {
         adOrderItems = [];
-    }
-
-    try {
-        warrantyRows = await prisma.warranty.findMany({
-            where: {
-                productId: {
-                    in: adProducts.map((product) => product.id),
-                },
-            },
-            select: {
-                productId: true,
-                type: true,
-                quantity: true,
-            },
-        });
-    } catch {
-        warrantyRows = [];
     }
 
     const now = new Date();
@@ -379,32 +334,6 @@ export async function getAdPagesDashboardAnalytics() {
         productEntry.adOrders.add(Number(item.orderId || 0));
     });
 
-    warrantyRows.forEach((row) => {
-        const productEntry = productsMap.get(row.productId);
-        if (!productEntry) {
-            return;
-        }
-
-        const quantity = Math.max(0, Number(row.quantity || 0));
-
-        if (row.type === 'REPLACEMENT') {
-            productEntry.replacementCount += 1;
-            productEntry.replacementQuantity += quantity;
-            return;
-        }
-
-        if (row.type === 'MAINTENANCE') {
-            productEntry.maintenanceCount += 1;
-            productEntry.maintenanceQuantity += quantity;
-            return;
-        }
-
-        if (row.type === 'DAMAGED') {
-            productEntry.damagedCount += 1;
-            productEntry.damagedQuantity += quantity;
-        }
-    });
-
     const products = Array.from(productsMap.values())
         .map((entry) => {
             const ordersCount = entry.adOrders.size;
@@ -476,14 +405,6 @@ export async function getPublicAffiliateProductByCode(code: string) {
                         where: { isApproved: true },
                         orderBy: { createdAt: 'desc' },
                         take: 12,
-                    },
-                    stocks: {
-                        include: {
-                            warehouse: true,
-                        },
-                        orderBy: {
-                            quantity: 'desc',
-                        },
                     },
                 },
             },
@@ -683,6 +604,18 @@ export async function toggleProductActive(productId: number, isActive: boolean) 
     }
 }
 
+export async function deleteProduct(productId: number) {
+    try {
+        await prisma.product.delete({
+            where: { id: productId }
+        });
+        revalidatePath('/dashboard/products');
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: "لا يمكن حذف المنتج لأنه مرتبط بطلبات أو بيانات أخرى" };
+    }
+}
+
 export async function toggleProductShowInAds(productId: number, showInAds: boolean) {
     try {
         await prisma.product.update({
@@ -771,31 +704,6 @@ export async function getProductCatalog() {
             name: true,
             modelNumber: true,
             barcode: true,
-            wholesalePrice: true,
-            wholesalePricingTiers: {
-                orderBy: { minQuantity: 'asc' },
-                select: {
-                    id: true,
-                    minQuantity: true,
-                    maxQuantity: true,
-                    price: true,
-                },
-            },
-            stocks: {
-                select: {
-                    id: true,
-                    quantity: true,
-                    price: true,
-                    wholesalePrice: true,
-                    discount: true,
-                    warehouse: {
-                        select: {
-                            id: true,
-                            location: true,
-                        },
-                    },
-                },
-            },
             variants: {
                 select: {
                     id: true,

@@ -1,7 +1,6 @@
 import { decrypt } from "@/lib/auth";
 import { isAffiliateAccount } from "@/lib/affiliate";
 import { prisma } from "@/lib/prisma";
-import { withWholesalePermissionAliases } from "@/lib/wholesale-permissions";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,8 +22,6 @@ export async function GET() {
                  username: true,
                  email: true,
                  phone: true,
-                 notes: true,
-                 jobTitle: true,
                  avatar: true,
                  accountType: true,
                  password: true,
@@ -48,9 +45,9 @@ export async function GET() {
             }, { status: 403 });
         }
 
-        return NextResponse.json({ 
-            success: true, 
-            data: users ? withWholesalePermissionAliases(users) : users 
+        return NextResponse.json({
+            success: true,
+            data: users
         }, { status: 200 });
     } catch (error) {
         console.error("Fetch Users Error:", error);

@@ -4,7 +4,6 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import ToasterProvider from "@/components/system/toaster-provider";
 import { prisma } from "@/lib/prisma";
-import "@/lib/cron";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

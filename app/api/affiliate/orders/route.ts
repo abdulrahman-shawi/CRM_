@@ -28,12 +28,6 @@ export async function POST(request: NextRequest) {
       where: { id: productId },
       include: {
         landingPage: true,
-        stocks: {
-          include: {
-            warehouse: true,
-          },
-          orderBy: { quantity: 'desc' },
-        },
       },
     });
 
@@ -52,9 +46,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: customerResult.error || 'تعذر إنشاء العميل' }, { status: 400 });
     }
 
-    const orderPrice = Number(product.affiliatePrice || 0) > 0
-      ? Number(product.affiliatePrice)
-      : Number(product.stocks?.[0]?.price || 0);
+    const orderPrice = Number(product.affiliatePrice || product.price || 0);
     const pricing = calculateQuantityDiscountPricing(orderPrice, quantity, product.landingPage?.quantityDiscountTiers);
 
     const items = [
@@ -73,13 +65,11 @@ export async function POST(request: NextRequest) {
         status: 'طلب جديد',
         receiverName: String(body?.receiverName || body?.customerName || '').trim(),
         receiverPhone: [String(body?.phone || '').trim()],
-        stockCountry: String(body?.stockCountry || '').trim(),
         country: String(body?.country || '').trim(),
         city: String(body?.city || '').trim(),
         municipality: String(body?.municipality || '').trim(),
         fullAddress: String(body?.fullAddress || '').trim(),
         googleMapsLink: '',
-        shippingId: null,
         deliveryMethod: 'توصيل',
         amount: '',
         amountBank: grandTotal,

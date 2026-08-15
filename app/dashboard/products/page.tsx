@@ -5,29 +5,24 @@ import { DynamicForm } from '@/components/shared/dynamic-form';
 import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/form-input';
-import { FormSelect } from '@/components/ui/select-form';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
-import { MultiFileUpload, FileItem } from '@/components/ui/ImageUpload';
+import { MultiFileUpload } from '@/components/ui/ImageUpload';
 import { useAuth } from '@/context/AuthContext';
 import { buildAdFullUrl } from '@/lib/affiliate';
 import { formatSiteCurrency, useSiteCurrency } from '@/lib/currency';
 import { getallcategory } from '@/server/category';
-import { deleteProductFromWarehouse, saveProductWithFiles, updateProductWithFiles } from '@/server/image';
-import { getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
+import { saveProductWithFiles, updateProductWithFiles } from '@/server/image';
+import { deleteProduct, getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
 import { getColors, getSizes, createColor, createSize } from '@/server/variants';
-import { getWarehouse } from '@/server/warehouse';
 import { Barcode } from '@/components/ui/barcode';
 import { BarcodeScannerModal } from '@/components/ui/barcode-scanner';
 import { generateBarcodeValue } from '@/lib/barcode';
 import Link from 'next/link';
-import { error } from 'console';
-import { image } from 'framer-motion/client';
-import { FileDown, Mail, Plus, Warehouse, FileText, ScanLine } from 'lucide-react';
+import { FileDown, Mail, Plus, FileText, ScanLine } from 'lucide-react';
 import * as React from 'react';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import z from 'zod';
-import { ta } from 'zod/v4/locales';
 import * as XLSX from 'xlsx';
 
 const createProductFileClientId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -49,30 +44,12 @@ const productschama = z.object({
     metaDescription: z.string().optional().nullable(),
     metaKeywords: z.string().optional().nullable(),
     categoryId: z.coerce.number().min(1, "يرجى اختيار فئة"),
+    price: z.coerce.number().min(0, "سعر المنتج يجب أن يكون صفر أو أكثر").optional().default(0),
     affiliatePrice: z.coerce.number().min(0, "سعر الأفلييت يجب أن يكون صفر أو أكثر").optional().default(0),
     affiliateCommissionRate: z.preprocess(
         (value) => value === '' || value == null ? null : Number(value),
         z.number().min(0, "نسبة عمولة الأفلييت يجب أن تكون صفر أو أكثر").nullable().optional()
     ),
-    warehouseStocks: z.array(
-        z.object({
-            warehouseId: z.coerce.number().min(1, "يرجى اختيار مستودع"),
-            quantity: z.coerce.number().min(0, "يرجى إدخال كمية صحيحة"),
-            stockPrice: z.coerce.number().min(0, "يرجى إدخال سعر صحيح").optional().default(0),
-            wholesalePrice: z.coerce.number().min(0, "يرجى إدخال سعر جملة صحيح").optional().default(0),
-            stockDiscount: z.coerce.number().min(0, "يرجى إدخال خصم صحيح").optional().default(0),
-        })
-    ).min(1, "يجب إضافة مستودع واحد على الأقل"),
-    wholesalePricingTiers: z.array(
-        z.object({
-            minQuantity: z.coerce.number().int().min(1, "الحد الأدنى للكمية يجب أن يكون 1 أو أكثر"),
-            maxQuantity: z.preprocess(
-                (value) => value === '' || value == null ? null : Number(value),
-                z.number().int().min(1, "الحد الأقصى يجب أن يكون 1 أو أكثر").nullable().optional()
-            ),
-            price: z.coerce.number().min(0, "سعر الشريحة يجب أن يكون صفر أو أكثر"),
-        })
-    ).optional().default([]),
     variants: z.array(
         z.object({
             colorId: z.preprocess(
@@ -217,157 +194,6 @@ const QuantityDiscountFields = ({ control, register, errors }: any) => {
                 ))}
                 {fields.length === 0 && (
                     <p className="text-sm text-slate-500 dark:text-slate-400">لا توجد شرائح خصم مضافة.</p>
-                )}
-            </div>
-        </div>
-    );
-};
-
-const WarehouseStocksFields = ({ control, register, errors, warehouses }: any) => {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'warehouseStocks'
-    });
-
-    return (
-        <div className="md:col-span-2 border rounded-lg p-3 border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium text-slate-800 dark:text-slate-200">المخزون حسب المستودع</h3>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => append({ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 })}
-                >
-                    إضافة مستودع
-                </Button>
-            </div>
-
-            <div className="grid gap-3">
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-5 gap-2 items-end border border-slate-200 dark:border-slate-800 rounded-md p-2">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">المستودع</label>
-                            <select
-                                {...register(`warehouseStocks.${index}.warehouseId`)}
-                                className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            >
-                                <option value="">اختر المستودع</option>
-                                {warehouses.map((warehouse: any) => (
-                                    <option key={warehouse.id} value={warehouse.id}>
-                                        {warehouse.location ? `${warehouse.name} - ${warehouse.location}` : warehouse.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors?.warehouseStocks?.[index]?.warehouseId && (
-                                <p className="text-xs text-red-500">{errors.warehouseStocks[index].warehouseId.message as string}</p>
-                            )}
-                        </div>
-
-                        <FormInput
-                            className='text-slate-900 dark:text-slate-100'
-                            type="number"
-                            label="الكمية"
-                            {...register(`warehouseStocks.${index}.quantity`)}
-                            error={errors?.warehouseStocks?.[index]?.quantity?.message as string}
-                        />
-
-                        <FormInput
-                            className='text-slate-900 dark:text-slate-100'
-                            type="number"
-                            step="0.01"
-                            label="سعر المنتج"
-                            {...register(`warehouseStocks.${index}.stockPrice`)}
-                            error={errors?.warehouseStocks?.[index]?.stockPrice?.message as string}
-                        />
-
-                        <FormInput
-                            className='text-slate-900 dark:text-slate-100'
-                            type="number"
-                            step="0.01"
-                            label="سعر الجملة"
-                            {...register(`warehouseStocks.${index}.wholesalePrice`)}
-                            error={errors?.warehouseStocks?.[index]?.wholesalePrice?.message as string}
-                        />
-
-                        <FormInput
-                            className='text-slate-900 dark:text-slate-100'
-                            type="number"
-                            step="0.01"
-                            label="خصم المنتج"
-                            {...register(`warehouseStocks.${index}.stockDiscount`)}
-                            error={errors?.warehouseStocks?.[index]?.stockDiscount?.message as string}
-                        />
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => remove(index)}
-                            disabled={fields.length === 1}
-                        >
-                            حذف
-                        </Button>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
-const WholesalePricingTiersFields = ({ control, register, errors }: any) => {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'wholesalePricingTiers'
-    });
-
-    return (
-        <div className="md:col-span-2 border rounded-lg p-3 border-slate-200 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-3">
-                <div>
-                    <h3 className="font-medium text-slate-800 dark:text-slate-200">شرائح أسعار الجملة</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">حدد السعر لكل شريحة كمية (مثلاً 1-5 بسعر 10، 6-10 بسعر 9).</p>
-                </div>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => append({ minQuantity: 1, maxQuantity: '', price: 0 })}
-                >
-                    إضافة شريحة
-                </Button>
-            </div>
-
-            <div className="grid gap-3">
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end border border-slate-200 dark:border-slate-800 rounded-md p-2">
-                        <FormInput
-                            type="number"
-                            label="من كمية"
-                            {...register(`wholesalePricingTiers.${index}.minQuantity`)}
-                            error={errors?.wholesalePricingTiers?.[index]?.minQuantity?.message as string}
-                        />
-                        <FormInput
-                            type="number"
-                            label="إلى كمية (اختياري)"
-                            {...register(`wholesalePricingTiers.${index}.maxQuantity`)}
-                            error={errors?.wholesalePricingTiers?.[index]?.maxQuantity?.message as string}
-                        />
-                        <FormInput
-                            type="number"
-                            step="0.01"
-                            label="سعر الجملة"
-                            {...register(`wholesalePricingTiers.${index}.price`)}
-                            error={errors?.wholesalePricingTiers?.[index]?.price?.message as string}
-                        />
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => remove(index)}
-                        >
-                            حذف
-                        </Button>
-                    </div>
-                ))}
-                {fields.length === 0 && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400">لا توجد شرائح أسعار جملة مضافة.</p>
                 )}
             </div>
         </div>
@@ -582,7 +408,6 @@ const ProductLayout = () => {
     const [editId, setEditId] = React.useState<string | number | null>(null);
     const [categories, setCategories] = React.useState<any[]>([]);
     const [products, setProducts] = React.useState<any[]>([]);
-    const [warehouses, setWarehouses] = React.useState<any[]>([]);
     const [colors, setColors] = React.useState<any[]>([]);
     const [sizes, setSizes] = React.useState<any[]>([]);
     const [tab, setTab] = React.useState<'table' | "grid">('table');
@@ -592,22 +417,17 @@ const ProductLayout = () => {
     const [landingProduct, setLandingProduct] = React.useState<any>(null);
     const [forData, setFormData] = React.useState<any>(null);
     const [page, setPage] = React.useState(1);
-    const [selectedWarehouseFilter, setSelectedWarehouseFilter] = React.useState<string>('all');
     const [nameFilter, setNameFilter] = React.useState('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
     const [isScannerOpen, setIsScannerOpen] = React.useState(false);
     const { user } = useAuth()
     const PAGE_SIZE = 10;
 
-    const hasLocationAccess = React.useCallback((_location: string) => true, []);
-
     React.useEffect(() => {
         getallcategory().then(setCategories).catch(console.error);
         getProduct().then((products) => {
             setProducts(products);
-            console.log("Products loaded:", products);
         }).catch(console.error);
-        getWarehouse().then(setWarehouses).catch(console.error);
         getColors().then(setColors).catch(console.error);
         getSizes().then(setSizes).catch(console.error);
 
@@ -634,21 +454,6 @@ const ProductLayout = () => {
         toast.error(res.error || "فشل في إنشاء المقاس");
         return false;
     };
-
-    const warehouseOptions = React.useMemo(() => {
-        return warehouses
-            .filter((warehouse: any) => hasLocationAccess(String(warehouse?.location || '').trim()))
-            .map((warehouse: any) => ({
-                value: String(warehouse.id),
-                label: warehouse.location ? `${warehouse.name} - ${warehouse.location}` : warehouse.name,
-            }));
-    }, [warehouses, hasLocationAccess]);
-
-    React.useEffect(() => {
-        if (selectedWarehouseFilter !== 'all' && !warehouseOptions.some((warehouse) => warehouse.value === selectedWarehouseFilter)) {
-            setSelectedWarehouseFilter('all');
-        }
-    }, [selectedWarehouseFilter, warehouseOptions]);
 
     const handleClose = () => {
         setIsOpen(false);
@@ -696,10 +501,9 @@ const ProductLayout = () => {
                 formData.append('metaDescription', data.metaDescription || '');
                 formData.append('metaKeywords', data.metaKeywords || '');
                 formData.append('isActive', String(data.isActive ?? true));
+                formData.append('price', String(data.price ?? 0));
                 formData.append('affiliatePrice', String(data.affiliatePrice ?? 0));
                 formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
-                formData.append('warehouseStocks', JSON.stringify(data.warehouseStocks || []));
-                formData.append('wholesalePricingTiers', JSON.stringify(data.wholesalePricingTiers || []));
                 formData.append('variants', JSON.stringify(data.variants || []));
 
                 const fileManifest = Array.isArray(data.files)
@@ -725,13 +529,9 @@ const ProductLayout = () => {
                     toast.success("تم تحديث المنتج بنجاح")
                     handleClose();
                     getallcategory().then(setCategories).catch(console.error);
-                    getProduct().then((products) => {
-                        setProducts(products);
-                        console.log("Products loaded:", products);
-                    }).catch(console.error);
+                    refreshProducts();
                 } else {
                     toast.error(`خطأ ${res.error}`)
-                    alert("خطأ: " + res.error);
                 }
             } else {
                 const formData = new FormData();
@@ -744,10 +544,9 @@ const ProductLayout = () => {
                 formData.append('metaDescription', data.metaDescription || '');
                 formData.append('metaKeywords', data.metaKeywords || '');
                 formData.append('isActive', String(data.isActive ?? true));
+                formData.append('price', String(data.price ?? 0));
                 formData.append('affiliatePrice', String(data.affiliatePrice ?? 0));
                 formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
-                formData.append('warehouseStocks', JSON.stringify(data.warehouseStocks || []));
-                formData.append('wholesalePricingTiers', JSON.stringify(data.wholesalePricingTiers || []));
                 formData.append('variants', JSON.stringify(data.variants || []));
 
                 // معالجة الملفات - استخراج الملف الحقيقي rawFile
@@ -759,19 +558,13 @@ const ProductLayout = () => {
                     });
                 }
 
-                // طباعة للتأكد من المحتوى قبل الإرسال
-                console.log("Files to upload:", formData.getAll('files'));
-
                 const result = await saveProductWithFiles(formData);
 
                 if (result.success) {
                     toast.success("تم الحفظ بنجاح")
                     handleClose();
                     getallcategory().then(setCategories).catch(console.error);
-                    getProduct().then((products) => {
-                        setProducts(products);
-                        console.log("Products loaded:", products);
-                    }).catch(console.error);
+                    refreshProducts();
                 } else {
                     toast.error("خطأ: " + result.error);
                 }
@@ -794,24 +587,9 @@ const ProductLayout = () => {
             metaTitle: data.metaTitle || '',
             metaDescription: data.metaDescription || '',
             metaKeywords: data.metaKeywords || '',
+            price: Number(data.price ?? 0),
             affiliatePrice: Number(data.affiliatePrice ?? 0),
             affiliateCommissionRate: data.affiliateCommissionRate ?? null,
-            warehouseStocks: data.stocks?.length
-                ? data.stocks.map((stock: any) => ({
-                    warehouseId: stock.warehouseId,
-                    quantity: stock.quantity,
-                    stockPrice: stock.price ?? 0,
-                    wholesalePrice: stock.wholesalePrice ?? 0,
-                    stockDiscount: stock.discount ?? 0,
-                }))
-                : [{ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }],
-            wholesalePricingTiers: Array.isArray(data.wholesalePricingTiers)
-                ? data.wholesalePricingTiers.map((tier: any) => ({
-                    minQuantity: Number(tier?.minQuantity ?? 1),
-                    maxQuantity: tier?.maxQuantity == null ? '' : Number(tier.maxQuantity),
-                    price: Number(tier?.price ?? 0),
-                }))
-                : [],
             variants: Array.isArray(data.variants)
                 ? data.variants.map((variant: any) => ({
                     colorId: variant.colorId ?? '',
@@ -837,59 +615,36 @@ const ProductLayout = () => {
     const displayProducts = React.useMemo(() => {
         const normalizedNameFilter = nameFilter.trim().toLowerCase();
 
-        return products.flatMap((product: any) => {
-            const stocks = Array.isArray(product?.stocks) ? product.stocks : [];
-
+        return products.filter((product: any) => {
             const matchesName = !normalizedNameFilter
                 || String(product?.name || '').toLowerCase().includes(normalizedNameFilter)
                 || String(product?.barcode || '').toLowerCase().includes(normalizedNameFilter);
             const matchesCategory = categoryFilter === 'all' || String(product?.categoryId || '') === categoryFilter;
-            if (!matchesName || !matchesCategory) {
-                return [];
-            }
-
-            return stocks
-                .filter((stock: any) => {
-                    const stockLocation = String(stock?.warehouse?.location || '').trim();
-                    const stockWarehouseId = String(stock?.warehouseId || stock?.warehouse?.id || '');
-
-                    if (!hasLocationAccess(stockLocation)) {
-                        return false;
-                    }
-
-                    return selectedWarehouseFilter === 'all' || stockWarehouseId === selectedWarehouseFilter;
-                })
-                .map((stock: any) => ({
-                    ...product,
-                    __stock: stock,
-                    __rowId: `${product.id}-${stock.warehouseId}`,
-                }));
+            return matchesName && matchesCategory;
         });
-    }, [products, selectedWarehouseFilter, nameFilter, categoryFilter, hasLocationAccess]);
+    }, [products, nameFilter, categoryFilter]);
 
     const ExportToExcel = () => {
         // تجهيز البيانات بشكل مقروء
-        const excelData = displayProducts.map((stock: any) => ({
-            "اسم المنتج": stock.name,
-            "المستودع": stock.__stock.warehouse.name,
-            "التصنيف": stock.categoryId ? (categories.find(c => c.id === stock.categoryId)?.name || "غير محدد") : "غير محدد",
-            "الكمية الحالية": stock.__stock.quantity,
-            "السعر": formatSiteCurrency(Number(stock.__stock.price || 0), settings),
-            "الخصم": formatSiteCurrency(Number(stock.__stock.discount || 0), settings),
+        const excelData = displayProducts.map((product: any) => ({
+            "اسم المنتج": product.name,
+            "التصنيف": product.categoryId ? (categories.find(c => c.id === product.categoryId)?.name || "غير محدد") : "غير محدد",
+            "الباركود": product.barcode || "—",
+            "السعر": formatSiteCurrency(Number(product.price || 0), settings),
+            "سعر الأفلييت": formatSiteCurrency(Number(product.affiliatePrice || 0), settings),
             "تاريخ الجرد": new Date().toLocaleDateString('ar-EG')
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "المخزون الحالي");
-        
+            XLSX.utils.book_append_sheet(workbook, worksheet, "المنتجات");
+
             // تحسين: ضبط عرض الأعمدة تلقائياً
             const maxWidth = 20;
             worksheet["!cols"] = [
-              { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }
+              { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }
             ];
-        
-            XLSX.writeFile(workbook, `inventory_${new Date().getTime()}.xlsx`);
-        // يمكنك إضافة منطق التصدير هنا إذا رغبت
+
+            XLSX.writeFile(workbook, `products_${new Date().getTime()}.xlsx`);
     };
 
     const tableActions: any[] = [
@@ -907,22 +662,19 @@ const ProductLayout = () => {
             icon: <Plus className="rotate-45" size={14} />,
             variant: "danger",
             onClick: async (data: any) => {
-                const warehouseName = data?.__stock?.warehouse?.name || "المستودع";
-                const confirm = window.confirm(`هل أنت متأكد من حذف هذا المنتج من ${warehouseName}؟`);
+                const confirm = window.confirm(`هل أنت متأكد من حذف هذا المنتج؟`);
                 if (confirm) {
                     const loadingToast = toast.loading('جاري الحذف...');
                     try {
-                        const res = await deleteProductFromWarehouse(Number(data.id), Number(data?.__stock?.warehouseId))
+                        const res = await deleteProduct(Number(data.id))
                         if (res.success) {
-                            toast.success("تم حذف المنتج من المستودع بنجاح")
-                            getProduct().then((products) => {
-                                setProducts(products);
-                            }).catch(console.error);
+                            toast.success("تم حذف المنتج بنجاح")
+                            refreshProducts();
                         } else {
-                            toast.error(res.error || "فشل حذف المنتج من المستودع")
+                            toast.error(res.error || "فشل حذف المنتج")
                         }
                     } catch (error) {
-                        toast.error('فشل في حذف المستخدم');
+                        toast.error('فشل في حذف المنتج');
                     } finally {
                         toast.dismiss(loadingToast);
                     }
@@ -933,7 +685,7 @@ const ProductLayout = () => {
 
     React.useEffect(() => {
         setPage(1);
-    }, [selectedWarehouseFilter, nameFilter, categoryFilter]);
+    }, [nameFilter, categoryFilter]);
 
 
     return (
@@ -1009,25 +761,6 @@ const ProductLayout = () => {
                         ))}
                     </select>
                 </div>
-
-                <div className="mb-4 max-w-xs">
-                    <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">
-                        عرض حسب المستودع
-                    </label>
-                    <select
-                        value={selectedWarehouseFilter}
-                        onChange={(e) => {
-                            setSelectedWarehouseFilter(e.target.value);
-                            setPage(1);
-                        }}
-                        className="h-10 w-full border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    >
-                        <option value="all">كل المستودعات</option>
-                        {warehouseOptions.map((warehouse) => (
-                            <option key={warehouse.value} value={warehouse.value}>{warehouse.label}</option>
-                        ))}
-                    </select>
-                </div>
                 </div>
             </div>
 
@@ -1035,7 +768,7 @@ const ProductLayout = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {displayProducts.map((product: any) => (
                         <div
-                            key={product.__rowId}
+                            key={product.id}
                             className="group relative bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl transition-all duration-300 flex flex-col"
                         >
                             {/* Image Section */}
@@ -1051,11 +784,6 @@ const ProductLayout = () => {
                                         <img src="/uploads/icon.png" className="w-16 opacity-20" alt="no-image" />
                                     </div>
                                 )}
-                                {Number(product?.__stock?.discount || 0) > 0 && (
-                                    <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                        خصم {formatSiteCurrency(Number(product?.__stock?.discount || 0), settings)}
-                                    </span>
-                                )}
                             </div>
 
                             {/* Content Section */}
@@ -1068,26 +796,11 @@ const ProductLayout = () => {
                                     {product.description ? product.description : "لا يوجد وصف لهذا المنتج."}
                                 </p>
 
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 font-bold">
-                                    المخزون: {Number(product?.__stock?.quantity || 0)} | المستودع: {product?.__stock?.warehouse?.name || "غير محدد"}
-                                </p>
-
                                 <div className="mt-auto flex items-center justify-between">
                                     <div>
-                                        {Number(product?.__stock?.discount || 0) > 0 ? (
-                                            <div className="flex flex-col">
-                                                <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                                                    {formatSiteCurrency(Number(product?.__stock?.price || 0) - Number(product?.__stock?.discount || 0), settings)}
-                                                </p>
-                                                <span className="text-xs text-slate-400 line-through">
-                                                    {formatSiteCurrency(Number(product?.__stock?.price || 0), settings)}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                                                {formatSiteCurrency(Number(product?.__stock?.price || 0), settings)}
-                                            </p>
-                                        )}
+                                        <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                                            {formatSiteCurrency(Number(product?.price || 0), settings)}
+                                        </p>
                                     </div>
                                     <Button
                                         variant="outline"
@@ -1166,19 +879,13 @@ const ProductLayout = () => {
                                     <div className="flex justify-between">
                                         <span className="text-slate-500 dark:text-slate-400">سعر القطعة</span>
                                         <span className="font-medium text-slate-800 dark:text-slate-100">
-                                            {formatSiteCurrency(Number(selectedProduct?.__stock?.price || 0), settings)}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-slate-400">الخصم</span>
-                                        <span className="font-medium text-red-500">
-                                            {formatSiteCurrency(Number(selectedProduct?.__stock?.discount || 0), settings)}
+                                            {formatSiteCurrency(Number(selectedProduct?.price || 0), settings)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between border-t pt-3 dark:border-slate-800">
-                                        <span className="text-slate-500 dark:text-slate-400">السعر النهائي</span>
+                                        <span className="text-slate-500 dark:text-slate-400">سعر الأفلييت</span>
                                         <span className="font-bold text-blue-600">
-                                            {formatSiteCurrency(Number(selectedProduct?.__stock?.price || 0) - Number(selectedProduct?.__stock?.discount || 0), settings)}
+                                            {formatSiteCurrency(Number(selectedProduct?.affiliatePrice || 0), settings)}
                                         </span>
                                     </div>
                                 </div>
@@ -1189,15 +896,9 @@ const ProductLayout = () => {
                                 <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">معلومات عامة</h3>
                                 <div className="space-y-3 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-slate-400">المستودع</span>
-                                        <span className="font-medium text-slate-800 dark:text-slate-100">
-                                            {selectedProduct?.__stock?.warehouse?.name || "غير محدد"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-slate-400">الكمية الحالية</span>
-                                        <span className="font-medium text-slate-800 dark:text-slate-100">
-                                            {Number(selectedProduct?.__stock?.quantity || 0)}
+                                        <span className="text-slate-500 dark:text-slate-400">الباركود</span>
+                                        <span className="font-medium text-slate-800 dark:text-slate-100" dir="ltr">
+                                            {selectedProduct?.barcode || "—"}
                                         </span>
                                     </div>
                                     <div className="flex justify-between">
@@ -1333,8 +1034,8 @@ const ProductLayout = () => {
             {tab === 'table' && (
                 <DataTable
                     data={displayProducts}
-                    rowKey={"__rowId"}
-                    totalCount={displayProducts.length} // لنفترض وجود 150 عميل في الداتا بيز
+                    rowKey={"id"}
+                    totalCount={displayProducts.length}
                     pageSize={PAGE_SIZE}
                     currentPage={page}
                     onPageChange={(newPage) => setPage(newPage)}
@@ -1371,24 +1072,7 @@ const ProductLayout = () => {
                         },
                         {
                             header: "السعر",
-                            accessor: (row: any) => (
-                                Number(row?.__stock?.discount || 0) > 0 ? (
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-slate-800 dark:text-slate-100">
-                                            {formatSiteCurrency(Number(row?.__stock?.price || 0) - Number(row?.__stock?.discount || 0), settings)}
-                                        </span>
-                                        <span className="text-xs text-slate-400 line-through">
-                                            {formatSiteCurrency(Number(row?.__stock?.price || 0), settings)}
-                                        </span>
-                                    </div>
-                                ) : (
-                                    formatSiteCurrency(Number(row?.__stock?.price || 0), settings)
-                                )
-                            )
-                        },
-                        {
-                            header: "الخصم",
-                            accessor: (row: any) => Number(row?.__stock?.discount || 0) > 0 ? formatSiteCurrency(Number(row?.__stock?.discount || 0), settings) : "—"
+                            accessor: (row: any) => formatSiteCurrency(Number(row?.price || 0), settings)
                         },
                         {
                             header: "الألوان والمقاسات",
@@ -1417,16 +1101,6 @@ const ProductLayout = () => {
                                         ))}
                                     </div>
                                 );
-                            }
-                        },
-                        {
-                            header: "المخزون",
-                            accessor: (row: any) => Number(row?.__stock?.quantity || 0)
-                        },
-                        {
-                            header: "المستودع",
-                            accessor: (row: any) => {
-                                return row?.__stock?.warehouse?.name || "غير محدد";
                             }
                         },
                         {
@@ -1505,7 +1179,7 @@ const ProductLayout = () => {
                     <DynamicForm
                         schema={productschama}
                         onSubmit={onSubmit}
-                        defaultValues={forData || { warehouseStocks: [{ warehouseId: '', quantity: 0, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }], wholesalePricingTiers: [], variants: [] }}
+                        defaultValues={forData || { variants: [] }}
                         submitLabel={editId ? "تعديل المنتج" : "حفظ المنتج"}
                     >
                         {({ register, control, setValue, watch, formState: { errors } }) => (
@@ -1547,6 +1221,13 @@ const ProductLayout = () => {
                                 <FormInput
                                     type="number"
                                     step="0.01"
+                                    label="سعر المنتج"
+                                    {...register("price")}
+                                    error={errors.price?.message as string}
+                                />
+                                <FormInput
+                                    type="number"
+                                    step="0.01"
                                     label="سعر الأفلييت"
                                     {...register("affiliatePrice")}
                                     error={errors.affiliatePrice?.message as string}
@@ -1557,17 +1238,6 @@ const ProductLayout = () => {
                                     label="نسبة عمولة الأفلييت %"
                                     {...register("affiliateCommissionRate")}
                                     error={errors.affiliateCommissionRate?.message as string}
-                                />
-                                <WarehouseStocksFields
-                                    control={control}
-                                    register={register}
-                                    errors={errors}
-                                    warehouses={warehouses}
-                                />
-                                <WholesalePricingTiersFields
-                                    control={control}
-                                    register={register}
-                                    errors={errors}
                                 />
                                 <VariantsFields
                                     control={control}

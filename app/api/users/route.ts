@@ -64,22 +64,6 @@ export async function GET(req :NextRequest) {
             },
           },
         },
-        activityTargets: {
-          orderBy: { createdAt: 'desc' },
-        },
-        targets: {
-          orderBy: { updatedAt: 'desc' },
-          include: {
-            products: {
-              select: {
-                id: true,
-                targetId: true,
-                productId: true,
-                product: true,
-              },
-            },
-          },
-        }, // جلب بيانات الأهداف المرتبطة بالمستخدم
       },
     });
 
@@ -98,7 +82,6 @@ export async function GET(req :NextRequest) {
       totalAffiliateClicks: Array.isArray(userRow.affiliateLinks)
         ? userRow.affiliateLinks.reduce((sum: number, link: any) => sum + Number(link?.clicks || 0), 0)
         : 0,
-      activityTarget: Array.isArray(userRow.activityTargets) ? userRow.activityTargets[0] || null : null,
     }));
 
     return new Response(JSON.stringify({ success: true, data: normalizedUsers }), { status: 200 });
@@ -118,15 +101,11 @@ export async function POST(req: NextRequest) {
         email: data.email,
         password: await bcrypt.hash(data.password, 10), //
         phone: data.phone || null,
-        notes: String(data.notes || "").trim() || null,
-        jobTitle: data.jobTitle,
         accountType,
         isAffiliate,
         affiliateApproved: false,
         affiliateRequestedAt: isAffiliate ? new Date() : null,
         affiliateApprovedAt: null,
-        salesCommissionPercent: Number(data.salesCommissionPercent) || 0,
-        wage: Number.isFinite(Number(data.wage)) ? Math.trunc(Number(data.wage)) : 0,
         // الربط مع جدول الصلاحيات باستخدام المعرف (ID)
         permission: {
           connect: { id: data.permissions } 

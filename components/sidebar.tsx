@@ -3,7 +3,6 @@ import { useAuth } from "@/context/AuthContext";
 import { hasAnyPermission, hasPermission, isAdmin } from "@/lib/utils";
 import {
   Home,
-  BarChart2,
   Users,
   Settings,
   ChevronRight,
@@ -11,31 +10,20 @@ import {
   Receipt,
   Box,
   FileText,
-  ShieldCheck,
   LogOut,
-  Users2,
-  Warehouse,
-  Truck,
   Megaphone,
   ImageIcon,
   BadgePercent,
   Ticket,
   ChevronDown,
-  ArrowRightLeft,
   LayoutGrid,
   Package,
   Store,
   MessageCircle,
-  CircleDollarSign,
   Globe,
   PanelsTopLeft,
   Sparkles,
   Download,
-  Award,
-  Bell,
-  MapPin,
-  ClipboardList,
-  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -136,8 +124,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       icon: Home,
       items: [
         { icon: LayoutGrid, label: "لوحة التحكم", href: "/dashboard" },
-        hasAnyPermission(user, ["viewAnalytics"]) &&
-        { icon: BarChart2, label: "التحليلات", href: "/dashboard/analytics" },
       ].filter(Boolean) as MenuItem[]
     },
     {
@@ -149,8 +135,6 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: Receipt, label: "الأقسام", href: "/dashboard/categories" },
         hasAnyPermission(user, ["viewProducts", "addProducts", "editProducts", "deleteProducts"]) &&
         { icon: Box, label: "المنتجات", href: "/dashboard/products" },
-        hasAnyPermission(user, ["viewCategories", "addCategories", "editCategories", "deleteCategories"]) &&
-        { icon: Warehouse, label: "المستودعات والدول", href: "/dashboard/inventories" },
       ].filter(Boolean) as MenuItem[]
     },
     {
@@ -160,57 +144,22 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       items: [
         hasAnyPermission(user, ["viewOrders", "addOrders", "editOrders", "deleteOrders"]) &&
         { icon: FileText, label: "الطلبات", href: "/dashboard/orders" },
-        hasAnyPermission(user, ["viewWholesaleOrders", "addWholesaleOrders", "editWholesaleOrders", "deleteWholesaleOrders"]) &&
-        { icon: FileText, label: "طلبات الجملة", href: "/dashboard/wholesale-orders" },
-        hasAnyPermission(user, ["viewReturns", "addReturns", "editReturns", "deleteReturns"]) &&
-        { icon: ArrowRightLeft, label: "المرتجعات", href: "/dashboard/returns" },
-        hasAnyPermission(user, ["viewOrders", "viewWholesaleCustomers", "viewReturns", "addReturns"]) &&
-        { icon: ArrowRightLeft, label: "مرتجعات المندوبين", href: "/dashboard/rep-returns" },
-        hasPermission(user, "viewWarranty") &&
-        { icon: ShieldCheck, label: "الكفالة", href: "/dashboard/warranty" },
-        isAdmin(user) &&
-        { icon: Truck, label: "شركات الشحن", href: "/dashboard/shipping" },
-        hasAnyPermission(user, ["viewTracking", "editTracking"]) &&
-        { icon: MapPin, label: "تتبع الشحنات", href: "/dashboard/tracking" },
       ].filter(Boolean) as MenuItem[]
     },
     {
       type: "section",
-      label: "العملاء والمندوبين",
+      label: "العملاء",
       icon: Users,
       items: [
         hasAnyPermission(user, ["viewCustomers", "addCustomers", "editCustomers", "deleteCustomers"]) &&
         { icon: Users, label: "العملاء", href: "/dashboard/customers" },
-        hasAnyPermission(user, ["viewWholesaleCustomers", "addWholesaleCustomers", "editWholesaleCustomers", "deleteWholesaleCustomers"]) &&
-        { icon: Users2, label: "المندوبين", href: "/dashboard/wholesale-customers" },
-        hasAnyPermission(user, ["viewTasks", "addTasks", "editTasks", "deleteTasks"]) &&
-        { icon: ClipboardList, label: "المهام والمواعيد", href: "/dashboard/tasks" },
-        hasAnyPermission(user, ["viewLoyalty", "editLoyalty"]) &&
-        { icon: Award, label: "نقاط الولاء", href: "/dashboard/loyalty" },
       ].filter(Boolean) as MenuItem[]
     },
     {
       type: "section",
-      label: "المالية",
-      icon: Wallet,
-      items: [
-        hasAnyPermission(user, ["viewCustomerPayments", "addCustomerPayments"]) &&
-        { icon: CircleDollarSign, label: "الفواتير المستحقة", href: "/dashboard/customer-payments" },
-        hasAnyPermission(user, ["viewExpenses", "addExpenses", "editExpenses", "deleteExpenses"]) &&
-        { icon: Wallet, label: "المصاريف", href: "/dashboard/expenses" },
-        isAdmin(user) &&
-        { icon: ArrowRightLeft, label: "تحويلات المحفظة", href: "/dashboard/affiliate/wallet-transfers" },
-      ].filter(Boolean) as MenuItem[]
-    },
-    {
-      type: "section",
-      label: "التسويق",
+      label: "المتجر الإلكتروني",
       icon: Megaphone,
       items: [
-        hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"]) &&
-        { icon: Megaphone, label: "الحملات الإعلانية", href: "/dashboard/marketing/campaigns" },
-        hasAnyPermission(user, ["viewMarketing", "addMarketing", "editMarketing", "deleteMarketing"]) &&
-        { icon: BarChart2, label: "تحليلات التسويق", href: "/dashboard/marketing/analytics" },
         isAdmin(user) &&
         { icon: Ticket, label: "العروض", href: "/dashboard/offers" },
         isAdmin(user) &&
@@ -221,22 +170,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
         { icon: MessageCircle, label: "التعليقات", href: "/dashboard/comments" },
       ].filter(Boolean) as MenuItem[]
     },
-    {
-      type: "section",
-      label: "المستخدمين والأدوار",
-      icon: Users2,
-      items: [
-        hasAnyPermission(user, ["viewEmployees", "addEmployees", "editEmployees", "deleteEmployees"]) &&
-        { icon: Users, label: "المستخدمين", href: "/dashboard/users" },
-        isAdmin(user) &&
-        { icon: CircleDollarSign, label: "رواتب الموظفين", href: "/dashboard/employee-salaries" },
-        hasAnyPermission(user, ["viewPermissions", "addPermissions", "editPermissions", "deletePermissions"]) &&
-        { icon: ShieldCheck, label: "الأدوار والصلاحيات", href: "/dashboard/permissions" },
-      ].filter(Boolean) as MenuItem[]
-    },
     // ─── روابط مباشرة بدون dropdown ───
-    hasPermission(user, "viewNotifications") &&
-    { type: "link", icon: Bell, label: "الإشعارات", href: "/dashboard/notifications" },
     isAdmin(user) &&
     { type: "link", icon: Settings, label: "الإعدادات", href: "/dashboard/settings" },
     hasAnyPermission(user, ["viewPages", "addPages", "editPages", "deletePages"]) &&

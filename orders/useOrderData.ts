@@ -2,7 +2,6 @@ import React from 'react';
 import { getOrders, getOrdersByUser } from '@/server/order';
 import { getCustomerList } from '@/server/customer';
 import { getProductCatalog } from '@/server/product';
-import { getshipping } from '@/server/shipping';
 
 interface User {
   id: string;
@@ -14,7 +13,6 @@ export const useOrderData = (user?: User) => {
   const [products, setProduct] = React.useState<any[]>([]);
   const [customers, setCustomers] = React.useState<any[]>([]);
   const [orders, setOrders] = React.useState<any[]>([]);
-  const [shippingCompanies, setShippingCompanies] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSupportingDataLoading, setIsSupportingDataLoading] = React.useState(false);
   const supportingDataPromiseRef = React.useRef<Promise<void> | null>(null);
@@ -58,15 +56,6 @@ export const useOrderData = (user?: User) => {
     }
   };
 
-  const refreshShippingCompanies = async () => {
-    try {
-      const shippingRes = await getshipping();
-      setShippingCompanies(shippingRes?.success ? (Array.isArray(shippingRes.data) ? shippingRes.data : []) : []);
-    } catch (error) {
-      console.error("Error refreshing shipping companies:", error);
-    }
-  };
-
   const refreshProducts = async () => {
     try {
       const productsRes = await getProductCatalog();
@@ -79,9 +68,8 @@ export const useOrderData = (user?: User) => {
   const ensureSupportingDataLoaded = async () => {
     const hasProducts = products.length > 0;
     const hasCustomers = customers.length > 0;
-    const hasShippingCompanies = shippingCompanies.length > 0;
 
-    if (hasProducts && hasCustomers && hasShippingCompanies) {
+    if (hasProducts && hasCustomers) {
       return;
     }
 
@@ -93,10 +81,9 @@ export const useOrderData = (user?: User) => {
 
     supportingDataPromiseRef.current = (async () => {
       try {
-        const [productsData, customersRes, shippingRes] = await Promise.all([
+        const [productsData, customersRes] = await Promise.all([
           hasProducts ? Promise.resolve(products) : getProductCatalog(),
           hasCustomers ? Promise.resolve({ success: true, data: customers }) : getCustomerList(),
-          hasShippingCompanies ? Promise.resolve({ success: true, data: shippingCompanies }) : getshipping(),
         ]);
 
         if (!hasProducts) {
@@ -105,10 +92,6 @@ export const useOrderData = (user?: User) => {
 
         if (!hasCustomers) {
           setCustomers(customersRes?.success ? (customersRes.data || []) : []);
-        }
-
-        if (!hasShippingCompanies) {
-          setShippingCompanies(shippingRes?.success ? (Array.isArray(shippingRes.data) ? shippingRes.data : []) : []);
         }
       } finally {
         supportingDataPromiseRef.current = null;
@@ -123,10 +106,6 @@ export const useOrderData = (user?: User) => {
     loadData();
   }, []);
 
-  React.useEffect(() => {
-    refreshShippingCompanies();
-  }, []);
-
   return {
     products,
     setProduct,
@@ -134,15 +113,12 @@ export const useOrderData = (user?: User) => {
     setCustomers,
     orders,
     setOrders,
-    shippingCompanies,
-    setShippingCompanies,
     isLoading,
     isSupportingDataLoading,
     loadData,
     loadOrdersByCustomer,
     refreshOrders,
     refreshCustomers,
-    refreshShippingCompanies,
     refreshProducts,
     ensureSupportingDataLoaded,
   };

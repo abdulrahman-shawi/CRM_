@@ -11,11 +11,8 @@ interface User {
   };
 }
 
-export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: number | string; name: string }> = []) => {
+export const useOrderFilters = (orders: any[], user?: User) => {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [cityId, setCityId] = React.useState("");
-  const [warehouseId, setWarehouseId] = React.useState("");
-  const [shippingCompany, setShippingCompany] = React.useState("");
   const [monthFilterType, setMonthFilterType] = React.useState<"all" | "current" | "previous" | "custom">("current");
   const [customMonth, setCustomMonth] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("طلب جديد");
@@ -25,13 +22,12 @@ export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: 
 
   const filterOrder = React.useMemo(() => {
     const isAdminUser = user?.accountType === "ADMIN";
-    const isWarehouseUser = String(user?.permission?.roleName || "").trim().includes("مستودع");
-    const canViewOrders = !user || isAdminUser || isWarehouseUser || user?.permission?.viewOrders === true;
+    const canViewOrders = !user || isAdminUser || user?.permission?.viewOrders === true;
 
     return orders.filter((order: any) => {
       if (!canViewOrders) return false;
 
-      if (user && !isAdminUser && !isWarehouseUser) {
+      if (user && !isAdminUser) {
         const isOwner = order.userId === user?.id;
         if (!isOwner) return false;
       }
@@ -45,29 +41,6 @@ export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: 
         (order.city && order.city.toLowerCase().includes(query));
 
       if (!matchesText) return false;
-
-      // فلتر المدينة: يطابق مدينة المستودع (cityId) أو اسم مدينة العميل (order.city)
-      if (cityId) {
-        const orderCityId = order.warehouse?.city?.id ?? order.warehouse?.cityId;
-        const selectedCityName = String(
-          cities.find((city) => String(city.id) === String(cityId))?.name || ""
-        ).trim();
-        const orderCityName = String(order.city || "").trim();
-        const matchesWarehouseCity = String(orderCityId || "") === String(cityId);
-        const matchesCustomerCity = Boolean(selectedCityName) && orderCityName === selectedCityName;
-        if (!matchesWarehouseCity && !matchesCustomerCity) return false;
-      }
-
-      // فلتر المستودع
-      if (warehouseId) {
-        const orderWarehouseId = order.warehouse?.id ?? order.warehouseId;
-        if (String(orderWarehouseId || "") !== String(warehouseId)) return false;
-      }
-
-      // فلتر شركة الشحن
-      const normalizedShippingFilter = String(shippingCompany || "").trim().toLowerCase();
-      const orderShippingName = String(order?.shipping?.name || "").trim().toLowerCase();
-      if (normalizedShippingFilter && orderShippingName !== normalizedShippingFilter) return false;
 
       // فلتر الشهر
       if (monthFilterType !== "all") {
@@ -83,7 +56,7 @@ export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: 
 
       return true;
     });
-  }, [orders, user, cities, searchQuery, cityId, warehouseId, shippingCompany, monthFilterType, customMonth]);
+  }, [orders, user, searchQuery, monthFilterType, customMonth]);
 
   const statusOptions = [
     "طلب جديد",
@@ -120,22 +93,12 @@ export const useOrderFilters = (orders: any[], user?: User, cities: Array<{ id: 
 
   React.useEffect(() => {
     setPage(1);
-  }, [statusFilter, cityId, warehouseId]);
-
-  React.useEffect(() => {
-    setWarehouseId("");
-  }, [cityId]);
+  }, [statusFilter]);
 
   return {
     // الحالات
     searchQuery,
     setSearchQuery,
-    cityId,
-    setCityId,
-    warehouseId,
-    setWarehouseId,
-    shippingCompany,
-    setShippingCompany,
     monthFilterType,
     setMonthFilterType,
     customMonth,

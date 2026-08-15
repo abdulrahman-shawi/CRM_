@@ -8,7 +8,7 @@ import { FormInput } from "@/components/ui/form-input";
 import PhoneInput from 'react-phone-number-input'
 import { Button } from "@/components/ui/button";
 import { AppModal } from "@/components/ui/app-modal";
-import { AssignUsers, createCustomerAction, createmessage, deleteCustomer, getCustomer, updateCustomer, UpdateStusa } from "@/server/customer";
+import { AssignUsers, createCustomerAction, deleteCustomer, getCustomer, updateCustomer, UpdateStusa } from "@/server/customer";
 import { useAuth } from "@/context/AuthContext";
 import { formatPhoneForDisplay, hasPermission, isAdmin } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -358,12 +358,11 @@ const CustomrLayout: React.FC = () => {
 
     if (field === "productId") {
       const product = products.find(p => p.id === Number(value));
-      const firstStock = Array.isArray(product?.stocks) ? product.stocks[0] : null;
       item.productId = value;
       item.name = product?.name || "";
       item.modelNumber = product?.modelNumber || "";
-      item.price = Number(firstStock?.price || 0);
-      item.discount = Number(firstStock?.discount || 0);
+      item.price = Number(product?.price || 0);
+      item.discount = 0;
       setSearchQueries({ ...searchQueries, [index]: item.name });
       setShowDropdown({ ...showDropdown, [index]: false });
     } else {

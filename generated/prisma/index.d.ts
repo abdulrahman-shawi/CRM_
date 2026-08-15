@@ -7276,6 +7276,7 @@ export namespace Prisma {
   export type ProductAvgAggregateOutputType = {
     id: number | null
     categoryId: number | null
+    price: number | null
     affiliatePrice: number | null
     affiliateCommissionRate: number | null
   }
@@ -7283,6 +7284,7 @@ export namespace Prisma {
   export type ProductSumAggregateOutputType = {
     id: number | null
     categoryId: number | null
+    price: number | null
     affiliatePrice: number | null
     affiliateCommissionRate: number | null
   }
@@ -7295,6 +7297,7 @@ export namespace Prisma {
     description: string | null
     googleLink: string | null
     categoryId: number | null
+    price: number | null
     createdAt: Date | null
     seoSlug: string | null
     metaTitle: string | null
@@ -7314,6 +7317,7 @@ export namespace Prisma {
     description: string | null
     googleLink: string | null
     categoryId: number | null
+    price: number | null
     createdAt: Date | null
     seoSlug: string | null
     metaTitle: string | null
@@ -7333,6 +7337,7 @@ export namespace Prisma {
     description: number
     googleLink: number
     categoryId: number
+    price: number
     createdAt: number
     seoSlug: number
     metaTitle: number
@@ -7349,6 +7354,7 @@ export namespace Prisma {
   export type ProductAvgAggregateInputType = {
     id?: true
     categoryId?: true
+    price?: true
     affiliatePrice?: true
     affiliateCommissionRate?: true
   }
@@ -7356,6 +7362,7 @@ export namespace Prisma {
   export type ProductSumAggregateInputType = {
     id?: true
     categoryId?: true
+    price?: true
     affiliatePrice?: true
     affiliateCommissionRate?: true
   }
@@ -7368,6 +7375,7 @@ export namespace Prisma {
     description?: true
     googleLink?: true
     categoryId?: true
+    price?: true
     createdAt?: true
     seoSlug?: true
     metaTitle?: true
@@ -7387,6 +7395,7 @@ export namespace Prisma {
     description?: true
     googleLink?: true
     categoryId?: true
+    price?: true
     createdAt?: true
     seoSlug?: true
     metaTitle?: true
@@ -7406,6 +7415,7 @@ export namespace Prisma {
     description?: true
     googleLink?: true
     categoryId?: true
+    price?: true
     createdAt?: true
     seoSlug?: true
     metaTitle?: true
@@ -7512,6 +7522,7 @@ export namespace Prisma {
     description: string | null
     googleLink: string | null
     categoryId: number | null
+    price: number
     createdAt: Date
     seoSlug: string | null
     metaTitle: string | null
@@ -7550,6 +7561,7 @@ export namespace Prisma {
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
+    price?: boolean
     createdAt?: boolean
     seoSlug?: boolean
     metaTitle?: boolean
@@ -7579,6 +7591,7 @@ export namespace Prisma {
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
+    price?: boolean
     createdAt?: boolean
     seoSlug?: boolean
     metaTitle?: boolean
@@ -7599,6 +7612,7 @@ export namespace Prisma {
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
+    price?: boolean
     createdAt?: boolean
     seoSlug?: boolean
     metaTitle?: boolean
@@ -7619,6 +7633,7 @@ export namespace Prisma {
     description?: boolean
     googleLink?: boolean
     categoryId?: boolean
+    price?: boolean
     createdAt?: boolean
     seoSlug?: boolean
     metaTitle?: boolean
@@ -7630,7 +7645,7 @@ export namespace Prisma {
     affiliateCommissionRate?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "modelNumber" | "barcode" | "description" | "googleLink" | "categoryId" | "createdAt" | "seoSlug" | "metaTitle" | "metaDescription" | "metaKeywords" | "isActive" | "showInAds" | "affiliatePrice" | "affiliateCommissionRate", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "modelNumber" | "barcode" | "description" | "googleLink" | "categoryId" | "price" | "createdAt" | "seoSlug" | "metaTitle" | "metaDescription" | "metaKeywords" | "isActive" | "showInAds" | "affiliatePrice" | "affiliateCommissionRate", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     category?: boolean | Product$categoryArgs<ExtArgs>
@@ -7671,6 +7686,7 @@ export namespace Prisma {
       description: string | null
       googleLink: string | null
       categoryId: number | null
+      price: number
       createdAt: Date
       seoSlug: string | null
       metaTitle: string | null
@@ -8119,6 +8135,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Product", 'String'>
     readonly googleLink: FieldRef<"Product", 'String'>
     readonly categoryId: FieldRef<"Product", 'Int'>
+    readonly price: FieldRef<"Product", 'Float'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly seoSlug: FieldRef<"Product", 'String'>
     readonly metaTitle: FieldRef<"Product", 'String'>
@@ -30221,6 +30238,7 @@ export namespace Prisma {
     description: 'description',
     googleLink: 'googleLink',
     categoryId: 'categoryId',
+    price: 'price',
     createdAt: 'createdAt',
     seoSlug: 'seoSlug',
     metaTitle: 'metaTitle',
@@ -31108,6 +31126,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
+    price?: FloatFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     seoSlug?: StringNullableFilter<"Product"> | string | null
     metaTitle?: StringNullableFilter<"Product"> | string | null
@@ -31136,6 +31155,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     googleLink?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
+    price?: SortOrder
     createdAt?: SortOrder
     seoSlug?: SortOrderInput | SortOrder
     metaTitle?: SortOrderInput | SortOrder
@@ -31168,6 +31188,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
+    price?: FloatFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     metaTitle?: StringNullableFilter<"Product"> | string | null
     metaDescription?: StringNullableFilter<"Product"> | string | null
@@ -31195,6 +31216,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     googleLink?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
+    price?: SortOrder
     createdAt?: SortOrder
     seoSlug?: SortOrderInput | SortOrder
     metaTitle?: SortOrderInput | SortOrder
@@ -31222,6 +31244,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Product"> | string | null
     googleLink?: StringNullableWithAggregatesFilter<"Product"> | string | null
     categoryId?: IntNullableWithAggregatesFilter<"Product"> | number | null
+    price?: FloatWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     seoSlug?: StringNullableWithAggregatesFilter<"Product"> | string | null
     metaTitle?: StringNullableWithAggregatesFilter<"Product"> | string | null
@@ -33294,6 +33317,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -33322,6 +33346,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -33347,6 +33372,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33375,6 +33401,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33402,6 +33429,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -33419,6 +33447,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33438,6 +33467,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35746,6 +35776,7 @@ export namespace Prisma {
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
+    price?: SortOrder
     createdAt?: SortOrder
     seoSlug?: SortOrder
     metaTitle?: SortOrder
@@ -35760,6 +35791,7 @@ export namespace Prisma {
   export type ProductAvgOrderByAggregateInput = {
     id?: SortOrder
     categoryId?: SortOrder
+    price?: SortOrder
     affiliatePrice?: SortOrder
     affiliateCommissionRate?: SortOrder
   }
@@ -35772,6 +35804,7 @@ export namespace Prisma {
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
+    price?: SortOrder
     createdAt?: SortOrder
     seoSlug?: SortOrder
     metaTitle?: SortOrder
@@ -35791,6 +35824,7 @@ export namespace Prisma {
     description?: SortOrder
     googleLink?: SortOrder
     categoryId?: SortOrder
+    price?: SortOrder
     createdAt?: SortOrder
     seoSlug?: SortOrder
     metaTitle?: SortOrder
@@ -35805,6 +35839,7 @@ export namespace Prisma {
   export type ProductSumOrderByAggregateInput = {
     id?: SortOrder
     categoryId?: SortOrder
+    price?: SortOrder
     affiliatePrice?: SortOrder
     affiliateCommissionRate?: SortOrder
   }
@@ -39709,6 +39744,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -39735,6 +39771,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -39835,6 +39872,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Product"> | string | null
     googleLink?: StringNullableFilter<"Product"> | string | null
     categoryId?: IntNullableFilter<"Product"> | number | null
+    price?: FloatFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     seoSlug?: StringNullableFilter<"Product"> | string | null
     metaTitle?: StringNullableFilter<"Product"> | string | null
@@ -40502,6 +40540,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40529,6 +40568,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40628,6 +40668,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40655,6 +40696,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40737,6 +40779,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40764,6 +40807,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40804,6 +40848,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40831,6 +40876,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40855,6 +40901,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40882,6 +40929,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -40922,6 +40970,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40949,6 +40998,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40973,6 +41023,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -41000,6 +41051,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -41093,6 +41145,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41120,6 +41173,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41203,6 +41257,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -41230,6 +41285,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -41270,6 +41326,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41297,6 +41354,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41857,6 +41915,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -41884,6 +41943,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -42049,6 +42109,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42076,6 +42137,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42214,6 +42276,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -42241,6 +42304,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -42397,6 +42461,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42424,6 +42489,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42581,6 +42647,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -42608,6 +42675,7 @@ export namespace Prisma {
     description?: string | null
     googleLink?: string | null
     categoryId?: number | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -42719,6 +42787,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42746,6 +42815,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43610,6 +43680,7 @@ export namespace Prisma {
     barcode?: string | null
     description?: string | null
     googleLink?: string | null
+    price?: number
     createdAt?: Date | string
     seoSlug?: string | null
     metaTitle?: string | null
@@ -43644,6 +43715,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43670,6 +43742,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43696,6 +43769,7 @@ export namespace Prisma {
     barcode?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     googleLink?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seoSlug?: NullableStringFieldUpdateOperationsInput | string | null
     metaTitle?: NullableStringFieldUpdateOperationsInput | string | null

@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { decoratePermission, getWholesalePermissionMirror } from "@/lib/wholesale-permissions";
 import { NextRequest, NextResponse } from "next/server";
 
 // تعريف الواجهة لبيانات الـ Params
@@ -11,59 +10,36 @@ interface RouteParams {
 export async function PUT(req: NextRequest, { params }: RouteParams) {
     try {
         const data = await req.json();
-        const { id } = params; 
-        const wholesalePermissions = getWholesalePermissionMirror(data);
+        const { id } = params;
 
         const updatedPermission = await prisma.permission.update({
             where: { id: id },
             data: {
                 roleName: data.roleName,
-                
+
                 // المنتجات
                 viewProducts: Boolean(data.viewProducts),
                 addProducts: Boolean(data.addProducts),
                 editProducts: Boolean(data.editProducts),
                 deleteProducts: Boolean(data.deleteProducts),
-                
+
                 // التقارير
                 viewReports: Boolean(data.viewReports),
                 addReports: Boolean(data.addReports),
                 editReports: Boolean(data.editReports),
                 deleteReports: Boolean(data.deleteReports),
-                
+
                 // الطلبات
                 viewOrders: Boolean(data.viewOrders),
                 addOrders: Boolean(data.addOrders),
                 editOrders: Boolean(data.editOrders),
                 deleteOrders: Boolean(data.deleteOrders),
 
-                // الكفالة
-                viewWarranty: Boolean(data.viewWarranty),
-                addWarranty: Boolean(data.addWarranty),
-                editWarranty: Boolean(data.editWarranty),
-                deleteWarranty: Boolean(data.deleteWarranty),
-
                 // العملاء
                 viewCustomers: Boolean(data.viewCustomers),
                 addCustomers: Boolean(data.addCustomers),
                 editCustomers: Boolean(data.editCustomers),
                 deleteCustomers: Boolean(data.deleteCustomers),
-
-                // عملاء الجملة
-                viewWholesaleCustomers: wholesalePermissions.viewWholesaleCustomers,
-                addWholesaleCustomers: wholesalePermissions.addWholesaleCustomers,
-                editWholesaleCustomers: wholesalePermissions.editWholesaleCustomers,
-                deleteWholesaleCustomers: wholesalePermissions.deleteWholesaleCustomers,
-                viewWholesaleOrders: wholesalePermissions.viewWholesaleOrders,
-                addWholesaleOrders: wholesalePermissions.addWholesaleOrders,
-                editWholesaleOrders: wholesalePermissions.editWholesaleOrders,
-                deleteWholesaleOrders: wholesalePermissions.deleteWholesaleOrders,
-
-                // الموظفين
-                viewEmployees: Boolean(data.viewEmployees),
-                addEmployees: Boolean(data.addEmployees),
-                editEmployees: Boolean(data.editEmployees),
-                deleteEmployees: Boolean(data.deleteEmployees),
 
                 // تصنيف المنتجات
                 viewCategories: Boolean(data.viewCategories),
@@ -82,25 +58,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
                 addPages: Boolean(data.addPages),
                 editPages: Boolean(data.editPages),
                 deletePages: Boolean(data.deletePages),
-
-                // التسويق
-                viewMarketing: Boolean(data.viewMarketing),
-                addMarketing: Boolean(data.addMarketing),
-                editMarketing: Boolean(data.editMarketing),
-                deleteMarketing: Boolean(data.deleteMarketing),
-
-                // المرتجعات
-                viewReturns: Boolean(data.viewReturns),
-                addReturns: Boolean(data.addReturns),
-                editReturns: Boolean(data.editReturns),
-                deleteReturns: Boolean(data.deleteReturns),
-
-                // إحصائيات النظام (حقل واحد فقط)
-                viewAnalytics: Boolean(data.viewAnalytics),
             }
         });
 
-        return NextResponse.json({ success: true, data: decoratePermission(updatedPermission) });
+        return NextResponse.json({ success: true, data: updatedPermission });
     } catch (error) {
         console.error("Update Error:", error);
         return NextResponse.json({ success: false, error: "فشل تحديث البيانات" }, { status: 500 });
@@ -119,9 +80,9 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ success: true, data: deletedPermission });
     } catch (error) {
         console.error("Delete Error:", error);
-        return NextResponse.json({ 
-            success: false, 
-            error: "فشل الحذف، قد يكون الدور مرتبطاً بمستخدمين حاليين" 
+        return NextResponse.json({
+            success: false,
+            error: "فشل الحذف، قد يكون الدور مرتبطاً بمستخدمين حاليين"
         }, { status: 500 });
     }
 }

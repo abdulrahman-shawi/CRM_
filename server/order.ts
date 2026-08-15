@@ -3,22 +3,14 @@
 import { decrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers";
-import { earnLoyaltyPointsForOrder, addManualLoyaltyPointsForOrder } from "@/server/loyalty";
-import { createOrderStatusChangeNotification } from "@/server/notification";
-import { syncTrackingStatusFromOrderStatus } from "@/server/tracking";
 
 const AFFILIATE_COOKIE_NAME = 'affiliate-code';
 
 const SOLD_ORDER_STATUSES = new Set(["تم تسليم الطلب", "تم التسليم", "مدفوعة"]);
 const PAID_COMMISSION_ORDER_STATUSES = new Set(["تم تسليم الطلب", "تم التسليم", "مدفوعة", "تم البيع"]);
-const STOCK_RETURN_STATUSES = new Set(["فشل التسليم مرتجع", "تم الغاء الطلب"]);
 
 const isSoldOrderStatus = (status: string) => SOLD_ORDER_STATUSES.has(status);
 const shouldMarkAffiliateCommissionPaid = (status: string) => PAID_COMMISSION_ORDER_STATUSES.has(String(status || "").trim());
-const isStockReturnStatus = (status: string) => STOCK_RETURN_STATUSES.has(status);
-const WAREHOUSE_ROLE_NAME = "مستودع";
-
-const normalizeWarehouseLocation = (location?: string | null) => String(location || "").trim();
 
 const parseOptionalDate = (value: any) => {
     if (!value) return null;
@@ -38,128 +30,10 @@ const sortOrdersByDisplayDateDesc = <T extends { manualCreatedAt?: Date | null; 
     return [...orders].sort((a, b) => getOrderSortTimestamp(b) - getOrderSortTimestamp(a));
 };
 
-async function applyOrderStockChange(
-    tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
-    order: { warehouseId?: number | null; warehouse?: { location?: string | null } | null; items: Array<{ productId: number; quantity: number }> },
-    direction: "restore" | "reserve"
-) {
-    const warehouseId = Number(order.warehouseId || 0) > 0 ? Number(order.warehouseId) : null;
-    const stockCountry = String(order.warehouse?.location || "").trim();
-
-    for (const item of order.items) {
-        const quantity = Number(item.quantity || 0);
-        if (quantity <= 0) continue;
-
-        const stock = warehouseId
-            ? await tx.productStock.findFirst({
-                where: {
-                    productId: item.productId,
-                    warehouseId,
-                },
-                orderBy: { quantity: "desc" },
-            })
-            : stockCountry
-                ? await tx.productStock.findFirst({
-                    where: {
-                        productId: item.productId,
-                        warehouse: { location: stockCountry },
-                    },
-                    orderBy: { quantity: "desc" },
-                })
-                : null;
-
-        if (direction === "restore") {
-            if (stock) {
-                await tx.productStock.update({
-                    where: { id: stock.id },
-                    data: { quantity: (Number(stock.quantity) || 0) + quantity },
-                });
-                continue;
-            }
-
-            if (warehouseId) {
-                await tx.productStock.create({
-                    data: {
-                        productId: item.productId,
-                        warehouseId,
-                        quantity,
-                    },
-                });
-            }
-
-            continue;
-        }
-
-        const stocks = warehouseId
-            ? await tx.productStock.findMany({
-                where: {
-                    productId: item.productId,
-                    warehouseId,
-                },
-                orderBy: { quantity: "desc" },
-            })
-            : stockCountry
-                ? await tx.productStock.findMany({
-                    where: {
-                        productId: item.productId,
-                        warehouse: { location: stockCountry },
-                    },
-                    orderBy: { quantity: "desc" },
-                })
-                : [];
-
-        if (stocks.length === 0) {
-            throw new Error(`لا يمكن إعادة حجز المنتج ${item.productId} لأنه غير موجود في المخزن`);
-        }
-
-        const totalAvailable = stocks.reduce((sum, currentStock) => sum + (Number(currentStock.quantity) || 0), 0);
-        if (totalAvailable < quantity) {
-            throw new Error(`كمية المنتج ${item.productId} في المخزن غير كافية لإعادة الطلب إلى حالة نشطة`);
-        }
-
-        let remaining = quantity;
-        for (const currentStock of stocks) {
-            if (remaining <= 0) break;
-
-            const currentQuantity = Number(currentStock.quantity) || 0;
-            const consumed = Math.min(currentQuantity, remaining);
-            remaining -= consumed;
-
-            await tx.productStock.update({
-                where: { id: currentStock.id },
-                data: { quantity: currentQuantity - consumed },
-            });
-        }
-    }
-}
-
-const parseWarehouseId = (value: unknown) => {
-    const parsed = Number(value || 0);
-    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-};
-
-function isWarehouseRole(user: any) {
-    const roleName = String(user?.permission?.roleName || "").trim();
-    return roleName.includes(WAREHOUSE_ROLE_NAME);
-}
-
 function canViewOrders(user: any) {
     if (!user) return false;
     if (user.accountType === "ADMIN") return true;
-    if (isWarehouseRole(user)) return true;
     return Boolean(user?.permission?.viewOrders);
-}
-
-async function getAllowedWarehouseLocations(user: any) {
-    void user;
-    const warehouses = await prisma.warehouse.findMany({
-        where: { location: { not: "" } },
-        select: { location: true },
-        distinct: ["location"],
-    });
-    return warehouses
-        .map((warehouse) => String(warehouse.location || "").trim())
-        .filter((location) => location.length > 0);
 }
 
 export async function getCurrentSessionUser() {
@@ -298,12 +172,6 @@ async function applyAffiliateAttribution(
     }
 }
 
-function canManageOrderShipping(user: any) {
-    if (!user) return false;
-    if (user.accountType === "ADMIN") return true;
-    return isWarehouseRole(user);
-}
-
 /**
  * ترجع قائمة معرفات المستخدمين ضمن نطاق المستخدم الحالي:
  * نفسه + الموظفون المرتبطون به مباشرة عبر parentId.
@@ -359,34 +227,11 @@ const orderBaseSelect = {
     status: true,
     userId: true,
     customerId: true,
-    shippingId: true,
-    paidAmount: true,
-    remainingAmount: true,
-    shippingPrice: true,
     moneyTransferCommission: true,
     otherCommissions: true,
     createdAt: true,
     manualCreatedAt: true,
     updatedAt: true,
-    warehouse: {
-        select: {
-            id: true,
-            location: true,
-            city: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-        },
-    },
-    shipping: {
-        select: {
-            id: true,
-            name: true,
-            price: true,
-        },
-    },
     user: {
         select: {
             id: true,
@@ -413,31 +258,6 @@ const orderDetailsSelect = {
     items: {
         select: orderItemSelect,
     },
-    returns: {
-        select: {
-            id: true,
-            reason: true,
-            refundAmount: true,
-            createdAt: true,
-            items: {
-                select: {
-                    id: true,
-                    quantity: true,
-                    price: true,
-                    product: { select: { id: true, name: true } },
-                },
-            },
-        },
-    },
-    payments: {
-        select: {
-            id: true,
-            amount: true,
-            paymentType: true,
-            paymentDate: true,
-        },
-        orderBy: { paymentDate: 'desc' },
-    },
 } as const;
 
 export async function getOrders() {
@@ -451,28 +271,14 @@ export async function getOrders() {
     }
 
     const isAdminUser = currentUser.accountType === "ADMIN";
-    const isWarehouseUser = isWarehouseRole(currentUser);
-    const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
 
     const where: any = {};
 
     if (!isAdminUser) {
-        if (isWarehouseUser) {
-            if (allowedWarehouseLocations.length === 0) {
-                return { success: true, data: [] };
-            }
-
-            where.warehouse = {
-                location: {
-                    in: allowedWarehouseLocations,
-                },
-            };
-        } else {
-            const scopedUserIds = await getScopedUserIds(currentUser.id);
-            where.userId = {
-                in: scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id],
-            };
-        }
+        const scopedUserIds = await getScopedUserIds(currentUser.id);
+        where.userId = {
+            in: scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id],
+        };
     }
 
     const order = await prisma.order.findMany({
@@ -488,7 +294,7 @@ export async function getOrdersByUser(userId: any) {
     const orders = await prisma.order.findMany({
         where: {
             // هنا يكمن السر: تصفية النتائج حسب معرف المستخدم
-            customerId: userId 
+            customerId: userId
         },
         orderBy: { createdAt: "desc" },
         select: orderDetailsSelect,
@@ -521,25 +327,12 @@ export async function getOrderById(orderId: string | number) {
     }
 
     const isAdminUser = currentUser.accountType === "ADMIN";
-    const isWarehouseUser = isWarehouseRole(currentUser);
 
     if (!isAdminUser) {
-        if (isWarehouseUser) {
-            const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
-            const orderWarehouseLocation = normalizeWarehouseLocation(order?.warehouse?.location);
-            const canAccessWarehouse = allowedWarehouseLocations
-                .map((location) => normalizeWarehouseLocation(location))
-                .includes(orderWarehouseLocation);
-
-            if (!canAccessWarehouse) {
-                return { success: false, error: "غير مصرح لك بعرض هذا الطلب" };
-            }
-        } else {
-            const scopedUserIds = await getScopedUserIds(currentUser.id);
-            const allowedUserIds = scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id];
-            if (!allowedUserIds.includes(String(order.userId))) {
-                return { success: false, error: "غير مصرح لك بعرض هذا الطلب" };
-            }
+        const scopedUserIds = await getScopedUserIds(currentUser.id);
+        const allowedUserIds = scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id];
+        if (!allowedUserIds.includes(String(order.userId))) {
+            return { success: false, error: "غير مصرح لك بعرض هذا الطلب" };
         }
     }
 
@@ -569,8 +362,6 @@ export async function getOrdersByIds(orderIds: Array<string | number>) {
     }
 
     const isAdminUser = currentUser.accountType === "ADMIN";
-    const isWarehouseUser = isWarehouseRole(currentUser);
-    const allowedWarehouseLocations = await getAllowedWarehouseLocations(currentUser);
 
     const where: any = {
         id: {
@@ -579,22 +370,10 @@ export async function getOrdersByIds(orderIds: Array<string | number>) {
     };
 
     if (!isAdminUser) {
-        if (isWarehouseUser) {
-            if (allowedWarehouseLocations.length === 0) {
-                return { success: true, data: [] };
-            }
-
-            where.warehouse = {
-                location: {
-                    in: allowedWarehouseLocations,
-                },
-            };
-        } else {
-            const scopedUserIds = await getScopedUserIds(currentUser.id);
-            where.userId = {
-                in: scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id],
-            };
-        }
+        const scopedUserIds = await getScopedUserIds(currentUser.id);
+        where.userId = {
+            in: scopedUserIds.length > 0 ? scopedUserIds : [currentUser.id],
+        };
     }
 
     const orders = await prisma.order.findMany({
@@ -614,24 +393,6 @@ export async function createOrder(data: any, items: any[], user: any) {
 
         // استخدام Transaction لضمان سلامة البيانات
         const result = await prisma.$transaction(async (tx) => {
-            const existingOrdersCount = await tx.order.count({
-                where: { customerId: data.customerId }
-            });
-
-            const warehouseId = parseWarehouseId(data.warehouseId);
-            if (!warehouseId) {
-                throw new Error("يرجى اختيار المستودع");
-            }
-
-            const orderWarehouse = await tx.warehouse.findUnique({
-                where: { id: warehouseId },
-                select: { id: true, location: true },
-            });
-
-            if (!orderWarehouse) {
-                throw new Error("المستودع المحدد غير موجود");
-            }
-
             const normalizedItems = items.map((item: any) => ({
                 productId: parseInt(item.productId),
                 quantity: parseInt(item.quantity),
@@ -669,55 +430,23 @@ export async function createOrder(data: any, items: any[], user: any) {
                 : (siteCurrency && siteCurrency !== "USD" && settingsExchangeRate > 0
                     ? settingsExchangeRate
                     : null);
-            const shippingId = Number(data.shippingId || 0);
-            const selectedShipping = shippingId > 0
-                ? await tx.shipping.findUnique({ where: { id: shippingId }, select: { price: true } })
-                : null;
 
-            const baseFinalAmount = Number(data.grandTotal || 0);
-
-            // استبدال نقاط الولاء: التحقق من القاعدة والرصيد والحسم داخل المعاملة نفسها
-            const redeemPoints = Math.max(0, Math.floor(Number(data.redeemPoints || 0)));
-            let loyaltyDiscount = 0;
-            if (redeemPoints > 0) {
-                const loyaltyRule = await tx.loyaltyRule.findFirst({ where: { isActive: true } });
-                if (!loyaltyRule || Number(loyaltyRule.redeemValue) <= 0) {
-                    throw new Error("لا توجد قاعدة ولاء مفعّلة للاستبدال");
-                }
-                if (redeemPoints < Number(loyaltyRule.minPointsToRedeem)) {
-                    throw new Error(`الحد الأدنى لاستبدال النقاط هو ${loyaltyRule.minPointsToRedeem} نقطة`);
-                }
-                const loyaltyCustomer = await tx.customer.findUnique({
-                    where: { id: data.customerId },
-                    select: { loyaltyPoints: true },
-                });
-                if (!loyaltyCustomer || redeemPoints > Number(loyaltyCustomer.loyaltyPoints || 0)) {
-                    throw new Error("رصيد نقاط الولاء غير كافٍ");
-                }
-                loyaltyDiscount = roundToTwoDecimals(Math.min(redeemPoints * Number(loyaltyRule.redeemValue), baseFinalAmount));
-            }
-
-            const finalAmount = Math.max(0, roundToTwoDecimals(baseFinalAmount - loyaltyDiscount));
-            const isPaidNow = data.paymentMethod === "مدفوعة" || data.paymentMethod === "Paid";
-            const paidAmount = isPaidNow ? finalAmount : (Number(data.amount || 0) || 0);
-            const remainingAmount = roundToTwoDecimals(finalAmount - paidAmount);
+            const finalAmount = roundToTwoDecimals(Number(data.grandTotal || 0));
 
             // 1. إنشاء الطلب
             const newOrder = await tx.order.create({
                 data: {
                     orderNumber,
                     usdToTryRateAtOrder,
-                    totalAmount: baseFinalAmount + Number(data.overallDiscount || 0),
-                    discount: Number(data.overallDiscount || 0) + loyaltyDiscount,
+                    totalAmount: finalAmount + Number(data.overallDiscount || 0),
+                    discount: Number(data.overallDiscount || 0),
                     finalAmount,
-                    paidAmount,
-                    remainingAmount,
                     status: data.status,
                     paymentMethod: data.paymentMethod || "عند الاستلام",
                     receiverName: data.receiverName,
                     // ضمان أن receiverPhone مصفوفة حتى لو جاءت قيمة واحدة أو فارغة
-                    receiverPhone: Array.isArray(data.receiverPhone) 
-                        ? data.receiverPhone 
+                    receiverPhone: Array.isArray(data.receiverPhone)
+                        ? data.receiverPhone
                         : data.receiverPhone ? [data.receiverPhone] : [],
                     country: data.country,
                     city: data.city,
@@ -729,11 +458,10 @@ export async function createOrder(data: any, items: any[], user: any) {
                     amountBank: String(data.amountBank),
                     deliveryMethod: data.deliveryMethod,
                     deliveryNotes: data.deliveryNotes,
+                    moneyTransferCommission: Number(data.moneyTransferCommission || 0),
+                    otherCommissions: Number(data.otherCommissions || 0),
                     customer: { connect: { id: data.customerId } },
                     user: { connect: { id: user } },
-                    shippingPrice: selectedShipping ? Number(selectedShipping.price || 0) : null,
-                    ...(shippingId > 0 ? { shipping: { connect: { id: shippingId } } } : {}),
-                    warehouse: { connect: { id: orderWarehouse.id } },
                     items: {
                         create: normalizedItems.map((item: any) => ({
                             productId: item.productId,
@@ -746,12 +474,6 @@ export async function createOrder(data: any, items: any[], user: any) {
                 }
             });
 
-            await applyOrderStockChange(tx, {
-                warehouseId: orderWarehouse.id,
-                warehouse: { location: orderWarehouse.location },
-                items: normalizedItems,
-            }, "reserve");
-
             await tx.customer.update({
                 where: { id: data.customerId },
                 data: { status: "تم البيع" }
@@ -759,33 +481,8 @@ export async function createOrder(data: any, items: any[], user: any) {
 
             await applyAffiliateAttribution(tx, newOrder.id, items, affiliateCode);
 
-            // خصم النقاط المستبدلة من رصيد العميل وتسجيل حركة REDEEM مرتبطة بالطلب
-            if (redeemPoints > 0) {
-                await tx.customer.update({
-                    where: { id: data.customerId },
-                    data: { loyaltyPoints: { decrement: redeemPoints } },
-                });
-                await tx.loyaltyTransaction.create({
-                    data: {
-                        customerId: data.customerId,
-                        orderId: newOrder.id,
-                        type: 'REDEEM',
-                        points: -redeemPoints,
-                        value: loyaltyDiscount,
-                        notes: `استبدال ${redeemPoints} نقطة على طلب #${newOrder.id}`,
-                    },
-                });
-            }
-
             return newOrder;
         });
-
-        await earnLoyaltyPointsForOrder(result.id);
-
-        const manualPoints = Math.max(0, Math.floor(Number(data.loyaltyPoints || 0)));
-        if (manualPoints > 0) {
-            await addManualLoyaltyPointsForOrder(result.id, manualPoints);
-        }
 
         return { success: true, order: result };
     } catch (error: any) {
@@ -799,26 +496,12 @@ export async function updateOrder(data: any, id: any, items: any) {
         // 1. جلب البيانات الأساسية خارج الـ Transaction لتقليل وقت القفل
         const oldOrder = await prisma.order.findUnique({
             where: { id },
-            include: { items: true, warehouse: true }
+            include: { items: true }
         });
 
         if (!oldOrder) return { success: false, error: "الطلب غير موجود" };
 
         const result = await prisma.$transaction(async (tx) => {
-            const warehouseId = parseWarehouseId(data.warehouseId) ?? oldOrder.warehouseId ?? null;
-            if (!warehouseId) {
-                throw new Error("يرجى اختيار المستودع");
-            }
-
-            const orderWarehouse = await tx.warehouse.findUnique({
-                where: { id: warehouseId },
-                select: { id: true, location: true },
-            });
-
-            if (!orderWarehouse) {
-                throw new Error("المستودع المحدد غير موجود");
-            }
-
             const oldOrderSavedRate = Number((oldOrder as any)?.usdToTryRateAtOrder || 0);
             const inputExchangeRate = Number(data.usdToTryRateAtOrder || 0);
             const siteSettings = await tx.generalSetting.findFirst({
@@ -834,10 +517,6 @@ export async function updateOrder(data: any, id: any, items: any) {
                     : (siteCurrency && siteCurrency !== "USD" && settingsExchangeRate > 0
                         ? settingsExchangeRate
                         : null));
-            const shippingId = Number(data.shippingId || 0);
-            const selectedShipping = shippingId > 0
-                ? await tx.shipping.findUnique({ where: { id: shippingId }, select: { price: true } })
-                : null;
             const manualCreatedAt = parseOptionalDate(data?.manualCreatedAt);
             const normalizedItems = items.map((item: any) => ({
                 productId: parseInt(item.productId),
@@ -864,12 +543,8 @@ export async function updateOrder(data: any, id: any, items: any) {
                 });
             }
 
-            await applyOrderStockChange(tx, oldOrder, "restore");
-
             const baseFinalAmount = Number(data.grandTotal || 0);
-            const oldPaidAmount = Number(oldOrder.paidAmount || 0);
             const totalDiscount = Number(data.overallDiscount || 0);
-            const remainingAmount = roundToTwoDecimals(Math.max(0, baseFinalAmount - oldPaidAmount));
 
             // ب - تحديث بيانات الطلب الرئيسية والعناصر (حذف وإضافة)
             const updatedOrder = await tx.order.update({
@@ -879,8 +554,6 @@ export async function updateOrder(data: any, id: any, items: any) {
                     totalAmount: baseFinalAmount + Number(data.overallDiscount || 0),
                     discount: totalDiscount,
                     finalAmount: baseFinalAmount,
-                    paidAmount: oldPaidAmount,
-                    remainingAmount,
                     status: data.status,
                     paymentMethod: data.paymentMethod || "عند الاستلام",
                     receiverName: data.receiverName,
@@ -894,13 +567,10 @@ export async function updateOrder(data: any, id: any, items: any) {
                     amount: data.amount,
                     deliveryMethod: data.deliveryMethod,
                     deliveryNotes: data.deliveryNotes,
-                    customer: { connect: { id: data.customerId } },
-                    shippingPrice: selectedShipping ? Number(selectedShipping.price || 0) : null,
+                    moneyTransferCommission: Number(data.moneyTransferCommission || 0),
+                    otherCommissions: Number(data.otherCommissions || 0),
                     manualCreatedAt,
-                    shipping: shippingId > 0
-                        ? { connect: { id: shippingId } }
-                        : { disconnect: true },
-                    warehouse: { connect: { id: orderWarehouse.id } },
+                    customer: { connect: { id: data.customerId } },
                     items: {
                         deleteMany: {}, // حذف العناصر السابقة
                         create: normalizedItems.map((item: any) => ({
@@ -921,22 +591,11 @@ export async function updateOrder(data: any, id: any, items: any) {
                 });
             }
 
-            await applyOrderStockChange(tx, {
-                warehouseId: orderWarehouse.id,
-                warehouse: { location: orderWarehouse.location },
-                items: normalizedItems,
-            }, "reserve");
-
             return { success: true, data: updatedOrder };
         }, {
             maxWait: 5000,
             timeout: 20000
         });
-
-        if (result.success && oldOrder && data.status !== oldOrder.status) {
-            await syncTrackingStatusFromOrderStatus(id, data.status);
-            await createOrderStatusChangeNotification(id, data.status);
-        }
 
         return result;
 
@@ -948,121 +607,26 @@ export async function updateOrder(data: any, id: any, items: any) {
 
 export async function deleteOrder(id: any) {
     try {
-        // 1. جلب البيانات خارج الـ Transaction لتقليل وقت القفل
         const oldOrder = await prisma.order.findUnique({
             where: { id },
-            include: { items: true, warehouse: true }
+            select: { id: true }
         });
 
         if (!oldOrder) return { success: false, error: "الطلب غير موجود" };
 
-        return await prisma.$transaction(async (tx) => {
-            await applyOrderStockChange(tx, oldOrder, "restore");
-
-            // ب - حذف الطلب
-            // ملاحظة: سيحذف العناصر المرتبطة تلقائياً إذا كان الـ Schema يدعم Cascade Delete
-            await tx.order.delete({
-                where: { id }
-            });
-
-            return { success: true };
-        }, {
-            maxWait: 5000,
-            timeout: 20000
+        // سيحذف العناصر المرتبطة تلقائياً عبر Cascade Delete
+        await prisma.order.delete({
+            where: { id }
         });
+
+        return { success: true };
 
     } catch (error: any) {
         console.error("Delete Order Error:", error);
-        return { 
-            success: false, 
-            error: error.message || "حدث خطأ أثناء محاولة حذف الطلب" 
+        return {
+            success: false,
+            error: error.message || "حدث خطأ أثناء محاولة حذف الطلب"
         };
-    }
-}
-
-export async function updateOrderShippingFromTable(
-    orderId: number,
-    shippingCompanyName: string,
-    shippingPrice: number,
-    moneyTransferCommission: number,
-    otherCommissions: number,
-) {
-    try {
-        const user = await getCurrentSessionUser();
-        if (!canManageOrderShipping(user)) {
-            return { success: false, error: "غير مصرح لك بتعديل بيانات الشحن" };
-        }
-
-        const parsedOrderId = Number(orderId);
-        const parsedShippingPrice = Number(shippingPrice || 0);
-        const parsedMoneyTransferCommission = Number(moneyTransferCommission || 0);
-        const parsedOtherCommissions = Number(otherCommissions || 0);
-        const normalizedShippingCompanyName = String(shippingCompanyName || "").trim();
-
-        if (!Number.isInteger(parsedOrderId) || parsedOrderId <= 0) {
-            return { success: false, error: "معرّف الطلب غير صالح" };
-        }
-
-        if (!normalizedShippingCompanyName) {
-            return { success: false, error: "يرجى إدخال اسم شركة الشحن" };
-        }
-
-        if (Number.isNaN(parsedShippingPrice) || parsedShippingPrice < 0) {
-            return { success: false, error: "سعر الشحن غير صالح" };
-        }
-
-        if (Number.isNaN(parsedMoneyTransferCommission) || parsedMoneyTransferCommission < 0) {
-            return { success: false, error: "عمولة تحويل الأموال غير صالحة" };
-        }
-
-        if (Number.isNaN(parsedOtherCommissions) || parsedOtherCommissions < 0) {
-            return { success: false, error: "العمولات الأخرى غير صالحة" };
-        }
-
-        const existingOrder = await prisma.order.findUnique({
-            where: { id: parsedOrderId },
-            select: { id: true },
-        });
-
-        if (!existingOrder) {
-            return { success: false, error: "الطلب غير موجود" };
-        }
-
-        let shipping = await prisma.shipping.findFirst({
-            where: { name: normalizedShippingCompanyName },
-            select: { id: true },
-        });
-
-        if (!shipping) {
-            shipping = await prisma.shipping.create({
-                data: {
-                    name: normalizedShippingCompanyName,
-                    price: parsedShippingPrice,
-                },
-                select: { id: true },
-            });
-        } else {
-            await prisma.shipping.update({
-                where: { id: shipping.id },
-                data: { price: parsedShippingPrice },
-            });
-        }
-
-        const updatedOrder = await prisma.order.update({
-            where: { id: parsedOrderId },
-            data: {
-                shipping: { connect: { id: shipping.id } },
-                shippingPrice: parsedShippingPrice,
-                moneyTransferCommission: parsedMoneyTransferCommission,
-                otherCommissions: parsedOtherCommissions,
-            },
-            include: { shipping: true, warehouse: true },
-        });
-
-        return { success: true, data: updatedOrder };
-    } catch (error) {
-        console.error("Update Order Shipping Error:", error);
-        return { success: false, error: "حدث خطأ أثناء تعديل بيانات الشحن" };
     }
 }
 
@@ -1082,35 +646,11 @@ export async function updateStaus(status:any , id:any){
         const updatedStatus = await prisma.$transaction(async (tx) => {
             const existingOrder = await tx.order.findUnique({
                 where: { id: orderId },
-                include: {
-                    items: {
-                        select: {
-                            productId: true,
-                            quantity: true,
-                        },
-                    },
-                    warehouse: {
-                        select: {
-                            location: true,
-                        },
-                    },
-                },
+                select: { id: true },
             });
 
             if (!existingOrder) {
                 throw new Error("الطلب غير موجود");
-            }
-
-            const previousStatus = String(existingOrder.status || "").trim();
-            const wasReturned = isStockReturnStatus(previousStatus);
-            const willBeReturned = isStockReturnStatus(nextStatus);
-
-            if (!wasReturned && willBeReturned) {
-                await applyOrderStockChange(tx, existingOrder, "restore");
-            }
-
-            if (wasReturned && !willBeReturned) {
-                await applyOrderStockChange(tx, existingOrder, "reserve");
             }
 
             const nextOrder = await tx.order.update({
@@ -1150,13 +690,8 @@ export async function updateStaus(status:any , id:any){
                 });
             }
 
-            return { nextOrder, previousStatus };
+            return { nextOrder };
         });
-
-        if (updatedStatus.previousStatus !== nextStatus) {
-            await syncTrackingStatusFromOrderStatus(orderId, nextStatus);
-            await createOrderStatusChangeNotification(orderId, nextStatus);
-        }
 
         return {success :true , data:updatedStatus.nextOrder}
     } catch (error: any) {

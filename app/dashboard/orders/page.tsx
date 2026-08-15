@@ -3,9 +3,7 @@ import { AppModal } from '@/components/ui/app-modal';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { formatPhoneForDisplay, hasPermission, isAdmin } from '@/lib/utils';
-import { createOrder, deleteOrder, getOrderById, getOrdersByIds, getOrdersByUser, updateOrder, updateOrderShippingFromTable, updateStaus } from '@/server/order';
-import { getCities } from '@/server/city';
-import { getWarehouse } from '@/server/warehouse';
+import { createOrder, deleteOrder, getOrderById, getOrdersByIds, getOrdersByUser, updateOrder, updateStaus } from '@/server/order';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BarChart2, Download, Eye, Pencil, Plus, Save, Search, Trash, Trash2, Upload, X } from 'lucide-react';
 import * as React from 'react';
@@ -20,7 +18,6 @@ import OrderCustomer from '@/components/pages/customers/orderCustomer';
 import OrderCustomerEdit from '@/components/pages/customers/orderCustomerEdit';
 import { StatusCards } from '@/orders/StatusCards';
 import { SearchAndFilter } from '@/orders/SearchAndFilter';
-import { ShippingModal } from '@/orders/ShippingModal';
 import { OrderTable } from '@/orders/OrderTable';
 import { useOrderFilters } from '@/orders/useOrderFilters';
 import { useOrderData } from '@/orders/useOrderData';
@@ -35,10 +32,6 @@ import {
     parseImportedDateValue,
     getEffectivePrice,
     openWhatsAppByPhone,
-    getOrderShippingName,
-    getOrderShippingPrice,
-    getOrderShippingCommissions,
-    getOrderTotalShippingExpenses,
     getOrderDeliveryMethod,
     getOrderDisplayDate,
 } from '@/orders/orderHelpers';
@@ -96,7 +89,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         products,
         customers,
         orders,
-        shippingCompanies,
         refreshOrders: Order,
         ensureSupportingDataLoaded,
         isLoading,
@@ -110,9 +102,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     const [items, setItems] = React.useState([
         { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
     ]);
-    const [cities, setCities] = React.useState<any[]>([]);
-    const [warehouses, setWarehouses] = React.useState<any[]>([]);
-    
     const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
     const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
     const [overallDiscount, setOverallDiscount] = React.useState(0);
@@ -138,19 +127,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     const [deliveryNotes, setDeliveryNotes] = React.useState("");
     const [additionalNotes, setAdditionalNotes] = React.useState("");
 
-    React.useEffect(() => {
-        getCities().then(setCities).catch(console.error);
-        getWarehouse().then(setWarehouses).catch(console.error);
-    }, []);
-    const [isShippingModalOpen, setIsShippingModalOpen] = React.useState(false);
-    const [shippingModalSaving, setShippingModalSaving] = React.useState(false);
-    const [shippingTargetOrder, setShippingTargetOrder] = React.useState<any>(null);
-    const [shippingForm, setShippingForm] = React.useState({
-        shippingCompanyName: "",
-        shippingPrice: "0",
-        moneyTransferCommission: "0",
-        otherCommissions: "0",
-    });
     const importInputRef = React.useRef<HTMLInputElement | null>(null);
     const subTotal = items.reduce((sum, i) => sum + i.total, 0);
     const grandTotal = subTotal - overallDiscount;
@@ -162,12 +138,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
 
         if (field === "productId") {
             const product = products.find(p => p.id === Number(value));
-            const firstStock = Array.isArray(product?.stocks) ? product.stocks[0] : null;
             item.productId = value;
             item.name = product?.name || "";
             item.modelNumber = product?.modelNumber || "";
-            item.price = Number(firstStock?.price || 0);
-            item.discount = Number(firstStock?.discount || 0);
+            item.price = 0;
+            item.discount = 0;
             setSearchQueries({ ...searchQueries, [index]: item.name });
             setShowDropdown({ ...showDropdown, [index]: false });
         } else {
@@ -178,24 +153,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         setItems(newItems);
     };
 
-    const canManageOrderShippingUi = React.useMemo(() => {
+    const canEditOrdersUi = React.useMemo(() => {
         if (!user) return false;
         if (isAdmin(user)) return true;
-        return String(user?.permission?.roleName || "").trim().includes("مستودع");
+        return Boolean(user?.permission?.editOrders);
     }, [user]);
-
-    const shippingCompanyOptions = React.useMemo(() => {
-        const normalized = shippingCompanies
-            .map((company: any) => String(company?.name || "").trim())
-            .filter(Boolean);
-
-        const currentName = String(shippingForm.shippingCompanyName || "").trim();
-        if (currentName && !normalized.includes(currentName)) {
-            return [currentName, ...normalized];
-        }
-
-        return normalized;
-    }, [shippingCompanies, shippingForm.shippingCompanyName]);
 
     const addNewItem = () => {
         setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
@@ -272,17 +234,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 "المدينة": order.city,
                 "البلدية": order.municipality,
                 "العنوان الكامل": order.fullAddress,
-                "بلد المخزون": order?.warehouse?.location || order?.country || "",
                 "رابط الخريطة": order.googleMapsLink,
                 "طريقة التوصيل": getOrderDeliveryMethod(order),
-                "شركة الشحن": getOrderShippingName(order),
-                "سعر الشحن": getOrderShippingPrice(order),
                 "عمولة تحويل الأموال": Number(order.moneyTransferCommission || 0),
                 "عمولات أخرى": Number(order.otherCommissions || 0),
-                "إجمالي مصاريف الشحن": getOrderTotalShippingExpenses(order),
-                "المجموع الكلي مع الشحن": Number(order.finalAmount || 0) + getOrderTotalShippingExpenses(order),
                 "المنتجات (JSON)": itemsStructured,
-                "كود التتبع": order.trackingCode,
                 "ملاحظات التوصيل": order.deliveryNotes,
                 "بواسطة الموظف": order.user?.username || "Admin",
             };
@@ -362,7 +318,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 );
 
                 const countryValue = String(getCellValueByAliases(row, ["الدولة", "country"]) || "").trim();
-                const stockCountryValue = String(getCellValueByAliases(row, ["بلد المخزون", "stockCountry"]) || countryValue).trim();
                 const cityValue = String(getCellValueByAliases(row, ["المدينة", "city"]) || "").trim();
                 const municipalityValue = String(getCellValueByAliases(row, ["البلدية", "municipality"]) || "").trim();
                 const fullAddressValue = String(getCellValueByAliases(row, ["العنوان الكامل", "address", "fullAddress"]) || "").trim();
@@ -375,18 +330,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 const deliveryNotesValue = String(getCellValueByAliases(row, ["ملاحظات التوصيل", "deliveryNotes"]) || "").trim();
                 const additionalNotesValue = String(getCellValueByAliases(row, ["ملاحظات إضافية", "additionalNotes"]) || "").trim();
                 const googleMapsLinkValue = String(getCellValueByAliases(row, ["رابط الخريطة", "googleMapsLink"]) || "").trim();
-                const shippingNameValue = String(getCellValueByAliases(row, ["شركة الشحن", "shipping"]) || "").trim();
                 const overallDiscountValue = Number(getCellValueByAliases(row, ["الخصم", "discount"]) || 0);
 
                 if (!customerName) {
                     failedCount += 1;
                     failedReasons.push(`السطر ${rowNumber}: اسم العميل مفقود`);
-                    continue;
-                }
-
-                if (!stockCountryValue) {
-                    failedCount += 1;
-                    failedReasons.push(`السطر ${rowNumber}: بلد المخزون مفقود`);
                     continue;
                 }
 
@@ -444,18 +392,12 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                         break;
                     }
 
-                    const countryStock = Array.isArray(resolvedProduct?.stocks)
-                        ? resolvedProduct.stocks.find((stock: any) => normalizeText(stock?.warehouse?.location) === normalizeText(stockCountryValue))
-                        : null;
-                    const fallbackStock = Array.isArray(resolvedProduct?.stocks) ? resolvedProduct.stocks[0] : null;
-                    const effectiveStock = countryStock || fallbackStock;
-
                     const basePrice = importedItem.price !== undefined && !Number.isNaN(importedItem.price)
                         ? Number(importedItem.price)
-                        : Number(effectiveStock?.price || 0);
+                        : 0;
                     const baseDiscount = importedItem.discount !== undefined && !Number.isNaN(importedItem.discount)
                         ? Number(importedItem.discount)
-                        : Number(effectiveStock?.discount || 0);
+                        : 0;
 
                     orderItems.push({
                         productId: String(resolvedProduct.id),
@@ -477,10 +419,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 const overallDiscount = Number.isNaN(overallDiscountValue) ? 0 : Number(overallDiscountValue);
                 const grandTotal = Math.max(0, subTotal - overallDiscount);
 
-                const shippingMatch = shippingNameValue
-                    ? shippingCompanies.find((shipping: any) => normalizeText(shipping?.name) === normalizeText(shippingNameValue))
-                    : null;
-
                 const orderPayload = {
                     customerId: matchedCustomer.id,
                     status: statusValue,
@@ -499,8 +437,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                     grandTotal,
                     overallDiscount,
                     subTotal,
-                    stockCountry: stockCountryValue,
-                    shippingId: shippingMatch?.id || undefined,
                     manualCreatedAt: manualCreatedAtValue,
                 };
 
@@ -534,86 +470,9 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         }
     };
 
-    const openShippingModal = (orderRow: any) => {
-        setShippingTargetOrder(orderRow);
-        setShippingForm({
-            shippingCompanyName: String(orderRow?.shipping?.name || ""),
-            shippingPrice: String(Number((orderRow?.shippingPrice ?? orderRow?.shipping?.price) || 0)),
-            moneyTransferCommission: String(Number(orderRow?.moneyTransferCommission || 0)),
-            otherCommissions: String(Number(orderRow?.otherCommissions || 0)),
-        });
-        setIsShippingModalOpen(true);
-    };
-
-    const handleSaveShippingModal = async () => {
-        const orderId = Number(shippingTargetOrder?.id || 0);
-        if (!orderId) {
-            toast.error("معرف الطلب غير صالح");
-            return;
-        }
-
-        const shippingCompanyName = String(shippingForm.shippingCompanyName || "").trim();
-        const shippingPrice = Number(shippingForm.shippingPrice || 0);
-        const moneyTransferCommission = Number(shippingForm.moneyTransferCommission || 0);
-        const otherCommissions = Number(shippingForm.otherCommissions || 0);
-
-        if (!shippingCompanyName) {
-            toast.error("يرجى إدخال اسم شركة الشحن");
-            return;
-        }
-
-        if (Number.isNaN(shippingPrice) || shippingPrice < 0) {
-            toast.error("سعر الشحنة غير صالح");
-            return;
-        }
-
-        if (Number.isNaN(moneyTransferCommission) || moneyTransferCommission < 0) {
-            toast.error("عمولة تحويل الأموال غير صالحة");
-            return;
-        }
-
-        if (Number.isNaN(otherCommissions) || otherCommissions < 0) {
-            toast.error("العمولات الأخرى غير صالحة");
-            return;
-        }
-
-        setShippingModalSaving(true);
-        const loadingToast = toast.loading("جاري حفظ بيانات الشحن والعمولات...");
-
-        try {
-            const result = await updateOrderShippingFromTable(
-                orderId,
-                shippingCompanyName,
-                shippingPrice,
-                moneyTransferCommission,
-                otherCommissions,
-            );
-
-            if (result.success) {
-                toast.success("تم حفظ بيانات الشحن والعمولات");
-                setIsShippingModalOpen(false);
-                setShippingTargetOrder(null);
-                await Order();
-            } else {
-                toast.error(result.error || "تعذر حفظ بيانات الشحن والعمولات");
-            }
-        } catch {
-            toast.error("حدث خطأ أثناء حفظ بيانات الشحن والعمولات");
-        } finally {
-            setShippingModalSaving(false);
-            toast.dismiss(loadingToast);
-        }
-    };
-
     const {
         searchQuery,
         setSearchQuery,
-        cityId,
-        setCityId,
-        warehouseId,
-        setWarehouseId,
-        shippingCompany,
-        setShippingCompany,
         monthFilterType,
         setMonthFilterType,
         customMonth,
@@ -626,7 +485,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         statusCounts,
         statusOptions,
         PAGE_SIZE,
-    } = useOrderFilters(orders, user, cities);
+    } = useOrderFilters(orders, user);
 
     // 1. تأكد من وجود حالة للتحميل في المكون الخاص بك
     // const [isSubmitting, setIsSubmitting] = useState(false);
@@ -785,7 +644,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
 
     const handleEditOrder = (data: any) => {
         const normalizedItems = (Array.isArray(data?.items) ? data.items : []).map((item: any) => {
-            const price = Number(item?.price ?? item?.product?.stocks?.[0]?.price ?? 0);
+            const price = Number(item?.price ?? 0);
             const quantity = Number(item?.quantity ?? 1);
             const discount = Number(item?.discount ?? 0);
             const productId = String(item?.productId ?? item?.product?.id ?? "");
@@ -850,7 +709,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 setisOpenorder(true);
             }
         },
-        canManageOrderShippingUi && {
+        canEditOrdersUi && {
             label: "تعديل",
             icon: <Pencil size={14} />,
             onClick: async (data: any) => {
@@ -862,10 +721,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 setorder(orderDetails);
                 setIsOpen(true);
             }
-        },
-        canManageOrderShippingUi && {
-            icon: <Save size={14} />,
-            onClick: (data: any) => openShippingModal(data)
         },
         (user) && {
             label: "مشاركة PDF",
@@ -966,17 +821,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             <SearchAndFilter
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
-                cityId={cityId}
-                onCityChange={setCityId}
-                warehouseId={warehouseId}
-                onWarehouseChange={setWarehouseId}
-                cityOptions={cities.map((city) => ({ value: String(city.id), label: city.name }))}
-                warehouseOptions={warehouses
-                    .filter((warehouse) => !cityId || String(warehouse.cityId) === cityId)
-                    .map((warehouse) => ({ value: String(warehouse.id), label: warehouse.name }))}
-                shippingCompany={shippingCompany}
-                onShippingCompanyChange={setShippingCompany}
-                shippingCompanyOptions={shippingCompanyOptions}
                 monthFilterType={monthFilterType}
                 onMonthFilterChange={(type) => setMonthFilterType(type as "all" | "previous" | "current" | "custom")}
                 customMonth={customMonth}
@@ -1007,21 +851,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             <AppModal size='full' isOpen={isOpenorder} onClose={() => setisOpenorder(false)} title='ملخص الطلب' >
                 <ViewOrder data={order} products={[]} />
             </AppModal>
-
-            <ShippingModal
-                isOpen={isShippingModalOpen}
-                onClose={() => {
-                    if (shippingModalSaving) return;
-                    setIsShippingModalOpen(false);
-                    setShippingTargetOrder(null);
-                }}
-                shippingForm={shippingForm}
-                onFormChange={setShippingForm}
-                shippingCompanyOptions={shippingCompanyOptions}
-                onSave={handleSaveShippingModal}
-                isSaving={shippingModalSaving}
-                targetOrder={shippingTargetOrder}
-            />
 
             {/* مودال إنشاء وتعديل الطلب */}
 {isOpen && (

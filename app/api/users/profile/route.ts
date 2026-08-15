@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     const username = String(formData.get("username") || "").trim();
     const email = String(formData.get("email") || "").trim();
     const phone = String(formData.get("phone") || "").trim();
-    const jobTitle = String(formData.get("jobTitle") || "").trim();
     const file = formData.get("avatar");
 
     if (!username || !email) {
@@ -36,7 +35,6 @@ export async function POST(req: NextRequest) {
         username,
         email,
         phone: phone || null,
-        jobTitle: jobTitle || null,
         ...(avatarUrl ? { avatar: avatarUrl } : {}),
       },
       select: {
@@ -44,7 +42,6 @@ export async function POST(req: NextRequest) {
         username: true,
         email: true,
         phone: true,
-        jobTitle: true,
         accountType: true,
         avatar: true,
       },

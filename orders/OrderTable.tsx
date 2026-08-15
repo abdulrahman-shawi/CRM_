@@ -4,9 +4,6 @@ import { useSiteCurrency, formatSiteCurrency } from '@/lib/currency';
 import {
   statusColors,
   getOrderAmountToCollect,
-  getOrderNetAmountAfterShipping,
-  getOrderShippingName,
-  getOrderTotalShippingExpenses,
   getOrderDisplayDate,
   openWhatsAppByPhone,
 } from '@/orders/orderHelpers';
@@ -97,30 +94,6 @@ export const OrderTable: React.FC<OrderTableProps> = ({
           accessor: (e: any) => (
             <span className="font-black text-blue-600">
               {formatSiteCurrency(getOrderAmountToCollect(e), settings)}
-            </span>
-          ),
-        },
-        {
-          header: "الصافي بعد طرح الشحن",
-          accessor: (e: any) => (
-            <span className="font-black text-emerald-600">
-              {formatSiteCurrency(getOrderNetAmountAfterShipping(e), settings)}
-            </span>
-          ),
-        },
-        {
-          header: "شركة الشحن",
-          accessor: (e: any) => (
-            <span className="font-bold text-slate-700 dark:text-slate-300">
-              {getOrderShippingName(e)}
-            </span>
-          ),
-        },
-        {
-          header: "مصاريف الشحن",
-          accessor: (e: any) => (
-            <span className="font-black text-amber-600">
-              {formatSiteCurrency(getOrderTotalShippingExpenses(e), settings)}
             </span>
           ),
         },

@@ -6,7 +6,9 @@
 
 ## Project Overview
 
-**SKYNOVA CRM** is a full-stack CRM / ERP web application built with Next.js 14 (App Router). It supports multi-role user management, order lifecycle tracking, multi-warehouse inventory across dynamically managed countries and cities, employee targets & salaries, expense tracking, customer management, analytics, and an e-commerce affiliate platform.
+**SKYNOVA CRM** is a full-stack CRM / e-commerce web application built with Next.js 14 (App Router). The current scope is intentionally reduced to: **Categories, Products, Orders, Customers, Settings**, plus the **e-commerce / affiliate platform** (landing pages, offers, hero slides, reviews, affiliate links & commissions). User & permission management is kept for login/access control.
+
+Removed modules (do not reintroduce unless asked): warehouses/inventory/stock movements, shipping companies & tracking, loyalty points, expenses, employee salaries, customer payments, marketing campaigns, WhatsApp Cloud API, email sending, tasks, notifications, warranty, returns, wholesale (customers & orders), countries/cities management, analytics, backups, cron jobs.
 
 The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-facing labels, toast messages, and inline comments are in Arabic. Code identifiers (variables, functions, filenames) remain in English.
 
@@ -30,7 +32,6 @@ The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-fac
 | Barcode | Code39 SVG (`lib/barcode.ts`, `components/ui/barcode.tsx`), camera scanning via `html5-qrcode` (`components/ui/barcode-scanner.tsx`), label printing at `/dashboard/barcode-labels` |
 | PWA | `@ducanh2912/next-pwa` |
 | Image Storage | `@vercel/blob` |
-| Cron | `node-cron` (server-side monthly target freeze) |
 
 ---
 
@@ -38,59 +39,56 @@ The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-fac
 
 ```
 app/                    # Next.js App Router
-  api/                  # API routes (login, users, permissions, settings, orders)
+  api/                  # API routes (login, users, permissions, settings, affiliate orders/track)
+  ad/                   # Public ad landing pages
+  ref/                  # Public affiliate referral pages
+  product/              # Public product pages
+  [slug]/               # Public CMS pages
   dashboard/            # Protected dashboard pages
     layout.tsx          # Dashboard shell (Sidebar + Navbar, RTL, ThemeProvider)
-    page.tsx            # Main dashboard (analytics, targets, activity)
-    analytics/
+    page.tsx            # Main dashboard (simple counters)
+    barcode-labels/
     categories/
-    collections/
+    comments/
     customers/
-    employee-salaries/
-    expenses/
-    inventories/
-    move-product/
+    customers-complated/
+    hero-slides/
+    offer-discounts/
+    offers/
     orders/
-    permissions/
+    pages/
     products/
     settings/
-    shipping/
-    users/
-    warranty/
+    affiliate/
   layout.tsx            # Root layout (fonts, AuthProvider, Toaster)
   page.tsx              # Login page (redirects to /dashboard if session exists)
   manifest.ts           # PWA manifest
 
 server/                 # Server Actions (`'use server'`)
-  user.ts               # Auth, user CRUD, targets, impersonation
-  order.ts              # Order CRUD, stock adjustments, analytics helpers
+  user.ts               # Auth, user CRUD (getalluser getMe login logout createuser updateuser deleteuser)
+  order.ts              # Order CRUD, affiliate attribution/commissions
   customer.ts
-  product.ts
+  product.ts            # Product queries, toggles, landing page, affiliate links, deleteProduct
   category.ts
-  warehouse.ts
-  shipping.ts
-  expenses.ts
-  analytics.ts
-  image.ts              # Vercel Blob image upload
-  collections.ts
-  employee-salaries.ts
-  warranty.ts
-  move.ts
+  image.ts              # Product create/update with file uploads (price, affiliate fields, variants)
   general-settings.ts
-  variants.ts             # Colors & Sizes CRUD, product variants (color/size + price)
+  offer.ts
+  page.ts
+  hero-slide.ts
+  affiliate.ts
+  variants.ts           # Colors & Sizes CRUD, product variants (color/size + price)
 
 components/             # React components
-  pages/                # Page-specific sections
+  pages/                # Page-specific sections (customers, affiliate, ...)
   shared/               # Reusable cross-page components (DataTable, DynamicForm, etc.)
   system/               # Toaster providers
   ui/                   # Low-level UI primitives (Button, Modal, Inputs, Cards)
   navbar.tsx
   sidebar.tsx
 
-orders/                 # Order domain split out from components/
+orders/                 # Order domain components & hooks
   OrderTable.tsx
   SearchAndFilter.tsx
-  ShippingModal.tsx
   StatusCards.tsx
   ViewOrder.tsx
   ViewOrderCustomer.tsx
@@ -107,7 +105,10 @@ lib/                    # Utilities & configuration
   utils.ts              # cn() (Tailwind merge), permission helpers, phone formatter
   type.ts               # Shared TypeScript interfaces (User, Permission, NavItem)
   themeProvider.tsx     # Re-exports next-themes provider
-  cron.ts               # Monthly target freeze cron job
+  currency.ts           # Site currency settings hook/helpers
+  affiliate.ts          # Affiliate/ad URL builders
+  ad-pricing.ts         # Quantity discount pricing helpers
+  barcode.ts
 
 context/
   AuthContext.tsx       # React context: auth state, impersonation, refreshUser
@@ -116,7 +117,7 @@ store/
   customer.ts           # Zustand store for order cash/grand-total state
 
 prisma/
-  schema.prisma         # Full schema (Users, Orders, Products, Affiliates, etc.)
+  schema.prisma         # Full schema (see models below)
   migrations/           # Prisma migrations
 ```
 
@@ -162,7 +163,9 @@ npx prisma migrate deploy
 
 Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file is also present for Prisma's new configuration format.
 
-**Important models:** `User`, `Permission`, `Order`, `OrderItem`, `Product`, `ProductStock`, `Warehouse`, `Customer`, `Expense`, `Shipping`, `Warranty`, `Page`, `AffiliateLink`, `Commission`, `WholesaleOrder`, `WholesaleOrderReturn`, `Color`, `Size`, `ProductVariant`.
+**Models (current):** `User`, `Permission`, `Category`, `Product` (has a direct `price` column), `Color`, `Size`, `ProductVariant`, `ProductImage`, `Customer`, `Order`, `OrderItem`, `GeneralSetting`, plus e-commerce models: `Page`, `HeroSlide`, `Review`, `ProductLandingPage`, `AdPageVisit`, `Offer`, `OfferDiscount`, `AffiliateLink`, `Commission`, `AffiliateWalletTransfer`.
+
+**Enums:** `AccountType` (ADMIN/MANAGER/STAFF), `WalletTransferStatus`, `CommissionStatus`, `DiscountType`.
 
 ---
 
@@ -173,7 +176,7 @@ Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file
   - Redirects unauthenticated users from `/dashboard/*` to `/`.
   - Redirects authenticated users from `/` to `/dashboard`.
 - **Roles:** `ADMIN`, `MANAGER`, `STAFF`.
-- **Permissions:** Granular CRUD permissions per module (products, orders, customers, employees, expenses, categories, permissions, pages, analytics). Admins bypass all permission checks.
+- **Permissions:** Granular CRUD permissions per module (products, reports, orders, customers, categories, permissions, pages). Admins bypass all permission checks.
 - **Impersonation:** Admins can impersonate other users via `?asUser=<id>` query param or session storage key `skynova_as_user_id`. Stop impersonation with `?asUser=me`.
 
 ### Security Considerations
@@ -205,29 +208,16 @@ Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file
 Heavy business logic lives in `server/*.ts` files as async exported functions with `'use server'`. These are imported directly into Server Components or called from Client Components for mutations.
 
 ### API Routes
-Lightweight API routes exist under `app/api/` for specific needs (login, logout, impersonation, user profile, settings data-transfer, WhatsApp sharing).
+Lightweight API routes exist under `app/api/` for specific needs (login, logout, impersonation, user profile, affiliate order creation & tracking).
 
-### WhatsApp Cloud API
-Bulk WhatsApp campaigns are sent via Meta's WhatsApp Cloud API (`lib/whatsapp.ts`), triggered by `launchCampaign` in `server/marketing.ts` for `WHATSAPP`-type campaigns. Credentials are resolved by `getWhatsAppConfig()` with priority: `GeneralSetting` fields (`whatsappCloudApiToken`, `whatsappPhoneNumberId`, `whatsappApiVersion` — editable from `/dashboard/settings`) first, then env vars `WHATSAPP_CLOUD_API_TOKEN` (or `WHATSAPP_TOKEN`), `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_API_VERSION` (default `v21.0`). If the campaign's `channelDetails.templateName` is set, an approved Meta template is sent (customer name passed as the first body variable); otherwise free-form text is sent, which only reaches users inside Meta's 24-hour messaging window.
-
-### Stock Management
-Orders affect stock in real time via `applyOrderStockChange` in `server/order.ts`:
-- Sold/delivered statuses **decrease** stock.
-- Cancelled/returned statuses **restore** stock.
-- Warehouses are linked to dynamically managed `Country`/`City` records; stock lookups fall back by warehouse location name when `warehouseId` is absent.
+### Product Pricing
+`Product.price` is the single sell price (per-warehouse stock pricing was removed with the inventory module). `Product.affiliatePrice` overrides it for affiliate/ad orders. `OrderItem.price` snapshots the unit price at order time.
 
 ### Product Variants (Colors & Sizes)
-`Color` / `Size` / `ProductVariant` (`server/variants.ts`) hold per-product color/size combos, each with its own price, managed from `/dashboard/products` (`VariantsFields` in the product form). Order forms on `/dashboard/customers` (`components/pages/customers/orderCustomer.tsx`) and `/dashboard/wholesale-customers` (`orders/WholesaleOrderCustomer.tsx`) let the user pick a variant per item and choose a pricing mode: `sum` (product price + variant price), `product` (product price only), or `variant` (variant price only). The resulting unit price is snapshotted on `OrderItem.price` / `WholesaleOrderItem.price`, and the optional `variantId` FK links the item to the variant. Stock stays tracked per product+warehouse, **not** per variant.
+`Color` / `Size` / `ProductVariant` (`server/variants.ts`) hold per-product color/size combos, each with its own price, managed from `/dashboard/products` (`VariantsFields` in the product form). Order forms let the user pick a variant per item and choose a pricing mode: `sum` (product price + variant price), `product` (product price only), or `variant` (variant price only). The resulting unit price is snapshotted on `OrderItem.price`, and the optional `variantId` FK links the item to the variant.
 
-### Warranty
-Warranty records (`server/warranty.ts`) now require a **warehouse** and **quantity** for every type:
-- Creating a warranty decrements stock from the selected warehouse and logs a `StockMovement` of type `OUT`.
-- `REPLACEMENT` warranties create a matching `Order` record and store its id on the warranty.
-- Deleting a warranty restores the quantity to the linked warehouse. For replacements, the linked order is deleted first; for `DAMAGED`/`MAINTENANCE`, a `StockMovement` of type `RETURN` is also logged.
-- `customerId` is optional. The customer field is hidden for `DAMAGED` and optional for `MAINTENANCE`, but it is still required for `REPLACEMENT` because an order must be linked to a customer.
-
-### Cron Jobs
-`lib/cron.ts` runs a monthly job (1st of month at 00:00 UTC) that deactivates active `UserTarget` records. It is imported in the root layout so it initializes once per server process.
+### Affiliate & Commissions
+Affiliate links (`AffiliateLink`) attribute orders via `applyAffiliateAttribution` in `server/order.ts`; commissions (`Commission`) are computed from `Product.affiliateCommissionRate`. Public order creation goes through `app/api/affiliate/orders/route.ts`.
 
 ---
 
@@ -235,7 +225,6 @@ Warranty records (`server/warranty.ts`) now require a **warehouse** and **quanti
 
 - The project includes PWA configuration (`next-pwa`) with service worker generation to `public/`.
 - Vercel deployment is implied by the presence of `.vercel/` and `@vercel/blob` usage.
-- `dev.db` exists in the repo but the app targets PostgreSQL in production.
 
 ---
 

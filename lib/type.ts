@@ -17,32 +17,10 @@ export interface Permission {
   editOrders: boolean;
   deleteOrders: boolean;
 
-  viewWarranty: boolean;
-  addWarranty: boolean;
-  editWarranty: boolean;
-  deleteWarranty: boolean;
-
   viewCustomers: boolean;
   addCustomers: boolean;
   editCustomers: boolean;
   deleteCustomers: boolean;
-
-  viewWholesaleCustomers: boolean;
-  addWholesaleCustomers: boolean;
-  editWholesaleCustomers: boolean;
-  deleteWholesaleCustomers: boolean;
-
-  viewWholesaleOrders: boolean;
-  addWholesaleOrders: boolean;
-  editWholesaleOrders: boolean;
-  deleteWholesaleOrders: boolean;
-
-  viewEmployees: boolean;
-  addEmployees: boolean;
-  editEmployees: boolean;
-  deleteEmployees: boolean;
-
-  viewAnalytics: boolean;
 
   viewCategories: boolean;
   addCategories: boolean;
@@ -59,38 +37,6 @@ export interface Permission {
   editPages: boolean;
   deletePages: boolean;
 
-  viewMarketing: boolean;
-  addMarketing: boolean;
-  editMarketing: boolean;
-  deleteMarketing: boolean;
-
-  viewReturns: boolean;
-  addReturns: boolean;
-  editReturns: boolean;
-  deleteReturns: boolean;
-
-  viewCustomerPayments: boolean;
-  addCustomerPayments: boolean;
-  deleteCustomerPayments: boolean;
-
-  viewExpenses: boolean;
-  addExpenses: boolean;
-  editExpenses: boolean;
-  deleteExpenses: boolean;
-
-  // Phase 2+3 permissions
-  viewLoyalty: boolean;
-  editLoyalty: boolean;
-  viewNotifications: boolean;
-  viewTasks: boolean;
-  addTasks: boolean;
-  editTasks: boolean;
-  deleteTasks: boolean;
-  viewTracking: boolean;
-  editTracking: boolean;
-  viewBackups: boolean;
-  manageBackups: boolean;
-
   users?: User[]; // optional to avoid circular reference issues
 }
 
@@ -101,7 +47,6 @@ export interface User {
   username: string;
   email: string;
   phone?: string | null;
-  jobTitle?: string | null;
   avatar?: string | null;
   accountType: "ADMIN" | "MANAGER" | "STAFF" | "AFFILIATE";
   isAffiliate?: boolean;

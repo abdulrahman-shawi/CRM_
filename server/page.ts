@@ -30,7 +30,6 @@ async function getCurrentUser(): Promise<User | null> {
       username: user.username,
       email: user.email,
       phone: user.phone,
-      jobTitle: user.jobTitle,
       avatar: user.avatar,
       accountType: user.accountType,
       password: user.password,

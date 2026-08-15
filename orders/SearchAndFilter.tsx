@@ -5,15 +5,6 @@ import { Button } from '@/components/ui/button';
 interface SearchAndFilterProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  cityId?: string;
-  onCityChange?: (cityId: string) => void;
-  cityOptions?: Array<{ value: string; label: string }>;
-  warehouseId?: string;
-  onWarehouseChange?: (warehouseId: string) => void;
-  warehouseOptions?: Array<{ value: string; label: string }>;
-  shippingCompany: string;
-  onShippingCompanyChange: (shippingCompany: string) => void;
-  shippingCompanyOptions?: string[];
   monthFilterType: string;
   onMonthFilterChange: (type: string) => void;
   customMonth: string;
@@ -26,15 +17,6 @@ interface SearchAndFilterProps {
 export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   searchQuery,
   onSearchChange,
-  cityId = '',
-  onCityChange,
-  cityOptions = [],
-  warehouseId = '',
-  onWarehouseChange,
-  warehouseOptions = [],
-  shippingCompany,
-  onShippingCompanyChange,
-  shippingCompanyOptions = [],
   monthFilterType,
   onMonthFilterChange,
   customMonth,
@@ -57,51 +39,6 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
           className="block w-full pr-10 pl-3 py-2 border border-gray-300 dark:border-gray-950 rounded-lg bg-white dark:bg-slate-950 dark:text-slate-100 focus:ring-blue-500 focus:border-blue-500 text-sm"
         />
       </div>
-
-      {onCityChange && (
-        <select
-          value={cityId}
-          onChange={(e) => onCityChange(e.target.value)}
-          className="w-full md:w-48 p-2 border border-gray-300 dark:border-gray-950 rounded-lg text-sm bg-white dark:bg-slate-950 dark:text-slate-100"
-        >
-          <option value="">كل المدن</option>
-          {cityOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {onWarehouseChange && (
-        <select
-          value={warehouseId}
-          onChange={(e) => onWarehouseChange(e.target.value)}
-          className="w-full md:w-48 p-2 border border-gray-300 dark:border-gray-950 rounded-lg text-sm bg-white dark:bg-slate-950 dark:text-slate-100"
-        >
-          <option value="">كل المستودعات</option>
-          {warehouseOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {shippingCompanyOptions.length > 0 && (
-        <select
-          value={shippingCompany}
-          onChange={(e) => onShippingCompanyChange(e.target.value)}
-          className="w-full md:w-52 p-2 border border-gray-300 dark:border-gray-950 rounded-lg text-sm bg-white dark:bg-slate-950 dark:text-slate-100"
-        >
-          <option value="">كل شركات الشحن</option>
-          {shippingCompanyOptions.map((companyName) => (
-            <option key={companyName} value={companyName}>
-              {companyName}
-            </option>
-          ))}
-        </select>
-      )}
 
       <div className="w-full md:w-auto flex items-center gap-2">
         <select

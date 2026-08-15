@@ -1,11 +1,7 @@
 import { AppModal } from "@/components/ui/app-modal";
 import { useAuth } from "@/context/AuthContext";
-import { getCities } from "@/server/city";
-import { getCountries } from "@/server/country";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
-import { createOrder, updateOrder } from "@/server/order";
-import { getshipping } from "@/server/shipping";
-import { getWarehouse } from "@/server/warehouse";
+import { updateOrder } from "@/server/order";
 import { useOrderStore } from "@/store/customer";
 import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
 import { AnimatePresence, motion } from "framer-motion";
@@ -22,51 +18,23 @@ const formatDateForInput = (dateLike?: string | Date | null) => {
 };
 
 export default function OrderCustomerEdit({ initialData, customers, customerId, products, isOpenOrder, setEditId, setCustomerId, setisOpenOrder, editId, getData }: { initialData?: any, customers: any, customerId: any, products: any, isOpenOrder: any, setEditId: any, setCustomerId: any, setisOpenOrder: any, editId: any, getData: any }) {
-  // ...existing code...
   const [items, setItems] = React.useState([
     { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
   ]);
   const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
   const { settings } = useSiteCurrency();
 
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadShipping = async () => {
-      try {
-        const res = await getshipping();
-        if (isMounted && res?.success) {
-          setShipping(Array.isArray(res.data) ? res.data : []);
-        }
-      } catch (error) {
-      }
-    };
-
-    loadShipping();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
   // بيانات المستلم والعنوان
   const [receiverName, setReceiverName] = React.useState("");
   const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
-  const [stockWarehouseId, setStockWarehouseId] = React.useState("");
-  const [warehouseCityId, setWarehouseCityId] = React.useState("");
-  const [warehouses, setWarehouses] = React.useState<any[]>([]);
-  const [countryRows, setCountryRows] = React.useState<any[]>([]);
-  const [cityRows, setCityRows] = React.useState<any[]>([]);
   const [country, setCountry] = React.useState("");
   const [city, setCity] = React.useState("");
   const [municipality, setMunicipality] = React.useState("");
   const [fullAddress, setFullAddress] = React.useState("");
   const [status, setStatus] = React.useState("طلب جديد");
-  // تفاصيل الشحن
+  // تفاصيل الدفع
   const [amount, setamount] = React.useState("");
-  const [amountBank, setamountBank] = React.useState("");
   const [googleMapsLink, setGoogleMapsLink] = React.useState("");
-  const [shipping, setShipping] = React.useState<any[]>([]);
-  const [shippingId, setShippingId] = React.useState<string>("");
   const [deliveryMethod, setDeliveryMethod] = React.useState("");
 
   const [customerSearchQuery, setCustomerSearchQuery] = React.useState("");
@@ -80,89 +48,27 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
   const { user } = useAuth()
   const isAdminUser = user?.accountType === "ADMIN";
   const isEditMode = Boolean(editId);
-  const selectedWarehouse = warehouses.find((warehouse) => String(warehouse.id) === stockWarehouseId);
-  const stockCountry = String(selectedWarehouse?.location || "").trim();
-  const filteredWarehousesByCity = React.useMemo(() => {
-    if (!warehouseCityId) return warehouses;
-    return warehouses.filter((warehouse) => String(warehouse.cityId) === warehouseCityId);
-  }, [warehouses, warehouseCityId]);
-  const selectedCountryRow = countryRows.find((row) => row.name === country);
-  const filteredCities = selectedCountryRow
-    ? cityRows.filter((row) => Number(row.countryId) === Number(selectedCountryRow.id))
-    : [];
 
   const currencySymbol = settings?.code === "USD" ? "$" : getCurrencySymbol(settings?.code) || settings?.code || "$";
   const convertUsdToOrderCurrency = (value: number) => Number(value || 0);
 
-  const getProductAvailableStockByWarehouse = (product: any, selectedWarehouseValue: string) => {
-    if (!Array.isArray(product?.stocks)) return 0;
-    return product.stocks
-      .filter((stock: any) => String(stock?.warehouse?.id || "") === String(selectedWarehouseValue || ""))
-      .reduce((sum: number, stock: any) => sum + (Number(stock?.quantity) || 0), 0);
-  };
-
-  const getProductPricingByWarehouse = (product: any, selectedWarehouseValue: string) => {
-    if (!Array.isArray(product?.stocks) || !selectedWarehouseValue) {
-      return { price: 0, discount: 0 };
-    }
-
-    const matchedStock = product.stocks.find((stock: any) =>
-      String(stock?.warehouse?.id || "") === String(selectedWarehouseValue || "") && Number(stock?.quantity || 0) > 0
-    );
-
-    if (!matchedStock) {
-      return { price: 0, discount: 0 };
-    }
-
+  const getProductPricing = (product: any) => {
     return {
-      price: convertUsdToOrderCurrency(Number(matchedStock?.price || 0)),
-      discount: convertUsdToOrderCurrency(Number(matchedStock?.discount || 0)),
+      price: convertUsdToOrderCurrency(Number(product?.price || 0)),
+      discount: 0,
     };
   };
-
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadReferenceData = async () => {
-      try {
-        const [warehouseRows, countriesData, citiesData] = await Promise.all([
-          getWarehouse(),
-          getCountries(),
-          getCities(),
-        ]);
-
-        if (!isMounted) {
-          return;
-        }
-
-        setWarehouses(Array.isArray(warehouseRows) ? warehouseRows : []);
-        setCountryRows(Array.isArray(countriesData) ? countriesData : []);
-        setCityRows(Array.isArray(citiesData) ? citiesData : []);
-      } catch (error) {
-      }
-    };
-
-    loadReferenceData();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   React.useEffect(() => {
   if (initialData && isOpenOrder) {
-    console.log("Initial Data:", initialData)
     // تعبئة البيانات عند التعديل
     setItems(initialData.items || []);
     setCustomerId(initialData.customerId || "");
     setReceiverName(initialData.receiverName || "");
     setReceiverPhone(initialData.receiverPhone || [""]);
-    setStockWarehouseId(initialData?.warehouseId ? String(initialData.warehouseId) : "");
-    setWarehouseCityId(initialData?.warehouse?.city?.id ? String(initialData.warehouse.city.id) : "");
     setCountry(initialData.country || "");
     setCity(initialData.city || "");
     setamount(initialData?.amount)
-    setamountBank(initialData?.amountBank)
-    setShippingId(initialData?.shippingId ? String(initialData.shippingId) : "");
     setDeliveryMethod(initialData?.deliveryMethod || "");
     setMunicipality(initialData.municipality || "");
     setFullAddress(initialData.fullAddress || "");
@@ -189,7 +95,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       return;
     }
 
-    const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+    const pricing = getProductPricing(product);
     const existingIndex = items.findIndex((item: any) => String(item.productId) === String(product.id));
     if (existingIndex !== -1) {
       const newItems = [...items];
@@ -239,7 +145,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
 
     if (field === "productId") {
       const product = products.find(p => p.id === Number(value));
-      const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+      const pricing = getProductPricing(product);
       item.productId = value;
       item.name = product?.name || "";
       item.modelNumber = product?.modelNumber || "";
@@ -285,18 +191,14 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     // إعادة بيانات المستلم والعنوان
     setReceiverName("");
     setReceiverPhone([""]);
-    setStockWarehouseId("");
-    setWarehouseCityId("");
     setCountry("");
     setCity("");
     setMunicipality("");
     setFullAddress("");
 
-    // إعادة تفاصيل الشحن والملاحظات
+    // إعادة تفاصيل الدفع والملاحظات
     setamount("");
-    setamountBank("");
     setGoogleMapsLink("");
-    setShippingId("");
     setDeliveryMethod("");
     setDeliveryNotes("");
     setAdditionalNotes("");
@@ -314,13 +216,8 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       return;
     }
 
-    if (!stockWarehouseId) {
-      toast.error("يرجى اختيار المستودع");
-      return;
-    }
-
     if (!country || !String(country).trim() || !city || !String(city).trim()) {
-      toast.error("يرجى اختيار الدولة والمدينة");
+      toast.error("يرجى إدخال الدولة والمدينة");
       return;
     }
 
@@ -339,19 +236,16 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     }
 
     if (receiverPhone.length === 0 || receiverPhone.some(phone => !phone || phone.length < 10)) {
-  toast.error("يرجى إدخال رقم هاتف صحيح");
-  return;
-}
-
-    if(paymentMethod === "مختلطة"){
-      if(amount === "" && amountBank === ""){
-        toast.error("يجب ادخال قيمة الدفعة المستلمة")
-      }
+      toast.error("يرجى إدخال رقم هاتف صحيح");
+      return;
     }
 
-
-
-    // تفعيل حالة التحم
+    if (paymentMethod === "مختلطة") {
+      if (amount === "") {
+        toast.error("يجب ادخال قيمة الدفعة المستلمة");
+        return;
+      }
+    }
 
     // تصحيح رسالة الـ Toast
     const loadingMessage = "جاري حفظ الطلب الجديد...";
@@ -362,15 +256,12 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       status,
       receiverName,
       receiverPhone,
-      warehouseId: Number(stockWarehouseId),
-      stockCountry,
       usdToTryRateAtOrder: settings && settings.code !== "USD" && settings.exchangeRate > 0 ? Number(settings.exchangeRate) : 0,
       country,
       city,
       municipality,
       fullAddress,
       googleMapsLink,
-      shippingId: shippingId || null,
       deliveryMethod,
       amount,
       amountBank: Number(grandTotal - Number(amount)),
@@ -387,7 +278,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       let res;
       // // حالة إنشاء طلب جديد
       res = await updateOrder(orderData, editId , items);
-      console.log(orderData, customerId, items, user?.id)
       if (res.success) {
         toast.success(editId ? "تم تحديث الطلب بنجاح" : "تم حفظ الطلب بنجاح");
 
@@ -397,12 +287,11 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
         // إغلاق المودال
         setisOpenOrder(false);
 
-        // تنظيف الحقول (اختياري حسب حاجتك)
+        // تنظيف الحقول
         resetForm();
       } else {
-        // عرض الخطأ القادم من السيرفر (مثل كمية غير كافية أو فشل Transaction)
-        console.log(res.success)
-        toast.error(res.success || "فشل في معالجة الطلب يرجى التأكد من عدد المنتجات أو اسم المنتج");
+        // عرض الخطأ القادم من السيرفر
+        toast.error((res as any).error || "فشل في معالجة الطلب يرجى التأكد من عدد المنتجات أو اسم المنتج");
 
       }
     } catch (error) {
@@ -467,52 +356,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                   className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">مدينة المستودع</label>
-                <select
-                  value={warehouseCityId}
-                  onChange={(e) => {
-                    setWarehouseCityId(e.target.value);
-                    setStockWarehouseId("");
-                    setSearchQueries({});
-                    setShowDropdown({});
-                  }}
-                  className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                >
-                  <option value="">اختر المدينة</option>
-                  {Array.from(
-                    new Map(
-                      warehouses
-                        .filter((warehouse) => warehouse?.city)
-                        .map((warehouse) => [String(warehouse.city.id), warehouse.city])
-                    ).values()
-                  ).map((city: any) => (
-                    <option key={city.id} value={String(city.id)}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">المستودع</label>
-                <select
-                  value={stockWarehouseId}
-                  onChange={(e) => {
-                    setStockWarehouseId(e.target.value);
-                    setSearchQueries({});
-                    setShowDropdown({});
-                  }}
-                  disabled={!warehouseCityId}
-                  className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold disabled:opacity-50"
-                >
-                  <option value="">اختر المستودع</option>
-                  {filteredWarehousesByCity.map((warehouse) => (
-                    <option key={warehouse.id} value={String(warehouse.id)}>
-                      {warehouse.name} - {warehouse.location}
-                    </option>
-                  ))}
-                </select>
-              </div>
               {isAdminUser && isEditMode && (
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold text-slate-500 mr-2">تاريخ الإنشاء (اختياري)</label>
@@ -544,22 +387,16 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                     {showDropdown[index] && (
                       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute z-[210] w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
                         {products?.filter((p: any) => {
-                          const currentStock = stockWarehouseId ? getProductAvailableStockByWarehouse(p, stockWarehouseId) : 0;
-                          const isAvailable = currentStock > 0;
-                          const matchesWarehouse = stockWarehouseId
-                            ? Array.isArray(p?.stocks) && p.stocks.some((s: any) => String(s?.warehouse?.id || "") === stockWarehouseId)
-                            : false;
-
                           // شرط البحث (الاسم أو الموديل)
                           const query = (searchQueries[index] || "").toLowerCase();
                           const matchesSearch =
                             String(p?.name || "").toLowerCase().includes(query) ||
                             String(p?.modelNumber || "").toLowerCase().includes(query);
 
-                          return isAvailable && matchesSearch && matchesWarehouse;
+                          return matchesSearch;
                         }
                         ).map((product: any) => {
-                          const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+                          const pricing = getProductPricing(product);
                           return (
                           <div
                             key={product.id}
@@ -647,7 +484,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
           <div className="space-y-8" dir="rtl">
             {/* القسم الأول: بيانات العميل والطلب */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
-              {/* معلومات المستلم مع قائمة منسدلة للبحث */}
+              {/* معلومات المستلم */}
               <div className="space-y-2 md:col-span-2 relative">
                 <label className="text-xs font-bold text-slate-500 mr-2">معلومات المستلم</label>
               </div>
@@ -717,37 +554,25 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
               )}
             </div>
 
-            {/* القسم الثاني: تفاصيل العنوان والشحن */}
+            {/* القسم الثاني: تفاصيل العنوان */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">الدولة</label>
-                <select
+                <input
+                  type="text"
                   value={country}
-                  onChange={(e) => {
-                    setCountry(e.target.value);
-                    setCity("");
-                  }}
+                  onChange={(e) => setCountry(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all"
-                >
-                  <option value="">اختر الدولة</option>
-                  {countryRows.map((countryRow) => (
-                    <option key={countryRow.id} value={countryRow.name}>{countryRow.name}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">المدينة / المنطقة</label>
-                <select
+                <input
+                  type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  disabled={!country}
-                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold disabled:opacity-50"
-                >
-                  <option value="">اختر المدينة</option>
-                  {filteredCities.map((cityRow) => (
-                    <option key={cityRow.id} value={cityRow.name}>{cityRow.name}</option>
-                  ))}
-                </select>
+                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">البلدية</label>
@@ -755,21 +580,8 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
               </div>
             </div>
 
-            {/* القسم الثالث: الشحن والملاحظات */}
+            {/* القسم الثالث: العنوان التفصيلي والملاحظات */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">شركة الشحن</label>
-                <select
-                  value={shippingId}
-                  onChange={(e) => setShippingId(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                >
-                  <option value="">اختر شركة الشحن</option>
-                  {shipping.map((s: any) => (
-                    <option key={s.id} value={String(s.id)}>{s.name}</option>
-                  ))}
-                </select>
-              </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">عنوان التسليم التفصيلي</label>
                 <input type="text" value={fullAddress} onChange={(e) => setFullAddress(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />

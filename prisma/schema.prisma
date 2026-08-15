@@ -143,6 +143,7 @@ model Product {
   description    String?
   googleLink     String?
   categoryId     Int?
+  price          Float           @default(0)
   createdAt      DateTime        @default(now())
 
   // ─── E-commerce columns ───

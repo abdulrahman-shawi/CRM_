@@ -54,18 +54,6 @@ const customerOrderSelect = {
   },
 } as const;
 
-const customerMessageSelect = {
-  id: true,
-  message: true,
-  createdAt: true,
-  user: {
-    select: {
-      id: true,
-      username: true,
-    },
-  },
-} as const;
-
 const customerListSelect = {
   id: true,
   name: true,
@@ -80,7 +68,6 @@ const customerListSelect = {
   city: true,
   rating: true,
   status: true,
-  loyaltyPoints: true,
   createdAt: true,
   updatedAt: true,
   users: {
@@ -95,13 +82,6 @@ const customerListSelect = {
     select: {
       orders: true,
     },
-  },
-  message: {
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 1,
-    select: customerMessageSelect,
   },
 } as const;
 
@@ -119,7 +99,6 @@ const customerDetailsSelect = {
   city: true,
   rating: true,
   status: true,
-  loyaltyPoints: true,
   createdAt: true,
   updatedAt: true,
   orders: {
@@ -127,12 +106,6 @@ const customerDetailsSelect = {
       createdAt: "desc",
     },
     select: customerOrderSelect,
-  },
-  message: {
-    orderBy: {
-      createdAt: "asc",
-    },
-    select: customerMessageSelect,
   },
 } as const;
 
@@ -197,14 +170,8 @@ export async function getCustomer() {
         },
         select: customerOrderSelect,
       },
-      message: {
-        orderBy: {
-          createdAt: "asc",
-        },
-        select: customerMessageSelect,
-      },
     }
-    
+
   })
   return {success:true , data:res }
   
@@ -232,40 +199,6 @@ export async function AssignUsers(customerId: string, userIds: string[]) {
   } catch (error) {
     console.error("Prisma Error:", error);
     throw new Error("فشل في ربط الموظفين بالعميل");
-  }
-}
-
-export async function createmessage(msg: string, customerId: string, userId: string) {
-  try {
-    const result = await prisma.$transaction(async (tx) => {
-      const ordersCount = await tx.order.count({
-        where: { customerId }
-      });
-
-      const newMessage = await tx.message.create({
-        data: {
-          message: msg,
-          customerId,
-          userId
-        }
-      });
-
-      await tx.customer.update({
-        where: { id: customerId },
-        data: { status: ordersCount > 0 ? "تم البيع" : "جاري المتابعة" }
-      });
-
-      return newMessage;
-    });
-
-    return { success: true, data: result };
-
-  } catch (error) {
-    console.error("Error creating message:", error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "حدث خطأ غير متوقع" 
-    };
   }
 }
 
@@ -458,14 +391,13 @@ export async function deleteCustomer(data: any) {
     }
 
     // 3. إذا لم توجد طلبات، قم بعملية الحذف
-    // نستخدم transaction للتأكد من فك الارتباطات الأخرى (مثل الرسائل والمستخدمين) قبل الحذف النهائي
+    // نستخدم transaction للتأكد من فك الارتباطات الأخرى (مثل المستخدمين) قبل الحذف النهائي
     const res = await prisma.$transaction(async (tx) => {
       // فك ارتباط العميل بالمستخدمين (Many-to-Many)
       await tx.customer.update({
         where: { id: data.id },
         data: {
-          users: { set: [] },
-          message: { deleteMany: {} } // حذف الرسائل المرتبطة إن وجدت
+          users: { set: [] }
         }
       });
 

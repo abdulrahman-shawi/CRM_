@@ -63,44 +63,6 @@ async function uploadSingleFile(file: File) {
     };
 }
 
-function parseWholesalePricingTiers(formData: FormData) {
-    const raw = formData.get('wholesalePricingTiers') as string | null;
-    if (!raw) {
-        return { tiers: [], error: null };
-    }
-
-    try {
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) {
-            return { tiers: [], error: "تنسيق شرائح أسعار الجملة غير صالح" };
-        }
-
-        const tiers = parsed
-            .map((item: any) => {
-                const minQuantity = Number(item?.minQuantity ?? 0);
-                const maxQuantityRaw = item?.maxQuantity;
-                const maxQuantity = maxQuantityRaw === '' || maxQuantityRaw == null ? null : Number(maxQuantityRaw);
-                const price = Number(item?.price ?? 0);
-                return { minQuantity, maxQuantity, price };
-            })
-            .filter((tier: any) => Number.isInteger(tier.minQuantity) && tier.minQuantity >= 1 && tier.price >= 0);
-
-        const hasInvalidMax = tiers.some((tier: any) => tier.maxQuantity != null && (!Number.isInteger(tier.maxQuantity) || tier.maxQuantity < tier.minQuantity));
-        if (hasInvalidMax) {
-            return { tiers: [], error: "الحد الأقصى للكمية يجب أن يكون أكبر من أو يساوي الحد الأدنى" };
-        }
-
-        const minQuantities = tiers.map((tier: any) => tier.minQuantity);
-        if (new Set(minQuantities).size !== minQuantities.length) {
-            return { tiers: [], error: "لا يمكن تكرار الحد الأدنى للكمية في نفس المنتج" };
-        }
-
-        return { tiers, error: null };
-    } catch {
-        return { tiers: [], error: "تنسيق شرائح أسعار الجملة غير صالح" };
-    }
-}
-
 function parseVariants(formData: FormData) {
     const raw = formData.get('variants') as string | null;
     if (!raw) {
@@ -171,59 +133,20 @@ export async function saveProductWithFiles(formData: FormData) {
         const metaDescription = String(formData.get('metaDescription') || '').trim() || null;
         const metaKeywords = String(formData.get('metaKeywords') || '').trim() || null;
         const isActive = formData.get('isActive') === 'true';
+        const price = Number(formData.get('price') || 0);
         const affiliatePrice = Number(formData.get('affiliatePrice') || 0);
         const affiliateCommissionRateRaw = formData.get('affiliateCommissionRate');
         const affiliateCommissionRate = affiliateCommissionRateRaw == null || String(affiliateCommissionRateRaw).trim() === ''
             ? null
             : Number(affiliateCommissionRateRaw);
-        const warehouseStocksRaw = formData.get('warehouseStocks') as string | null;
-        let warehouseStocks: Array<{ warehouseId: number; quantity: number; stockPrice: number; wholesalePrice: number; stockDiscount: number }> = [];
-
-        if (warehouseStocksRaw) {
-            try {
-                const parsed = JSON.parse(warehouseStocksRaw);
-                if (Array.isArray(parsed)) {
-                    warehouseStocks = parsed.map((item: any) => ({
-                        warehouseId: Number(item?.warehouseId),
-                        quantity: Number(item?.quantity ?? 0),
-                        stockPrice: Number(item?.stockPrice ?? 0),
-                        wholesalePrice: Number(item?.wholesalePrice ?? 0),
-                        stockDiscount: Number(item?.stockDiscount ?? 0),
-                    }));
-                }
-            } catch {
-                return { success: false, error: "تنسيق بيانات المخزون غير صالح" };
-            }
-        }
-
-        const { tiers: wholesalePricingTiers, error: tiersError } = parseWholesalePricingTiers(formData);
-        if (tiersError) {
-            return { success: false, error: tiersError };
-        }
 
         const { variants, error: variantsError } = parseVariants(formData);
         if (variantsError) {
             return { success: false, error: variantsError };
         }
 
-        if (!warehouseStocks.length) {
-            const warehouseId = parseInt(formData.get('warehouseId') as string);
-            const quantity = parseInt(formData.get('quantity') as string) || 0;
-            if (Number.isInteger(warehouseId) && warehouseId > 0) {
-                warehouseStocks = [{ warehouseId, quantity, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }];
-            }
-        }
-
-        if (!warehouseStocks.length) {
-            return { success: false, error: "يرجى إضافة مستودع واحد على الأقل" };
-        }
-
-        const hasInvalidWarehouseStock = warehouseStocks.some(
-            (item) => !Number.isInteger(item.warehouseId) || item.warehouseId <= 0 || item.quantity < 0 || item.stockPrice < 0 || item.wholesalePrice < 0 || item.stockDiscount < 0 || item.stockDiscount > item.stockPrice
-        );
-
-        if (hasInvalidWarehouseStock) {
-            return { success: false, error: "تحقق من بيانات المستودعات والكمية والسعر" };
+        if (Number.isNaN(price) || price < 0) {
+            return { success: false, error: "سعر المنتج غير صالح" };
         }
 
         if (Number.isNaN(affiliatePrice) || affiliatePrice < 0) {
@@ -234,32 +157,18 @@ export async function saveProductWithFiles(formData: FormData) {
             return { success: false, error: "نسبة عمولة الأفلييت غير صالحة" };
         }
 
-        const uniqueWarehouseIds = new Set(warehouseStocks.map((item) => item.warehouseId));
-        if (uniqueWarehouseIds.size !== warehouseStocks.length) {
-            return { success: false, error: "لا يمكن تكرار نفس المستودع أكثر من مرة" };
-        }
-
-        const submittedWarehouseIds = warehouseStocks.map((item) => item.warehouseId);
-
-        const existingByNameAndWarehouse = await prisma.product.findFirst({
+        const existingByName = await prisma.product.findFirst({
             where: {
                 name: {
                     equals: normalizedName,
                     mode: 'insensitive',
                 },
-                stocks: {
-                    some: {
-                        warehouseId: {
-                            in: submittedWarehouseIds,
-                        }
-                    }
-                }
             },
             select: { id: true }
         });
 
-        if (existingByNameAndWarehouse) {
-            return { success: false, error: "لا يمكن إضافة نفس المنتج في نفس المستودع أكثر من مرة" };
+        if (existingByName) {
+            return { success: false, error: "لا يمكن إضافة نفس المنتج أكثر من مرة" };
         }
         
         // جلب الملفات والتأكد أنها من نوع File فعلاً
@@ -285,26 +194,11 @@ export async function saveProductWithFiles(formData: FormData) {
                 metaKeywords,
                 isActive,
                 seoSlug,
+                price,
                 affiliatePrice,
                 affiliateCommissionRate,
                 // التأكد من إرسالcategoryId فقط إذا كان رقماً صحيحاً
                 ...(categoryId ? { categoryId } : {}),
-                stocks: {
-                    create: warehouseStocks.map((item) => ({
-                        warehouseId: item.warehouseId,
-                        quantity: item.quantity,
-                        price: item.stockPrice,
-                        wholesalePrice: item.wholesalePrice,
-                        discount: item.stockDiscount,
-                    }))
-                },
-                wholesalePricingTiers: {
-                    create: wholesalePricingTiers.map((tier) => ({
-                        minQuantity: tier.minQuantity,
-                        maxQuantity: tier.maxQuantity,
-                        price: tier.price,
-                    })),
-                },
                 variants: {
                     create: variants.map((variant) => ({
                         colorId: variant.colorId,
@@ -347,59 +241,20 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
         const metaDescription = String(formData.get('metaDescription') || '').trim() || null;
         const metaKeywords = String(formData.get('metaKeywords') || '').trim() || null;
         const isActive = formData.get('isActive') === 'true';
+        const price = Number(formData.get('price') || 0);
         const affiliatePrice = Number(formData.get('affiliatePrice') || 0);
         const affiliateCommissionRateRaw = formData.get('affiliateCommissionRate');
         const affiliateCommissionRate = affiliateCommissionRateRaw == null || String(affiliateCommissionRateRaw).trim() === ''
             ? null
             : Number(affiliateCommissionRateRaw);
-        const warehouseStocksRaw = formData.get('warehouseStocks') as string | null;
-        let warehouseStocks: Array<{ warehouseId: number; quantity: number; stockPrice: number; wholesalePrice: number; stockDiscount: number }> = [];
-
-        if (warehouseStocksRaw) {
-            try {
-                const parsed = JSON.parse(warehouseStocksRaw);
-                if (Array.isArray(parsed)) {
-                    warehouseStocks = parsed.map((item: any) => ({
-                        warehouseId: Number(item?.warehouseId),
-                        quantity: Number(item?.quantity ?? 0),
-                        stockPrice: Number(item?.stockPrice ?? 0),
-                        wholesalePrice: Number(item?.wholesalePrice ?? 0),
-                        stockDiscount: Number(item?.stockDiscount ?? 0),
-                    }));
-                }
-            } catch {
-                return { success: false, error: "تنسيق بيانات المخزون غير صالح" };
-            }
-        }
-
-        const { tiers: wholesalePricingTiers, error: tiersError } = parseWholesalePricingTiers(formData);
-        if (tiersError) {
-            return { success: false, error: tiersError };
-        }
 
         const { variants, error: variantsError } = parseVariants(formData);
         if (variantsError) {
             return { success: false, error: variantsError };
         }
 
-        if (!warehouseStocks.length) {
-            const warehouseId = parseInt(formData.get('warehouseId') as string);
-            const quantity = parseInt(formData.get('quantity') as string) || 0;
-            if (Number.isInteger(warehouseId) && warehouseId > 0) {
-                warehouseStocks = [{ warehouseId, quantity, stockPrice: 0, wholesalePrice: 0, stockDiscount: 0 }];
-            }
-        }
-
-        if (!warehouseStocks.length) {
-            return { success: false, error: "يرجى إضافة مستودع واحد على الأقل" };
-        }
-
-        const hasInvalidWarehouseStock = warehouseStocks.some(
-            (item) => !Number.isInteger(item.warehouseId) || item.warehouseId <= 0 || item.quantity < 0 || item.stockPrice < 0 || item.wholesalePrice < 0 || item.stockDiscount < 0 || item.stockDiscount > item.stockPrice
-        );
-
-        if (hasInvalidWarehouseStock) {
-            return { success: false, error: "تحقق من بيانات المستودعات والكمية والسعر" };
+        if (Number.isNaN(price) || price < 0) {
+            return { success: false, error: "سعر المنتج غير صالح" };
         }
 
         if (Number.isNaN(affiliatePrice) || affiliatePrice < 0) {
@@ -410,33 +265,19 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
             return { success: false, error: "نسبة عمولة الأفلييت غير صالحة" };
         }
 
-        const uniqueWarehouseIds = new Set(warehouseStocks.map((item) => item.warehouseId));
-        if (uniqueWarehouseIds.size !== warehouseStocks.length) {
-            return { success: false, error: "لا يمكن تكرار نفس المستودع أكثر من مرة" };
-        }
-
-        const submittedWarehouseIds = warehouseStocks.map((item) => item.warehouseId);
-
-        const existingByNameAndWarehouse = await prisma.product.findFirst({
+        const existingByName = await prisma.product.findFirst({
             where: {
                 name: {
                     equals: name.trim(),
                     mode: 'insensitive',
                 },
                 NOT: { id: productId },
-                stocks: {
-                    some: {
-                        warehouseId: {
-                            in: submittedWarehouseIds,
-                        }
-                    }
-                }
             },
             select: { id: true }
         });
 
-        if (existingByNameAndWarehouse) {
-            return { success: false, error: "لا يمكن إضافة نفس المنتج في نفس المستودع أكثر من مرة" };
+        if (existingByName) {
+            return { success: false, error: "لا يمكن إضافة نفس المنتج أكثر من مرة" };
         }
 
         // 1. جلب الملفات الجديدة من الـ FormData
@@ -525,27 +366,10 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
                 metaDescription,
                 metaKeywords,
                 isActive,
+                price,
                 affiliatePrice,
                 affiliateCommissionRate,
                 ...(categoryId ? { categoryId } : {}),
-                stocks: {
-                    deleteMany: {},
-                    create: warehouseStocks.map((item) => ({
-                        warehouseId: item.warehouseId,
-                        quantity: item.quantity,
-                        price: item.stockPrice,
-                        wholesalePrice: item.wholesalePrice,
-                        discount: item.stockDiscount,
-                    })),
-                },
-                wholesalePricingTiers: {
-                    deleteMany: {},
-                    create: wholesalePricingTiers.map((tier) => ({
-                        minQuantity: tier.minQuantity,
-                        maxQuantity: tier.maxQuantity,
-                        price: tier.price,
-                    })),
-                },
                 variants: {
                     deleteMany: {},
                     create: variants.map((variant) => ({
@@ -620,56 +444,3 @@ export async function deleteProduct(productId: number) {
     }
 }
 
-export async function deleteProductFromWarehouse(productId: number, warehouseId: number) {
-    try {
-        if (!Number.isInteger(productId) || productId <= 0 || !Number.isInteger(warehouseId) || warehouseId <= 0) {
-            return { success: false, error: "بيانات الحذف غير صحيحة" };
-        }
-
-        const result = await prisma.$transaction(async (tx) => {
-            await tx.productStock.delete({
-                where: {
-                    productId_warehouseId: {
-                        productId,
-                        warehouseId,
-                    }
-                }
-            });
-
-            const remainingStocks = await tx.productStock.count({ where: { productId } });
-
-            if (remainingStocks === 0) {
-                const product = await tx.product.findUnique({
-                    where: { id: productId },
-                    include: { images: true }
-                });
-
-                if (product) {
-                    await tx.product.delete({ where: { id: productId } });
-                    return { deletedProduct: true, images: product.images };
-                }
-            }
-
-            return { deletedProduct: false, images: [] as Array<{ url: string }> };
-        });
-
-        if (result.deletedProduct && result.images.length > 0) {
-            for (const img of result.images) {
-                try {
-                    await del(img.url);
-                } catch (err) {
-                    console.error(`فشل حذف الصورة: ${img.url}`, err);
-                }
-            }
-        }
-
-        revalidatePath('/dashboard/products');
-        return { success: true, deletedProduct: result.deletedProduct };
-    } catch (error: any) {
-        console.error("Error deleting product from warehouse:", error);
-        return {
-            success: false,
-            error: error.message || "حدث خطأ أثناء حذف المنتج من المستودع"
-        };
-    }
-}

@@ -12,19 +12,13 @@ type GeneralSettingsInput = {
   companyPhone?: string;
   siteCurrency?: string;
   usdToTryRate?: number | string;
-  cashboxUsd?: number | string;
   logo?: string;
   facebookUrl?: string;
   instagramUrl?: string;
   topBannerText?: string;
   primaryColor?: string;
   secondaryColor?: string;
-  resendFromEmail?: string;
-  resendApiKey?: string;
   nextPublicAppUrl?: string;
-  whatsappCloudApiToken?: string;
-  whatsappPhoneNumberId?: string;
-  whatsappApiVersion?: string;
 };
 
 function sanitizeFileName(fileName: string) {
@@ -46,8 +40,6 @@ export async function getEmailSettings() {
     const data = await prisma.generalSetting.findFirst({
       orderBy: { id: "asc" },
       select: {
-        resendFromEmail: true,
-        resendApiKey: true,
         nextPublicAppUrl: true,
       },
     });
@@ -55,8 +47,8 @@ export async function getEmailSettings() {
     return {
       success: true,
       data: {
-        resendFromEmail: data?.resendFromEmail || process.env.RESEND_FROM_EMAIL || "",
-        resendApiKey: data?.resendApiKey || process.env.RESEND_API_KEY || "",
+        resendFromEmail: process.env.RESEND_FROM_EMAIL || "",
+        resendApiKey: process.env.RESEND_API_KEY || "",
         nextPublicAppUrl: data?.nextPublicAppUrl || process.env.NEXT_PUBLIC_APP_URL || "",
       },
     };
@@ -100,18 +92,12 @@ export async function upsertGeneralSettings(formData: FormData) {
     const companyPhone = String(formData.get('companyPhone') || '').trim() || null;
     const siteCurrency = String(formData.get('siteCurrency') || 'USD').trim() || 'USD';
     const usdToTryRate = Number(formData.get('usdToTryRate') || 0);
-    const cashboxUsd = Number(formData.get('cashboxUsd') || 0);
     const facebookUrl = String(formData.get('facebookUrl') || '').trim() || null;
     const instagramUrl = String(formData.get('instagramUrl') || '').trim() || null;
     const topBannerText = String(formData.get('topBannerText') || '').trim() || null;
     const primaryColor = String(formData.get('primaryColor') || '#10b981').trim() || '#10b981';
     const secondaryColor = String(formData.get('secondaryColor') || '#0f766e').trim() || '#0f766e';
-    const resendFromEmail = String(formData.get('resendFromEmail') || '').trim() || null;
-    const resendApiKey = String(formData.get('resendApiKey') || '').trim() || null;
     const nextPublicAppUrl = String(formData.get('nextPublicAppUrl') || '').trim() || null;
-    const whatsappCloudApiToken = String(formData.get('whatsappCloudApiToken') || '').trim() || null;
-    const whatsappPhoneNumberId = String(formData.get('whatsappPhoneNumberId') || '').trim() || null;
-    const whatsappApiVersion = String(formData.get('whatsappApiVersion') || '').trim() || null;
 
     let logoUrl: string | undefined;
     const logoFile = formData.get('logo');
@@ -151,18 +137,12 @@ export async function upsertGeneralSettings(formData: FormData) {
       companyPhone,
       siteCurrency,
       usdToTryRate,
-      cashboxUsd,
       facebookUrl,
       instagramUrl,
       topBannerText,
       primaryColor,
       secondaryColor,
-      resendFromEmail,
-      resendApiKey,
       nextPublicAppUrl,
-      whatsappCloudApiToken,
-      whatsappPhoneNumberId,
-      whatsappApiVersion,
       ...(logoUrl ? { logo: logoUrl } : {}),
       ...(faviconUrl ? { favicon: faviconUrl } : {}),
     };

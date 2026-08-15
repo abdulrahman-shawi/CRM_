@@ -1,12 +1,7 @@
 import { AppModal } from "@/components/ui/app-modal";
 import { useAuth } from "@/context/AuthContext";
-import { getCities } from "@/server/city";
-import { getCountries } from "@/server/country";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
 import { createOrder } from "@/server/order";
-import { getCustomerLoyaltySummary } from "@/server/loyalty";
-import { getshipping } from "@/server/shipping";
-import { getWarehouse } from "@/server/warehouse";
 import { useOrderStore } from "@/store/customer";
 import { MapPicker } from "@/components/ui/MapPicker";
 import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
@@ -17,128 +12,45 @@ import toast from "react-hot-toast";
 import PhoneInput from 'react-phone-number-input'
 
 export default function OrderCustomer({ customers, customerId, products, isOpenOrder, setEditId, setCustomerId, setisOpenOrder, editId, getData }: { customers: any, customerId: any, products: any, isOpenOrder: any, setEditId: any, setCustomerId: any, setisOpenOrder: any, editId: any, getData: any }) {
-  // ...existing code...
   const [items, setItems] = React.useState([
     { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }
   ]);
   const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
   const { settings } = useSiteCurrency();
 
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadShipping = async () => {
-      try {
-        const res = await getshipping();
-        if (isMounted && res?.success) {
-          setShipping(Array.isArray(res.data) ? res.data : []);
-        }
-      } catch (error) {
-      }
-    };
-
-    loadShipping();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
   // بيانات المستلم والعنوان
   const [receiverName, setReceiverName] = React.useState("");
   const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
-  const [stockWarehouseId, setStockWarehouseId] = React.useState("");
-  const [warehouses, setWarehouses] = React.useState<any[]>([]);
-  const [countryRows, setCountryRows] = React.useState<any[]>([]);
-  const [cityRows, setCityRows] = React.useState<any[]>([]);
   const [country, setCountry] = React.useState("");
   const [city, setCity] = React.useState("");
   const [municipality, setMunicipality] = React.useState("");
   const [fullAddress, setFullAddress] = React.useState("");
   const [status, setStatus] = React.useState("طلب جديد");
-  // تفاصيل الشحن
+  // تفاصيل الدفع
   const [amount, setamount] = React.useState("");
-  const [amountBank, setamountBank] = React.useState("");
   const [googleMapsLink, setGoogleMapsLink] = React.useState("");
-  const [shipping, setShipping] = React.useState<any[]>([]);
-  const [shippingId, setShippingId] = React.useState<string>("");
   const [deliveryMethod, setDeliveryMethod] = React.useState("");
 
   const [customerSearchQuery, setCustomerSearchQuery] = React.useState("");
   const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
   const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [overallDiscount, setOverallDiscount] = React.useState(0);
-  const [loyaltyPoints, setLoyaltyPoints] = React.useState(0);
-  const [redeemPoints, setRedeemPoints] = React.useState(0);
-  const [loyaltySummary, setLoyaltySummary] = React.useState<{ balance: number; redeemValue: number; minPointsToRedeem: number } | null>(null);
   const [additionalNotes, setAdditionalNotes] = React.useState("");
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
   const { user } = useAuth()
-  const selectedWarehouse = warehouses.find((warehouse) => String(warehouse.id) === stockWarehouseId);
-  const stockCountry = String(selectedWarehouse?.location || "").trim();
-  const selectedCountryRow = countryRows.find((row) => row.name === country);
-  const filteredCities = selectedCountryRow
-    ? cityRows.filter((row) => Number(row.countryId) === Number(selectedCountryRow.id))
-    : [];
 
   const currencySymbol = settings?.code === "USD" ? "$" : getCurrencySymbol(settings?.code) || settings?.code || "$";
   // معامل التحويل من الدولار إلى عملة الموقع (الأسعار الداخلية كلها بالدولار)
   const currencyRate = settings && settings.code !== "USD" && Number(settings.exchangeRate) > 0 ? Number(settings.exchangeRate) : 1;
   const convertUsdToOrderCurrency = (value: number) => Number(value || 0);
 
-  const getProductAvailableStockByWarehouse = (product: any, selectedWarehouseValue: string) => {
-    if (!Array.isArray(product?.stocks)) return 0;
-    return product.stocks
-      .filter((stock: any) => String(stock?.warehouse?.id || "") === String(selectedWarehouseValue || ""))
-      .reduce((sum: number, stock: any) => sum + (Number(stock?.quantity) || 0), 0);
-  };
-
-  const getProductPricingByWarehouse = (product: any, selectedWarehouseValue: string) => {
-    if (!Array.isArray(product?.stocks) || !selectedWarehouseValue) {
-      return { price: 0, discount: 0 };
-    }
-
-    const matchedStock = product.stocks.find((stock: any) =>
-      String(stock?.warehouse?.id || "") === String(selectedWarehouseValue || "") && Number(stock?.quantity || 0) > 0
-    );
-
-    if (!matchedStock) {
-      return { price: 0, discount: 0 };
-    }
-
+  const getProductPricing = (product: any) => {
     return {
-      price: convertUsdToOrderCurrency(Number(matchedStock?.price || 0)),
-      discount: convertUsdToOrderCurrency(Number(matchedStock?.discount || 0)),
+      price: convertUsdToOrderCurrency(Number(product?.price || 0)),
+      discount: 0,
     };
   };
-
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadReferenceData = async () => {
-      try {
-        const [warehouseRows, countriesData, citiesData] = await Promise.all([
-          getWarehouse(),
-          getCountries(),
-          getCities(),
-        ]);
-
-        if (!isMounted) {
-          return;
-        }
-
-        setWarehouses(Array.isArray(warehouseRows) ? warehouseRows : []);
-        setCountryRows(Array.isArray(countriesData) ? countriesData : []);
-        setCityRows(Array.isArray(citiesData) ? citiesData : []);
-      } catch (error) {
-      }
-    };
-
-    loadReferenceData();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const addNewItem = () => {
     setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }]);
@@ -154,7 +66,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       return;
     }
 
-    const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+    const pricing = getProductPricing(product);
     const existingIndex = items.findIndex((item) => String(item.productId) === String(product.id));
     if (existingIndex !== -1) {
       const newItems = [...items];
@@ -229,7 +141,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
 
     if (field === "productId") {
       const product = products.find(p => p.id === Number(value));
-      const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+      const pricing = getProductPricing(product);
       item.productId = value;
       item.name = product?.name || "";
       item.modelNumber = product?.modelNumber || "";
@@ -242,7 +154,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     } else if (field === "variantId" || field === "priceMode") {
       (item as any)[field] = value;
       const product = products.find(p => p.id === Number(item.productId));
-      const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+      const pricing = getProductPricing(product);
       const variant = Array.isArray(product?.variants)
         ? product.variants.find((v: any) => String(v?.id) === String(item.variantId)) || null
         : null;
@@ -260,38 +172,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
   const subTotal = items.reduce((sum, i) => sum + i.total, 0);
   const grandTotal = subTotal - overallDiscount;
 
-  // جلب رصيد نقاط الولاء وقاعدة الاستبدال عند اختيار العميل
-  React.useEffect(() => {
-    setRedeemPoints(0);
-    if (!customerId) {
-      setLoyaltySummary(null);
-      return;
-    }
-    let isMounted = true;
-    getCustomerLoyaltySummary(String(customerId))
-      .then((res) => {
-        if (!isMounted) return;
-        if (res.success && res.data?.customer) {
-          setLoyaltySummary({
-            balance: Number(res.data.customer.loyaltyPoints || 0),
-            redeemValue: Number(res.data.rule?.redeemValue || 0),
-            minPointsToRedeem: Number(res.data.rule?.minPointsToRedeem || 0),
-          });
-        } else {
-          setLoyaltySummary(null);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      isMounted = false;
-    };
-  }, [customerId]);
-
-  // خصم الاستبدال (معاينة فقط — الحسم النهائي يتم في الخادم)
-  const loyaltyRedeemDiscount = loyaltySummary && redeemPoints > 0
-    ? Math.min(redeemPoints * loyaltySummary.redeemValue, grandTotal)
-    : 0;
-  const finalTotalAfterLoyalty = Math.max(0, grandTotal - loyaltyRedeemDiscount);
   // تحديث المخزن العالمي عند تغير المجموع أو المبلغ المدفوع
   React.useEffect(() => {
     setGrandTotal(grandTotal);
@@ -308,9 +188,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     setSearchQueries({});
     setShowDropdown({});
     setOverallDiscount(0);
-    setLoyaltyPoints(0);
-    setRedeemPoints(0);
-    setLoyaltySummary(null);
 
     // إعادة بيانات العميل
     setCustomerId("");
@@ -321,17 +198,14 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     // إعادة بيانات المستلم والعنوان
     setReceiverName("");
     setReceiverPhone([""]);
-    setStockWarehouseId("");
     setCountry("");
     setCity("");
     setMunicipality("");
     setFullAddress("");
 
-    // إعادة تفاصيل الشحن والملاحظات
+    // إعادة تفاصيل الدفع والملاحظات
     setamount("");
-    setamountBank("");
     setGoogleMapsLink("");
-    setShippingId("");
     setDeliveryMethod("");
     setDeliveryNotes("");
     setAdditionalNotes("");
@@ -348,13 +222,8 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       return;
     }
 
-    if (!stockWarehouseId) {
-      toast.error("يرجى اختيار المستودع");
-      return;
-    }
-
     if (!country || !String(country).trim() || !city || !String(city).trim()) {
-      toast.error("يرجى اختيار الدولة والمدينة");
+      toast.error("يرجى إدخال الدولة والمدينة");
       return;
     }
 
@@ -373,35 +242,16 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     }
 
     if (receiverPhone.length === 0 || receiverPhone.some(phone => !phone || phone.length < 10)) {
-  toast.error("يرجى إدخال رقم هاتف صحيح");
-  return;
-}
-
-    if(paymentMethod === "مختلطة"){
-      if(amount === "" && amountBank === ""){
-        toast.error("يجب ادخال قيمة الدفعة المستلمة")
-      }
+      toast.error("يرجى إدخال رقم هاتف صحيح");
+      return;
     }
 
-    // التحقق من استبدال نقاط الولاء
-    if (redeemPoints > 0) {
-      if (!loyaltySummary || loyaltySummary.redeemValue <= 0) {
-        toast.error("لا توجد قاعدة ولاء مفعّلة للاستبدال");
-        return;
-      }
-      if (redeemPoints < loyaltySummary.minPointsToRedeem) {
-        toast.error(`الحد الأدنى للاستبدال ${loyaltySummary.minPointsToRedeem} نقطة`);
-        return;
-      }
-      if (redeemPoints > loyaltySummary.balance) {
-        toast.error("رصيد نقاط الولاء غير كافٍ");
+    if (paymentMethod === "مختلطة") {
+      if (amount === "") {
+        toast.error("يجب ادخال قيمة الدفعة المستلمة");
         return;
       }
     }
-
-
-
-    // تفعيل حالة التحم
 
     // تصحيح رسالة الـ Toast
     const loadingMessage = "جاري حفظ الطلب الجديد...";
@@ -412,25 +262,20 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       status,
       receiverName,
       receiverPhone,
-      warehouseId: Number(stockWarehouseId),
-      stockCountry,
       usdToTryRateAtOrder: settings && settings.code !== "USD" && settings.exchangeRate > 0 ? Number(settings.exchangeRate) : 0,
       country,
       city,
       municipality,
       fullAddress,
       googleMapsLink,
-      shippingId: shippingId || null,
       deliveryMethod,
       amount: paymentMethod === "مختلطة" ? String(Number(amount || 0) / currencyRate) : "",
-      amountBank: paymentMethod === "مختلطة" ? Number(finalTotalAfterLoyalty - Number(amount || 0) / currencyRate) : 0,
+      amountBank: paymentMethod === "مختلطة" ? Number(grandTotal - Number(amount || 0) / currencyRate) : 0,
       deliveryNotes,
       paymentMethod,
       additionalNotes,
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
-      loyaltyPoints: Math.max(0, Math.floor(Number(loyaltyPoints) || 0)),
-      redeemPoints: Math.max(0, Math.floor(Number(redeemPoints) || 0)),
       subTotal: Number(subTotal)
     };
 
@@ -438,7 +283,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
       let res;
       // // حالة إنشاء طلب جديد
       res = await createOrder(orderData, items, user?.id);
-      console.log(orderData, customerId, items, user?.id)
       if (res.success) {
         toast.success(editId ? "تم تحديث الطلب بنجاح" : "تم حفظ الطلب بنجاح");
 
@@ -448,12 +292,10 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
         // إغلاق المودال
         setisOpenOrder(false);
 
-        // تنظيف الحقول (اختياري حسب حاجتك)
+        // تنظيف الحقول
         resetForm();
       } else {
-        // عرض الخطأ القادم من السيرفر (مثل كمية غير كافية أو فشل Transaction)
-        console.log(res.success)
-        toast.error(res.success || "فشل في معالجة الطلب يرجى التأكد من عدد المنتجات أو اسم المنتج");
+        toast.error(res.error || "فشل في معالجة الطلب يرجى التأكد من عدد المنتجات أو اسم المنتج");
 
       }
     } catch (error) {
@@ -478,39 +320,9 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400"> {currencySymbol}</span>
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-emerald-600 uppercase px-1">نقاط ولاء إضافية</label>
-              <input
-                type="number"
-                min="0"
-                value={loyaltyPoints}
-                onChange={(e) => setLoyaltyPoints(Math.max(0, Number(e.target.value)))}
-                className="w-32 bg-emerald-50 dark:bg-emerald-900/10 p-3 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 outline-none font-bold text-emerald-600 text-center"
-                placeholder="0"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-amber-600 uppercase px-1">استبدال نقاط الولاء</label>
-              <input
-                type="number"
-                min="0"
-                value={redeemPoints}
-                disabled={!loyaltySummary || loyaltySummary.balance <= 0}
-                onChange={(e) => setRedeemPoints(Math.max(0, Math.floor(Number(e.target.value))))}
-                className="w-32 bg-amber-50 dark:bg-amber-900/10 p-3 rounded-2xl border border-amber-100 dark:border-amber-900/20 outline-none font-bold text-amber-600 text-center disabled:opacity-50"
-                placeholder="0"
-              />
-              <p className="text-[10px] text-slate-400 px-1">
-                {loyaltySummary ? `الرصيد: ${loyaltySummary.balance} نقطة` : 'لا يوجد رصيد نقاط'}
-                {loyaltyRedeemDiscount > 0 && ` — خصم ${formatSiteCurrency(loyaltyRedeemDiscount, settings)}`}
-              </p>
-            </div>
             <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 md:px-8 md:py-4 rounded-3xl">
               <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">الإجمالي النهائي</p>
-              <h3 className="text-2xl md:text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(finalTotalAfterLoyalty, settings)}</h3>
-              {loyaltyRedeemDiscount > 0 && (
-                <p className="text-[10px] font-bold text-amber-600 mt-1">شامل خصم الولاء: -{formatSiteCurrency(loyaltyRedeemDiscount, settings)}</p>
-              )}
+              <h3 className="text-2xl md:text-3xl font-black font-sans text-blue-600 italic"> {formatSiteCurrency(grandTotal, settings)}</h3>
             </div>
           </div>
           <div className="flex flex-wrap gap-4 justify-center">
@@ -548,26 +360,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                   className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">المستودع</label>
-                <select
-                  value={stockWarehouseId}
-                  onChange={(e) => {
-                    setStockWarehouseId(e.target.value);
-                    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }]);
-                    setSearchQueries({});
-                    setShowDropdown({});
-                  }}
-                  className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                >
-                  <option value="">اختر المستودع</option>
-                  {warehouses.map((warehouse) => (
-                    <option key={warehouse.id} value={String(warehouse.id)}>
-                      {warehouse.name} - {warehouse.location}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
             {items.map((item: any, index: number) => (
               <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 items-center">
@@ -588,22 +380,16 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                     {showDropdown[index] && (
                       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute z-[210] w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
                         {products?.filter((p: any) => {
-                          const currentStock = stockWarehouseId ? getProductAvailableStockByWarehouse(p, stockWarehouseId) : 0;
-                          const isAvailable = currentStock > 0;
-                          const matchesWarehouse = stockWarehouseId
-                            ? Array.isArray(p?.stocks) && p.stocks.some((s: any) => String(s?.warehouse?.id || "") === stockWarehouseId)
-                            : false;
-
                           // شرط البحث (الاسم أو الموديل)
                           const query = (searchQueries[index] || "").toLowerCase();
                           const matchesSearch =
                             String(p?.name || "").toLowerCase().includes(query) ||
                             String(p?.modelNumber || "").toLowerCase().includes(query);
 
-                          return isAvailable && matchesSearch && matchesWarehouse;
+                          return matchesSearch;
                         }
                         ).map((product: any) => {
-                          const pricing = getProductPricingByWarehouse(product, stockWarehouseId);
+                          const pricing = getProductPricing(product);
                           return (
                           <div
                             key={product.id}
@@ -748,7 +534,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
           <div className="space-y-8" dir="rtl">
             {/* القسم الأول: بيانات العميل والطلب */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
-              {/* معلومات المستلم مع قائمة منسدلة للبحث */}
+              {/* معلومات المستلم */}
               <div className="space-y-2 md:col-span-2 relative">
                 <label className="text-xs font-bold text-slate-500 mr-2">معلومات المستلم</label>
               </div>
@@ -811,7 +597,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي ({settings?.code || "USD"})</label>
-                    <input type="text" value={Math.max(0, finalTotalAfterLoyalty * currencyRate - Number(amount || 0))} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
+                    <input type="text" value={Math.max(0, grandTotal * currencyRate - Number(amount || 0))} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
                   </div>
                 </div>
               ) : (
@@ -819,37 +605,25 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
               )}
             </div>
 
-            {/* القسم الثاني: تفاصيل العنوان والشحن */}
+            {/* القسم الثاني: تفاصيل العنوان */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">الدولة</label>
-                <select
+                <input
+                  type="text"
                   value={country}
-                  onChange={(e) => {
-                    setCountry(e.target.value);
-                    setCity("");
-                  }}
+                  onChange={(e) => setCountry(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all"
-                >
-                  <option value="">اختر الدولة</option>
-                  {countryRows.map((countryRow) => (
-                    <option key={countryRow.id} value={countryRow.name}>{countryRow.name}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">المدينة / المنطقة</label>
-                <select
+                <input
+                  type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  disabled={!country}
-                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold disabled:opacity-50"
-                >
-                  <option value="">اختر المدينة</option>
-                  {filteredCities.map((cityRow) => (
-                    <option key={cityRow.id} value={cityRow.name}>{cityRow.name}</option>
-                  ))}
-                </select>
+                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">البلدية</label>
@@ -857,7 +631,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
               </div>
             </div>
 
-            {/* القسم الثالث: الشحن والملاحظات */}
+            {/* القسم الثالث: العنوان التفصيلي والملاحظات */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <div className="space-y-2">
