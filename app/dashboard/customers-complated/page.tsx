@@ -445,7 +445,7 @@ const CustomrLayout: React.FC = () => {
   //   // إعادة بيانات الطلب والمنتجات
   //   setStatus("طلب جديد");
   //   setEditId(null);
-  //   setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+  //   setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
   //   setSearchQueries({});
   //   setShowDropdown({});
   //   setOverallDiscount(0);
