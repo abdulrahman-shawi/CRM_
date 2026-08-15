@@ -8,7 +8,6 @@ type ProductLike = {
   id: number;
   name: string;
   price?: number | null;
-  affiliatePrice?: number | null;
   landingPage?: {
     ctaText?: string | null;
     quantityDiscountTiers?: Array<{ minQuantity?: number | null; discountPercent?: number | null }> | null;
@@ -40,7 +39,7 @@ export default function AffiliateProductOrderForm({
   const [loading, setLoading] = React.useState(false);
   const [form, setForm] = React.useState(() => createEmptyForm());
 
-  const unitPrice = Number(product.affiliatePrice || 0) > 0 ? Number(product.affiliatePrice) : Number(product.price || 0);
+  const unitPrice = Number(product.price || 0);
   const pricing = React.useMemo(
     () => calculateQuantityDiscountPricing(unitPrice, Number(form.quantity || 1), product.landingPage?.quantityDiscountTiers),
     [unitPrice, form.quantity, product.landingPage?.quantityDiscountTiers]

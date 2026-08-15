@@ -100,7 +100,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     const [status, setStatus] = React.useState("طلب جديد");
     const [editId, setEditId] = React.useState<string | number | null>(null);
     const [items, setItems] = React.useState([
-        { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
+        { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
     ]);
     const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
     const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -140,7 +140,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             const product = products.find(p => p.id === Number(value));
             item.productId = value;
             item.name = product?.name || "";
-            item.modelNumber = product?.modelNumber || "";
             item.price = 0;
             item.discount = 0;
             setSearchQueries({ ...searchQueries, [index]: item.name });
@@ -160,7 +159,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
     }, [user]);
 
     const addNewItem = () => {
-        setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+        setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
     };
 
     const ensureOrderSupportData = async (loadingMessage = "جاري تحميل بيانات الطلب...") => {
@@ -604,7 +603,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         // إعادة بيانات الطلب والمنتجات
         setStatus("طلب جديد");
         setEditId(null);
-        setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+        setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
         setSearchQueries({});
         setShowDropdown({});
         setOverallDiscount(0);
@@ -651,7 +650,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             return {
                 productId,
                 name: item?.product?.name || item?.name || "",
-                modelNumber: item?.product?.modelNumber || item?.modelNumber || "",
                 price,
                 quantity,
                 discount,
@@ -662,10 +660,10 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
 
         const nextItems = normalizedItems.length > 0
             ? normalizedItems
-            : [{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }];
+            : [{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }];
 
         const nextSearchQueries = nextItems.reduce((acc: Record<number, string>, item: any, index: number) => {
-            acc[index] = item.name || item.modelNumber || "";
+            acc[index] = item.name || "";
             return acc;
         }, {});
 

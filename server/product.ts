@@ -75,12 +75,6 @@ export async function getProduct() {
                 orderBy: { id: 'asc' },
             },
             landingPage: true,
-            variants: {
-                include: {
-                    color: true,
-                    size: true,
-                },
-            },
             affiliateLinks: {
                 include: {
                     user: {
@@ -440,8 +434,6 @@ export async function getAffiliateDashboardData() {
                     id: true,
                     name: true,
                     seoSlug: true,
-                    affiliatePrice: true,
-                    affiliateCommissionRate: true,
                 },
             },
             commissions: {
@@ -702,29 +694,7 @@ export async function getProductCatalog() {
         select: {
             id: true,
             name: true,
-            modelNumber: true,
-            barcode: true,
-            variants: {
-                select: {
-                    id: true,
-                    price: true,
-                    colorId: true,
-                    sizeId: true,
-                    color: {
-                        select: {
-                            id: true,
-                            name: true,
-                            hexCode: true,
-                        },
-                    },
-                    size: {
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                    },
-                },
-            },
+            price: true,
         },
     });
 

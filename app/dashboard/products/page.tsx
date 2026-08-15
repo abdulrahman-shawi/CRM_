@@ -13,14 +13,9 @@ import { formatSiteCurrency, useSiteCurrency } from '@/lib/currency';
 import { getallcategory } from '@/server/category';
 import { saveProductWithFiles, updateProductWithFiles } from '@/server/image';
 import { deleteProduct, getProduct, toggleProductActive, toggleProductShowInAds, upsertProductLandingPage, LandingPageInput } from '@/server/product';
-import { getColors, getSizes, createColor, createSize } from '@/server/variants';
-import { Barcode } from '@/components/ui/barcode';
-import { BarcodeScannerModal } from '@/components/ui/barcode-scanner';
-import { generateBarcodeValue } from '@/lib/barcode';
-import Link from 'next/link';
-import { FileDown, Mail, Plus, FileText, ScanLine } from 'lucide-react';
+import { FileDown, Mail, Plus, FileText } from 'lucide-react';
 import * as React from 'react';
-import { Controller, useFieldArray, useWatch } from 'react-hook-form';
+import { Controller, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import z from 'zod';
 import * as XLSX from 'xlsx';
@@ -37,35 +32,12 @@ const getFileNameFromUrl = (url?: string) => {
 
 const productschama = z.object({
     name: z.string().min(3, "اسم المنتج مطلوب"),
-    modelNumber: z.string().optional().nullable(),
-    barcode: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     metaTitle: z.string().optional().nullable(),
     metaDescription: z.string().optional().nullable(),
     metaKeywords: z.string().optional().nullable(),
     categoryId: z.coerce.number().min(1, "يرجى اختيار فئة"),
     price: z.coerce.number().min(0, "سعر المنتج يجب أن يكون صفر أو أكثر").optional().default(0),
-    affiliatePrice: z.coerce.number().min(0, "سعر الأفلييت يجب أن يكون صفر أو أكثر").optional().default(0),
-    affiliateCommissionRate: z.preprocess(
-        (value) => value === '' || value == null ? null : Number(value),
-        z.number().min(0, "نسبة عمولة الأفلييت يجب أن تكون صفر أو أكثر").nullable().optional()
-    ),
-    variants: z.array(
-        z.object({
-            colorId: z.preprocess(
-                (value) => value === '' || value == null ? null : Number(value),
-                z.number().min(1, "يرجى اختيار لون صحيح").nullable().optional()
-            ),
-            sizeId: z.preprocess(
-                (value) => value === '' || value == null ? null : Number(value),
-                z.number().min(1, "يرجى اختيار مقاس صحيح").nullable().optional()
-            ),
-            price: z.coerce.number().min(0, "يرجى إدخال سعر صحيح"),
-        }).refine(
-            (variant) => variant.colorId != null || variant.sizeId != null,
-            { message: "اختر لوناً أو مقاساً على الأقل" }
-        )
-    ).optional().default([]),
     isActive: z.boolean().optional().default(true),
     files: z.array(z.any()).optional().default([]), // استخدام any هنا لتسهيل التعامل مع File objects
 });
@@ -200,216 +172,12 @@ const QuantityDiscountFields = ({ control, register, errors }: any) => {
     );
 };
 
-const VariantColorSwatch = ({ control, index, colors }: any) => {
-    const colorId = useWatch({ control, name: `variants.${index}.colorId` });
-    const color = colors.find((c: any) => String(c.id) === String(colorId));
-    if (!color?.hexCode) return null;
-    return (
-        <span
-            className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 shrink-0"
-            style={{ backgroundColor: color.hexCode }}
-        />
-    );
-};
-
-const VariantsFields = ({ control, register, errors, colors, sizes, onCreateColor, onCreateSize }: any) => {
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'variants'
-    });
-    const [showColorForm, setShowColorForm] = React.useState(false);
-    const [showSizeForm, setShowSizeForm] = React.useState(false);
-    const [newColorName, setNewColorName] = React.useState('');
-    const [newColorHex, setNewColorHex] = React.useState('#000000');
-    const [newSizeName, setNewSizeName] = React.useState('');
-    const [isSaving, setIsSaving] = React.useState(false);
-
-    const handleCreateColor = async () => {
-        if (!newColorName.trim() || isSaving) return;
-        setIsSaving(true);
-        const created = await onCreateColor(newColorName.trim(), newColorHex);
-        setIsSaving(false);
-        if (created) {
-            setNewColorName('');
-            setNewColorHex('#000000');
-            setShowColorForm(false);
-        }
-    };
-
-    const handleCreateSize = async () => {
-        if (!newSizeName.trim() || isSaving) return;
-        setIsSaving(true);
-        const created = await onCreateSize(newSizeName.trim());
-        setIsSaving(false);
-        if (created) {
-            setNewSizeName('');
-            setShowSizeForm(false);
-        }
-    };
-
-    return (
-        <div className="md:col-span-2 border rounded-lg p-3 border-slate-200 dark:border-slate-800">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <div>
-                    <h3 className="font-medium text-slate-800 dark:text-slate-200">الألوان والمقاسات</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">حدد سعراً مختلفاً لكل تركيبة لون/مقاس (اختياري).</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => { setShowColorForm((v: boolean) => !v); setShowSizeForm(false); }}
-                    >
-                        لون جديد
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => { setShowSizeForm((v: boolean) => !v); setShowColorForm(false); }}
-                    >
-                        مقاس جديد
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => append({ colorId: '', sizeId: '', price: 0 })}
-                    >
-                        إضافة متغير
-                    </Button>
-                </div>
-            </div>
-
-            {showColorForm && (
-                <div className="flex flex-wrap items-end gap-2 border border-slate-200 dark:border-slate-800 rounded-md p-2 mb-3 bg-slate-50 dark:bg-slate-900/40">
-                    <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اسم اللون</label>
-                        <input
-                            type="text"
-                            value={newColorName}
-                            onChange={(e) => setNewColorName(e.target.value)}
-                            placeholder="مثال: أحمر"
-                            className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">كود اللون</label>
-                        <input
-                            type="color"
-                            value={newColorHex}
-                            onChange={(e) => setNewColorHex(e.target.value)}
-                            className="h-10 w-14 cursor-pointer rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-1"
-                        />
-                    </div>
-                    <Button type="button" onClick={handleCreateColor} disabled={isSaving || !newColorName.trim()}>
-                        حفظ اللون
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setShowColorForm(false)}>
-                        إلغاء
-                    </Button>
-                </div>
-            )}
-
-            {showSizeForm && (
-                <div className="flex flex-wrap items-end gap-2 border border-slate-200 dark:border-slate-800 rounded-md p-2 mb-3 bg-slate-50 dark:bg-slate-900/40">
-                    <div className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
-                        <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اسم المقاس</label>
-                        <input
-                            type="text"
-                            value={newSizeName}
-                            onChange={(e) => setNewSizeName(e.target.value)}
-                            placeholder="مثال: XL"
-                            className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        />
-                    </div>
-                    <Button type="button" onClick={handleCreateSize} disabled={isSaving || !newSizeName.trim()}>
-                        حفظ المقاس
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setShowSizeForm(false)}>
-                        إلغاء
-                    </Button>
-                </div>
-            )}
-
-            <div className="grid gap-3">
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end border border-slate-200 dark:border-slate-800 rounded-md p-2">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">اللون (اختياري)</label>
-                            <div className="flex items-center gap-2">
-                                <VariantColorSwatch control={control} index={index} colors={colors} />
-                                <select
-                                    {...register(`variants.${index}.colorId`)}
-                                    className="h-10 flex-1 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                >
-                                    <option value="">بدون لون</option>
-                                    {colors.map((color: any) => (
-                                        <option key={color.id} value={color.id}>
-                                            {color.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            {errors?.variants?.[index]?.colorId && (
-                                <p className="text-xs text-red-500">{errors.variants[index].colorId.message as string}</p>
-                            )}
-                        </div>
-
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm text-right font-medium text-slate-800 dark:text-slate-200">المقاس (اختياري)</label>
-                            <select
-                                {...register(`variants.${index}.sizeId`)}
-                                className="h-10 border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            >
-                                <option value="">بدون مقاس</option>
-                                {sizes.map((size: any) => (
-                                    <option key={size.id} value={size.id}>
-                                        {size.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors?.variants?.[index]?.sizeId && (
-                                <p className="text-xs text-red-500">{errors.variants[index].sizeId.message as string}</p>
-                            )}
-                        </div>
-
-                        <FormInput
-                            className='text-slate-900 dark:text-slate-100'
-                            type="number"
-                            step="0.01"
-                            label="السعر"
-                            {...register(`variants.${index}.price`)}
-                            error={errors?.variants?.[index]?.price?.message as string}
-                        />
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => remove(index)}
-                        >
-                            حذف
-                        </Button>
-                        {errors?.variants?.[index]?.root?.message && (
-                            <p className="text-xs text-red-500 md:col-span-4">{errors.variants[index].root.message as string}</p>
-                        )}
-                    </div>
-                ))}
-                {fields.length === 0 && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400">لا توجد ألوان أو مقاسات مضافة.</p>
-                )}
-            </div>
-        </div>
-    );
-};
-
-
 const ProductLayout = () => {
     const { settings } = useSiteCurrency();
     const [isOpen, setIsOpen] = React.useState(false);
     const [editId, setEditId] = React.useState<string | number | null>(null);
     const [categories, setCategories] = React.useState<any[]>([]);
     const [products, setProducts] = React.useState<any[]>([]);
-    const [colors, setColors] = React.useState<any[]>([]);
-    const [sizes, setSizes] = React.useState<any[]>([]);
     const [tab, setTab] = React.useState<'table' | "grid">('table');
     const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
     const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
@@ -419,7 +187,6 @@ const ProductLayout = () => {
     const [page, setPage] = React.useState(1);
     const [nameFilter, setNameFilter] = React.useState('');
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
-    const [isScannerOpen, setIsScannerOpen] = React.useState(false);
     const { user } = useAuth()
     const PAGE_SIZE = 10;
 
@@ -428,32 +195,8 @@ const ProductLayout = () => {
         getProduct().then((products) => {
             setProducts(products);
         }).catch(console.error);
-        getColors().then(setColors).catch(console.error);
-        getSizes().then(setSizes).catch(console.error);
 
     }, []);
-
-    const handleCreateColor = async (name: string, hexCode: string) => {
-        const res = await createColor(name, hexCode);
-        if (res.success) {
-            toast.success("تم إضافة اللون");
-            setColors((prev) => [...prev, res.data].sort((a, b) => String(a.name).localeCompare(String(b.name))));
-            return true;
-        }
-        toast.error(res.error || "فشل في إنشاء اللون");
-        return false;
-    };
-
-    const handleCreateSize = async (name: string) => {
-        const res = await createSize(name);
-        if (res.success) {
-            toast.success("تم إضافة المقاس");
-            setSizes((prev) => [...prev, res.data].sort((a, b) => String(a.name).localeCompare(String(b.name))));
-            return true;
-        }
-        toast.error(res.error || "فشل في إنشاء المقاس");
-        return false;
-    };
 
     const handleClose = () => {
         setIsOpen(false);
@@ -493,8 +236,6 @@ const ProductLayout = () => {
             if (editId) {
                 const formData = new FormData();
                 formData.append('name', data.name);
-                formData.append('modelNumber', data.modelNumber || '');
-                formData.append('barcode', data.barcode || '');
                 formData.append('categoryId', data.categoryId.toString());
                 formData.append('description', data.description || '');
                 formData.append('metaTitle', data.metaTitle || '');
@@ -502,9 +243,6 @@ const ProductLayout = () => {
                 formData.append('metaKeywords', data.metaKeywords || '');
                 formData.append('isActive', String(data.isActive ?? true));
                 formData.append('price', String(data.price ?? 0));
-                formData.append('affiliatePrice', String(data.affiliatePrice ?? 0));
-                formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
-                formData.append('variants', JSON.stringify(data.variants || []));
 
                 const fileManifest = Array.isArray(data.files)
                     ? data.files.map((fileItem: any) => ({
@@ -536,8 +274,6 @@ const ProductLayout = () => {
             } else {
                 const formData = new FormData();
                 formData.append('name', data.name);
-                formData.append('modelNumber', data.modelNumber || '');
-                formData.append('barcode', data.barcode || '');
                 formData.append('categoryId', data.categoryId.toString());
                 formData.append('description', data.description || '');
                 formData.append('metaTitle', data.metaTitle || '');
@@ -545,9 +281,6 @@ const ProductLayout = () => {
                 formData.append('metaKeywords', data.metaKeywords || '');
                 formData.append('isActive', String(data.isActive ?? true));
                 formData.append('price', String(data.price ?? 0));
-                formData.append('affiliatePrice', String(data.affiliatePrice ?? 0));
-                formData.append('affiliateCommissionRate', data.affiliateCommissionRate == null ? '' : String(data.affiliateCommissionRate));
-                formData.append('variants', JSON.stringify(data.variants || []));
 
                 // معالجة الملفات - استخراج الملف الحقيقي rawFile
                 if (data.files && data.files.length > 0) {
@@ -580,23 +313,12 @@ const ProductLayout = () => {
         setEditId(data.id);
         setFormData({
             name: data.name,
-            modelNumber: data.modelNumber || '',
-            barcode: data.barcode || '',
             categoryId: data.categoryId,
             description: data.description,
             metaTitle: data.metaTitle || '',
             metaDescription: data.metaDescription || '',
             metaKeywords: data.metaKeywords || '',
             price: Number(data.price ?? 0),
-            affiliatePrice: Number(data.affiliatePrice ?? 0),
-            affiliateCommissionRate: data.affiliateCommissionRate ?? null,
-            variants: Array.isArray(data.variants)
-                ? data.variants.map((variant: any) => ({
-                    colorId: variant.colorId ?? '',
-                    sizeId: variant.sizeId ?? '',
-                    price: Number(variant.price ?? 0),
-                }))
-                : [],
             isActive: data.isActive ?? true,
             files: Array.isArray(data.images)
                 ? data.images.map((image: any, index: number) => ({
@@ -617,8 +339,7 @@ const ProductLayout = () => {
 
         return products.filter((product: any) => {
             const matchesName = !normalizedNameFilter
-                || String(product?.name || '').toLowerCase().includes(normalizedNameFilter)
-                || String(product?.barcode || '').toLowerCase().includes(normalizedNameFilter);
+                || String(product?.name || '').toLowerCase().includes(normalizedNameFilter);
             const matchesCategory = categoryFilter === 'all' || String(product?.categoryId || '') === categoryFilter;
             return matchesName && matchesCategory;
         });
@@ -629,9 +350,7 @@ const ProductLayout = () => {
         const excelData = displayProducts.map((product: any) => ({
             "اسم المنتج": product.name,
             "التصنيف": product.categoryId ? (categories.find(c => c.id === product.categoryId)?.name || "غير محدد") : "غير محدد",
-            "الباركود": product.barcode || "—",
             "السعر": formatSiteCurrency(Number(product.price || 0), settings),
-            "سعر الأفلييت": formatSiteCurrency(Number(product.affiliatePrice || 0), settings),
             "تاريخ الجرد": new Date().toLocaleDateString('ar-EG')
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -641,7 +360,7 @@ const ProductLayout = () => {
             // تحسين: ضبط عرض الأعمدة تلقائياً
             const maxWidth = 20;
             worksheet["!cols"] = [
-              { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }
+              { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }, { wch: maxWidth }
             ];
 
             XLSX.writeFile(workbook, `products_${new Date().getTime()}.xlsx`);
@@ -693,9 +412,6 @@ const ProductLayout = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-xl font-bold">إدارة المنتجات</h1>
                 <div className="flex items-center gap-2">
-                    <Link href="/dashboard/barcode-labels">
-                        <Button variant="outline">ملصقات الباركود</Button>
-                    </Link>
                     {(user && (user.accountType === "ADMIN" || user.permission?.addProducts === true))
                         && (
                             <Button onClick={() => { setEditId(null); setFormData(null); setIsOpen(true); }}>إضافة منتج جديد</Button>
@@ -719,9 +435,8 @@ const ProductLayout = () => {
                 <div className="flex items-center gap-3">
                     <div className="mb-4 max-w-xs">
                     <label className="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200">
-                        بحث بالاسم أو الباركود
+                        بحث بالاسم
                     </label>
-                    <div className="flex items-center gap-2">
                     <input
                         type="text"
                         value={nameFilter}
@@ -732,15 +447,6 @@ const ProductLayout = () => {
                         placeholder="اسم المنتج"
                         className="h-10 w-full border rounded-md px-3 bg-white dark:bg-slate-950 dark:border-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     />
-                    <button
-                        type="button"
-                        onClick={() => setIsScannerOpen(true)}
-                        title="مسح الباركود بالكاميرا"
-                        className="h-10 w-10 shrink-0 flex items-center justify-center border rounded-md bg-white dark:bg-slate-950 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-500 transition-all"
-                    >
-                        <ScanLine size={18} />
-                    </button>
-                    </div>
                 </div>
 
                 <div className="mb-4 max-w-xs">
@@ -882,12 +588,6 @@ const ProductLayout = () => {
                                             {formatSiteCurrency(Number(selectedProduct?.price || 0), settings)}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between border-t pt-3 dark:border-slate-800">
-                                        <span className="text-slate-500 dark:text-slate-400">سعر الأفلييت</span>
-                                        <span className="font-bold text-blue-600">
-                                            {formatSiteCurrency(Number(selectedProduct?.affiliatePrice || 0), settings)}
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
 
@@ -895,12 +595,6 @@ const ProductLayout = () => {
                             <div className="border rounded-xl p-4 dark:border-slate-800">
                                 <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">معلومات عامة</h3>
                                 <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-slate-400">الباركود</span>
-                                        <span className="font-medium text-slate-800 dark:text-slate-100" dir="ltr">
-                                            {selectedProduct?.barcode || "—"}
-                                        </span>
-                                    </div>
                                     <div className="flex justify-between">
                                         <span className="text-slate-500 dark:text-slate-400">العرض في المتجر</span>
                                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${selectedProduct.isActive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"}`}>
@@ -916,31 +610,6 @@ const ProductLayout = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* الألوان والمقاسات */}
-                        {Array.isArray(selectedProduct?.variants) && selectedProduct.variants.length > 0 && (
-                            <div className="border rounded-xl p-4 mb-6 dark:border-slate-800">
-                                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">الألوان والمقاسات</h3>
-                                <div className="space-y-2 text-sm">
-                                    {selectedProduct.variants.map((variant: any) => (
-                                        <div key={variant.id} className="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0 dark:border-slate-800">
-                                            <span className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                                {variant.color?.hexCode && (
-                                                    <span
-                                                        className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600"
-                                                        style={{ backgroundColor: variant.color.hexCode }}
-                                                    />
-                                                )}
-                                                {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ') || "متغير"}
-                                            </span>
-                                            <span className="font-medium text-slate-800 dark:text-slate-100">
-                                                {formatSiteCurrency(Number(variant.price || 0), settings)}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
 
                         {/* Description */}
                         <div className="border-t pt-4 dark:border-slate-800">
@@ -1062,46 +731,8 @@ const ProductLayout = () => {
                             }
                         },
                         {
-                            header: "الباركود",
-                            accessor: (row: any) => row.barcode ? (
-                                <div className="text-slate-800 dark:text-slate-100" dir="ltr">
-                                    <Barcode value={row.barcode} height={30} showValue={false} />
-                                    <span className="block text-[10px] font-mono text-slate-500 dark:text-slate-400 text-center">{row.barcode}</span>
-                                </div>
-                            ) : "—"
-                        },
-                        {
                             header: "السعر",
                             accessor: (row: any) => formatSiteCurrency(Number(row?.price || 0), settings)
-                        },
-                        {
-                            header: "الألوان والمقاسات",
-                            accessor: (row: any) => {
-                                const variants = Array.isArray(row?.variants) ? row.variants : [];
-                                if (!variants.length) return "—";
-                                return (
-                                    <div className="flex flex-wrap gap-1 max-w-[240px]">
-                                        {variants.map((variant: any) => (
-                                            <span
-                                                key={variant.id}
-                                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
-                                            >
-                                                {variant.color?.hexCode && (
-                                                    <span
-                                                        className="inline-block w-3 h-3 rounded-full border border-slate-300 dark:border-slate-600"
-                                                        style={{ backgroundColor: variant.color.hexCode }}
-                                                    />
-                                                )}
-                                                <span>
-                                                    {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ')}
-                                                </span>
-                                                <span className="text-slate-400">•</span>
-                                                <span>{formatSiteCurrency(Number(variant.price || 0), settings)}</span>
-                                            </span>
-                                        ))}
-                                    </div>
-                                );
-                            }
                         },
                         {
                             header: "العرض في المتجر",
@@ -1179,30 +810,12 @@ const ProductLayout = () => {
                     <DynamicForm
                         schema={productschama}
                         onSubmit={onSubmit}
-                        defaultValues={forData || { variants: [] }}
+                        defaultValues={forData || { isActive: true, files: [] }}
                         submitLabel={editId ? "تعديل المنتج" : "حفظ المنتج"}
                     >
-                        {({ register, control, setValue, watch, formState: { errors } }) => (
+                        {({ register, control, formState: { errors } }) => (
                             <div className="grid gap-4 md:grid-cols-2">
                                 <FormInput className='col-span-2' label="اسم المنتج" {...register("name")} error={errors.name?.message as string} />
-                                <FormInput className='col-span-2' label="رقم الموديل" {...register("modelNumber")} error={errors.modelNumber?.message as string} />
-                                <div className='col-span-2 space-y-2'>
-                                    <div className="flex items-end gap-2">
-                                        <FormInput className='flex-1' label="الباركود" {...register("barcode")} error={errors.barcode?.message as string} dir="ltr" />
-                                        <button
-                                            type="button"
-                                            onClick={() => setValue("barcode", generateBarcodeValue())}
-                                            className="h-10 px-4 rounded-md bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
-                                        >
-                                            توليد تلقائي
-                                        </button>
-                                    </div>
-                                    {watch("barcode") && (
-                                        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md p-2 inline-block text-slate-900 dark:text-slate-100" dir="ltr">
-                                            <Barcode value={watch("barcode")} height={44} />
-                                        </div>
-                                    )}
-                                </div>
                                 <FormInput className='col-span-2' label="Meta Title" {...register("metaTitle")} error={errors.metaTitle?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Description" {...register("metaDescription")} error={errors.metaDescription?.message as string} />
                                 <FormInput className='col-span-2' label="Meta Keywords" {...register("metaKeywords")} error={errors.metaKeywords?.message as string} />
@@ -1224,29 +837,6 @@ const ProductLayout = () => {
                                     label="سعر المنتج"
                                     {...register("price")}
                                     error={errors.price?.message as string}
-                                />
-                                <FormInput
-                                    type="number"
-                                    step="0.01"
-                                    label="سعر الأفلييت"
-                                    {...register("affiliatePrice")}
-                                    error={errors.affiliatePrice?.message as string}
-                                />
-                                <FormInput
-                                    type="number"
-                                    step="0.01"
-                                    label="نسبة عمولة الأفلييت %"
-                                    {...register("affiliateCommissionRate")}
-                                    error={errors.affiliateCommissionRate?.message as string}
-                                />
-                                <VariantsFields
-                                    control={control}
-                                    register={register}
-                                    errors={errors}
-                                    colors={colors}
-                                    sizes={sizes}
-                                    onCreateColor={handleCreateColor}
-                                    onCreateSize={handleCreateSize}
                                 />
                                 <div className="col-span-2">
                                     <Controller
@@ -1471,16 +1061,6 @@ const ProductLayout = () => {
                     </DynamicForm>
                 </div>
             </AppModal>
-
-            <BarcodeScannerModal
-                isOpen={isScannerOpen}
-                onClose={() => setIsScannerOpen(false)}
-                onScan={(code) => {
-                    setNameFilter(code);
-                    setPage(1);
-                }}
-                title="مسح باركود المنتج"
-            />
         </div>
     );
 };

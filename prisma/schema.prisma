@@ -138,8 +138,6 @@ model Category {
 model Product {
   id             Int             @id @default(autoincrement())
   name           String
-  modelNumber    String?
-  barcode        String?
   description    String?
   googleLink     String?
   categoryId     Int?
@@ -153,8 +151,6 @@ model Product {
   metaKeywords          String?
   isActive              Boolean  @default(true)
   showInAds             Boolean  @default(false)
-  affiliatePrice        Float    @default(0)
-  affiliateCommissionRate Float? @default(10.00)
 
   // ─── Relations ───
   orderItems     OrderItem[]
@@ -167,38 +163,6 @@ model Product {
   reviews        Review[]
   landingPage    ProductLandingPage?
   offerDiscounts OfferDiscount[]
-
-  // ─── Variants (Colors & Sizes) ───
-  variants       ProductVariant[]
-}
-
-model Color {
-  id       Int              @id @default(autoincrement())
-  name     String           @unique
-  hexCode  String?
-  variants ProductVariant[]
-}
-
-model Size {
-  id       Int              @id @default(autoincrement())
-  name     String           @unique
-  variants ProductVariant[]
-}
-
-model ProductVariant {
-  id        Int      @id @default(autoincrement())
-  productId Int
-  colorId   Int?
-  sizeId    Int?
-  price     Float    @default(0)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  color     Color?   @relation(fields: [colorId], references: [id], onDelete: SetNull)
-  size      Size?    @relation(fields: [sizeId], references: [id], onDelete: SetNull)
-
-  orderItems          OrderItem[]
-
-  @@unique([productId, colorId, sizeId])
-  @@index([productId])
 }
 
 model AdPageVisit {
@@ -381,7 +345,6 @@ model OrderItem {
   discount  Float
   orderId   Int
   productId Int
-  variantId Int?
 
   // ─── E-commerce Affiliate tracking ───
   affiliateLinkId String?
@@ -389,7 +352,6 @@ model OrderItem {
   // ─── Relations ───
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
-  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   // ─── E-commerce Affiliate Relation ───
   affiliateLink AffiliateLink? @relation(fields: [affiliateLinkId], references: [id], onDelete: SetNull)

@@ -6,10 +6,9 @@ type ProductView = {
   id: number;
   name: string;
   description?: string | null;
-  affiliatePrice?: number | null;
+  price?: number | null;
   images?: Array<{ url?: string | null }>;
   reviews?: Array<{ id: string | number; name?: string | null; rating?: number | null; comment?: string | null }>;
-  stocks?: Array<{ price?: number | null }>;
   landingPage?: {
     badgeText?: string | null;
     heroTitle?: string | null;
@@ -108,9 +107,9 @@ export default function AffiliateProductLanding({ product, affiliateCode = '', p
             <div className="space-y-3 p-6">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-sm font-bold text-slate-500">السعر المعتمد للأفلييت</p>
+                  <p className="text-sm font-bold text-slate-500">السعر</p>
                   <p className="text-3xl font-black text-slate-900">
-                    {(Number(product.affiliatePrice || 0) > 0 ? Number(product.affiliatePrice) : Number(product.stocks?.[0]?.price || 0)).toFixed(2)}
+                    {Number(product.price || 0).toFixed(2)}
                   </p>
                 </div>
                 {product.landingPage?.discountPercent ? (

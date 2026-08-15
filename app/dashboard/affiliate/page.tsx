@@ -8,7 +8,7 @@ import { createAffiliateLinkByAdmin, deleteAffiliateLinkByAdmin, getAffiliateAdm
 
 type DashboardData = {
   users: Array<{ id: string; username: string; email: string }>;
-  products: Array<{ id: number; name: string; affiliatePrice: number; affiliateCommissionRate: number | null }>;
+  products: Array<{ id: number; name: string }>;
   totalClicks: number;
   totalConversions: number;
   totalCommissions: number;
@@ -57,9 +57,6 @@ export default function AffiliateDashboardPage() {
   React.useEffect(() => {
     void loadData();
   }, [loadData]);
-
-  const selectedProduct = data.products.find((item) => String(item.id) === form.productId);
-  const selectedEditProduct = data.products.find((item) => String(item.id) === editLinkForm.productId);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -234,15 +231,7 @@ export default function AffiliateDashboardPage() {
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700 dark:text-slate-200">المنتج</label>
-          <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-950" value={form.productId} onChange={(e) => setForm((prev) => {
-            const selectedRate = Number(data.products.find((item) => String(item.id) === e.target.value)?.affiliateCommissionRate || 0);
-
-            return {
-              ...prev,
-              productId: e.target.value,
-              commissionRate: selectedRate > 0 ? String(selectedRate) : prev.commissionRate,
-            };
-          })}>
+          <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-950" value={form.productId} onChange={(e) => setForm((prev) => ({ ...prev, productId: e.target.value }))}>
             <option value="">اختر المنتج</option>
             {data.products.map((product) => (
               <option key={product.id} value={product.id}>{product.name}</option>
@@ -253,13 +242,6 @@ export default function AffiliateDashboardPage() {
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700 dark:text-slate-200">نسبة العمولة</label>
           <input className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-950" value={form.commissionRate} onChange={(e) => setForm((prev) => ({ ...prev, commissionRate: e.target.value }))} />
-          {selectedProduct ? (
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {Number(selectedProduct.affiliateCommissionRate || 0) > 0
-                ? 'سيتم استخدام نسبة المنتج عند إنشاء العمولة.'
-                : 'إذا كانت نسبة المنتج فارغة أو 0 فسيتم استخدام نسبة الرابط.'}
-            </p>
-          ) : null}
         </div>
 
         <div className="flex items-end">
@@ -449,16 +431,7 @@ export default function AffiliateDashboardPage() {
             <select
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-950"
               value={editLinkForm.productId}
-              onChange={(e) => setEditLinkForm((prev) => {
-                const nextProductId = e.target.value;
-                const nextRate = Number(data.products.find((item) => String(item.id) === nextProductId)?.affiliateCommissionRate || 0);
-
-                return {
-                  ...prev,
-                  productId: nextProductId,
-                  commissionRate: nextRate > 0 ? String(nextRate) : prev.commissionRate,
-                };
-              })}
+              onChange={(e) => setEditLinkForm((prev) => ({ ...prev, productId: e.target.value }))}
               disabled={updatingLink}
             >
               <option value="">اختر المنتج</option>
@@ -476,13 +449,6 @@ export default function AffiliateDashboardPage() {
               onChange={(e) => setEditLinkForm((prev) => ({ ...prev, commissionRate: e.target.value }))}
               disabled={updatingLink}
             />
-            {selectedEditProduct ? (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {Number(selectedEditProduct.affiliateCommissionRate || 0) > 0
-                  ? 'سيتم استخدام نسبة المنتج عند إنشاء العمولة الجديدة.'
-                  : 'إذا كانت نسبة المنتج فارغة أو 0 فسيتم استخدام نسبة الرابط.'}
-              </p>
-            ) : null}
           </div>
 
           <button

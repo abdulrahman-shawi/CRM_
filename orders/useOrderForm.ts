@@ -10,7 +10,6 @@ interface OrderFormItem {
   discount: number;
   note: string;
   total: number;
-  modelNumber: string;
 }
 
 interface OrderFormData {
@@ -33,7 +32,7 @@ interface OrderFormData {
 export const useOrderForm = (userId?: string) => {
   // بيانات الطلب
   const [items, setItems] = React.useState<OrderFormItem[]>([
-    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
+    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
   ]);
 
   // بيانات العميل والمبالغ
@@ -182,7 +181,7 @@ export const useOrderForm = (userId?: string) => {
   const resetForm = () => {
     setStatus("طلب جديد");
     setEditId(null);
-    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
     setSearchQueries({});
     setShowDropdown({});
     setOverallDiscount(0);
@@ -215,7 +214,6 @@ export const useOrderForm = (userId?: string) => {
       return {
         productId,
         name: item?.product?.name || item?.name || "",
-        modelNumber: item?.product?.modelNumber || item?.modelNumber || "",
         price,
         quantity,
         discount,
@@ -226,10 +224,10 @@ export const useOrderForm = (userId?: string) => {
 
     const nextItems = normalizedItems.length > 0
       ? normalizedItems
-      : [{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }];
+      : [{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }];
 
     const nextSearchQueries = nextItems.reduce((acc: Record<number, string>, item: any, index: number) => {
-      acc[index] = item.name || item.modelNumber || "";
+      acc[index] = item.name || "";
       return acc;
     }, {});
 

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: customerResult.error || 'تعذر إنشاء العميل' }, { status: 400 });
     }
 
-    const orderPrice = Number(product.affiliatePrice || product.price || 0);
+    const orderPrice = Number(product.price || 0);
     const pricing = calculateQuantityDiscountPricing(orderPrice, quantity, product.landingPage?.quantityDiscountTiers);
 
     const items = [

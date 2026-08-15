@@ -85,7 +85,7 @@ const CustomrLayout: React.FC = () => {
   const [customer, setCustomer] = React.useState<any>({})
   const [customerorder, setCustomerorder] = React.useState<any[]>([])
   const [items, setItems] = React.useState([
-    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
+    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
   ]);
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -360,7 +360,6 @@ const CustomrLayout: React.FC = () => {
       const product = products.find(p => p.id === Number(value));
       item.productId = value;
       item.name = product?.name || "";
-      item.modelNumber = product?.modelNumber || "";
       item.price = Number(product?.price || 0);
       item.discount = 0;
       setSearchQueries({ ...searchQueries, [index]: item.name });
@@ -393,7 +392,7 @@ const CustomrLayout: React.FC = () => {
 
 
   const addNewItem = () => {
-    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
   };
 
 

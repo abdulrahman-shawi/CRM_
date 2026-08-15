@@ -3,7 +3,6 @@
 import { put, del } from '@vercel/blob';
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { generateBarcodeValue } from "@/lib/barcode";
 
 /**
  * دالة مساعدة لتنظيف اسم الملف من الحروف الخاصة والعربية
@@ -63,49 +62,6 @@ async function uploadSingleFile(file: File) {
     };
 }
 
-function parseVariants(formData: FormData) {
-    const raw = formData.get('variants') as string | null;
-    if (!raw) {
-        return { variants: [], error: null };
-    }
-
-    try {
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) {
-            return { variants: [], error: "تنسيق بيانات المتغيرات غير صالح" };
-        }
-
-        const variants = parsed
-            .map((item: any) => {
-                const colorIdRaw = item?.colorId;
-                const sizeIdRaw = item?.sizeId;
-                const colorId = colorIdRaw === '' || colorIdRaw == null ? null : Number(colorIdRaw);
-                const sizeId = sizeIdRaw === '' || sizeIdRaw == null ? null : Number(sizeIdRaw);
-                const price = Number(item?.price ?? 0);
-                return { colorId, sizeId, price };
-            })
-            .filter((variant: any) => variant.colorId != null || variant.sizeId != null);
-
-        const hasInvalid = variants.some((variant: any) =>
-            (variant.colorId != null && (!Number.isInteger(variant.colorId) || variant.colorId <= 0)) ||
-            (variant.sizeId != null && (!Number.isInteger(variant.sizeId) || variant.sizeId <= 0)) ||
-            Number.isNaN(variant.price) || variant.price < 0
-        );
-        if (hasInvalid) {
-            return { variants: [], error: "تحقق من بيانات الألوان والمقاسات والأسعار" };
-        }
-
-        const keys = variants.map((variant: any) => `${variant.colorId ?? 'none'}-${variant.sizeId ?? 'none'}`);
-        if (new Set(keys).size !== keys.length) {
-            return { variants: [], error: "لا يمكن تكرار نفس تركيبة اللون والمقاس أكثر من مرة" };
-        }
-
-        return { variants, error: null };
-    } catch {
-        return { variants: [], error: "تنسيق بيانات المتغيرات غير صالح" };
-    }
-}
-
 export async function uploadUserAvatar(file: File) {
     const fileName = `users/${Date.now()}-${sanitizeFileName(file.name)}`;
     
@@ -124,9 +80,6 @@ export async function saveProductWithFiles(formData: FormData) {
         // تحويل البيانات مع إضافة قيم افتراضية للحماية من null
         const name = formData.get('name') as string;
         const normalizedName = name.trim();
-        const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
-        // توليد باركود تلقائي عند عدم إدخاله
-        const barcode = String(formData.get('barcode') || '').trim() || generateBarcodeValue();
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;
@@ -134,27 +87,9 @@ export async function saveProductWithFiles(formData: FormData) {
         const metaKeywords = String(formData.get('metaKeywords') || '').trim() || null;
         const isActive = formData.get('isActive') === 'true';
         const price = Number(formData.get('price') || 0);
-        const affiliatePrice = Number(formData.get('affiliatePrice') || 0);
-        const affiliateCommissionRateRaw = formData.get('affiliateCommissionRate');
-        const affiliateCommissionRate = affiliateCommissionRateRaw == null || String(affiliateCommissionRateRaw).trim() === ''
-            ? null
-            : Number(affiliateCommissionRateRaw);
-
-        const { variants, error: variantsError } = parseVariants(formData);
-        if (variantsError) {
-            return { success: false, error: variantsError };
-        }
 
         if (Number.isNaN(price) || price < 0) {
             return { success: false, error: "سعر المنتج غير صالح" };
-        }
-
-        if (Number.isNaN(affiliatePrice) || affiliatePrice < 0) {
-            return { success: false, error: "سعر الأفلييت غير صالح" };
-        }
-
-        if (affiliateCommissionRate !== null && (Number.isNaN(affiliateCommissionRate) || affiliateCommissionRate < 0)) {
-            return { success: false, error: "نسبة عمولة الأفلييت غير صالحة" };
         }
 
         const existingByName = await prisma.product.findFirst({
@@ -186,8 +121,6 @@ export async function saveProductWithFiles(formData: FormData) {
         const product = await prisma.product.create({
             data: {
                 name: normalizedName,
-                modelNumber,
-                barcode,
                 description,
                 metaTitle,
                 metaDescription,
@@ -195,17 +128,8 @@ export async function saveProductWithFiles(formData: FormData) {
                 isActive,
                 seoSlug,
                 price,
-                affiliatePrice,
-                affiliateCommissionRate,
                 // التأكد من إرسالcategoryId فقط إذا كان رقماً صحيحاً
                 ...(categoryId ? { categoryId } : {}),
-                variants: {
-                    create: variants.map((variant) => ({
-                        colorId: variant.colorId,
-                        sizeId: variant.sizeId,
-                        price: variant.price,
-                    })),
-                },
                 images: {
                     create: fileDataArray.map(file => ({
                         url: file.url,
@@ -232,9 +156,6 @@ export async function saveProductWithFiles(formData: FormData) {
 export async function updateProductWithFiles(productId: number, formData: FormData) {
     try {
         const name = formData.get('name') as string;
-        const modelNumber = String(formData.get('modelNumber') || '').trim() || null;
-        // توليد باركود تلقائي عند عدم إدخاله
-        const barcode = String(formData.get('barcode') || '').trim() || generateBarcodeValue();
         const categoryId = parseInt(formData.get('categoryId') as string);
         const description = (formData.get('description') as string) || null;
         const metaTitle = String(formData.get('metaTitle') || '').trim() || null;
@@ -242,27 +163,9 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
         const metaKeywords = String(formData.get('metaKeywords') || '').trim() || null;
         const isActive = formData.get('isActive') === 'true';
         const price = Number(formData.get('price') || 0);
-        const affiliatePrice = Number(formData.get('affiliatePrice') || 0);
-        const affiliateCommissionRateRaw = formData.get('affiliateCommissionRate');
-        const affiliateCommissionRate = affiliateCommissionRateRaw == null || String(affiliateCommissionRateRaw).trim() === ''
-            ? null
-            : Number(affiliateCommissionRateRaw);
-
-        const { variants, error: variantsError } = parseVariants(formData);
-        if (variantsError) {
-            return { success: false, error: variantsError };
-        }
 
         if (Number.isNaN(price) || price < 0) {
             return { success: false, error: "سعر المنتج غير صالح" };
-        }
-
-        if (Number.isNaN(affiliatePrice) || affiliatePrice < 0) {
-            return { success: false, error: "سعر الأفلييت غير صالح" };
-        }
-
-        if (affiliateCommissionRate !== null && (Number.isNaN(affiliateCommissionRate) || affiliateCommissionRate < 0)) {
-            return { success: false, error: "نسبة عمولة الأفلييت غير صالحة" };
         }
 
         const existingByName = await prisma.product.findFirst({
@@ -359,25 +262,13 @@ export async function updateProductWithFiles(productId: number, formData: FormDa
             where: { id: productId },
             data: {
                 name,
-                modelNumber,
-                barcode,
                 description,
                 metaTitle,
                 metaDescription,
                 metaKeywords,
                 isActive,
                 price,
-                affiliatePrice,
-                affiliateCommissionRate,
                 ...(categoryId ? { categoryId } : {}),
-                variants: {
-                    deleteMany: {},
-                    create: variants.map((variant) => ({
-                        colorId: variant.colorId,
-                        sizeId: variant.sizeId,
-                        price: variant.price,
-                    })),
-                },
                 images: {
                     deleteMany: {},
                     create: finalImages.map(file => ({

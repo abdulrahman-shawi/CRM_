@@ -6,15 +6,6 @@ import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 const DELIVERED_ORDER_STATUSES = new Set(['تم تسليم الطلب', 'تم التسليم', 'مدفوعة', 'تم البيع']);
 
-function resolveAffiliateCommissionRate(productRate?: number | null, linkRate?: number | null) {
-  const normalizedProductRate = Number(productRate || 0);
-  if (normalizedProductRate > 0) {
-    return normalizedProductRate;
-  }
-
-  return Number(linkRate || 0);
-}
-
 function getEffectiveCommissionStatus(commission: {
   status?: 'PENDING' | 'PAID' | 'CANCELLED' | string | null;
   order?: { status?: string | null } | null;
@@ -134,8 +125,6 @@ export async function getAffiliateAdminDashboard() {
       id: true,
       name: true,
       seoSlug: true,
-      affiliatePrice: true,
-      affiliateCommissionRate: true,
       isActive: true,
     },
   });
@@ -155,8 +144,6 @@ export async function getAffiliateAdminDashboard() {
           id: true,
           name: true,
           seoSlug: true,
-          affiliatePrice: true,
-          affiliateCommissionRate: true,
         },
       },
       commissions: {
@@ -276,8 +263,6 @@ export async function getAffiliateUserDashboard(targetUserId: string) {
               id: true,
               name: true,
               seoSlug: true,
-              affiliatePrice: true,
-              affiliateCommissionRate: true,
             },
           },
           commissions: {
@@ -337,10 +322,7 @@ export async function getAffiliateUserDashboard(targetUserId: string) {
         return {
           ...link,
           fullUrl: buildAffiliateFullUrl(link.product?.seoSlug, link.uniqueCode, link.product?.id),
-          effectiveCommissionRate: resolveAffiliateCommissionRate(
-            link?.product?.affiliateCommissionRate,
-            link?.commissionRate
-          ),
+          effectiveCommissionRate: Number(link?.commissionRate || 0),
           commissions: normalizedCommissions,
           totalCommissions,
           pendingCommissions,

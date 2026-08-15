@@ -184,8 +184,6 @@ exports.Prisma.CategoryScalarFieldEnum = {
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  modelNumber: 'modelNumber',
-  barcode: 'barcode',
   description: 'description',
   googleLink: 'googleLink',
   categoryId: 'categoryId',
@@ -196,28 +194,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   metaDescription: 'metaDescription',
   metaKeywords: 'metaKeywords',
   isActive: 'isActive',
-  showInAds: 'showInAds',
-  affiliatePrice: 'affiliatePrice',
-  affiliateCommissionRate: 'affiliateCommissionRate'
-};
-
-exports.Prisma.ColorScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  hexCode: 'hexCode'
-};
-
-exports.Prisma.SizeScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-};
-
-exports.Prisma.ProductVariantScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  colorId: 'colorId',
-  sizeId: 'sizeId',
-  price: 'price'
+  showInAds: 'showInAds'
 };
 
 exports.Prisma.AdPageVisitScalarFieldEnum = {
@@ -330,7 +307,6 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   discount: 'discount',
   orderId: 'orderId',
   productId: 'productId',
-  variantId: 'variantId',
   affiliateLinkId: 'affiliateLinkId'
 };
 
@@ -504,9 +480,6 @@ exports.Prisma.ModelName = {
   Permission: 'Permission',
   Category: 'Category',
   Product: 'Product',
-  Color: 'Color',
-  Size: 'Size',
-  ProductVariant: 'ProductVariant',
   AdPageVisit: 'AdPageVisit',
   ProductLandingPage: 'ProductLandingPage',
   Review: 'Review',
