@@ -3,9 +3,8 @@ import { useAuth } from "@/context/AuthContext";
 import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/currency";
 import { updateOrder } from "@/server/order";
 import { useOrderStore } from "@/store/customer";
-import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
 import { AnimatePresence, motion } from "framer-motion";
-import { Save, Trash2, ScanLine } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import React from "react";
 import toast from "react-hot-toast";
 import PhoneInput from 'react-phone-number-input'
@@ -19,7 +18,7 @@ const formatDateForInput = (dateLike?: string | Date | null) => {
 
 export default function OrderCustomerEdit({ initialData, customers, customerId, products, isOpenOrder, setEditId, setCustomerId, setisOpenOrder, editId, getData }: { initialData?: any, customers: any, customerId: any, products: any, isOpenOrder: any, setEditId: any, setCustomerId: any, setisOpenOrder: any, editId: any, getData: any }) {
   const [items, setItems] = React.useState([
-    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }
+    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
   ]);
   const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
   const { settings } = useSiteCurrency();
@@ -82,50 +81,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
   }
 }, [initialData, isOpenOrder]);
   const addNewItem = () => {
-    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
-  };
-
-  const [isScannerOpen, setIsScannerOpen] = React.useState(false);
-
-  // مسح الباركود: يضيف المنتج للطلب أو يزيد كميته بمقدار 1 (مسح مستمر)
-  const handleBarcodeScan = (code: string) => {
-    const product = products?.find((p: any) => String(p?.barcode || '') === code);
-    if (!product) {
-      toast.error('لم يتم العثور على منتج بهذا الباركود');
-      return;
-    }
-
-    const pricing = getProductPricing(product);
-    const existingIndex = items.findIndex((item: any) => String(item.productId) === String(product.id));
-    if (existingIndex !== -1) {
-      const newItems = [...items];
-      const item = newItems[existingIndex];
-      item.quantity = Number(item.quantity || 0) + 1;
-      item.total = getEffectivePrice(item.price, item.discount) * item.quantity;
-      setItems(newItems);
-    } else {
-      const newItem = {
-        productId: String(product.id),
-        name: product?.name || "",
-        price: pricing.price,
-        quantity: 1,
-        discount: pricing.discount,
-        note: "",
-        total: getEffectivePrice(pricing.price, pricing.discount),
-        modelNumber: product?.modelNumber || "",
-      };
-      const emptyIndex = items.findIndex((item: any) => !item.productId);
-      if (emptyIndex !== -1) {
-        const newItems = [...items];
-        newItems[emptyIndex] = newItem;
-        setItems(newItems);
-        setSearchQueries({ ...searchQueries, [emptyIndex]: newItem.name });
-        setShowDropdown({ ...showDropdown, [emptyIndex]: false });
-      } else {
-        setItems([...items, newItem]);
-      }
-    }
-    toast.success(`تمت إضافة: ${product.name}`);
+    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
   };
 
   const getEffectivePrice = (price: number, discount: number) => {
@@ -148,7 +104,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       const pricing = getProductPricing(product);
       item.productId = value;
       item.name = product?.name || "";
-      item.modelNumber = product?.modelNumber || "";
       item.price = pricing.price;
       item.discount = pricing.discount;
       setSearchQueries({ ...searchQueries, [index]: item.name });
@@ -177,7 +132,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     // إعادة بيانات الطلب والمنتجات
     setStatus("طلب جديد");
     setEditId(null);
-    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "" }]);
+    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
     setSearchQueries({});
     setShowDropdown({});
     setOverallDiscount(0);
@@ -374,7 +329,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                   <label className="text-[10px] font-bold text-slate-400 mb-1">المنتج</label>
                   <input
                     type="text"
-                    value={searchQueries[index] || item.product?.name || item.product?.modelNumber}
+                    value={searchQueries[index] || item.product?.name || item.name}
                     placeholder="اكتب اسم المنتج..."
                     onFocus={() => setShowDropdown({ ...showDropdown, [index]: true })}
                     onChange={(e) => {
@@ -387,13 +342,9 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                     {showDropdown[index] && (
                       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute z-[210] w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
                         {products?.filter((p: any) => {
-                          // شرط البحث (الاسم أو الموديل)
+                          // شرط البحث بالاسم
                           const query = (searchQueries[index] || "").toLowerCase();
-                          const matchesSearch =
-                            String(p?.name || "").toLowerCase().includes(query) ||
-                            String(p?.modelNumber || "").toLowerCase().includes(query);
-
-                          return matchesSearch;
+                          return String(p?.name || "").toLowerCase().includes(query);
                         }
                         ).map((product: any) => {
                           const pricing = getProductPricing(product);
@@ -405,9 +356,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                           >
                             <div className="flex justify-between items-center">
                               <span className='text-slate-900 dark:text-slate-50'>{product.name}</span>
-                              <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-500">
-                                {product.modelNumber}
-                              </span>
                             </div>
                             <div className="text-blue-500 text-xs mt-1"> {formatSiteCurrency(getEffectivePrice(pricing.price, pricing.discount), settings)}</div>
                           </div>
@@ -471,14 +419,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
             ))}
             <div className="flex gap-2">
               <button onClick={addNewItem} className="flex-1 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all">+ إضافة بند جديد</button>
-              <button
-                type="button"
-                onClick={() => setIsScannerOpen(true)}
-                title="مسح الباركود بالكاميرا"
-                className="px-4 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 hover:border-blue-500 hover:text-blue-500 transition-all"
-              >
-                <ScanLine size={18} />
-              </button>
             </div>
           </div>
           <div className="space-y-8" dir="rtl">
@@ -599,14 +539,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
 
         </div>
       </AppModal>
-
-      <BarcodeScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScan={handleBarcodeScan}
-        title="مسح باركود المنتجات"
-        continuous
-      />
 
     </div>
   )

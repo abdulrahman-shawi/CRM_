@@ -4,16 +4,15 @@ import { formatSiteCurrency, getCurrencySymbol, useSiteCurrency } from "@/lib/cu
 import { createOrder } from "@/server/order";
 import { useOrderStore } from "@/store/customer";
 import { MapPicker } from "@/components/ui/MapPicker";
-import { BarcodeScannerModal } from "@/components/ui/barcode-scanner";
 import { AnimatePresence, motion } from "framer-motion";
-import { Save, Trash2, ScanLine } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import React from "react";
 import toast from "react-hot-toast";
 import PhoneInput from 'react-phone-number-input'
 
 export default function OrderCustomer({ customers, customerId, products, isOpenOrder, setEditId, setCustomerId, setisOpenOrder, editId, getData }: { customers: any, customerId: any, products: any, isOpenOrder: any, setEditId: any, setCustomerId: any, setisOpenOrder: any, editId: any, getData: any }) {
   const [items, setItems] = React.useState([
-    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }
+    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
   ]);
   const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
   const { settings } = useSiteCurrency();
@@ -53,112 +52,35 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
   };
 
   const addNewItem = () => {
-    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }]);
-  };
-
-  const [isScannerOpen, setIsScannerOpen] = React.useState(false);
-
-  // مسح الباركود: يضيف المنتج للطلب أو يزيد كميته بمقدار 1 (مسح مستمر)
-  const handleBarcodeScan = (code: string) => {
-    const product = products?.find((p: any) => String(p?.barcode || '') === code);
-    if (!product) {
-      toast.error('لم يتم العثور على منتج بهذا الباركود');
-      return;
-    }
-
-    const pricing = getProductPricing(product);
-    const existingIndex = items.findIndex((item) => String(item.productId) === String(product.id));
-    if (existingIndex !== -1) {
-      const newItems = [...items];
-      const item = newItems[existingIndex];
-      item.quantity = Number(item.quantity || 0) + 1;
-      item.total = getEffectivePrice(item.price, item.discount) * item.quantity;
-      setItems(newItems);
-    } else {
-      const newItem = {
-        productId: String(product.id),
-        name: product?.name || "",
-        price: pricing.price,
-        quantity: 1,
-        discount: pricing.discount,
-        note: "",
-        total: getEffectivePrice(pricing.price, pricing.discount),
-        modelNumber: product?.modelNumber || "",
-        variantId: "",
-        priceMode: "sum",
-      };
-      const emptyIndex = items.findIndex((item) => !item.productId);
-      if (emptyIndex !== -1) {
-        const newItems = [...items];
-        newItems[emptyIndex] = newItem;
-        setItems(newItems);
-        setSearchQueries({ ...searchQueries, [emptyIndex]: newItem.name });
-        setShowDropdown({ ...showDropdown, [emptyIndex]: false });
-      } else {
-        setItems([...items, newItem]);
-      }
-    }
-    toast.success(`تمت إضافة: ${product.name}`);
+    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
   };
 
   const getEffectivePrice = (price: number, discount: number) => {
     return Math.max(0, Number(price || 0) - Number(discount || 0));
   };
 
-  // حساب سعر الوحدة حسب طريقة التسعير المختارة للمتغير (لون/مقاس)
-  const applyVariantPricing = (basePrice: number, variant: any, priceMode: string) => {
-    if (!variant) return basePrice;
-    const variantPrice = convertUsdToOrderCurrency(Number(variant?.price || 0));
-    if (priceMode === "product") return basePrice;
-    if (priceMode === "variant") return variantPrice;
-    return basePrice + variantPrice; // sum: جمع سعر المنتج مع سعر المتغير
-  };
-
-  const findItemVariant = (item: any) => {
-    const product = products?.find((p: any) => String(p?.id) === String(item?.productId));
-    if (!product || !Array.isArray(product?.variants)) return null;
-    return product.variants.find((variant: any) => String(variant?.id) === String(item?.variantId)) || null;
-  };
-
   const updateItem = (index: number, field: string, value: any, products: any[]) => {
     const newItems = [...items];
     const item = newItems[index];
 
-    if (field === "productId" || field === "variantId") {
-      const nextProductId = field === "productId" ? value : item.productId;
-      const nextVariantId = field === "variantId" ? value : (item.variantId || "");
+    if (field === "productId") {
       const isDuplicate = items.some((other, i) =>
-        i !== index &&
-        String(other.productId) === String(nextProductId) &&
-        String(other.variantId || "") === String(nextVariantId || "")
+        i !== index && String(other.productId) === String(value)
       );
 
       if (isDuplicate) {
-        toast.error("هذا المنتج بنفس اللون/المقاس مضاف بالفعل! يرجى تعديل الكمية.");
+        toast.error("هذا المنتج مضاف بالفعل! يرجى تعديل الكمية.");
         return; // توقف عن التنفيذ ولا تقم بتحديث الحالة
       }
-    }
 
-    if (field === "productId") {
       const product = products.find(p => p.id === Number(value));
       const pricing = getProductPricing(product);
       item.productId = value;
       item.name = product?.name || "";
-      item.modelNumber = product?.modelNumber || "";
-      item.variantId = "";
-      item.priceMode = "sum";
       item.price = pricing.price;
       item.discount = pricing.discount;
       setSearchQueries({ ...searchQueries, [index]: item.name });
       setShowDropdown({ ...showDropdown, [index]: false });
-    } else if (field === "variantId" || field === "priceMode") {
-      (item as any)[field] = value;
-      const product = products.find(p => p.id === Number(item.productId));
-      const pricing = getProductPricing(product);
-      const variant = Array.isArray(product?.variants)
-        ? product.variants.find((v: any) => String(v?.id) === String(item.variantId)) || null
-        : null;
-      item.price = applyVariantPricing(pricing.price, variant, item.priceMode);
     } else {
       (item as any)[field] = value;
     }
@@ -184,7 +106,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
     // إعادة بيانات الطلب والمنتجات
     setStatus("طلب جديد");
     setEditId(null);
-    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0, modelNumber: "", variantId: "", priceMode: "sum" }]);
+    setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
     setSearchQueries({});
     setShowDropdown({});
     setOverallDiscount(0);
@@ -367,7 +289,7 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                   <label className="text-[10px] font-bold text-slate-400 mb-1">المنتج</label>
                   <input
                     type="text"
-                    value={searchQueries[index] || item.name || item.modelNumber}
+                    value={searchQueries[index] || item.name}
                     placeholder="اكتب اسم المنتج..."
                     onFocus={() => setShowDropdown({ ...showDropdown, [index]: true })}
                     onChange={(e) => {
@@ -380,13 +302,9 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                     {showDropdown[index] && (
                       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute z-[210] w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
                         {products?.filter((p: any) => {
-                          // شرط البحث (الاسم أو الموديل)
+                          // شرط البحث بالاسم
                           const query = (searchQueries[index] || "").toLowerCase();
-                          const matchesSearch =
-                            String(p?.name || "").toLowerCase().includes(query) ||
-                            String(p?.modelNumber || "").toLowerCase().includes(query);
-
-                          return matchesSearch;
+                          return String(p?.name || "").toLowerCase().includes(query);
                         }
                         ).map((product: any) => {
                           const pricing = getProductPricing(product);
@@ -398,9 +316,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                           >
                             <div className="flex justify-between items-center">
                               <span className='text-slate-900 dark:text-slate-50'>{product.name}</span>
-                              <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-500">
-                                {product.modelNumber}
-                              </span>
                             </div>
                             <div className="text-blue-500 text-xs mt-1"> {formatSiteCurrency(getEffectivePrice(pricing.price, pricing.discount), settings)}</div>
                           </div>
@@ -460,75 +375,10 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
                     <Trash2 size={18} />
                   </button>
                 </div>
-                {/* اختيار اللون/المقاس وطريقة التسعير */}
-                {(() => {
-                  const selectedProduct = products?.find((p: any) => String(p?.id) === String(item.productId));
-                  const productVariants = Array.isArray(selectedProduct?.variants) ? selectedProduct.variants : [];
-                  if (!selectedProduct || productVariants.length === 0) return null;
-                  const selectedVariant = findItemVariant(item);
-                  return (
-                    <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-slate-200 dark:border-slate-700 pt-3">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-400 mb-1">اللون / المقاس</label>
-                        <div className="flex items-center gap-2">
-                          {selectedVariant?.color?.hexCode && (
-                            <span
-                              className="inline-block w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 shrink-0"
-                              style={{ backgroundColor: selectedVariant.color.hexCode }}
-                            />
-                          )}
-                          <select
-                            value={item.variantId || ""}
-                            onChange={(e) => updateItem(index, "variantId", e.target.value, products)}
-                            className="w-full text-slate-900 dark:text-slate-50 bg-white dark:bg-slate-900 p-3 rounded-xl border-none outline-none font-bold text-sm shadow-sm"
-                          >
-                            <option value="">بدون لون/مقاس (سعر المنتج)</option>
-                            {productVariants.map((variant: any) => (
-                              <option key={variant.id} value={variant.id}>
-                                {[variant.color?.name, variant.size?.name].filter(Boolean).join(' / ')} — {formatSiteCurrency(Number(variant.price || 0), settings)}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      {selectedVariant && (
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 mb-1">طريقة التسعير</label>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
-                            {[
-                              { value: "sum", label: "جمع السعرين" },
-                              { value: "product", label: "سعر المنتج فقط" },
-                              { value: "variant", label: "سعر اللون/المقاس فقط" },
-                            ].map((option) => (
-                              <label key={option.value} className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-300">
-                                <input
-                                  type="radio"
-                                  name={`priceMode-${index}`}
-                                  checked={(item.priceMode || "sum") === option.value}
-                                  onChange={() => updateItem(index, "priceMode", option.value, products)}
-                                  className="accent-blue-600"
-                                />
-                                {option.label}
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
               </div>
             ))}
             <div className="flex gap-2">
               <button onClick={addNewItem} className="flex-1 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-500 hover:text-blue-500 transition-all">+ إضافة بند جديد</button>
-              <button
-                type="button"
-                onClick={() => setIsScannerOpen(true)}
-                title="مسح الباركود بالكاميرا"
-                className="px-4 py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 hover:border-blue-500 hover:text-blue-500 transition-all"
-              >
-                <ScanLine size={18} />
-              </button>
             </div>
           </div>
           <div className="space-y-8" dir="rtl">
@@ -654,14 +504,6 @@ export default function OrderCustomer({ customers, customerId, products, isOpenO
 
         </div>
       </AppModal>
-
-      <BarcodeScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScan={handleBarcodeScan}
-        title="مسح باركود المنتجات"
-        continuous
-      />
 
     </div>
   )

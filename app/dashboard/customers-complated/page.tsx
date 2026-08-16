@@ -8,17 +8,14 @@ import { FormInput } from "@/components/ui/form-input";
 import PhoneInput from 'react-phone-number-input'
 import { Button } from "@/components/ui/button";
 import { AppModal } from "@/components/ui/app-modal";
-import { AssignUsers, createCustomerAction, deleteCustomer, getCustomer, updateCustomer, UpdateStusa } from "@/server/customer";
+import { createCustomerAction, deleteCustomer, getCustomer, updateCustomer, UpdateStusa } from "@/server/customer";
 import { useAuth } from "@/context/AuthContext";
 import { formatPhoneForDisplay, hasPermission, isAdmin } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { CheckSquare, Download, Eye, LayoutGrid, MapPin, MessageCircle, Pencil, Phone, Plus, Save, Send, ShoppingBag, Table2, Trash2, Upload, UserPlus, XCircle } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { CheckSquare, Download, Eye, LayoutGrid, MessageCircle, Pencil, Plus, ShoppingBag, Table2, Trash2, Upload, XCircle } from "lucide-react";
 import { getProduct } from "@/server/product";
-import { createOrder } from "@/server/order";
 import { Controller, useFieldArray } from "react-hook-form";
 import ViewOrderCustomer from "@/components/pages/customers/viewOrder";
-import AssignUserModal from "@/components/pages/customers/assignuser";
 import GetCustomerSingle from "@/components/pages/customers/gitSingleCustomer";
 import OrderCustomer from "@/components/pages/customers/orderCustomer";
 import { DataTable, TableAction } from "@/components/shared/DataTable";
@@ -27,14 +24,22 @@ import { DataTable, TableAction } from "@/components/shared/DataTable";
 
 const STATUS_OPTIONS = [
   { label: "فرصة جديدة", value: "فرصة جديدة" },
-  { label: "جاري المتابعة", value: "جاري المتابعة" },
   { label: "تم البيع", value: "تم البيع" },
-  { label: "غير مهتم / ملغي", value: "غير مهتم / ملغي" },
+  { label: "المتجر", value: "المتجر" },
 ];
 
-const LOCKED_STATUS_VALUES = new Set(["جاري المتابعة", "تم البيع"]);
+const LOCKED_STATUS_VALUES = new Set(["تم البيع"]);
 
 const FORCE_STATUS = "تم البيع";
+
+const getStatusClasses = (status: string) =>
+  status === "فرصة جديدة"
+    ? "bg-blue-100 text-blue-600 border-rose-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+    : status === "تم البيع"
+      ? "bg-yellow-100 text-yellow-600 border-green-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800"
+      : status === "المتجر"
+        ? "bg-purple-100 text-purple-600 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800"
+        : "bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800";
 
 const buildDateKey = (value: Date) =>
   `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
@@ -74,66 +79,31 @@ type CustomerFormValues = z.infer<typeof customerSchema>;
 
 /* ===================== Component ===================== */
 const CustomrLayout: React.FC = () => {
-  const [activeTabs, setActiveTabs] = React.useState<Array<"skin" | "laser" | "slimming">>([]);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpencustomer, setIsOpencustomer] = React.useState(false);
-  const [isOpencustomerchat, setIsOpencustomerchat] = React.useState(false);
   const [isOpenOrder, setisOpenOrder] = React.useState(false);
   const [customers, setCustomers] = React.useState<any[]>([])
   const [formdata, setFormdata] = React.useState<any>(null)
   const [editId, setEditId] = React.useState<string | null>(null);
   const [customer, setCustomer] = React.useState<any>({})
   const [customerorder, setCustomerorder] = React.useState<any[]>([])
-  const [items, setItems] = React.useState([
-    { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
-  ]);
-  const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
-  const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
-  const [overallDiscount, setOverallDiscount] = React.useState(0);
 
-  // بيانات العميل والمبالغ
   const [customerId, setCustomerId] = React.useState("");
-  const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
-
-  // بيانات المستلم والعنوان
-  const [receiverName, setReceiverName] = React.useState("");
-  const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
-  const [country, setCountry] = React.useState("ليبيا"); // افتراضي حسب الصورة
-  const [city, setCity] = React.useState("");
-  const [municipality, setMunicipality] = React.useState("");
-  const [fullAddress, setFullAddress] = React.useState("");
-  const [status, setStatus] = React.useState("طلب جديد");
-  // تفاصيل الشحن
-  const [deliveryMethod, setDeliveryMethod] = React.useState("توصيل الى المنزل");
-  const [amount, setamount] = React.useState("");
-  const [amountBank, setamountBank] = React.useState("");
-  const [googleMapsLink, setGoogleMapsLink] = React.useState("");
-
-  const [customerSearchQuery, setCustomerSearchQuery] = React.useState("");
-  const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
-  const [deliveryNotes, setDeliveryNotes] = React.useState("");
-  const [additionalNotes, setAdditionalNotes] = React.useState("");
-  const subTotal = items.reduce((sum, i) => sum + i.total, 0);
-  const grandTotal = subTotal - overallDiscount;
   const [search, setSearch] = React.useState("")
   const [isOpenordercustomer, setisOpenordercustomer] = React.useState(false)
-  const [OpenAssignModal, setOpenAssignModal] = React.useState(false)
-  const [isBulkAssignOpen, setIsBulkAssignOpen] = React.useState(false)
   const { user, loading } = useAuth()
   const [viewMode, setViewMode] = React.useState<"cards" | "table">("table");
   const [page, setPage] = React.useState(1);
   const PAGE_SIZE = 10;
   const [sortState, setSortState] = React.useState<{
-    field: "country" | "createdAt" | "ordersCount" | null;
+    field: "createdAt" | "ordersCount" | null;
     direction: "asc" | "desc";
   }>({ field: null, direction: "asc" });
 
   const [dateFilter, setDateFilter] = React.useState(FORCE_STATUS);
-  const [genderFilter, setGenderFilter] = React.useState("الكل");
   const [createdPreset, setCreatedPreset] = React.useState("month");
   const [createdFrom, setCreatedFrom] = React.useState("");
   const [createdTo, setCreatedTo] = React.useState("");
-  const [alluser, setUsers] = React.useState<any[]>([])
   const [selectedCustomers, setSelectedCustomers] = React.useState<any[]>([]);
   const importInputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -147,32 +117,14 @@ const CustomrLayout: React.FC = () => {
     const rangeStart = fromKey && toKey ? (fromKey <= toKey ? fromKey : toKey) : fromKey || toKey;
     const rangeEnd = fromKey && toKey ? (fromKey <= toKey ? toKey : fromKey) : fromKey || toKey;
 
-    const hasAssignedUserMatch = Array.isArray(e.users)
-      ? e.users.some((assignedUser: any) => {
-          const username = String(assignedUser?.username ?? "").toLowerCase();
-          const name = String(assignedUser?.name ?? "").toLowerCase();
-          const email = String(assignedUser?.email ?? "").toLowerCase();
-          return (
-            username.includes(normalizedSearch) ||
-            name.includes(normalizedSearch) ||
-            email.includes(normalizedSearch)
-          );
-        })
-      : false;
-
     // 1. منطق البحث النصي الحالي
     const matchesSearch =
       e.name?.toLowerCase().includes(normalizedSearch) ||
-      e.countryCode?.toLowerCase().includes(normalizedSearch) ||
-      e.phone?.some((p:any )=> String(p ?? "").toLowerCase().includes(normalizedSearch)) ||
-      e.city?.toLowerCase().includes(normalizedSearch) || // أضفت المدينة كما طلبت
-      e.country?.toLowerCase().includes(normalizedSearch) ||
-      hasAssignedUserMatch;
+      e.phone?.some((p:any )=> String(p ?? "").toLowerCase().includes(normalizedSearch));
 
 
     // إذا كان المستخدم اختار حالة معينة، نقوم بالمطابقة، وإذا لم يختار (All) نعرض الكل
     const matchesStatus = e.status === FORCE_STATUS;
-    const matchesGender = genderFilter === "الكل" ? true : String(e?.gender || "").trim() === genderFilter;
     const customerCreatedAt = e?.createdAt ? new Date(e.createdAt) : null;
     const hasValidCreatedAt = Boolean(customerCreatedAt && !Number.isNaN(customerCreatedAt.getTime()));
     const customerCreatedKey = hasValidCreatedAt
@@ -182,33 +134,21 @@ const CustomrLayout: React.FC = () => {
       (!rangeStart || customerCreatedKey >= rangeStart) &&
       (!rangeEnd || customerCreatedKey <= rangeEnd);
 
-    return matchesSearch && matchesStatus && matchesGender && matchesCreatedAt;
+    return matchesSearch && matchesStatus && matchesCreatedAt;
   });
 
   React.useEffect(() => {
     setPage(1);
-  }, [search, dateFilter, genderFilter, createdPreset, createdFrom, createdTo, viewMode]);
-
-  const visibleCustomers = React.useMemo(() => {
-    return filterCustomer.filter((customer) => {
-      if (!user) return true;
-      if (isAdmin(user)) return true;
-      return customer.users.some((u: any) => u.id === user?.id);
-    });
-  }, [filterCustomer, user]);
+  }, [search, dateFilter, createdPreset, createdFrom, createdTo, viewMode]);
 
   const sortedVisibleCustomers = React.useMemo(() => {
-    const list = [...visibleCustomers];
+    const list = [...filterCustomer];
     if (!sortState.field) return list;
 
     list.sort((left: any, right: any) => {
       let comparison = 0;
 
-      if (sortState.field === "country") {
-        const leftValue = String(left?.country || "").trim();
-        const rightValue = String(right?.country || "").trim();
-        comparison = leftValue.localeCompare(rightValue, "ar");
-      } else if (sortState.field === "createdAt") {
+      if (sortState.field === "createdAt") {
         const leftValue = new Date(left?.createdAt || 0).getTime();
         const rightValue = new Date(right?.createdAt || 0).getTime();
         comparison = leftValue - rightValue;
@@ -222,9 +162,9 @@ const CustomrLayout: React.FC = () => {
     });
 
     return list;
-  }, [visibleCustomers, sortState]);
+  }, [filterCustomer, sortState]);
 
-  const toggleSort = (field: "country" | "createdAt" | "ordersCount") => {
+  const toggleSort = (field: "createdAt" | "ordersCount") => {
     setPage(1);
     setSortState((prev) => {
       if (prev.field === field) {
@@ -239,7 +179,7 @@ const CustomrLayout: React.FC = () => {
 
   const renderSortHeader = (
     label: string,
-    field: "country" | "createdAt" | "ordersCount"
+    field: "createdAt" | "ordersCount"
   ) => {
     const isActive = sortState.field === field;
     const indicator = !isActive ? "↕" : sortState.direction === "asc" ? "↑" : "↓";
@@ -265,37 +205,6 @@ const CustomrLayout: React.FC = () => {
 
   const toggleSelectAll = () => {
     setSelectedCustomers(areAllSelected ? [] : allFilteredIds);
-  };
-
-  const handleBulkAssignUsers = async (_: string, userIds: string[]) => {
-    if (selectedCustomers.length === 0) {
-      toast.error("لا يوجد عملاء محددين");
-      return;
-    }
-
-    const loading = toast.loading("جار ربط الموظفين بالعملاء المحددين");
-    try {
-      const results = await Promise.all(
-        selectedCustomers.map((customerId) =>
-          AssignUsers(customerId, userIds)
-            .then(() => ({ success: true }))
-            .catch(() => ({ success: false }))
-        )
-      );
-
-      const failedCount = results.filter((r) => !r.success).length;
-      if (failedCount > 0) {
-        toast.error(`تعذر ربط ${failedCount} عميل`);
-      } else {
-        toast.success("تم ربط الموظفين بنجاح");
-      }
-
-      getData();
-      setSelectedCustomers([]);
-      setIsBulkAssignOpen(false);
-    } finally {
-      toast.dismiss(loading);
-    }
   };
 
   const handleBulkDelete = async () => {
@@ -345,32 +254,6 @@ const CustomrLayout: React.FC = () => {
       prev.includes(id) ? prev.filter((itemId: any) => itemId !== id) : [...prev, id]
     );
   };
-  const updateItem = (index: number, field: string, value: any, products: any[]) => {
-    const newItems = [...items];
-    const item = newItems[index];
-
-    const isDuplicate = items.some((item, i) => item.productId === value && i !== index);
-
-    if (isDuplicate) {
-      toast.error("هذا المنتج مضاف بالفعل! يرجى اختيار منتج آخر أو تعديل الكمية.");
-      return; // توقف عن التنفيذ ولا تقم بتحديث الحالة
-    }
-
-    if (field === "productId") {
-      const product = products.find(p => p.id === Number(value));
-      item.productId = value;
-      item.name = product?.name || "";
-      item.price = Number(product?.price || 0);
-      item.discount = 0;
-      setSearchQueries({ ...searchQueries, [index]: item.name });
-      setShowDropdown({ ...showDropdown, [index]: false });
-    } else {
-      (item as any)[field] = value;
-    }
-
-    item.total = item.price * item.quantity - item.discount;
-    setItems(newItems);
-  };
 
   const deleteCus = async (data: any) => {
     const confirm = window.confirm("هل انت متأكد من الحذف")
@@ -391,11 +274,6 @@ const CustomrLayout: React.FC = () => {
   }
 
 
-  const addNewItem = () => {
-    setItems([...items, { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
-  };
-
-
   const getData = async () => {
     const res = await getCustomer();
     if (res.success) {
@@ -414,16 +292,6 @@ const CustomrLayout: React.FC = () => {
     }
   };
 
-  const getAlluser = async () => {
-    try {
-      const res = await fetch("/api/users", { cache: "no-store" })
-      const data = await res.json()
-      setUsers(data.data);
-      console.log("Users:", res);
-    } catch (error) {
-
-    }
-  }
   const [products, setProduct] = React.useState<any[]>([])
   React.useEffect(() => {
     if (loading) {
@@ -431,47 +299,10 @@ const CustomrLayout: React.FC = () => {
     }
 
     getData();
-    getAlluser();
     getProduct().then((products) => {
       setProduct(products);
     }).catch(console.error);
   }, [loading, user])
-  const [isPending, setIsPending] = React.useState(false);
-
-  // const resetForm = () => {
-  //   // إغلاق المودال أولاً
-  //   setisOpenOrder(false);
-
-  //   // إعادة بيانات الطلب والمنتجات
-  //   setStatus("طلب جديد");
-  //   setEditId(null);
-  //   setItems([{ productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }]);
-  //   setSearchQueries({});
-  //   setShowDropdown({});
-  //   setOverallDiscount(0);
-
-  //   // إعادة بيانات العميل
-  //   setCustomerId("");
-  //   setCustomerSearchQuery("");
-  //   setShowCustomerDropdown(false);
-  //   setPaymentMethod("عند الاستلام");
-
-  //   // إعادة بيانات المستلم والعنوان
-  //   setReceiverName("");
-  //   setReceiverPhone([""]);
-  //   setCountry("ليبيا");
-  //   setCity("");
-  //   setMunicipality("");
-  //   setFullAddress("");
-
-  //   // إعادة تفاصيل الشحن والملاحظات
-  //   setDeliveryMethod("توصيل الى المنزل");
-  //   setamount("");
-  //   setamountBank("");
-  //   setGoogleMapsLink("");
-  //   setDeliveryNotes("");
-  //   setAdditionalNotes("");
-  // };
 
   const handleStatus = async (customerId: any, status: any) => {
     console.log(customerId, status)
@@ -560,7 +391,7 @@ const CustomrLayout: React.FC = () => {
     };
 
     const rawText = String(value)
-      .replace(/[\u200E\u200F\u202A-\u202E]/g, "")
+      .replace(/[‎‏‪-‮]/g, "")
       .trim();
     const normalizedText = normalizeArabicDigits(rawText)
       .replace(/\s+/g, " ")
@@ -604,7 +435,7 @@ const CustomrLayout: React.FC = () => {
 
       try {
         const formattedData = {
-          ...data,
+          name: data.name,
           phone: normalizePhoneList(data.phone),
         };
 
@@ -626,7 +457,7 @@ const CustomrLayout: React.FC = () => {
         const phoneArray = normalizePhoneList(data.phone);
 
         const formattedData = {
-          ...data,
+          name: data.name,
           phone: phoneArray, // هنا سيتم إرسال ["098786", "099876"]
         };
 
@@ -680,11 +511,6 @@ const CustomrLayout: React.FC = () => {
     const maxPhoneCount = phoneLists.reduce((maxCount, phones) => Math.max(maxCount, phones.length), 0);
 
     const worksheetData = customers.map((customer) => {
-      // تجميع الرسائل الأخيرة أو الطلبات إذا أردت
-      const lastMessage = customer.message && customer.message.length > 0
-        ? customer.message[customer.message.length - 1].message
-        : "لا توجد رسائل";
-
       const phones = Array.isArray(customer.phone)
         ? customer.phone
         : [customer.phone].filter(Boolean);
@@ -698,13 +524,10 @@ const CustomrLayout: React.FC = () => {
       return {
         "اسم العميل": customer.name,
         ...phoneColumns,
-        "الدولة": customer.country,
         "الحالة": customer.status,
         "تاريخ التسجيل": new Date(customer.createdAt).toLocaleDateString('ar-EG'),
         "تاريخ التسجيل ISO": new Date(customer.createdAt).toISOString(),
         "عدد الطلبات": customer.orders?.length || 0,
-        "آخر رسالة": lastMessage,
-        "الموظفين المسؤولين": customer.users?.map((u: any) => u.username).join(', ') || "غير معين",
       };
     });
 
@@ -759,7 +582,6 @@ const CustomrLayout: React.FC = () => {
       for (const row of rows) {
         const name = String(getCellValueByAliases(row, ["اسم العميل", "الاسم", "name", "customer name"]) || "").trim();
         const phoneRaw = String(getCellValueByAliases(row, ["رقم الهاتف", "الهاتف", "phone", "phone number", "mobile"]) || "").trim();
-        const country = String(getCellValueByAliases(row, ["الدولة", "البلد", "country"]) || "").trim();
         const createdAt = parseImportedDateValue(
           getCellValueByAliases(row, ["تاريخ التسجيل ISO", "تاريخ التسجيل", "createdAt", "manualCreatedAt", "تاريخ الإنشاء"])
         );
@@ -779,9 +601,6 @@ const CustomrLayout: React.FC = () => {
         const payload = {
           name,
           phone: phoneArray,
-          country,
-          countryCode: "",
-          city: "",
           createdAt,
         };
 
@@ -806,28 +625,6 @@ const CustomrLayout: React.FC = () => {
     } finally {
       toast.dismiss(loading);
     }
-  };
-
-  const handleAssignUsers = async (customerId: string, userIds: string[]) => {
-    const loading = toast.loading("جار ربط الموظفين بالعميل")
-    try {
-      const res = await AssignUsers(customerId, userIds)
-
-      if (res.success) {
-        // تحديث البيانات محلياً أو إعادة جلبها
-        toast.success("تم ربط الموظفين بنجاح");
-        getData();
-        setOpenAssignModal(false);
-      } else {
-        toast.error("خطأ")
-      }
-    } catch (error) {
-      toast.error("خطأ في الربط");
-    } finally {
-      toast.dismiss(loading)
-    }
-
-    console.log(customerId, userIds)
   };
 
   const tableColumns = [
@@ -863,12 +660,10 @@ const CustomrLayout: React.FC = () => {
             ? (() => {
                 const rawPhone = customer.phone?.[0] || "";
                 const phoneNumber = String(rawPhone).replace(/\D/g, "");
-                const countryCode = String(customer.countryCode || "").replace(/\D/g, "");
-                const whatsappNumber = `${countryCode}${phoneNumber}`;
                 const phoneText = customer.phone
                   .map((phone: string) => formatPhoneForDisplay(phone))
                   .join(" - ");
-  
+
                 if (!phoneNumber) {
                   return (
                     <span dir="ltr" className="inline-block text-left">
@@ -876,10 +671,10 @@ const CustomrLayout: React.FC = () => {
                     </span>
                   );
                 }
-  
+
                 return (
                   <a
-                    href={`https://wa.me/${whatsappNumber}`}
+                    href={`https://wa.me/${phoneNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     dir="ltr"
@@ -891,70 +686,6 @@ const CustomrLayout: React.FC = () => {
               })()
             : "غير متوفر",
         className: "text-xs font-bold text-slate-600 dark:text-slate-300",
-      },
-      {
-        header: renderSortHeader("الدولة", "country"),
-        accessor: (customer: any) => customer.country || "-",
-        className: "text-xs font-bold text-slate-600 dark:text-slate-300",
-      },
-      {
-        header: "المسؤول",
-        accessor: (customer: any) => {
-          const assignedUsers = Array.isArray(customer.users) ? customer.users : [];
-          const firstResponsible = assignedUsers[0]?.username || assignedUsers[0]?.name || "غير معين";
-          const firstAvatar = assignedUsers[0]?.avatar || "";
-          const remainingCount = Math.max(0, assignedUsers.length - 1);
-          const hasMultiple = remainingCount > 0;
-  
-          if (!(user && isAdmin(user))) {
-            return (
-              <div className="inline-flex items-center gap-2">
-                {firstAvatar ? (
-                  <img
-                    src={firstAvatar}
-                    alt={firstResponsible}
-                    className="w-6 h-6 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="font-bold text-slate-700 dark:text-slate-300">{firstResponsible}</span>
-                )}
-                {hasMultiple && (
-                  <span className="min-w-6 h-6 px-2 rounded-full bg-blue-100 text-blue-700 text-[11px] font-black flex items-center justify-center">
-                    {remainingCount}
-                  </span>
-                )}
-              </div>
-            );
-          }
-  
-          return (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCustomer(customer);
-                setOpenAssignModal(true);
-              }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
-            >
-              {firstAvatar ? (
-                <img
-                  src={firstAvatar}
-                  alt={firstResponsible}
-                  className="w-6 h-6 rounded-full object-cover"
-                />
-              ) : (
-                <span className="font-bold text-slate-700 dark:text-slate-300">{firstResponsible}</span>
-              )}
-              {hasMultiple && (
-                <span className="min-w-6 h-6 px-2 rounded-full bg-blue-100 text-blue-700 text-[11px] font-black flex items-center justify-center">
-                  {remainingCount}
-                </span>
-              )}
-            </button>
-          );
-        },
-        className: "text-xs",
       },
       {
         header: "الحالة",
@@ -970,16 +701,7 @@ const CustomrLayout: React.FC = () => {
             className={`
               appearance-none outline-none cursor-pointer
               px-3 py-1.5 rounded-full text-[10px] font-black text-center transition-all border
-              ${customer.status === "فرصة جديدة"
-                ? "bg-blue-100 text-blue-600 border-rose-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
-                : customer.status === "جاري المتابعة"
-                  ? "bg-green-100 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
-                  : customer.status === "تم البيع"
-                    ? "bg-yellow-100 text-yellow-600 border-green-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800"
-                    : customer.status === "غير مهتم / ملغي"
-                      ? "bg-red-100 text-red-500 border-slate-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
-                      : "bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800"
-              }
+              ${getStatusClasses(customer.status)}
             `}
           >
             {STATUS_OPTIONS.map((option) => (
@@ -1006,7 +728,7 @@ const CustomrLayout: React.FC = () => {
       },
       {
         header: renderSortHeader("عدد الطلبات", "ordersCount"),
-        accessor: (customer: any) => 
+        accessor: (customer: any) =>
         (
           <button
             type="button"
@@ -1019,23 +741,14 @@ const CustomrLayout: React.FC = () => {
             {customer.orders?.length || 0}
           </button>
         ),
-          
+
         className: "text-xs font-bold text-slate-600 dark:text-slate-300",
       },
-      {
-        header: "آخر رسالة",
-        accessor: (customer: any) => {
-          const lastMessage = customer.message && customer.message.length > 0
-            ? customer.message[customer.message.length - 1].message
-            : "لا توجد رسائل...";
-          return <span className="max-w-[220px] truncate block text-slate-500 dark:text-slate-400">{lastMessage}</span>;
-        },
-      },
     ];
-  
+
     const tableActions: TableAction<any>[] = (() => {
       const actions: TableAction<any>[] = [];
-  
+
       if (user && hasPermission(user, "editCustomers")) {
         actions.push({
           label: "تعديل",
@@ -1056,7 +769,7 @@ const CustomrLayout: React.FC = () => {
           }
         });
       }
-  
+
       if (user && hasPermission(user, "deleteCustomers")) {
         actions.push({
           label: "حذف",
@@ -1065,7 +778,7 @@ const CustomrLayout: React.FC = () => {
           onClick: (customer: any) => deleteCus(customer),
         });
       }
-  
+
       if (user && hasPermission(user, "addOrders")) {
         actions.push({
           label: "الطلبات",
@@ -1076,7 +789,7 @@ const CustomrLayout: React.FC = () => {
           }
         });
       }
-  
+
       return actions;
     })();
 
@@ -1096,17 +809,10 @@ const CustomrLayout: React.FC = () => {
               <CheckSquare size={20} />
             </Button>
           )}
-            {selectedCustomers.length > 0 && user && isAdmin(user) && (
-              <>
-                <Button onClick={() => setIsBulkAssignOpen(true)} variant="outline">
-                  <UserPlus size={20} />
-                </Button>
-                {hasPermission(user, "deleteCustomers") && (
-                  <Button onClick={handleBulkDelete} variant="secondary">
-                    <Trash2 size={20} />
-                  </Button>
-                )}
-              </>
+            {selectedCustomers.length > 0 && user && isAdmin(user) && hasPermission(user, "deleteCustomers") && (
+              <Button onClick={handleBulkDelete} variant="secondary">
+                <Trash2 size={20} />
+              </Button>
             )}
             {user && isAdmin(user) && (
             <>
@@ -1126,16 +832,6 @@ const CustomrLayout: React.FC = () => {
             {user && isAdmin(user) && (
             <Button onClick={handleExportAction}><Download size={20} /></Button>
           )}
-            {/* <button
-              
-              className={`flex items-center gap-2 px-6 py-2 rounded-xl text-white font-bold transition-all ${selectedCustomers.length > 0
-                ? 'bg-blue-600 hover:bg-blue-700 shadow-lg scale-105'
-                : 'bg-slate-600 hover:bg-slate-700'
-                }`}
-            >
-              <Download size={18} />
-            </button> */}
-
             {/* زر مسح التحديد - يظهر فقط عند وجود تحديد */}
             {selectedCustomers.length > 0 && (
               <button
@@ -1158,7 +854,7 @@ const CustomrLayout: React.FC = () => {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ابحث بالرقم أو الاسم أو الدولة أو المدينة أو اسم الموظف"
+            placeholder="ابحث بالرقم أو الاسم"
             className="flex-1 h-11 w-full rounded-lg border border-slate-800/50 dark:border-slate-100/50 text-slate-800 dark:text-slate-100 bg-transparent p-5 my-3"
           />
           </div>
@@ -1166,7 +862,7 @@ const CustomrLayout: React.FC = () => {
           {/* خيارات التاريخ */}
           <div className="flex bg-slate-100 w-[120px] justify-center dark:bg-slate-800 p-1 rounded-xl gap-1 h-11 items-center">
             {[
-              
+
               { id: 'تم البيع', label: 'تم البيع' },
             ].map((tab) => (
               <button
@@ -1185,16 +881,6 @@ const CustomrLayout: React.FC = () => {
             ))}
 
           </div>
-
-          <select
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value)}
-            className="h-11 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 px-3"
-          >
-            <option value="الكل">الجنس: الكل</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
-          </select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
@@ -1256,7 +942,7 @@ const CustomrLayout: React.FC = () => {
         <div className=" mx-auto">
           {viewMode === "cards" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visibleCustomers.map((customer) => (
+              {filterCustomer.map((customer) => (
                 <div
                   onClick={() => getSingleCustomer(customer)}
                   key={customer.id}
@@ -1309,8 +995,8 @@ const CustomrLayout: React.FC = () => {
                     >
                       <Trash2 size={16} />
                     </button>
-                      )}   
-                    
+                      )}
+
                   </div>
 
                   <div className="flex justify-between items-start mb-6">
@@ -1319,12 +1005,6 @@ const CustomrLayout: React.FC = () => {
                         <h3 className="text-base font-black text-slate-900 dark:text-white mb-1">
                           {customer.name}
                         </h3>
-                        {/* عرض آخر رسالة إذا وجدت */}
-                        <p className="text-xs text-slate-500 line-clamp-1 italic font-medium">
-                          {customer.message && customer.message.length > 0
-                            ? customer.message[customer.message.length - 1].message
-                            : "لا توجد رسائل..."}
-                        </p>
 
                       </div>
 
@@ -1341,12 +1021,7 @@ const CustomrLayout: React.FC = () => {
                           className={`
       appearance-none outline-none cursor-pointer
       px-4 py-1.5 rounded-full text-[10px] font-black text-center transition-all border
-      ${customer.status === "فرصة جديدة" ? 'bg-blue-100 text-blue-600 border-rose-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800' :
-                              customer.status === "جاري المتابعة" ? 'bg-green-100 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' :
-                                customer.status === "تم البيع" ? 'bg-yellow-100 text-yellow-600 border-green-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800' :
-                                  customer.status === "غير مهتم / ملغي" ? 'bg-red-100 text-red-500 border-slate-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800' :
-                                    'bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'
-                            }
+      ${getStatusClasses(customer.status)}
     `}
                         >
                           {STATUS_OPTIONS.map((option) => (
@@ -1360,37 +1035,6 @@ const CustomrLayout: React.FC = () => {
                             </option>
                           ))}
                         </select>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!(user && isAdmin(user))) return;
-                            setCustomer(customer);
-                            setOpenAssignModal(true);
-                          }}
-                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${user && isAdmin(user)
-                            ? "bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                            : "bg-slate-100/60 dark:bg-slate-800/60 cursor-default"}`}
-                          title="ربط الموظفين"
-                        >
-                          {customer.users?.[0]?.avatar ? (
-                            <img
-                              src={customer.users[0].avatar}
-                              alt={customer.users?.[0]?.username || customer.users?.[0]?.name || "avatar"}
-                              className="w-6 h-6 rounded-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-[11px] font-black text-slate-700 dark:text-slate-300">
-                              {customer.users?.[0]?.username || customer.users?.[0]?.name || "غير معين"}
-                            </span>
-                          )}
-                          {(customer.users?.length || 0) > 1 && (
-                            <span className="min-w-6 h-6 px-2 rounded-full bg-blue-100 text-blue-700 text-[11px] font-black flex items-center justify-center">
-                              {(customer.users?.length || 0) - 1}
-                            </span>
-                          )}
-                        </button>
 
                         {/* التاريخ المنسق */}
                         <div className="flex flex-col border-r border-slate-200 dark:border-slate-700 pr-3">
@@ -1430,8 +1074,6 @@ const CustomrLayout: React.FC = () => {
                       </button>
                       )}
 
-                      {/* أيقونة تعيين موظف (للأدمن فقط) */}
-
                       {user && hasPermission(user, "viewOrders") && (
                         <button
                         className="p-2 text-slate-400 hover:text-green-500 hover:bg-blue-50 rounded-xl transition-all"
@@ -1450,10 +1092,9 @@ const CustomrLayout: React.FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         const rawPhone = customer.phone?.[0] || '';
-                        const phoneNumber = rawPhone.replace(/\D/g, '');
-                        const countryCode = (customer.countryCode || '').replace(/\D/g, '');
+                        const phoneNumber = String(rawPhone).replace(/\D/g, '');
                         if (phoneNumber) {
-                          window.open(`https://wa.me/${countryCode}${phoneNumber}`, '_blank');
+                          window.open(`https://wa.me/${phoneNumber}`, '_blank');
                         }
                       }}
                       className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold transition-transform active:scale-95 shadow-md shadow-green-200 dark:shadow-none"
@@ -1523,14 +1164,6 @@ const CustomrLayout: React.FC = () => {
                                   defaultCountry="SY"
                                   value={value}
                                   onChange={onChange}
-                                  onCountryChange={(country) => {
-            if (country) { 
-              
-              // خيار ب: حفظ مفتاح الاتصال (مثلاً: 963)
-              // const code = getCountryCallingCode(country);
-              // setValue("countryCode", code);
-            }
-          }}
                                   className="PhoneInputCustom"
                                   numberInputProps={{
                                     className: "w-full bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-blue-500 transition-all",
@@ -1591,17 +1224,6 @@ const CustomrLayout: React.FC = () => {
         isOpenOrder={isOpenOrder} products={products}
       setEditId={setEditId} setCustomerId={setCustomerId} setisOpenOrder={setisOpenOrder} />
 
-
-      <AppModal isOpen={OpenAssignModal} onClose={() => setOpenAssignModal(false)} title="ربط المستخدمين بالعميل" >
-        <AssignUserModal customer={customer} allUsers={alluser} onSave={handleAssignUsers} />
-      </AppModal>
-      <AppModal isOpen={isBulkAssignOpen} onClose={() => setIsBulkAssignOpen(false)} title="ربط المستخدمين بالعملاء المحددين" >
-        <AssignUserModal
-          customer={{ id: "bulk", name: `مجموعة (${selectedCustomers.length})`, users: [] }}
-          allUsers={alluser}
-          onSave={handleBulkAssignUsers}
-        />
-      </AppModal>
       <AppModal size='lg' isOpen={isOpenordercustomer} onClose={() => setisOpenordercustomer(false)} title='طلبات العميل'>
         <ViewOrderCustomer orders={customerorder} />
       </AppModal>

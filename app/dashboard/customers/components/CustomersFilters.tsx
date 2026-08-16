@@ -5,8 +5,6 @@ type CustomersFiltersProps = {
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   dateFilter: string;
   setDateFilter: React.Dispatch<React.SetStateAction<string>>;
-  genderFilter: string;
-  setGenderFilter: React.Dispatch<React.SetStateAction<string>>;
   createdPreset: string;
   setCreatedPreset: React.Dispatch<React.SetStateAction<string>>;
   createdFrom: string;
@@ -18,10 +16,7 @@ type CustomersFiltersProps = {
 
 const filterTabs = [
   { id: "فرصة جديدة", label: "فرصة جديدة" },
-  { id: "مهتم", label: "مهتم" },
-  { id: "جاري المتابعة", label: "جاري المتابعة" },
   { id: "تم البيع", label: "تم البيع" },
-  { id: "غير مهتم / ملغي", label: "غير مهتم / ملغي" },
   { id: "المتجر", label: "المتجر" },
   { id: "الكل", label: "الكل" },
 ];
@@ -31,8 +26,6 @@ export const CustomersFilters: React.FC<CustomersFiltersProps> = ({
   setSearch,
   dateFilter,
   setDateFilter,
-  genderFilter,
-  setGenderFilter,
   createdPreset,
   setCreatedPreset,
   createdFrom,
@@ -49,7 +42,7 @@ export const CustomersFilters: React.FC<CustomersFiltersProps> = ({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ابحث بالرقم أو الاسم أو الدولة أو المدينة أو اسم الموظف"
+            placeholder="ابحث بالرقم أو الاسم"
             className="flex-1 h-11 w-full rounded-lg border border-slate-800/50 dark:border-slate-100/50 text-slate-800 dark:text-slate-100 bg-transparent p-5 my-3"
           />
         </div>
@@ -79,18 +72,6 @@ export const CustomersFilters: React.FC<CustomersFiltersProps> = ({
             </button>
           ))}
           </div>
-        </div>
-
-        <div className="w-full md:w-auto md:justify-self-start">
-          <select
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value)}
-            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 md:min-w-[180px]"
-          >
-            <option value="الكل">الجنس: الكل</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
-          </select>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { hasPermission } from "@/lib/utils";
-import { AssignUsers, deleteCustomer } from "@/server/customer";
+import { deleteCustomer } from "@/server/customer";
 import toast from "react-hot-toast";
 import * as React from "react";
 
@@ -8,7 +8,6 @@ type UseCustomerBulkActionsParams = {
   user: any;
   getData: () => Promise<void>;
   setSelectedCustomers: React.Dispatch<React.SetStateAction<any[]>>;
-  setIsBulkAssignOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function useCustomerBulkActions({
@@ -16,39 +15,7 @@ export function useCustomerBulkActions({
   user,
   getData,
   setSelectedCustomers,
-  setIsBulkAssignOpen,
 }: UseCustomerBulkActionsParams) {
-  const handleBulkAssignUsers = async (_: string, userIds: string[]) => {
-    if (selectedCustomers.length === 0) {
-      toast.error("لا يوجد عملاء محددين");
-      return;
-    }
-
-    const loading = toast.loading("جار ربط الموظفين بالعملاء المحددين");
-    try {
-      const results = await Promise.all(
-        selectedCustomers.map((customerId) =>
-          AssignUsers(customerId, userIds)
-            .then(() => ({ success: true }))
-            .catch(() => ({ success: false }))
-        )
-      );
-
-      const failedCount = results.filter((result) => !result.success).length;
-      if (failedCount > 0) {
-        toast.error(`تعذر ربط ${failedCount} عميل`);
-      } else {
-        toast.success("تم ربط الموظفين بنجاح");
-      }
-
-      await getData();
-      setSelectedCustomers([]);
-      setIsBulkAssignOpen(false);
-    } finally {
-      toast.dismiss(loading);
-    }
-  };
-
   const handleBulkDelete = async () => {
     if (!user || !hasPermission(user, "deleteCustomers")) {
       toast.error("ليس لديك صلاحية حذف العملاء");
@@ -93,7 +60,6 @@ export function useCustomerBulkActions({
   };
 
   return {
-    handleBulkAssignUsers,
     handleBulkDelete,
   };
 }

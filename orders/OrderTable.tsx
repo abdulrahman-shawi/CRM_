@@ -53,9 +53,8 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                 onClick={() => {
                   const rawPhone = e.customer?.phone?.[0] || "";
                   const phoneNumber = rawPhone.replace(/\D/g, "");
-                  const countryCode = (e.customer?.countryCode || "").replace(/\D/g, "");
                   if (phoneNumber) {
-                    window.open(`https://wa.me/${countryCode}${phoneNumber}`, '_blank');
+                    window.open(`https://wa.me/${phoneNumber}`, '_blank');
                   }
                 }}
                 className="text-right font-bold text-blue-600 hover:text-blue-700"

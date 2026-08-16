@@ -1,93 +1,14 @@
-import { useAuth } from "@/context/AuthContext";
-import { formatPhoneForDisplay, hasPermission } from "@/lib/utils";
-import { updateCustomer } from "@/server/customer";
-import { MapPin, Phone } from "lucide-react";
+import { formatPhoneForDisplay } from "@/lib/utils";
+import { Phone } from "lucide-react";
 import React from "react";
-import toast from "react-hot-toast";
 import ViewOrderCustomer from "./viewOrder";
 
 export default function GetCustomerSingle({ data, getdatas }: { data: any, getdatas: any }) {
   const [activeTab, setActiveTab] = React.useState<"details" | "orders">("details");
-  const [localFields, setLocalFields] = React.useState({
-    age: "",
-    gender: "",
-    rating: "",
-    source: "",
-    country: "",
-    city: "",
-  });
-  const { user } = useAuth()
-  const canEdit = hasPermission(user, "editCustomers");
-
-  const sourceOptions = [
-    { label: "whatsApp", value: "whatsApp" },
-    { label: "Facebook", value: "Facebook" },
-    { label: "instgram", value: "instgram" },
-    { label: "احالة", value: "احالة" },
-    { label: "زيارة شخصية", value: "زيارة شخصية" },
-    { label: "معرض", value: "معرض" },
-    { label: "أرشيف / رقم قديم", value: "أرشيف / رقم قديم" },
-  ];
-
-  const genderOptions = [
-    { label: "ذكر", value: "ذكر" },
-    { label: "أنثى", value: "أنثى" },
-  ];
-
-  const ageOptions = [
-    { label: "18-25", value: "18-25" },
-    { label: "26-35", value: "26-35" },
-    { label: "36-45", value: "36-45" },
-    { label: "46+", value: "46+" },
-  ];
-
-  const ratingOptions = [
-    { label: "1", value: "1" },
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
-    { label: "5", value: "5" },
-  ];
-
-  React.useEffect(() => {
-    setLocalFields({
-      age: data.age || "",
-      gender: data.gender || "",
-      rating: data.rating ? String(data.rating) : "",
-      source: data.source || "",
-      country: data.country || "",
-      city: data.city || "",
-    });
-  }, [data]);
 
   React.useEffect(() => {
     setActiveTab("details");
   }, [data?.id]);
-
-  const handleFieldChange = async (field: "age" | "gender" | "rating" | "source" | "country" | "city", value: string) => {
-    if (!canEdit) {
-      toast.error("ليس لديك صلاحية التعديل");
-      return;
-    }
-
-    setLocalFields((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    const payload: any = { [field]: value || undefined };
-    if (field === "rating") {
-      payload.rating = value ? Number(value) : undefined;
-    }
-
-    const res = await updateCustomer(payload, data.id);
-    if (res.success) {
-      await getdatas();
-      toast.success("تم تحديث البيانات");
-    } else {
-      toast.error("حدث خطأ أثناء التحديث");
-    }
-  };
 
   return (
     <div className="text-slate-800 dark:text-slate-50">
@@ -99,64 +20,6 @@ export default function GetCustomerSingle({ data, getdatas }: { data: any, getda
           <div>
             <h3 className="text-xl font-bold text-white">{data.name}</h3>
             <div className="border border-slate-500 mt-2 mb-4"></div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500">العمر</label>
-                <select
-                  value={localFields.age}
-                  onChange={(e) => handleFieldChange("age", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                >
-                  <option value="">غير محدد</option>
-                  {ageOptions.map((a) => (
-                    <option key={a.value} value={a.value}>{a.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500">الجنس</label>
-                <select
-                  value={localFields.gender}
-                  onChange={(e) => handleFieldChange("gender", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                >
-                  <option value="">غير محدد</option>
-                  {genderOptions.map((g) => (
-                    <option key={g.value} value={g.value}>{g.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500">التقييم</label>
-                <select
-                  value={localFields.rating}
-                  onChange={(e) => handleFieldChange("rating", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                >
-                  <option value="">غير محدد</option>
-                  {ratingOptions.map((r) => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500">مصدر العميل</label>
-                <select
-                  value={localFields.source}
-                  onChange={(e) => handleFieldChange("source", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                >
-                  <option value="">غير محدد</option>
-                  {sourceOptions.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
             <p className="text-xs text-slate-500">تم الانشاء في: {new Date(data.createdAt).toLocaleDateString('ar-EG')}</p>
           </div>
         </div>
@@ -196,32 +59,6 @@ export default function GetCustomerSingle({ data, getdatas }: { data: any, getda
                     {(Array.isArray(data.phone) ? data.phone : []).map((phone: string) => formatPhoneForDisplay(phone)).join(" - ")}
                   </span>
                 </p>
-              </div>
-            </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-              <MapPin size={18} className="text-red-500" />
-              <div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase">الدولة</p>
-                <input
-                  value={localFields.country}
-                  onChange={(e) => setLocalFields((prev) => ({ ...prev, country: e.target.value }))}
-                  onBlur={(e) => handleFieldChange("country", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                />
-              </div>
-            </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-              <MapPin size={18} className="text-emerald-500" />
-              <div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase">المدينة</p>
-                <input
-                  value={localFields.city}
-                  onChange={(e) => setLocalFields((prev) => ({ ...prev, city: e.target.value }))}
-                  onBlur={(e) => handleFieldChange("city", e.target.value)}
-                  disabled={!canEdit}
-                  className="text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 disabled:opacity-60"
-                />
               </div>
             </div>
           </div>

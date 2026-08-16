@@ -8,7 +8,7 @@
 
 **SKYNOVA CRM** is a full-stack CRM / e-commerce web application built with Next.js 14 (App Router). The current scope is intentionally reduced to: **Categories, Products, Orders, Customers, Settings**, plus the **e-commerce / affiliate platform** (landing pages, offers, hero slides, reviews, affiliate links & commissions). User & permission management is kept for login/access control.
 
-Removed modules (do not reintroduce unless asked): warehouses/inventory/stock movements, shipping companies & tracking, loyalty points, expenses, employee salaries, customer payments, marketing campaigns, WhatsApp Cloud API, email sending, tasks, notifications, warranty, returns, wholesale (customers & orders), countries/cities management, analytics, backups, cron jobs.
+Removed modules (do not reintroduce unless asked): warehouses/inventory/stock movements, shipping companies & tracking, loyalty points, expenses, employee salaries, customer payments, marketing campaigns, WhatsApp Cloud API, email sending, tasks, notifications, warranty, returns, wholesale (customers & orders), countries/cities management, analytics, backups, cron jobs, barcode (scanning & label printing), product variants (colors & sizes), product-level affiliate price/commission overrides.
 
 The UI is primarily **Arabic** and rendered **RTL** (`dir="rtl"`). Most user-facing labels, toast messages, and inline comments are in Arabic. Code identifiers (variables, functions, filenames) remain in English.
 
@@ -46,7 +46,6 @@ app/                    # Next.js App Router
   dashboard/            # Protected dashboard pages
     layout.tsx          # Dashboard shell (Sidebar + Navbar, RTL, ThemeProvider)
     page.tsx            # Main dashboard (simple counters)
-    barcode-labels/
     categories/
     comments/
     customers/
@@ -69,13 +68,12 @@ server/                 # Server Actions (`'use server'`)
   customer.ts
   product.ts            # Product queries, toggles, landing page, affiliate links, deleteProduct
   category.ts
-  image.ts              # Product create/update with file uploads (price, affiliate fields, variants)
+  image.ts              # Product create/update with file uploads (name, price, meta, images)
   general-settings.ts
   offer.ts
   page.ts
   hero-slide.ts
   affiliate.ts
-  variants.ts           # Colors & Sizes CRUD, product variants (color/size + price)
 
 components/             # React components
   pages/                # Page-specific sections (customers, affiliate, ...)
@@ -107,7 +105,6 @@ lib/                    # Utilities & configuration
   currency.ts           # Site currency settings hook/helpers
   affiliate.ts          # Affiliate/ad URL builders
   ad-pricing.ts         # Quantity discount pricing helpers
-  barcode.ts
 
 context/
   AuthContext.tsx       # React context: auth state, impersonation, refreshUser
@@ -162,7 +159,7 @@ npx prisma migrate deploy
 
 Connection is configured via `DATABASE_URL` in `.env`. A `prisma.config.ts` file is also present for Prisma's new configuration format.
 
-**Models (current):** `User`, `Permission`, `Category`, `Product` (has a direct `price` column), `Color`, `Size`, `ProductVariant`, `ProductImage`, `Customer`, `Order`, `OrderItem`, `GeneralSetting`, plus e-commerce models: `Page`, `HeroSlide`, `Review`, `ProductLandingPage`, `AdPageVisit`, `Offer`, `OfferDiscount`, `AffiliateLink`, `Commission`, `AffiliateWalletTransfer`.
+**Models (current):** `User`, `Permission`, `Category`, `Product` (has a direct `price` column), `ProductImage`, `Customer`, `Order`, `OrderItem`, `GeneralSetting`, plus e-commerce models: `Page`, `HeroSlide`, `Review`, `ProductLandingPage`, `AdPageVisit`, `Offer`, `OfferDiscount`, `AffiliateLink`, `Commission`, `AffiliateWalletTransfer`.
 
 **Enums:** `AccountType` (ADMIN/MANAGER/STAFF), `WalletTransferStatus`, `CommissionStatus`, `DiscountType`.
 
@@ -210,13 +207,10 @@ Heavy business logic lives in `server/*.ts` files as async exported functions wi
 Lightweight API routes exist under `app/api/` for specific needs (login, logout, impersonation, user profile, affiliate order creation & tracking).
 
 ### Product Pricing
-`Product.price` is the single sell price (per-warehouse stock pricing was removed with the inventory module). `Product.affiliatePrice` overrides it for affiliate/ad orders. `OrderItem.price` snapshots the unit price at order time.
-
-### Product Variants (Colors & Sizes)
-`Color` / `Size` / `ProductVariant` (`server/variants.ts`) hold per-product color/size combos, each with its own price, managed from `/dashboard/products` (`VariantsFields` in the product form). Order forms let the user pick a variant per item and choose a pricing mode: `sum` (product price + variant price), `product` (product price only), or `variant` (variant price only). The resulting unit price is snapshotted on `OrderItem.price`, and the optional `variantId` FK links the item to the variant.
+`Product.price` is the single sell price, used for store, affiliate, and ad orders alike. `OrderItem.price` snapshots the unit price at order time.
 
 ### Affiliate & Commissions
-Affiliate links (`AffiliateLink`) attribute orders via `applyAffiliateAttribution` in `server/order.ts`; commissions (`Commission`) are computed from `Product.affiliateCommissionRate`. Public order creation goes through `app/api/affiliate/orders/route.ts`.
+Affiliate links (`AffiliateLink`) attribute orders via `applyAffiliateAttribution` in `server/order.ts`; commissions (`Commission`) are computed from `AffiliateLink.commissionRate`. Public order creation goes through `app/api/affiliate/orders/route.ts`.
 
 ---
 

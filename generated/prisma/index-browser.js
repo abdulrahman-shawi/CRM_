@@ -253,16 +253,7 @@ exports.Prisma.ProductImageScalarFieldEnum = {
 exports.Prisma.CustomerScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  email: 'email',
   phone: 'phone',
-  countryCode: 'countryCode',
-  phonestatus: 'phonestatus',
-  country: 'country',
-  gender: 'gender',
-  age: 'age',
-  source: 'source',
-  city: 'city',
-  rating: 'rating',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

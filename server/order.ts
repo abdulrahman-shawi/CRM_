@@ -221,7 +221,6 @@ const orderBaseSelect = {
             id: true,
             name: true,
             phone: true,
-            countryCode: true,
         },
     },
 } as const;

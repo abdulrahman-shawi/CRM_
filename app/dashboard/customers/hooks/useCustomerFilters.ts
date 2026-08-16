@@ -29,9 +29,9 @@ const getRangeForPreset = (preset: string) => {
 
 export const normalizeStatus = (value: unknown) =>
   String(value ?? "")
-    .replace(/[\u064B-\u065F\u0670]/g, "")
-    .replace(/\u0640/g, "")
-    .replace(/[\u200E\u200F\u202A-\u202E]/g, "")
+    .replace(/[ً-ٰٟ]/g, "")
+    .replace(/ـ/g, "")
+    .replace(/[‎‏‪-‮]/g, "")
     .replace(/[إأآ]/g, "ا")
     .replace(/ى/g, "ي")
     .replace(/ة/g, "ه")
@@ -42,7 +42,6 @@ export function useCustomerFilters(
   customers: any[],
   search: string,
   dateFilter: string,
-  genderFilter: string,
   createdPreset: string,
   createdFrom: string,
   createdTo: string
@@ -56,37 +55,14 @@ export function useCustomerFilters(
     const rangeEnd = fromKey && toKey ? (fromKey <= toKey ? toKey : fromKey) : fromKey || toKey;
 
     return customers.filter((customer: any) => {
-      const hasAssignedUserMatch = Array.isArray(customer.users)
-        ? customer.users.some((assignedUser: any) => {
-            const username = String(assignedUser?.username ?? "").toLowerCase();
-            const name = String(assignedUser?.name ?? "").toLowerCase();
-            const email = String(assignedUser?.email ?? "").toLowerCase();
-            return (
-              username.includes(normalizedSearch) ||
-              name.includes(normalizedSearch) ||
-              email.includes(normalizedSearch)
-            );
-          })
-        : false;
-
       const matchesSearch =
         customer.name?.toLowerCase().includes(normalizedSearch) ||
-        customer.countryCode?.toLowerCase().includes(normalizedSearch) ||
-        customer.phone?.some((phone: any) => String(phone ?? "").toLowerCase().includes(normalizedSearch)) ||
-        customer.city?.toLowerCase().includes(normalizedSearch) ||
-        customer.country?.toLowerCase().includes(normalizedSearch) ||
-        hasAssignedUserMatch;
+        customer.phone?.some((phone: any) => String(phone ?? "").toLowerCase().includes(normalizedSearch));
 
       const selectedStatus = normalizeStatus(dateFilter);
       const currentStatus = normalizeStatus(customer?.status);
       const matchesStatus = selectedStatus !== normalizeStatus("الكل")
         ? currentStatus === selectedStatus
-        : true;
-
-      const selectedGender = normalizeStatus(genderFilter);
-      const currentGender = normalizeStatus(customer?.gender);
-      const matchesGender = selectedGender !== normalizeStatus("الكل")
-        ? currentGender === selectedGender
         : true;
 
       const customerCreatedAt = customer?.createdAt ? new Date(customer.createdAt) : null;
@@ -98,7 +74,7 @@ export function useCustomerFilters(
         (!rangeStart || customerCreatedKey >= rangeStart) &&
         (!rangeEnd || customerCreatedKey <= rangeEnd);
 
-      return matchesSearch && matchesStatus && matchesGender && matchesCreatedAt;
+      return matchesSearch && matchesStatus && matchesCreatedAt;
     });
-  }, [customers, search, dateFilter, genderFilter, createdPreset, createdFrom, createdTo]);
+  }, [customers, search, dateFilter, createdPreset, createdFrom, createdTo]);
 }

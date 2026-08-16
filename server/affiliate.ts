@@ -628,11 +628,7 @@ export async function createPublicCustomerForAffiliateOrder(data: {
     data: {
       name,
       phone: [phone],
-      country: String(data.country || '').trim() || null,
-      city: String(data.city || '').trim() || null,
       status: 'المتجر',
-      phonestatus: 'معلق',
-      source: 'affiliate',
     },
     select: {
       id: true,

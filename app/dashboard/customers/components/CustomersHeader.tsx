@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { hasPermission, isAdmin } from "@/lib/utils";
-import { CheckSquare, Download, Plus, Trash2, Upload, UserPlus, XCircle } from "lucide-react";
+import { CheckSquare, Download, Plus, Trash2, Upload, XCircle } from "lucide-react";
 
 type CustomersHeaderProps = {
   user: any;
@@ -9,7 +9,6 @@ type CustomersHeaderProps = {
   importInputRef: React.RefObject<HTMLInputElement>;
   onOpenCreate: () => void;
   onToggleSelectAll: () => void;
-  onOpenBulkAssign: () => void;
   onBulkDelete: () => void;
   onImportClick: () => void;
   onImportFile: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,7 +22,6 @@ export const CustomersHeader: React.FC<CustomersHeaderProps> = ({
   importInputRef,
   onOpenCreate,
   onToggleSelectAll,
-  onOpenBulkAssign,
   onBulkDelete,
   onImportClick,
   onImportFile,
@@ -45,17 +43,10 @@ export const CustomersHeader: React.FC<CustomersHeaderProps> = ({
               </Button>
             )}
 
-            {selectedCount > 0 && user && isAdmin(user) && (
-              <>
-                <Button onClick={onOpenBulkAssign} variant="outline">
-                  <UserPlus size={20} />
-                </Button>
-                {hasPermission(user, "deleteCustomers") && (
-                  <Button onClick={onBulkDelete} variant="secondary">
-                    <Trash2 size={20} />
-                  </Button>
-                )}
-              </>
+            {selectedCount > 0 && user && isAdmin(user) && hasPermission(user, "deleteCustomers") && (
+              <Button onClick={onBulkDelete} variant="secondary">
+                <Trash2 size={20} />
+              </Button>
             )}
 
             {user && isAdmin(user) && (

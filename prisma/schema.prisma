@@ -60,7 +60,6 @@ model User {
   orders                 Order[]
   walletTransfers        AffiliateWalletTransfer[]
   permission             Permission?     @relation(fields: [permissionId], references: [id])
-  customers              Customer[]      @relation("CustomerToUser")
 
   // ─── E-commerce Affiliate Relations ───
   affiliateLinks         AffiliateLink[]
@@ -268,21 +267,11 @@ model ProductImage {
 model Customer {
   id          String    @id @default(uuid())
   name        String    @unique
-  email       String?
   phone       String[]
-  countryCode String?
-  phonestatus String?
-  country     String?
-  gender      String?
-  age         String?
-  source      String?
-  city        String?
-  rating      Int?
   status      String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   orders      Order[]
-  users       User[]    @relation("CustomerToUser")
 }
 
 // ============================================

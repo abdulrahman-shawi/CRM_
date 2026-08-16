@@ -20,12 +20,6 @@ const customerOrderSelect = {
   shippingPrice: true,
   moneyTransferCommission: true,
   otherCommissions: true,
-  warehouse: {
-    select: {
-      id: true,
-      location: true,
-    },
-  },
   user: {
     select: {
       id: true,
@@ -54,30 +48,17 @@ const customerOrderSelect = {
   },
 } as const;
 
-const customerListSelect = {
+const customerBaseSelect = {
   id: true,
   name: true,
-  email: true,
   phone: true,
-  countryCode: true,
-  phonestatus: true,
-  country: true,
-  gender: true,
-  age: true,
-  source: true,
-  city: true,
-  rating: true,
   status: true,
   createdAt: true,
   updatedAt: true,
-  users: {
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      avatar: true,
-    },
-  },
+} as const;
+
+const customerListSelect = {
+  ...customerBaseSelect,
   _count: {
     select: {
       orders: true,
@@ -86,21 +67,7 @@ const customerListSelect = {
 } as const;
 
 const customerDetailsSelect = {
-  id: true,
-  name: true,
-  email: true,
-  phone: true,
-  countryCode: true,
-  phonestatus: true,
-  country: true,
-  gender: true,
-  age: true,
-  source: true,
-  city: true,
-  rating: true,
-  status: true,
-  createdAt: true,
-  updatedAt: true,
+  ...customerBaseSelect,
   orders: {
     orderBy: {
       createdAt: "desc",
@@ -137,33 +104,11 @@ export async function getCustomerDetails(customerId: string) {
 
 export async function getCustomer() {
   const res = await prisma.customer.findMany({
-    orderBy:{
-      createdAt:"desc"
+    orderBy: {
+      createdAt: "desc"
     },
-    select:{
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-      countryCode: true,
-      phonestatus: true,
-      country: true,
-      gender: true,
-      age: true,
-      source: true,
-      city: true,
-      rating: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-      users: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatar: true,
-        },
-      },
+    select: {
+      ...customerBaseSelect,
       orders: {
         orderBy: {
           createdAt: "desc",
@@ -171,41 +116,13 @@ export async function getCustomer() {
         select: customerOrderSelect,
       },
     }
-
-  })
-  return {success:true , data:res }
-  
-}
-
-export async function AssignUsers(customerId: string, userIds: string[]) {
-  try {
-    const assign = await prisma.customer.update({
-      where: { 
-        id: customerId 
-      },
-      data: {
-        users: {
-          // 'set' تقوم بإزالة الروابط القديمة ووضع القائمة الجديدة المرسلة
-          // نمرر مصفوفة من الكائنات تحتوي على المعرفات [{id: '1'}, {id: '2'}]
-          set: userIds.map((id) => ({ id })),
-        },
-      },
-      include: {
-        users: true, // لإرجاع البيانات الجديدة بعد التحديث
-      },
-    });
-    
-    return {success:true , data:assign};
-  } catch (error) {
-    console.error("Prisma Error:", error);
-    throw new Error("فشل في ربط الموظفين بالعميل");
-  }
+  });
+  return { success: true, data: res };
 }
 
 export async function createCustomerAction(data: any, id: string) {
   try {
-    // 1. التحقق يدويًا إذا كان الرقم موجودًا مسبقًا في أي مصفوفة
-    // نستخدم عامل البحث hasAny أو has لتفقد المصفوفات
+    // التحقق يدويًا إذا كان الرقم موجودًا مسبقًا في أي مصفوفة
     const existingCustomer = await prisma.customer.findFirst({
       where: {
         phone: {
@@ -215,74 +132,29 @@ export async function createCustomerAction(data: any, id: string) {
     });
 
     if (existingCustomer) {
-      // أريد أن أشيك في الموظف الذي أضاف العميل ان كان هو الذي اضاف العميل يظهر خطأ وان لم يقم هو باضافة العميل نقوم بربط المستخدم بالعميب
-      const isSameUser = await prisma.customer.findFirst({
-        where: {
-          id: existingCustomer.id,
-          users: {
-            some: {
-              id: id
-            }
-          }
-        }
-      });
-
-      if (isSameUser) {
-        return { success: false, error: "عذراً، رقم الهاتف هذا مسجل لعميل آخر بالفعل" };
-      } else {
-        // ربط المستخدم الجديد بالعميل الموجود مسبقاً
-        await prisma.customer.update({
-          where: { id: existingCustomer.id },
-          data: {
-            name: existingCustomer.name, // نحتفظ بالاسم القديم
-            email: data.email ?? existingCustomer.email,
-            users: {
-              connect: { id }
-            }
-          }
-        });
-      }
+      return { success: false, error: "عذراً، رقم الهاتف هذا مسجل لعميل آخر بالفعل" };
     }
-    else {
-      // 2. إذا لم يكن موجوداً، نقوم بالإضافة
-      const createdAtFromImport = parseOptionalDate(data?.createdAt || data?.manualCreatedAt);
 
-      const existingName = await prisma.customer.findUnique({
-        where: { name: data.name },
-      });
-      if (existingName) {
-        return { success: false, error: "عذراً، اسم العميل مسجل مسبقاً" };
-      }
+    const existingName = await prisma.customer.findUnique({
+      where: { name: data.name },
+    });
+    if (existingName) {
+      return { success: false, error: "عذراً، اسم العميل مسجل مسبقاً" };
+    }
+
+    const createdAtFromImport = parseOptionalDate(data?.createdAt || data?.manualCreatedAt);
 
     const newCustomer = await prisma.customer.create({
       data: {
         name: data.name,
-        email: data.email,
         status: "فرصة جديدة",
-        phonestatus: "معلق",
         phone: data.phone, // مصفوفة مثل ["05xxxx"]
-        countryCode: data.countryCode,
-        city: data.city,
-        age: data.age,
-        gender: data.gender,
-        rating: data.rating,
-        source: data.source,
-        country: data.country,
         ...(createdAtFromImport ? { createdAt: createdAtFromImport } : {}),
-        users: {
-          connect: { id: id }
-        },
       },
     });
 
     revalidatePath("/dashboard/customers");
     return { success: true, data: newCustomer };
-
-    // 2. إذا لم يكن موجوداً، نقوم بالإضافة
-    
-
-    }
-    return { success: true, data: existingCustomer };
   } catch (error: any) {
     console.error("Prisma Error:", error);
     return { success: false, error: "حدث خطأ أثناء حفظ البيانات" };
@@ -309,15 +181,7 @@ export async function updateCustomer(data: any, customer: string) {
       },
       data: {
         name: data.name,
-        email: data.email,
         phone: data.phone,
-        countryCode: data.countryCode,
-        country: data.country,
-        city: data.city,
-        age: data.age,
-        gender: data.gender,
-        source: data.source,
-        rating: data.rating,
       },
     });
 
@@ -328,7 +192,7 @@ export async function updateCustomer(data: any, customer: string) {
   }
 }
 
-export async function UpdateStusa(customer:any , status:any) {
+export async function UpdateStusa(customer: any, status: any) {
   const requestedStatus = String(status || "").trim();
 
   if (requestedStatus === "فرصة جديدة") {
@@ -355,15 +219,15 @@ export async function UpdateStusa(customer:any , status:any) {
   }
 
   const stusas = await prisma.customer.update({
-    where:{
-      id:customer
+    where: {
+      id: customer
     },
-    data:{
-      status:requestedStatus
+    data: {
+      status: requestedStatus
     }
   })
 
-  return {success:true , data:stusas}
+  return { success: true, data: stusas }
 }
 
 export async function deleteCustomer(data: any) {
@@ -384,27 +248,15 @@ export async function deleteCustomer(data: any) {
 
     // 2. إذا كان عدد الطلبات أكبر من صفر، امنع الحذف
     if (customerWithOrders._count.orders > 0) {
-      return { 
-        success: false, 
-        error: "لا يمكن حذف العميل لوجود طلبات مرتبطة به. يجب حذف الطلبات أولاً." 
+      return {
+        success: false,
+        error: "لا يمكن حذف العميل لوجود طلبات مرتبطة به. يجب حذف الطلبات أولاً."
       };
     }
 
     // 3. إذا لم توجد طلبات، قم بعملية الحذف
-    // نستخدم transaction للتأكد من فك الارتباطات الأخرى (مثل المستخدمين) قبل الحذف النهائي
-    const res = await prisma.$transaction(async (tx) => {
-      // فك ارتباط العميل بالمستخدمين (Many-to-Many)
-      await tx.customer.update({
-        where: { id: data.id },
-        data: {
-          users: { set: [] }
-        }
-      });
-
-      // الحذف النهائي للعميل
-      return await tx.customer.delete({
-        where: { id: data.id }
-      });
+    const res = await prisma.customer.delete({
+      where: { id: data.id }
     });
 
     return { success: true, data: res };

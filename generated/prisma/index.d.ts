@@ -2559,7 +2559,6 @@ export namespace Prisma {
     subordinates: number
     orders: number
     walletTransfers: number
-    customers: number
     affiliateLinks: number
     reviews: number
   }
@@ -2568,7 +2567,6 @@ export namespace Prisma {
     subordinates?: boolean | UserCountOutputTypeCountSubordinatesArgs
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     walletTransfers?: boolean | UserCountOutputTypeCountWalletTransfersArgs
-    customers?: boolean | UserCountOutputTypeCountCustomersArgs
     affiliateLinks?: boolean | UserCountOutputTypeCountAffiliateLinksArgs
     reviews?: boolean | UserCountOutputTypeCountReviewsArgs
   }
@@ -2603,13 +2601,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountWalletTransfersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AffiliateWalletTransferWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountCustomersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CustomerWhereInput
   }
 
   /**
@@ -2780,12 +2771,10 @@ export namespace Prisma {
 
   export type CustomerCountOutputType = {
     orders: number
-    users: number
   }
 
   export type CustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | CustomerCountOutputTypeCountOrdersArgs
-    users?: boolean | CustomerCountOutputTypeCountUsersArgs
   }
 
   // Custom InputTypes
@@ -2804,13 +2793,6 @@ export namespace Prisma {
    */
   export type CustomerCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderWhereInput
-  }
-
-  /**
-   * CustomerCountOutputType without action
-   */
-  export type CustomerCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserWhereInput
   }
 
 
@@ -3186,7 +3168,6 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     walletTransfers?: boolean | User$walletTransfersArgs<ExtArgs>
     permission?: boolean | User$permissionArgs<ExtArgs>
-    customers?: boolean | User$customersArgs<ExtArgs>
     affiliateLinks?: boolean | User$affiliateLinksArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -3260,7 +3241,6 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     walletTransfers?: boolean | User$walletTransfersArgs<ExtArgs>
     permission?: boolean | User$permissionArgs<ExtArgs>
-    customers?: boolean | User$customersArgs<ExtArgs>
     affiliateLinks?: boolean | User$affiliateLinksArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -3282,7 +3262,6 @@ export namespace Prisma {
       orders: Prisma.$OrderPayload<ExtArgs>[]
       walletTransfers: Prisma.$AffiliateWalletTransferPayload<ExtArgs>[]
       permission: Prisma.$PermissionPayload<ExtArgs> | null
-      customers: Prisma.$CustomerPayload<ExtArgs>[]
       affiliateLinks: Prisma.$AffiliateLinkPayload<ExtArgs>[]
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
     }
@@ -3702,7 +3681,6 @@ export namespace Prisma {
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     walletTransfers<T extends User$walletTransfersArgs<ExtArgs> = {}>(args?: Subset<T, User$walletTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AffiliateWalletTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     permission<T extends User$permissionArgs<ExtArgs> = {}>(args?: Subset<T, User$permissionArgs<ExtArgs>>): Prisma__PermissionClient<$Result.GetResult<Prisma.$PermissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    customers<T extends User$customersArgs<ExtArgs> = {}>(args?: Subset<T, User$customersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     affiliateLinks<T extends User$affiliateLinksArgs<ExtArgs> = {}>(args?: Subset<T, User$affiliateLinksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AffiliateLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4253,30 +4231,6 @@ export namespace Prisma {
      */
     include?: PermissionInclude<ExtArgs> | null
     where?: PermissionWhereInput
-  }
-
-  /**
-   * User.customers
-   */
-  export type User$customersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Customer
-     */
-    select?: CustomerSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Customer
-     */
-    omit?: CustomerOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CustomerInclude<ExtArgs> | null
-    where?: CustomerWhereInput
-    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
-    cursor?: CustomerWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
   }
 
   /**
@@ -12980,32 +12934,13 @@ export namespace Prisma {
 
   export type AggregateCustomer = {
     _count: CustomerCountAggregateOutputType | null
-    _avg: CustomerAvgAggregateOutputType | null
-    _sum: CustomerSumAggregateOutputType | null
     _min: CustomerMinAggregateOutputType | null
     _max: CustomerMaxAggregateOutputType | null
-  }
-
-  export type CustomerAvgAggregateOutputType = {
-    rating: number | null
-  }
-
-  export type CustomerSumAggregateOutputType = {
-    rating: number | null
   }
 
   export type CustomerMinAggregateOutputType = {
     id: string | null
     name: string | null
-    email: string | null
-    countryCode: string | null
-    phonestatus: string | null
-    country: string | null
-    gender: string | null
-    age: string | null
-    source: string | null
-    city: string | null
-    rating: number | null
     status: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -13014,15 +12949,6 @@ export namespace Prisma {
   export type CustomerMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    email: string | null
-    countryCode: string | null
-    phonestatus: string | null
-    country: string | null
-    gender: string | null
-    age: string | null
-    source: string | null
-    city: string | null
-    rating: number | null
     status: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -13031,16 +12957,7 @@ export namespace Prisma {
   export type CustomerCountAggregateOutputType = {
     id: number
     name: number
-    email: number
     phone: number
-    countryCode: number
-    phonestatus: number
-    country: number
-    gender: number
-    age: number
-    source: number
-    city: number
-    rating: number
     status: number
     createdAt: number
     updatedAt: number
@@ -13048,26 +12965,9 @@ export namespace Prisma {
   }
 
 
-  export type CustomerAvgAggregateInputType = {
-    rating?: true
-  }
-
-  export type CustomerSumAggregateInputType = {
-    rating?: true
-  }
-
   export type CustomerMinAggregateInputType = {
     id?: true
     name?: true
-    email?: true
-    countryCode?: true
-    phonestatus?: true
-    country?: true
-    gender?: true
-    age?: true
-    source?: true
-    city?: true
-    rating?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -13076,15 +12976,6 @@ export namespace Prisma {
   export type CustomerMaxAggregateInputType = {
     id?: true
     name?: true
-    email?: true
-    countryCode?: true
-    phonestatus?: true
-    country?: true
-    gender?: true
-    age?: true
-    source?: true
-    city?: true
-    rating?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -13093,16 +12984,7 @@ export namespace Prisma {
   export type CustomerCountAggregateInputType = {
     id?: true
     name?: true
-    email?: true
     phone?: true
-    countryCode?: true
-    phonestatus?: true
-    country?: true
-    gender?: true
-    age?: true
-    source?: true
-    city?: true
-    rating?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -13147,18 +13029,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: CustomerAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: CustomerSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: CustomerMinAggregateInputType
@@ -13189,8 +13059,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CustomerCountAggregateInputType | true
-    _avg?: CustomerAvgAggregateInputType
-    _sum?: CustomerSumAggregateInputType
     _min?: CustomerMinAggregateInputType
     _max?: CustomerMaxAggregateInputType
   }
@@ -13198,22 +13066,11 @@ export namespace Prisma {
   export type CustomerGroupByOutputType = {
     id: string
     name: string
-    email: string | null
     phone: string[]
-    countryCode: string | null
-    phonestatus: string | null
-    country: string | null
-    gender: string | null
-    age: string | null
-    source: string | null
-    city: string | null
-    rating: number | null
     status: string | null
     createdAt: Date
     updatedAt: Date
     _count: CustomerCountAggregateOutputType | null
-    _avg: CustomerAvgAggregateOutputType | null
-    _sum: CustomerSumAggregateOutputType | null
     _min: CustomerMinAggregateOutputType | null
     _max: CustomerMaxAggregateOutputType | null
   }
@@ -13235,37 +13092,18 @@ export namespace Prisma {
   export type CustomerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     phone?: boolean
-    countryCode?: boolean
-    phonestatus?: boolean
-    country?: boolean
-    gender?: boolean
-    age?: boolean
-    source?: boolean
-    city?: boolean
-    rating?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     orders?: boolean | Customer$ordersArgs<ExtArgs>
-    users?: boolean | Customer$usersArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customer"]>
 
   export type CustomerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     phone?: boolean
-    countryCode?: boolean
-    phonestatus?: boolean
-    country?: boolean
-    gender?: boolean
-    age?: boolean
-    source?: boolean
-    city?: boolean
-    rating?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -13274,16 +13112,7 @@ export namespace Prisma {
   export type CustomerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     phone?: boolean
-    countryCode?: boolean
-    phonestatus?: boolean
-    country?: boolean
-    gender?: boolean
-    age?: boolean
-    source?: boolean
-    city?: boolean
-    rating?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -13292,25 +13121,15 @@ export namespace Prisma {
   export type CustomerSelectScalar = {
     id?: boolean
     name?: boolean
-    email?: boolean
     phone?: boolean
-    countryCode?: boolean
-    phonestatus?: boolean
-    country?: boolean
-    gender?: boolean
-    age?: boolean
-    source?: boolean
-    city?: boolean
-    rating?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "countryCode" | "phonestatus" | "country" | "gender" | "age" | "source" | "city" | "rating" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
   export type CustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | Customer$ordersArgs<ExtArgs>
-    users?: boolean | Customer$usersArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -13320,21 +13139,11 @@ export namespace Prisma {
     name: "Customer"
     objects: {
       orders: Prisma.$OrderPayload<ExtArgs>[]
-      users: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      email: string | null
       phone: string[]
-      countryCode: string | null
-      phonestatus: string | null
-      country: string | null
-      gender: string | null
-      age: string | null
-      source: string | null
-      city: string | null
-      rating: number | null
       status: string | null
       createdAt: Date
       updatedAt: Date
@@ -13733,7 +13542,6 @@ export namespace Prisma {
   export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     orders<T extends Customer$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Customer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    users<T extends Customer$usersArgs<ExtArgs> = {}>(args?: Subset<T, Customer$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13765,16 +13573,7 @@ export namespace Prisma {
   interface CustomerFieldRefs {
     readonly id: FieldRef<"Customer", 'String'>
     readonly name: FieldRef<"Customer", 'String'>
-    readonly email: FieldRef<"Customer", 'String'>
     readonly phone: FieldRef<"Customer", 'String[]'>
-    readonly countryCode: FieldRef<"Customer", 'String'>
-    readonly phonestatus: FieldRef<"Customer", 'String'>
-    readonly country: FieldRef<"Customer", 'String'>
-    readonly gender: FieldRef<"Customer", 'String'>
-    readonly age: FieldRef<"Customer", 'String'>
-    readonly source: FieldRef<"Customer", 'String'>
-    readonly city: FieldRef<"Customer", 'String'>
-    readonly rating: FieldRef<"Customer", 'Int'>
     readonly status: FieldRef<"Customer", 'String'>
     readonly createdAt: FieldRef<"Customer", 'DateTime'>
     readonly updatedAt: FieldRef<"Customer", 'DateTime'>
@@ -14187,30 +13986,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
-  }
-
-  /**
-   * Customer.users
-   */
-  export type Customer$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
-    cursor?: UserWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -26475,16 +26250,7 @@ export namespace Prisma {
   export const CustomerScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    email: 'email',
     phone: 'phone',
-    countryCode: 'countryCode',
-    phonestatus: 'phonestatus',
-    country: 'country',
-    gender: 'gender',
-    age: 'age',
-    source: 'source',
-    city: 'city',
-    rating: 'rating',
     status: 'status',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -26889,7 +26655,6 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     walletTransfers?: AffiliateWalletTransferListRelationFilter
     permission?: XOR<PermissionNullableScalarRelationFilter, PermissionWhereInput> | null
-    customers?: CustomerListRelationFilter
     affiliateLinks?: AffiliateLinkListRelationFilter
     reviews?: ReviewListRelationFilter
   }
@@ -26916,7 +26681,6 @@ export namespace Prisma {
     orders?: OrderOrderByRelationAggregateInput
     walletTransfers?: AffiliateWalletTransferOrderByRelationAggregateInput
     permission?: PermissionOrderByWithRelationInput
-    customers?: CustomerOrderByRelationAggregateInput
     affiliateLinks?: AffiliateLinkOrderByRelationAggregateInput
     reviews?: ReviewOrderByRelationAggregateInput
   }
@@ -26946,7 +26710,6 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     walletTransfers?: AffiliateWalletTransferListRelationFilter
     permission?: XOR<PermissionNullableScalarRelationFilter, PermissionWhereInput> | null
-    customers?: CustomerListRelationFilter
     affiliateLinks?: AffiliateLinkListRelationFilter
     reviews?: ReviewListRelationFilter
   }, "id" | "email" | "affiliateCode">
@@ -27700,41 +27463,21 @@ export namespace Prisma {
     NOT?: CustomerWhereInput | CustomerWhereInput[]
     id?: StringFilter<"Customer"> | string
     name?: StringFilter<"Customer"> | string
-    email?: StringNullableFilter<"Customer"> | string | null
     phone?: StringNullableListFilter<"Customer">
-    countryCode?: StringNullableFilter<"Customer"> | string | null
-    phonestatus?: StringNullableFilter<"Customer"> | string | null
-    country?: StringNullableFilter<"Customer"> | string | null
-    gender?: StringNullableFilter<"Customer"> | string | null
-    age?: StringNullableFilter<"Customer"> | string | null
-    source?: StringNullableFilter<"Customer"> | string | null
-    city?: StringNullableFilter<"Customer"> | string | null
-    rating?: IntNullableFilter<"Customer"> | number | null
     status?: StringNullableFilter<"Customer"> | string | null
     createdAt?: DateTimeFilter<"Customer"> | Date | string
     updatedAt?: DateTimeFilter<"Customer"> | Date | string
     orders?: OrderListRelationFilter
-    users?: UserListRelationFilter
   }
 
   export type CustomerOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrderInput | SortOrder
     phone?: SortOrder
-    countryCode?: SortOrderInput | SortOrder
-    phonestatus?: SortOrderInput | SortOrder
-    country?: SortOrderInput | SortOrder
-    gender?: SortOrderInput | SortOrder
-    age?: SortOrderInput | SortOrder
-    source?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    rating?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
-    users?: UserOrderByRelationAggregateInput
   }
 
   export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -27743,44 +27486,23 @@ export namespace Prisma {
     AND?: CustomerWhereInput | CustomerWhereInput[]
     OR?: CustomerWhereInput[]
     NOT?: CustomerWhereInput | CustomerWhereInput[]
-    email?: StringNullableFilter<"Customer"> | string | null
     phone?: StringNullableListFilter<"Customer">
-    countryCode?: StringNullableFilter<"Customer"> | string | null
-    phonestatus?: StringNullableFilter<"Customer"> | string | null
-    country?: StringNullableFilter<"Customer"> | string | null
-    gender?: StringNullableFilter<"Customer"> | string | null
-    age?: StringNullableFilter<"Customer"> | string | null
-    source?: StringNullableFilter<"Customer"> | string | null
-    city?: StringNullableFilter<"Customer"> | string | null
-    rating?: IntNullableFilter<"Customer"> | number | null
     status?: StringNullableFilter<"Customer"> | string | null
     createdAt?: DateTimeFilter<"Customer"> | Date | string
     updatedAt?: DateTimeFilter<"Customer"> | Date | string
     orders?: OrderListRelationFilter
-    users?: UserListRelationFilter
   }, "id" | "name">
 
   export type CustomerOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrderInput | SortOrder
     phone?: SortOrder
-    countryCode?: SortOrderInput | SortOrder
-    phonestatus?: SortOrderInput | SortOrder
-    country?: SortOrderInput | SortOrder
-    gender?: SortOrderInput | SortOrder
-    age?: SortOrderInput | SortOrder
-    source?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    rating?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CustomerCountOrderByAggregateInput
-    _avg?: CustomerAvgOrderByAggregateInput
     _max?: CustomerMaxOrderByAggregateInput
     _min?: CustomerMinOrderByAggregateInput
-    _sum?: CustomerSumOrderByAggregateInput
   }
 
   export type CustomerScalarWhereWithAggregatesInput = {
@@ -27789,16 +27511,7 @@ export namespace Prisma {
     NOT?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Customer"> | string
     name?: StringWithAggregatesFilter<"Customer"> | string
-    email?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     phone?: StringNullableListFilter<"Customer">
-    countryCode?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    phonestatus?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    country?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    gender?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    age?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    source?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    city?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    rating?: IntNullableWithAggregatesFilter<"Customer"> | number | null
     status?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
@@ -28811,7 +28524,6 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -28836,7 +28548,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -28861,7 +28572,6 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -28886,7 +28596,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -29751,96 +29460,47 @@ export namespace Prisma {
   export type CustomerCreateInput = {
     id?: string
     name: string
-    email?: string | null
     phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
     status?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: OrderCreateNestedManyWithoutCustomerInput
-    users?: UserCreateNestedManyWithoutCustomersInput
   }
 
   export type CustomerUncheckedCreateInput = {
     id?: string
     name: string
-    email?: string | null
     phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
     status?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
-    users?: UserUncheckedCreateNestedManyWithoutCustomersInput
   }
 
   export type CustomerUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutCustomerNestedInput
-    users?: UserUpdateManyWithoutCustomersNestedInput
   }
 
   export type CustomerUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
-    users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
   }
 
   export type CustomerCreateManyInput = {
     id?: string
     name: string
-    email?: string | null
     phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
     status?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29849,16 +29509,7 @@ export namespace Prisma {
   export type CustomerUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29867,16 +29518,7 @@ export namespace Prisma {
   export type CustomerUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31085,12 +30727,6 @@ export namespace Prisma {
     isNot?: PermissionWhereInput | null
   }
 
-  export type CustomerListRelationFilter = {
-    every?: CustomerWhereInput
-    some?: CustomerWhereInput
-    none?: CustomerWhereInput
-  }
-
   export type AffiliateLinkListRelationFilter = {
     every?: AffiliateLinkWhereInput
     some?: AffiliateLinkWhereInput
@@ -31117,10 +30753,6 @@ export namespace Prisma {
   }
 
   export type AffiliateWalletTransferOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CustomerOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -31864,37 +31496,15 @@ export namespace Prisma {
   export type CustomerCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     phone?: SortOrder
-    countryCode?: SortOrder
-    phonestatus?: SortOrder
-    country?: SortOrder
-    gender?: SortOrder
-    age?: SortOrder
-    source?: SortOrder
-    city?: SortOrder
-    rating?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type CustomerAvgOrderByAggregateInput = {
-    rating?: SortOrder
-  }
-
   export type CustomerMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
-    countryCode?: SortOrder
-    phonestatus?: SortOrder
-    country?: SortOrder
-    gender?: SortOrder
-    age?: SortOrder
-    source?: SortOrder
-    city?: SortOrder
-    rating?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31903,22 +31513,9 @@ export namespace Prisma {
   export type CustomerMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
-    countryCode?: SortOrder
-    phonestatus?: SortOrder
-    country?: SortOrder
-    gender?: SortOrder
-    age?: SortOrder
-    source?: SortOrder
-    city?: SortOrder
-    rating?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type CustomerSumOrderByAggregateInput = {
-    rating?: SortOrder
   }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
@@ -32670,12 +32267,6 @@ export namespace Prisma {
     connect?: PermissionWhereUniqueInput
   }
 
-  export type CustomerCreateNestedManyWithoutUsersInput = {
-    create?: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput> | CustomerCreateWithoutUsersInput[] | CustomerUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: CustomerCreateOrConnectWithoutUsersInput | CustomerCreateOrConnectWithoutUsersInput[]
-    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-  }
-
   export type AffiliateLinkCreateNestedManyWithoutUserInput = {
     create?: XOR<AffiliateLinkCreateWithoutUserInput, AffiliateLinkUncheckedCreateWithoutUserInput> | AffiliateLinkCreateWithoutUserInput[] | AffiliateLinkUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AffiliateLinkCreateOrConnectWithoutUserInput | AffiliateLinkCreateOrConnectWithoutUserInput[]
@@ -32709,12 +32300,6 @@ export namespace Prisma {
     connectOrCreate?: AffiliateWalletTransferCreateOrConnectWithoutUserInput | AffiliateWalletTransferCreateOrConnectWithoutUserInput[]
     createMany?: AffiliateWalletTransferCreateManyUserInputEnvelope
     connect?: AffiliateWalletTransferWhereUniqueInput | AffiliateWalletTransferWhereUniqueInput[]
-  }
-
-  export type CustomerUncheckedCreateNestedManyWithoutUsersInput = {
-    create?: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput> | CustomerCreateWithoutUsersInput[] | CustomerUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: CustomerCreateOrConnectWithoutUsersInput | CustomerCreateOrConnectWithoutUsersInput[]
-    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
   }
 
   export type AffiliateLinkUncheckedCreateNestedManyWithoutUserInput = {
@@ -32817,19 +32402,6 @@ export namespace Prisma {
     update?: XOR<XOR<PermissionUpdateToOneWithWhereWithoutUsersInput, PermissionUpdateWithoutUsersInput>, PermissionUncheckedUpdateWithoutUsersInput>
   }
 
-  export type CustomerUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput> | CustomerCreateWithoutUsersInput[] | CustomerUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: CustomerCreateOrConnectWithoutUsersInput | CustomerCreateOrConnectWithoutUsersInput[]
-    upsert?: CustomerUpsertWithWhereUniqueWithoutUsersInput | CustomerUpsertWithWhereUniqueWithoutUsersInput[]
-    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    update?: CustomerUpdateWithWhereUniqueWithoutUsersInput | CustomerUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: CustomerUpdateManyWithWhereWithoutUsersInput | CustomerUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
-  }
-
   export type AffiliateLinkUpdateManyWithoutUserNestedInput = {
     create?: XOR<AffiliateLinkCreateWithoutUserInput, AffiliateLinkUncheckedCreateWithoutUserInput> | AffiliateLinkCreateWithoutUserInput[] | AffiliateLinkUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AffiliateLinkCreateOrConnectWithoutUserInput | AffiliateLinkCreateOrConnectWithoutUserInput[]
@@ -32898,19 +32470,6 @@ export namespace Prisma {
     update?: AffiliateWalletTransferUpdateWithWhereUniqueWithoutUserInput | AffiliateWalletTransferUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AffiliateWalletTransferUpdateManyWithWhereWithoutUserInput | AffiliateWalletTransferUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AffiliateWalletTransferScalarWhereInput | AffiliateWalletTransferScalarWhereInput[]
-  }
-
-  export type CustomerUncheckedUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput> | CustomerCreateWithoutUsersInput[] | CustomerUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: CustomerCreateOrConnectWithoutUsersInput | CustomerCreateOrConnectWithoutUsersInput[]
-    upsert?: CustomerUpsertWithWhereUniqueWithoutUsersInput | CustomerUpsertWithWhereUniqueWithoutUsersInput[]
-    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
-    update?: CustomerUpdateWithWhereUniqueWithoutUsersInput | CustomerUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: CustomerUpdateManyWithWhereWithoutUsersInput | CustomerUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
   }
 
   export type AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput = {
@@ -33474,23 +33033,11 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
-  export type UserCreateNestedManyWithoutCustomersInput = {
-    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput> | UserCreateWithoutCustomersInput[] | UserUncheckedCreateWithoutCustomersInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput | UserCreateOrConnectWithoutCustomersInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-  }
-
   export type OrderUncheckedCreateNestedManyWithoutCustomerInput = {
     create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
     createMany?: OrderCreateManyCustomerInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
-  }
-
-  export type UserUncheckedCreateNestedManyWithoutCustomersInput = {
-    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput> | UserCreateWithoutCustomersInput[] | UserUncheckedCreateWithoutCustomersInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput | UserCreateOrConnectWithoutCustomersInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type CustomerUpdatephoneInput = {
@@ -33512,19 +33059,6 @@ export namespace Prisma {
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
-  export type UserUpdateManyWithoutCustomersNestedInput = {
-    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput> | UserCreateWithoutCustomersInput[] | UserUncheckedCreateWithoutCustomersInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput | UserCreateOrConnectWithoutCustomersInput[]
-    upsert?: UserUpsertWithWhereUniqueWithoutCustomersInput | UserUpsertWithWhereUniqueWithoutCustomersInput[]
-    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    update?: UserUpdateWithWhereUniqueWithoutCustomersInput | UserUpdateWithWhereUniqueWithoutCustomersInput[]
-    updateMany?: UserUpdateManyWithWhereWithoutCustomersInput | UserUpdateManyWithWhereWithoutCustomersInput[]
-    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
-  }
-
   export type OrderUncheckedUpdateManyWithoutCustomerNestedInput = {
     create?: XOR<OrderCreateWithoutCustomerInput, OrderUncheckedCreateWithoutCustomerInput> | OrderCreateWithoutCustomerInput[] | OrderUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: OrderCreateOrConnectWithoutCustomerInput | OrderCreateOrConnectWithoutCustomerInput[]
@@ -33537,19 +33071,6 @@ export namespace Prisma {
     update?: OrderUpdateWithWhereUniqueWithoutCustomerInput | OrderUpdateWithWhereUniqueWithoutCustomerInput[]
     updateMany?: OrderUpdateManyWithWhereWithoutCustomerInput | OrderUpdateManyWithWhereWithoutCustomerInput[]
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
-  }
-
-  export type UserUncheckedUpdateManyWithoutCustomersNestedInput = {
-    create?: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput> | UserCreateWithoutCustomersInput[] | UserUncheckedCreateWithoutCustomersInput[]
-    connectOrCreate?: UserCreateOrConnectWithoutCustomersInput | UserCreateOrConnectWithoutCustomersInput[]
-    upsert?: UserUpsertWithWhereUniqueWithoutCustomersInput | UserUpsertWithWhereUniqueWithoutCustomersInput[]
-    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
-    update?: UserUpdateWithWhereUniqueWithoutCustomersInput | UserUpdateWithWhereUniqueWithoutCustomersInput[]
-    updateMany?: UserUpdateManyWithWhereWithoutCustomersInput | UserUpdateManyWithWhereWithoutCustomersInput[]
-    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type OrderCreatereceiverPhoneInput = {
@@ -34324,7 +33845,6 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -34348,7 +33868,6 @@ export namespace Prisma {
     affiliateApprovedAt?: Date | string | null
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -34377,7 +33896,6 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -34401,7 +33919,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -34596,49 +34113,6 @@ export namespace Prisma {
     create: XOR<PermissionCreateWithoutUsersInput, PermissionUncheckedCreateWithoutUsersInput>
   }
 
-  export type CustomerCreateWithoutUsersInput = {
-    id?: string
-    name: string
-    email?: string | null
-    phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
-    status?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    orders?: OrderCreateNestedManyWithoutCustomerInput
-  }
-
-  export type CustomerUncheckedCreateWithoutUsersInput = {
-    id?: string
-    name: string
-    email?: string | null
-    phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
-    status?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
-  }
-
-  export type CustomerCreateOrConnectWithoutUsersInput = {
-    where: CustomerWhereUniqueInput
-    create: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput>
-  }
-
   export type AffiliateLinkCreateWithoutUserInput = {
     id?: string
     uniqueCode: string
@@ -34735,7 +34209,6 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -34759,7 +34232,6 @@ export namespace Prisma {
     affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -34962,43 +34434,6 @@ export namespace Prisma {
     deletePages?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type CustomerUpsertWithWhereUniqueWithoutUsersInput = {
-    where: CustomerWhereUniqueInput
-    update: XOR<CustomerUpdateWithoutUsersInput, CustomerUncheckedUpdateWithoutUsersInput>
-    create: XOR<CustomerCreateWithoutUsersInput, CustomerUncheckedCreateWithoutUsersInput>
-  }
-
-  export type CustomerUpdateWithWhereUniqueWithoutUsersInput = {
-    where: CustomerWhereUniqueInput
-    data: XOR<CustomerUpdateWithoutUsersInput, CustomerUncheckedUpdateWithoutUsersInput>
-  }
-
-  export type CustomerUpdateManyWithWhereWithoutUsersInput = {
-    where: CustomerScalarWhereInput
-    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyWithoutUsersInput>
-  }
-
-  export type CustomerScalarWhereInput = {
-    AND?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
-    OR?: CustomerScalarWhereInput[]
-    NOT?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
-    id?: StringFilter<"Customer"> | string
-    name?: StringFilter<"Customer"> | string
-    email?: StringNullableFilter<"Customer"> | string | null
-    phone?: StringNullableListFilter<"Customer">
-    countryCode?: StringNullableFilter<"Customer"> | string | null
-    phonestatus?: StringNullableFilter<"Customer"> | string | null
-    country?: StringNullableFilter<"Customer"> | string | null
-    gender?: StringNullableFilter<"Customer"> | string | null
-    age?: StringNullableFilter<"Customer"> | string | null
-    source?: StringNullableFilter<"Customer"> | string | null
-    city?: StringNullableFilter<"Customer"> | string | null
-    rating?: IntNullableFilter<"Customer"> | number | null
-    status?: StringNullableFilter<"Customer"> | string | null
-    createdAt?: DateTimeFilter<"Customer"> | Date | string
-    updatedAt?: DateTimeFilter<"Customer"> | Date | string
-  }
-
   export type AffiliateLinkUpsertWithWhereUniqueWithoutUserInput = {
     where: AffiliateLinkWhereUniqueInput
     update: XOR<AffiliateLinkUpdateWithoutUserInput, AffiliateLinkUncheckedUpdateWithoutUserInput>
@@ -35079,7 +34514,6 @@ export namespace Prisma {
     subordinates?: UserCreateNestedManyWithoutParentInput
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -35103,7 +34537,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -36051,7 +35484,6 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
   }
 
@@ -36075,7 +35507,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -36169,7 +35600,6 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
   }
 
@@ -36193,7 +35623,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -36374,59 +35803,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserCreateWithoutCustomersInput = {
-    id?: string
-    username: string
-    email: string
-    phone?: string | null
-    avatar?: string | null
-    accountType?: $Enums.AccountType
-    password: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    isAffiliate?: boolean
-    affiliateApproved?: boolean
-    affiliateCode?: string | null
-    affiliateRequestedAt?: Date | string | null
-    affiliateApprovedAt?: Date | string | null
-    parent?: UserCreateNestedOneWithoutSubordinatesInput
-    subordinates?: UserCreateNestedManyWithoutParentInput
-    orders?: OrderCreateNestedManyWithoutUserInput
-    walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
-    permission?: PermissionCreateNestedOneWithoutUsersInput
-    affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCustomersInput = {
-    id?: string
-    username: string
-    email: string
-    phone?: string | null
-    avatar?: string | null
-    accountType?: $Enums.AccountType
-    password: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    permissionId?: string | null
-    parentId?: string | null
-    isAffiliate?: boolean
-    affiliateApproved?: boolean
-    affiliateCode?: string | null
-    affiliateRequestedAt?: Date | string | null
-    affiliateApprovedAt?: Date | string | null
-    subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
-    orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCustomersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
-  }
-
   export type OrderUpsertWithWhereUniqueWithoutCustomerInput = {
     where: OrderWhereUniqueInput
     update: XOR<OrderUpdateWithoutCustomerInput, OrderUncheckedUpdateWithoutCustomerInput>
@@ -36443,58 +35819,22 @@ export namespace Prisma {
     data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutCustomerInput>
   }
 
-  export type UserUpsertWithWhereUniqueWithoutCustomersInput = {
-    where: UserWhereUniqueInput
-    update: XOR<UserUpdateWithoutCustomersInput, UserUncheckedUpdateWithoutCustomersInput>
-    create: XOR<UserCreateWithoutCustomersInput, UserUncheckedCreateWithoutCustomersInput>
-  }
-
-  export type UserUpdateWithWhereUniqueWithoutCustomersInput = {
-    where: UserWhereUniqueInput
-    data: XOR<UserUpdateWithoutCustomersInput, UserUncheckedUpdateWithoutCustomersInput>
-  }
-
-  export type UserUpdateManyWithWhereWithoutCustomersInput = {
-    where: UserScalarWhereInput
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutCustomersInput>
-  }
-
   export type CustomerCreateWithoutOrdersInput = {
     id?: string
     name: string
-    email?: string | null
     phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
     status?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    users?: UserCreateNestedManyWithoutCustomersInput
   }
 
   export type CustomerUncheckedCreateWithoutOrdersInput = {
     id?: string
     name: string
-    email?: string | null
     phone?: CustomerCreatephoneInput | string[]
-    countryCode?: string | null
-    phonestatus?: string | null
-    country?: string | null
-    gender?: string | null
-    age?: string | null
-    source?: string | null
-    city?: string | null
-    rating?: number | null
     status?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    users?: UserUncheckedCreateNestedManyWithoutCustomersInput
   }
 
   export type CustomerCreateOrConnectWithoutOrdersInput = {
@@ -36521,7 +35861,6 @@ export namespace Prisma {
     subordinates?: UserCreateNestedManyWithoutParentInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -36545,7 +35884,6 @@ export namespace Prisma {
     affiliateApprovedAt?: Date | string | null
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -36624,39 +35962,19 @@ export namespace Prisma {
   export type CustomerUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserUpdateManyWithoutCustomersNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserUncheckedUpdateManyWithoutCustomersNestedInput
   }
 
   export type UserUpsertWithoutOrdersInput = {
@@ -36689,7 +36007,6 @@ export namespace Prisma {
     subordinates?: UserUpdateManyWithoutParentNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -36713,7 +36030,6 @@ export namespace Prisma {
     affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -37095,7 +36411,6 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
 
@@ -37119,7 +36434,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
     walletTransfers?: AffiliateWalletTransferUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -37262,7 +36576,6 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
 
@@ -37286,7 +36599,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -37909,7 +37221,6 @@ export namespace Prisma {
     subordinates?: UserCreateNestedManyWithoutParentInput
     orders?: OrderCreateNestedManyWithoutUserInput
     permission?: PermissionCreateNestedOneWithoutUsersInput
-    customers?: CustomerCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -37933,7 +37244,6 @@ export namespace Prisma {
     affiliateApprovedAt?: Date | string | null
     subordinates?: UserUncheckedCreateNestedManyWithoutParentInput
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
-    customers?: CustomerUncheckedCreateNestedManyWithoutUsersInput
     affiliateLinks?: AffiliateLinkUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -37973,7 +37283,6 @@ export namespace Prisma {
     subordinates?: UserUpdateManyWithoutParentNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -37997,7 +37306,6 @@ export namespace Prisma {
     affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -38103,7 +37411,6 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
     permission?: PermissionUpdateOneWithoutUsersNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -38127,7 +37434,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -38282,62 +37588,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CustomerUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    orders?: OrderUpdateManyWithoutCustomerNestedInput
-  }
-
-  export type CustomerUncheckedUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
-  }
-
-  export type CustomerUncheckedUpdateManyWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: CustomerUpdatephoneInput | string[]
-    countryCode?: NullableStringFieldUpdateOperationsInput | string | null
-    phonestatus?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableStringFieldUpdateOperationsInput | string | null
-    source?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type AffiliateLinkUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     uniqueCode?: StringFieldUpdateOperationsInput | string
@@ -38442,7 +37692,6 @@ export namespace Prisma {
     subordinates?: UserUpdateManyWithoutParentNestedInput
     orders?: OrderUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
-    customers?: CustomerUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -38466,7 +37715,6 @@ export namespace Prisma {
     subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
     walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    customers?: CustomerUncheckedUpdateManyWithoutUsersNestedInput
     affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -39021,73 +38269,6 @@ export namespace Prisma {
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserUpdateWithoutCustomersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
-    password?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
-    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
-    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
-    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    parent?: UserUpdateOneWithoutSubordinatesNestedInput
-    subordinates?: UserUpdateManyWithoutParentNestedInput
-    orders?: OrderUpdateManyWithoutUserNestedInput
-    walletTransfers?: AffiliateWalletTransferUpdateManyWithoutUserNestedInput
-    permission?: PermissionUpdateOneWithoutUsersNestedInput
-    affiliateLinks?: AffiliateLinkUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutCustomersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
-    password?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
-    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
-    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
-    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    subordinates?: UserUncheckedUpdateManyWithoutParentNestedInput
-    orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
-    walletTransfers?: AffiliateWalletTransferUncheckedUpdateManyWithoutUserNestedInput
-    affiliateLinks?: AffiliateLinkUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateManyWithoutCustomersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
-    password?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    permissionId?: NullableStringFieldUpdateOperationsInput | string | null
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    isAffiliate?: BoolFieldUpdateOperationsInput | boolean
-    affiliateApproved?: BoolFieldUpdateOperationsInput | boolean
-    affiliateCode?: NullableStringFieldUpdateOperationsInput | string | null
-    affiliateRequestedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    affiliateApprovedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OrderItemCreateManyOrderInput = {
