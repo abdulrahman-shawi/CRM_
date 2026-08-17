@@ -123,26 +123,17 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <option value="" disabled>
                     اختر الحالة
                   </option>
+                  {/* الطلبات القديمة التي تحمل حالة لم تعد مستخدمة تُعرض كخيار للقراءة فقط */}
+                  {!["طلب جديد", "تم تسليم الطلب", "المتجر"].includes(c.status) && (
+                    <option value={c.status} className="bg-white text-black">
+                      {c.status}
+                    </option>
+                  )}
                   <option value="طلب جديد" className="bg-white text-black">
                     طلب جديد
                   </option>
-                  <option value="تم استلام الطلب" className="bg-white text-black">
-                    تم استلام الطلب
-                  </option>
-                  <option value="تم ارسال الطلب" className="bg-white text-black">
-                    تم ارسال الطلب
-                  </option>
                   <option value="تم تسليم الطلب" className="bg-white text-black">
                     تم تسليم الطلب
-                  </option>
-                  <option value="فشل التسليم مرتجع" className="bg-white text-black">
-                    فشل التسليم مرتجع
-                  </option>
-                  <option value="تم الغاء الطلب" className="bg-white text-black">
-                    تم الغاء الطلب
-                  </option>
-                  <option value="معلق / نقص معلومات" className="bg-white text-black">
-                    معلق / نقص معلومات
                   </option>
                   <option value="المتجر" className="bg-white text-black">
                     المتجر
