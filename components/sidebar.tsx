@@ -187,7 +187,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean;
       });
 
       if (response.ok) {
-        window.location.href = "/";
+        window.location.href = "/login";
         toast.success("نراك قريباً!");
       }
     } catch (error) {

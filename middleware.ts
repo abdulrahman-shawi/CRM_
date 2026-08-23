@@ -6,10 +6,10 @@ export async function middleware(request: NextRequest) {
 
   // إذا لم يوجد توكن، وجهه لصفحة تسجيل الدخول
   if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (session && request.nextUrl.pathname === '/') {
+  if (session && request.nextUrl.pathname === '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
