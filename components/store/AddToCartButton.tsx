@@ -3,6 +3,7 @@
 import { ShoppingCart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCartStore } from '@/store/cart';
+import { useCartUiStore } from '@/store/cart-ui';
 import { cn } from '@/lib/utils';
 
 interface AddToCartButtonProps {
@@ -27,6 +28,7 @@ export default function AddToCartButton({
   className,
 }: AddToCartButtonProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const openCart = useCartUiStore((state) => state.openCart);
 
   const handleAdd = () => {
     addItem(
@@ -41,6 +43,8 @@ export default function AddToCartButton({
       quantity
     );
     toast.success('تمت إضافة المنتج إلى السلة');
+    // فتح درج السلة تلقائياً بعد الإضافة (سلوك Molla القياسي)
+    openCart();
   };
 
   return (

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, Heart, Menu, Search, ShoppingCart, X } from 'lucide-react';
 import { useCartCount } from '@/store/cart';
+import { useCartUiStore } from '@/store/cart-ui';
 import { useWishlistCount } from '@/store/wishlist';
 import type { ShopCategorySummary, StoreSettings } from '@/components/store/types';
 import { getCategoryHref } from '@/components/store/types';
@@ -39,6 +40,7 @@ export default function StoreHeader({ settings, categories }: StoreHeaderProps) 
 
   const cartCount = useCartCount();
   const wishlistCount = useWishlistCount();
+  const openCart = useCartUiStore((state) => state.openCart);
 
   useEffect(() => setMounted(true), []);
 
@@ -114,14 +116,16 @@ export default function StoreHeader({ settings, categories }: StoreHeaderProps) 
             <Heart className="h-6 w-6" />
             <CountBadge count={wishlistCount} mounted={mounted} />
           </Link>
-          <Link
-            href="/cart"
+          {/* زر السلة يفتح الدرج الجانبي بدلاً من صفحة مستقلة */}
+          <button
+            type="button"
+            onClick={openCart}
             aria-label="السلة"
             className="relative text-gray-600 transition hover:text-[var(--store-primary)]"
           >
             <ShoppingCart className="h-6 w-6" />
             <CountBadge count={cartCount} mounted={mounted} />
-          </Link>
+          </button>
         </div>
       </div>
 

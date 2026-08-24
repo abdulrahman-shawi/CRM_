@@ -4,6 +4,7 @@ import { getShopCategories, type ShopCategorySummary } from '@/server/shop';
 import { getPublishedPages } from '@/server/page';
 import StoreHeader from '@/components/store/StoreHeader';
 import StoreFooter from '@/components/store/StoreFooter';
+import CartDrawer from '@/components/store/CartDrawer';
 import type { StorePageLink, StoreSettings } from '@/components/store/types';
 
 const DEFAULT_PRIMARY_COLOR = '#fcb941';
@@ -66,6 +67,7 @@ export default async function StoreLayout({ children }: { children: ReactNode })
       className="flex min-h-screen flex-col bg-white text-gray-800"
     >
       <StoreHeader settings={settings} categories={categories} />
+      <CartDrawer />
       <main className="flex-1">{children}</main>
       <StoreFooter settings={settings} pages={pages} />
     </div>
