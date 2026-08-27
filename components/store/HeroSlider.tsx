@@ -50,20 +50,22 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           <div className="absolute inset-0 bg-black/40" />
 
           <div className="absolute inset-0 flex items-center">
-            <div className="mx-auto w-full max-w-7xl px-4">
-              <div className="max-w-xl">
+            <div className="mx-auto w-full max-w-7xl px-12 md:px-8">
+              <div className="flex max-w-xl flex-col items-start gap-4 text-right">
                 {slide.title && (
-                  <h2 className="text-3xl font-bold leading-snug text-white md:text-5xl">
+                  <h2 className="text-3xl font-bold leading-snug text-white drop-shadow-md md:text-5xl">
                     {slide.title}
                   </h2>
                 )}
                 {slide.subtitle && (
-                  <p className="mt-4 text-base text-gray-200 md:text-lg">{slide.subtitle}</p>
+                  <p className="text-base text-gray-100 drop-shadow md:text-lg">
+                    {slide.subtitle}
+                  </p>
                 )}
-                {slide.buttonText && slide.buttonLink && (
+                {slide.buttonText && (
                   <Link
-                    href={slide.buttonLink}
-                    className="mt-6 inline-flex items-center rounded-md bg-[var(--store-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                    href={slide.buttonLink || '#'}
+                    className="mt-2 inline-flex items-center rounded-md bg-[var(--store-primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:opacity-90"
                   >
                     {slide.buttonText}
                   </Link>
