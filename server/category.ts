@@ -53,6 +53,8 @@ export async function createcategory(formData: FormData) {
     });
 
     revalidatePath('/dashboard/categories');
+    revalidatePath('/');
+    revalidatePath('/shop');
     return { success: true, data: category };
   } catch (error: any) {
     console.error("Prisma Error:", error);
@@ -96,6 +98,8 @@ export async function updatecategory(id: string, formData: FormData) {
     });
 
     revalidatePath('/dashboard/categories');
+    revalidatePath('/');
+    revalidatePath('/shop');
     return { success: true, data: category };
   } catch (error: any) {
     console.error("Prisma Error:", error);
@@ -116,6 +120,8 @@ export async function deletecategory(id: string) {
 
         await prisma.category.delete({ where: { id: Number(id) } });
         revalidatePath('/dashboard/categories');
+        revalidatePath('/');
+        revalidatePath('/shop');
         return { success: true };
     } catch (error) {
         return { success: false, error: "فشل الحذف" };
