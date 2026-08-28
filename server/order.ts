@@ -355,6 +355,13 @@ export async function createOrder(data: any, items: any[], user: any) {
         const manualCreatedAt = parseOptionalDate(data?.manualCreatedAt);
         const affiliateCode = await resolveAffiliateCodeFromServerAction(data?.affiliateCode);
 
+        // إذا لم يصل معرف المستخدم من الواجهة، نستخرجه من الجلسة الحالية
+        let userId = user ? String(user) : "";
+        if (!userId) {
+            const sessionUser = await getCurrentSessionUser();
+            userId = sessionUser?.id ? String(sessionUser.id) : "";
+        }
+
         // استخدام Transaction لضمان سلامة البيانات
         const result = await prisma.$transaction(async (tx) => {
             const normalizedItems = items.map((item: any) => ({
@@ -396,7 +403,7 @@ export async function createOrder(data: any, items: any[], user: any) {
                     fullAddress: data.fullAddress,
                     manualCreatedAt,
                     customer: { connect: { id: data.customerId } },
-                    user: { connect: { id: user } },
+                    ...(userId ? { user: { connect: { id: userId } } } : {}),
                     items: {
                         create: normalizedItems.map((item: any) => ({
                             productId: item.productId,
