@@ -598,8 +598,6 @@ export async function updateAffiliateLinkByAdmin(payload: {
 export async function createPublicCustomerForAffiliateOrder(data: {
   name: string;
   phone: string;
-  country?: string;
-  city?: string;
 }) {
   const name = String(data.name || '').trim();
   const phone = String(data.phone || '').trim();

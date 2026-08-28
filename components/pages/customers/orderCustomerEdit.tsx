@@ -20,27 +20,17 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
   const [items, setItems] = React.useState([
     { productId: "", name: "", price: 0, quantity: 1, discount: 0, note: "", total: 0 }
   ]);
-  const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
   const { settings } = useSiteCurrency();
 
   // بيانات المستلم والعنوان
   const [receiverName, setReceiverName] = React.useState("");
   const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
-  const [country, setCountry] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [municipality, setMunicipality] = React.useState("");
   const [fullAddress, setFullAddress] = React.useState("");
   const [status, setStatus] = React.useState("طلب جديد");
-  // تفاصيل الدفع
-  const [amount, setamount] = React.useState("");
-  const [googleMapsLink, setGoogleMapsLink] = React.useState("");
-  const [deliveryMethod, setDeliveryMethod] = React.useState("");
 
   const [customerSearchQuery, setCustomerSearchQuery] = React.useState("");
   const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
-  const [deliveryNotes, setDeliveryNotes] = React.useState("");
   const [overallDiscount, setOverallDiscount] = React.useState(0);
-  const [additionalNotes, setAdditionalNotes] = React.useState("");
   const [manualCreatedAt, setManualCreatedAt] = React.useState("");
   const [searchQueries, setSearchQueries] = React.useState<Record<number, string>>({});
   const [showDropdown, setShowDropdown] = React.useState<Record<number, boolean>>({});
@@ -65,13 +55,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     setCustomerId(initialData.customerId || "");
     setReceiverName(initialData.receiverName || "");
     setReceiverPhone(initialData.receiverPhone || [""]);
-    setCountry(initialData.country || "");
-    setCity(initialData.city || "");
-    setamount(initialData?.amount)
-    setDeliveryMethod(initialData?.deliveryMethod || "");
-    setMunicipality(initialData.municipality || "");
     setFullAddress(initialData.fullAddress || "");
-    setPaymentMethod(initialData.paymentMethod || "عند الاستلام");
     setOverallDiscount(Number(initialData?.discount ?? initialData?.overallDiscount ?? 0));
     setStatus(initialData.status || "طلب جديد");
     setManualCreatedAt(formatDateForInput(initialData?.manualCreatedAt || initialData?.createdAt));
@@ -141,22 +125,11 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
     setCustomerId("");
     setCustomerSearchQuery("");
     setShowCustomerDropdown(false);
-    setPaymentMethod("عند الاستلام");
 
     // إعادة بيانات المستلم والعنوان
     setReceiverName("");
     setReceiverPhone([""]);
-    setCountry("");
-    setCity("");
-    setMunicipality("");
     setFullAddress("");
-
-    // إعادة تفاصيل الدفع والملاحظات
-    setamount("");
-    setGoogleMapsLink("");
-    setDeliveryMethod("");
-    setDeliveryNotes("");
-    setAdditionalNotes("");
     setManualCreatedAt("");
   };
   const handleSubmit = async () => {
@@ -171,15 +144,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       return;
     }
 
-    if (!country || !String(country).trim() || !city || !String(city).trim()) {
-      toast.error("يرجى إدخال الدولة والمدينة");
-      return;
-    }
-
-    if (!municipality || municipality.trim() === "") {
-      toast.error("يرجى تحديد البلدية/المنطقة");
-      return;
-    }
     if (!fullAddress || fullAddress.trim() === "") {
       toast.error("يرجى كتابة عنوان التسليم");
       return;
@@ -195,13 +159,6 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       return;
     }
 
-    if (paymentMethod === "مختلطة") {
-      if (amount === "") {
-        toast.error("يجب ادخال قيمة الدفعة المستلمة");
-        return;
-      }
-    }
-
     // تصحيح رسالة الـ Toast
     const loadingMessage = "جاري حفظ الطلب الجديد...";
     const loadingToast = toast.loading(loadingMessage);
@@ -212,17 +169,7 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
       receiverName,
       receiverPhone,
       usdToTryRateAtOrder: settings && settings.code !== "USD" && settings.exchangeRate > 0 ? Number(settings.exchangeRate) : 0,
-      country,
-      city,
-      municipality,
       fullAddress,
-      googleMapsLink,
-      deliveryMethod,
-      amount,
-      amountBank: Number(grandTotal - Number(amount)),
-      deliveryNotes,
-      paymentMethod,
-      additionalNotes,
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
       subTotal: Number(subTotal),
@@ -470,69 +417,13 @@ export default function OrderCustomerEdit({ initialData, customers, customerId, 
                   + إضافة رقم هاتف آخر
                 </button>
               </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">طريقة الدفع</label>
-                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold">
-                  <option value="عند الاستلام">عند الاستلام</option>
-                  <option value="تحويل بنكي">تحويل بنكي</option>
-                  <option value="مختلطة">مختلطة</option>
-                </select>
-              </div>
-              {paymentMethod === "مختلطة" ? (
-                <div className="grid md:col-span-2 grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المستلم</label>
-                    <input type="text" value={amount} onChange={(e) => setamount(e.target.value)} className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 mr-2">المبلغ المتبقي</label>
-                    <input type="text" value={Number(grandTotal) - Number(amount)} readOnly className="w-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
-                  </div>
-                </div>
-              ) : (
-                <div className=""></div>
-              )}
             </div>
 
-            {/* القسم الثاني: تفاصيل العنوان */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">الدولة</label>
-                <input
-                  type="text"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">المدينة / المنطقة</label>
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">البلدية</label>
-                <input type="text" value={municipality} onChange={(e) => setMunicipality(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-50 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-              </div>
-            </div>
-
-            {/* القسم الثالث: العنوان التفصيلي والملاحظات */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* القسم الثاني: العنوان التفصيلي */}
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 mr-2">عنوان التسليم التفصيلي</label>
                 <input type="text" value={fullAddress} onChange={(e) => setFullAddress(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">رابط الخريطة</label>
-                <input type="text" value={googleMapsLink} onChange={(e) => setGoogleMapsLink(e.target.value)} placeholder="رابط الخريطة" className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold text-left" dir="ltr" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-slate-500 mr-2">ملاحظات التوصيل</label>
-                <textarea rows={2} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} placeholder="ملاحظات للمندوب..." className="w-full bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold resize-none" />
               </div>
             </div>
           </div>

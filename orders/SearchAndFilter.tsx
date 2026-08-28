@@ -33,7 +33,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         </span>
         <input
           type="text"
-          placeholder="بحث باسم العميل، الموظف، أو المدينة..."
+          placeholder="بحث باسم العميل، الموظف، أو العنوان..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="block w-full pr-10 pl-3 py-2 border border-gray-300 dark:border-gray-950 rounded-lg bg-white dark:bg-slate-950 dark:text-slate-100 focus:ring-blue-500 focus:border-blue-500 text-sm"

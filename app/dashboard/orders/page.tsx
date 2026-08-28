@@ -32,7 +32,6 @@ import {
     parseImportedDateValue,
     getEffectivePrice,
     openWhatsAppByPhone,
-    getOrderDeliveryMethod,
     getOrderDisplayDate,
 } from '@/orders/orderHelpers';
 interface IOrderLayoutProps {
@@ -56,28 +55,12 @@ interface OrderCustomerProps {
   setReceiverName: React.Dispatch<React.SetStateAction<string>>;
   receiverPhone: any[];
   setReceiverPhone: React.Dispatch<React.SetStateAction<any[]>>;
-  country: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
-  city: string;
-  setCity: React.Dispatch<React.SetStateAction<string>>;
-  municipality: string;
-  setMunicipality: React.Dispatch<React.SetStateAction<string>>;
   fullAddress: string;
   setFullAddress: React.Dispatch<React.SetStateAction<string>>;
-  paymentMethod: string;
-  setPaymentMethod: React.Dispatch<React.SetStateAction<string>>;
-  amount: any;
-  setAmount: React.Dispatch<React.SetStateAction<any>>;
   overallDiscount: number;
   setOverallDiscount: React.Dispatch<React.SetStateAction<number>>;
   status: string;
   setStatus: React.Dispatch<React.SetStateAction<string>>;
-  deliveryNotes: string;
-  setDeliveryNotes: React.Dispatch<React.SetStateAction<string>>;
-  additionalNotes: string;
-  setAdditionalNotes: React.Dispatch<React.SetStateAction<string>>;
-  googleMapsLink: string;
-  setGoogleMapsLink: React.Dispatch<React.SetStateAction<string>>;
   isSubmitting: boolean;
   handleSubmit: () => Promise<void>;
 }
@@ -108,29 +91,18 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
 
     // بيانات العميل والمبالغ
     const [customerId, setCustomerId] = React.useState("");
-    const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
-    const [amount, setAmount] = React.useState("");
 
     // بيانات المستلم والعنوان
     const [receiverName, setReceiverName] = React.useState("");
     const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]);
-    const [country, setCountry] = React.useState("");
-    const [city, setCity] = React.useState("");
-    const [municipality, setMunicipality] = React.useState("");
     const [fullAddress, setFullAddress] = React.useState("");
-
-    // تفاصيل الشحن
-    const [googleMapsLink, setGoogleMapsLink] = React.useState("");
 
     const [customerSearchQuery, setCustomerSearchQuery] = React.useState("");
     const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
-    const [deliveryNotes, setDeliveryNotes] = React.useState("");
-    const [additionalNotes, setAdditionalNotes] = React.useState("");
 
     const importInputRef = React.useRef<HTMLInputElement | null>(null);
     const subTotal = items.reduce((sum, i) => sum + i.total, 0);
     const grandTotal = subTotal - overallDiscount;
-    const remainingAmount = Math.max(0, Number(grandTotal) - Number(amount || 0));
 
     const updateItem = (index: number, field: string, value: any, products: any[]) => {
         const newItems = [...items];
@@ -225,20 +197,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                 "المبلغ الإجمالي": order.totalAmount,
                 "الخصم": order.discount,
                 "المبلغ النهائي": order.finalAmount,
-                "طريقة الدفع": order.paymentMethod,
                 "المنتجات المشتراة": itemsSummary,
                 "اسم المستلم": order.receiverName || "نفس العميل",
                 "هاتف المستلم": order.receiverPhone ? (Array.isArray(order.receiverPhone) ? order.receiverPhone.join(' - ') : order.receiverPhone) : "لم يسجل",
-                "الدولة": order.country,
-                "المدينة": order.city,
-                "البلدية": order.municipality,
                 "العنوان الكامل": order.fullAddress,
-                "رابط الخريطة": order.googleMapsLink,
-                "طريقة التوصيل": getOrderDeliveryMethod(order),
-                "عمولة تحويل الأموال": Number(order.moneyTransferCommission || 0),
-                "عمولات أخرى": Number(order.otherCommissions || 0),
                 "المنتجات (JSON)": itemsStructured,
-                "ملاحظات التوصيل": order.deliveryNotes,
                 "بواسطة الموظف": order.user?.username || "Admin",
             };
         });
@@ -311,14 +274,10 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
 
                 const customerName = String(getCellValueByAliases(row, ["اسم العميل", "العميل", "customer", "customerName"]) || "").trim();
                 const statusValue = String(getCellValueByAliases(row, ["حالة الطلب", "status"]) || "طلب جديد").trim() || "طلب جديد";
-                const paymentMethodValue = String(getCellValueByAliases(row, ["طريقة الدفع", "paymentMethod"]) || "عند الاستلام").trim() || "عند الاستلام";
                 const manualCreatedAtValue = parseImportedDateValue(
                     getCellValueByAliases(row, ["تاريخ الإنشاء ISO", "تاريخ الإنشاء", "manualCreatedAt", "createdAt"])
                 );
 
-                const countryValue = String(getCellValueByAliases(row, ["الدولة", "country"]) || "").trim();
-                const cityValue = String(getCellValueByAliases(row, ["المدينة", "city"]) || "").trim();
-                const municipalityValue = String(getCellValueByAliases(row, ["البلدية", "municipality"]) || "").trim();
                 const fullAddressValue = String(getCellValueByAliases(row, ["العنوان الكامل", "address", "fullAddress"]) || "").trim();
                 const receiverNameValue = String(getCellValueByAliases(row, ["اسم المستلم", "receiverName"]) || customerName).trim();
                 const receiverPhoneRaw = String(getCellValueByAliases(row, ["هاتف المستلم", "receiverPhone", "phone"]) || "").trim();
@@ -326,9 +285,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                     ? receiverPhoneRaw.split(/[-,،]/).map((p) => p.trim()).filter(Boolean)
                     : [];
 
-                const deliveryNotesValue = String(getCellValueByAliases(row, ["ملاحظات التوصيل", "deliveryNotes"]) || "").trim();
-                const additionalNotesValue = String(getCellValueByAliases(row, ["ملاحظات إضافية", "additionalNotes"]) || "").trim();
-                const googleMapsLinkValue = String(getCellValueByAliases(row, ["رابط الخريطة", "googleMapsLink"]) || "").trim();
                 const overallDiscountValue = Number(getCellValueByAliases(row, ["الخصم", "discount"]) || 0);
 
                 if (!customerName) {
@@ -423,16 +379,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
                     status: statusValue,
                     receiverName: receiverNameValue || customerName,
                     receiverPhone: receiverPhoneValue,
-                    country: countryValue,
-                    city: cityValue,
-                    municipality: municipalityValue,
                     fullAddress: fullAddressValue,
-                    googleMapsLink: googleMapsLinkValue,
-                    deliveryNotes: deliveryNotesValue,
-                    paymentMethod: paymentMethodValue,
-                    amount: "",
-                    amountBank: "",
-                    additionalNotes: additionalNotesValue,
                     grandTotal,
                     overallDiscount,
                     subTotal,
@@ -511,30 +458,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             return;
         }
 
-        if (!country || !String(country).trim() || !city || !String(city).trim()) {
-            toast.error("يرجى اختيار الدولة والمدينة");
-            return;
-        }
-
-        if (paymentMethod === "مختلطة") {
-            const amountValue = Number(amount);
-
-            if (!amount) {
-                toast.error("يرجى إدخال قيمة الحوالة");
-                return;
-            }
-
-            if (amountValue < 0) {
-                toast.error("قيمة الحوالة يجب أن تكون رقمًا موجبًا");
-                return;
-            }
-
-            if (amountValue > Number(grandTotal)) {
-                toast.error("قيمة الحوالة لا يمكن أن تتجاوز الإجمالي النهائي");
-                return;
-            }
-        }
-
         // تفعيل حالة التحميل لمنع النقرات المتكررة (تعالج خطأ P2028)
         setIsSubmitting(true);
 
@@ -547,16 +470,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             status,
             receiverName,
             receiverPhone,
-            country,
-            city,
-            municipality,
             fullAddress,
-            googleMapsLink,
-            deliveryNotes,
-            paymentMethod,
-            amount: paymentMethod === "مختلطة" ? amount : "",
-            amountBank: paymentMethod === "مختلطة" ? String(remainingAmount) : "",
-            additionalNotes,
             grandTotal: Number(grandTotal),
             overallDiscount: Number(overallDiscount),
             subTotal: Number(subTotal),
@@ -612,21 +526,11 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         setCustomerId("");
         setCustomerSearchQuery("");
         setShowCustomerDropdown(false);
-        setPaymentMethod("عند الاستلام");
-        setAmount("");
 
         // إعادة بيانات المستلم والعنوان
         setReceiverName("");
         setReceiverPhone([""]);
-        setCountry("");
-        setCity("");
-        setMunicipality("");
         setFullAddress("");
-
-        // إعادة تفاصيل الشحن والملاحظات
-        setGoogleMapsLink("");
-        setDeliveryNotes("");
-        setAdditionalNotes("");
     };
 
     const [ordercustomer, setordercustomer] = React.useState<any[]>([]); // مصفوفة للطلبات
@@ -675,8 +579,6 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
         setCustomerId(String(data?.customerId || ""));
         setCustomerSearchQuery(data?.customer?.name || "");
         setStatus(data?.status || "طلب جديد");
-        setPaymentMethod(data?.paymentMethod || "عند الاستلام");
-        setAmount(String(data?.amount ?? ""));
 
         setReceiverName(data?.receiverName || "");
         const receiverPhoneValues = Array.isArray(data?.receiverPhone)
@@ -684,13 +586,7 @@ const OrderLayout: React.FunctionComponent<IOrderLayoutProps> = (props) => {
             : [data?.receiverPhone || ""];
         setReceiverPhone(receiverPhoneValues);
 
-        setCountry(data?.country || "");
-        setCity(data?.city || "");
-        setMunicipality(data?.municipality || "");
         setFullAddress(data?.fullAddress || "");
-        setGoogleMapsLink(data?.googleMapsLink || "");
-        setDeliveryNotes(data?.deliveryNotes || "");
-        setAdditionalNotes(data?.additionalNotes || "");
         setOverallDiscount(Number(data?.discount || 0));
 
         setisOpenordercustomer(true);

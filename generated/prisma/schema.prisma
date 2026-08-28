@@ -279,35 +279,21 @@ model Customer {
 // ============================================
 
 model Order {
-  id                      Int       @id @default(autoincrement())
-  orderNumber             String    @unique
-  usdToTryRateAtOrder     Float?
-  moneyTransferCommission Float?    @default(0)
-  otherCommissions        Float?    @default(0)
-  totalAmount             Float
-  discount                Float     @default(0)
-  finalAmount             Float
-  paymentMethod           String
-  pay                     String?
-  receiverName            String?
-  receiverPhone           String[]
-  country                 String?
-  city                    String?
-  invoiceImage            String?
-  municipality            String?
-  fullAddress             String?
-  deliveryNotes           String?
-  googleMapsLink          String?
-  amount                  String?
-  amountBank              String?
-  deliveryMethod          String?
-  additionalNotes         String?
-  status                  String    @default("PENDING")
-  customerId              String
-  userId                  String?
-  manualCreatedAt         DateTime?
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  id                  Int       @id @default(autoincrement())
+  orderNumber         String    @unique
+  usdToTryRateAtOrder Float?
+  totalAmount         Float
+  discount            Float     @default(0)
+  finalAmount         Float
+  receiverName        String?
+  receiverPhone       String[]
+  fullAddress         String?
+  status              String    @default("PENDING")
+  customerId          String
+  userId              String?
+  manualCreatedAt     DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   // ─── Relations ───
   customer Customer    @relation(fields: [customerId], references: [id])

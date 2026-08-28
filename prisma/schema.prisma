@@ -282,26 +282,12 @@ model Order {
   id                              Int         @id @default(autoincrement())
   orderNumber                     String      @unique
   usdToTryRateAtOrder            Float?
-  moneyTransferCommission         Float? @default(0)
-  otherCommissions                Float? @default(0)
   totalAmount                     Float
   discount                        Float       @default(0)
   finalAmount                     Float
-  paymentMethod                   String
-  pay                             String?
   receiverName                    String?
   receiverPhone                   String[]
-  country                         String?
-  city                            String?
-  invoiceImage                    String?
-  municipality                    String?
   fullAddress                     String?
-  deliveryNotes                   String?
-  googleMapsLink                  String?
-  amount                          String?
-  amountBank                      String?
-  deliveryMethod                  String?
-  additionalNotes                 String?
   status                          String      @default("PENDING")
   customerId                      String
   userId                          String?

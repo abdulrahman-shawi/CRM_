@@ -17,8 +17,6 @@ const customerOrderSelect = {
   status: true,
   createdAt: true,
   manualCreatedAt: true,
-  moneyTransferCommission: true,
-  otherCommissions: true,
   user: {
     select: {
       id: true,

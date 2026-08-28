@@ -14022,8 +14022,6 @@ export namespace Prisma {
   export type OrderAvgAggregateOutputType = {
     id: number | null
     usdToTryRateAtOrder: number | null
-    moneyTransferCommission: number | null
-    otherCommissions: number | null
     totalAmount: number | null
     discount: number | null
     finalAmount: number | null
@@ -14032,8 +14030,6 @@ export namespace Prisma {
   export type OrderSumAggregateOutputType = {
     id: number | null
     usdToTryRateAtOrder: number | null
-    moneyTransferCommission: number | null
-    otherCommissions: number | null
     totalAmount: number | null
     discount: number | null
     finalAmount: number | null
@@ -14043,25 +14039,11 @@ export namespace Prisma {
     id: number | null
     orderNumber: string | null
     usdToTryRateAtOrder: number | null
-    moneyTransferCommission: number | null
-    otherCommissions: number | null
     totalAmount: number | null
     discount: number | null
     finalAmount: number | null
-    paymentMethod: string | null
-    pay: string | null
     receiverName: string | null
-    country: string | null
-    city: string | null
-    invoiceImage: string | null
-    municipality: string | null
     fullAddress: string | null
-    deliveryNotes: string | null
-    googleMapsLink: string | null
-    amount: string | null
-    amountBank: string | null
-    deliveryMethod: string | null
-    additionalNotes: string | null
     status: string | null
     customerId: string | null
     userId: string | null
@@ -14074,25 +14056,11 @@ export namespace Prisma {
     id: number | null
     orderNumber: string | null
     usdToTryRateAtOrder: number | null
-    moneyTransferCommission: number | null
-    otherCommissions: number | null
     totalAmount: number | null
     discount: number | null
     finalAmount: number | null
-    paymentMethod: string | null
-    pay: string | null
     receiverName: string | null
-    country: string | null
-    city: string | null
-    invoiceImage: string | null
-    municipality: string | null
     fullAddress: string | null
-    deliveryNotes: string | null
-    googleMapsLink: string | null
-    amount: string | null
-    amountBank: string | null
-    deliveryMethod: string | null
-    additionalNotes: string | null
     status: string | null
     customerId: string | null
     userId: string | null
@@ -14105,26 +14073,12 @@ export namespace Prisma {
     id: number
     orderNumber: number
     usdToTryRateAtOrder: number
-    moneyTransferCommission: number
-    otherCommissions: number
     totalAmount: number
     discount: number
     finalAmount: number
-    paymentMethod: number
-    pay: number
     receiverName: number
     receiverPhone: number
-    country: number
-    city: number
-    invoiceImage: number
-    municipality: number
     fullAddress: number
-    deliveryNotes: number
-    googleMapsLink: number
-    amount: number
-    amountBank: number
-    deliveryMethod: number
-    additionalNotes: number
     status: number
     customerId: number
     userId: number
@@ -14138,8 +14092,6 @@ export namespace Prisma {
   export type OrderAvgAggregateInputType = {
     id?: true
     usdToTryRateAtOrder?: true
-    moneyTransferCommission?: true
-    otherCommissions?: true
     totalAmount?: true
     discount?: true
     finalAmount?: true
@@ -14148,8 +14100,6 @@ export namespace Prisma {
   export type OrderSumAggregateInputType = {
     id?: true
     usdToTryRateAtOrder?: true
-    moneyTransferCommission?: true
-    otherCommissions?: true
     totalAmount?: true
     discount?: true
     finalAmount?: true
@@ -14159,25 +14109,11 @@ export namespace Prisma {
     id?: true
     orderNumber?: true
     usdToTryRateAtOrder?: true
-    moneyTransferCommission?: true
-    otherCommissions?: true
     totalAmount?: true
     discount?: true
     finalAmount?: true
-    paymentMethod?: true
-    pay?: true
     receiverName?: true
-    country?: true
-    city?: true
-    invoiceImage?: true
-    municipality?: true
     fullAddress?: true
-    deliveryNotes?: true
-    googleMapsLink?: true
-    amount?: true
-    amountBank?: true
-    deliveryMethod?: true
-    additionalNotes?: true
     status?: true
     customerId?: true
     userId?: true
@@ -14190,25 +14126,11 @@ export namespace Prisma {
     id?: true
     orderNumber?: true
     usdToTryRateAtOrder?: true
-    moneyTransferCommission?: true
-    otherCommissions?: true
     totalAmount?: true
     discount?: true
     finalAmount?: true
-    paymentMethod?: true
-    pay?: true
     receiverName?: true
-    country?: true
-    city?: true
-    invoiceImage?: true
-    municipality?: true
     fullAddress?: true
-    deliveryNotes?: true
-    googleMapsLink?: true
-    amount?: true
-    amountBank?: true
-    deliveryMethod?: true
-    additionalNotes?: true
     status?: true
     customerId?: true
     userId?: true
@@ -14221,26 +14143,12 @@ export namespace Prisma {
     id?: true
     orderNumber?: true
     usdToTryRateAtOrder?: true
-    moneyTransferCommission?: true
-    otherCommissions?: true
     totalAmount?: true
     discount?: true
     finalAmount?: true
-    paymentMethod?: true
-    pay?: true
     receiverName?: true
     receiverPhone?: true
-    country?: true
-    city?: true
-    invoiceImage?: true
-    municipality?: true
     fullAddress?: true
-    deliveryNotes?: true
-    googleMapsLink?: true
-    amount?: true
-    amountBank?: true
-    deliveryMethod?: true
-    additionalNotes?: true
     status?: true
     customerId?: true
     userId?: true
@@ -14340,26 +14248,12 @@ export namespace Prisma {
     id: number
     orderNumber: string
     usdToTryRateAtOrder: number | null
-    moneyTransferCommission: number | null
-    otherCommissions: number | null
     totalAmount: number
     discount: number
     finalAmount: number
-    paymentMethod: string
-    pay: string | null
     receiverName: string | null
     receiverPhone: string[]
-    country: string | null
-    city: string | null
-    invoiceImage: string | null
-    municipality: string | null
     fullAddress: string | null
-    deliveryNotes: string | null
-    googleMapsLink: string | null
-    amount: string | null
-    amountBank: string | null
-    deliveryMethod: string | null
-    additionalNotes: string | null
     status: string
     customerId: string
     userId: string | null
@@ -14391,26 +14285,12 @@ export namespace Prisma {
     id?: boolean
     orderNumber?: boolean
     usdToTryRateAtOrder?: boolean
-    moneyTransferCommission?: boolean
-    otherCommissions?: boolean
     totalAmount?: boolean
     discount?: boolean
     finalAmount?: boolean
-    paymentMethod?: boolean
-    pay?: boolean
     receiverName?: boolean
     receiverPhone?: boolean
-    country?: boolean
-    city?: boolean
-    invoiceImage?: boolean
-    municipality?: boolean
     fullAddress?: boolean
-    deliveryNotes?: boolean
-    googleMapsLink?: boolean
-    amount?: boolean
-    amountBank?: boolean
-    deliveryMethod?: boolean
-    additionalNotes?: boolean
     status?: boolean
     customerId?: boolean
     userId?: boolean
@@ -14428,26 +14308,12 @@ export namespace Prisma {
     id?: boolean
     orderNumber?: boolean
     usdToTryRateAtOrder?: boolean
-    moneyTransferCommission?: boolean
-    otherCommissions?: boolean
     totalAmount?: boolean
     discount?: boolean
     finalAmount?: boolean
-    paymentMethod?: boolean
-    pay?: boolean
     receiverName?: boolean
     receiverPhone?: boolean
-    country?: boolean
-    city?: boolean
-    invoiceImage?: boolean
-    municipality?: boolean
     fullAddress?: boolean
-    deliveryNotes?: boolean
-    googleMapsLink?: boolean
-    amount?: boolean
-    amountBank?: boolean
-    deliveryMethod?: boolean
-    additionalNotes?: boolean
     status?: boolean
     customerId?: boolean
     userId?: boolean
@@ -14462,26 +14328,12 @@ export namespace Prisma {
     id?: boolean
     orderNumber?: boolean
     usdToTryRateAtOrder?: boolean
-    moneyTransferCommission?: boolean
-    otherCommissions?: boolean
     totalAmount?: boolean
     discount?: boolean
     finalAmount?: boolean
-    paymentMethod?: boolean
-    pay?: boolean
     receiverName?: boolean
     receiverPhone?: boolean
-    country?: boolean
-    city?: boolean
-    invoiceImage?: boolean
-    municipality?: boolean
     fullAddress?: boolean
-    deliveryNotes?: boolean
-    googleMapsLink?: boolean
-    amount?: boolean
-    amountBank?: boolean
-    deliveryMethod?: boolean
-    additionalNotes?: boolean
     status?: boolean
     customerId?: boolean
     userId?: boolean
@@ -14496,26 +14348,12 @@ export namespace Prisma {
     id?: boolean
     orderNumber?: boolean
     usdToTryRateAtOrder?: boolean
-    moneyTransferCommission?: boolean
-    otherCommissions?: boolean
     totalAmount?: boolean
     discount?: boolean
     finalAmount?: boolean
-    paymentMethod?: boolean
-    pay?: boolean
     receiverName?: boolean
     receiverPhone?: boolean
-    country?: boolean
-    city?: boolean
-    invoiceImage?: boolean
-    municipality?: boolean
     fullAddress?: boolean
-    deliveryNotes?: boolean
-    googleMapsLink?: boolean
-    amount?: boolean
-    amountBank?: boolean
-    deliveryMethod?: boolean
-    additionalNotes?: boolean
     status?: boolean
     customerId?: boolean
     userId?: boolean
@@ -14524,7 +14362,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "usdToTryRateAtOrder" | "moneyTransferCommission" | "otherCommissions" | "totalAmount" | "discount" | "finalAmount" | "paymentMethod" | "pay" | "receiverName" | "receiverPhone" | "country" | "city" | "invoiceImage" | "municipality" | "fullAddress" | "deliveryNotes" | "googleMapsLink" | "amount" | "amountBank" | "deliveryMethod" | "additionalNotes" | "status" | "customerId" | "userId" | "manualCreatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "usdToTryRateAtOrder" | "totalAmount" | "discount" | "finalAmount" | "receiverName" | "receiverPhone" | "fullAddress" | "status" | "customerId" | "userId" | "manualCreatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     user?: boolean | Order$userArgs<ExtArgs>
@@ -14553,26 +14391,12 @@ export namespace Prisma {
       id: number
       orderNumber: string
       usdToTryRateAtOrder: number | null
-      moneyTransferCommission: number | null
-      otherCommissions: number | null
       totalAmount: number
       discount: number
       finalAmount: number
-      paymentMethod: string
-      pay: string | null
       receiverName: string | null
       receiverPhone: string[]
-      country: string | null
-      city: string | null
-      invoiceImage: string | null
-      municipality: string | null
       fullAddress: string | null
-      deliveryNotes: string | null
-      googleMapsLink: string | null
-      amount: string | null
-      amountBank: string | null
-      deliveryMethod: string | null
-      additionalNotes: string | null
       status: string
       customerId: string
       userId: string | null
@@ -15009,26 +14833,12 @@ export namespace Prisma {
     readonly id: FieldRef<"Order", 'Int'>
     readonly orderNumber: FieldRef<"Order", 'String'>
     readonly usdToTryRateAtOrder: FieldRef<"Order", 'Float'>
-    readonly moneyTransferCommission: FieldRef<"Order", 'Float'>
-    readonly otherCommissions: FieldRef<"Order", 'Float'>
     readonly totalAmount: FieldRef<"Order", 'Float'>
     readonly discount: FieldRef<"Order", 'Float'>
     readonly finalAmount: FieldRef<"Order", 'Float'>
-    readonly paymentMethod: FieldRef<"Order", 'String'>
-    readonly pay: FieldRef<"Order", 'String'>
     readonly receiverName: FieldRef<"Order", 'String'>
     readonly receiverPhone: FieldRef<"Order", 'String[]'>
-    readonly country: FieldRef<"Order", 'String'>
-    readonly city: FieldRef<"Order", 'String'>
-    readonly invoiceImage: FieldRef<"Order", 'String'>
-    readonly municipality: FieldRef<"Order", 'String'>
     readonly fullAddress: FieldRef<"Order", 'String'>
-    readonly deliveryNotes: FieldRef<"Order", 'String'>
-    readonly googleMapsLink: FieldRef<"Order", 'String'>
-    readonly amount: FieldRef<"Order", 'String'>
-    readonly amountBank: FieldRef<"Order", 'String'>
-    readonly deliveryMethod: FieldRef<"Order", 'String'>
-    readonly additionalNotes: FieldRef<"Order", 'String'>
     readonly status: FieldRef<"Order", 'String'>
     readonly customerId: FieldRef<"Order", 'String'>
     readonly userId: FieldRef<"Order", 'String'>
@@ -26263,26 +26073,12 @@ export namespace Prisma {
     id: 'id',
     orderNumber: 'orderNumber',
     usdToTryRateAtOrder: 'usdToTryRateAtOrder',
-    moneyTransferCommission: 'moneyTransferCommission',
-    otherCommissions: 'otherCommissions',
     totalAmount: 'totalAmount',
     discount: 'discount',
     finalAmount: 'finalAmount',
-    paymentMethod: 'paymentMethod',
-    pay: 'pay',
     receiverName: 'receiverName',
     receiverPhone: 'receiverPhone',
-    country: 'country',
-    city: 'city',
-    invoiceImage: 'invoiceImage',
-    municipality: 'municipality',
     fullAddress: 'fullAddress',
-    deliveryNotes: 'deliveryNotes',
-    googleMapsLink: 'googleMapsLink',
-    amount: 'amount',
-    amountBank: 'amountBank',
-    deliveryMethod: 'deliveryMethod',
-    additionalNotes: 'additionalNotes',
     status: 'status',
     customerId: 'customerId',
     userId: 'userId',
@@ -27524,26 +27320,12 @@ export namespace Prisma {
     id?: IntFilter<"Order"> | number
     orderNumber?: StringFilter<"Order"> | string
     usdToTryRateAtOrder?: FloatNullableFilter<"Order"> | number | null
-    moneyTransferCommission?: FloatNullableFilter<"Order"> | number | null
-    otherCommissions?: FloatNullableFilter<"Order"> | number | null
     totalAmount?: FloatFilter<"Order"> | number
     discount?: FloatFilter<"Order"> | number
     finalAmount?: FloatFilter<"Order"> | number
-    paymentMethod?: StringFilter<"Order"> | string
-    pay?: StringNullableFilter<"Order"> | string | null
     receiverName?: StringNullableFilter<"Order"> | string | null
     receiverPhone?: StringNullableListFilter<"Order">
-    country?: StringNullableFilter<"Order"> | string | null
-    city?: StringNullableFilter<"Order"> | string | null
-    invoiceImage?: StringNullableFilter<"Order"> | string | null
-    municipality?: StringNullableFilter<"Order"> | string | null
     fullAddress?: StringNullableFilter<"Order"> | string | null
-    deliveryNotes?: StringNullableFilter<"Order"> | string | null
-    googleMapsLink?: StringNullableFilter<"Order"> | string | null
-    amount?: StringNullableFilter<"Order"> | string | null
-    amountBank?: StringNullableFilter<"Order"> | string | null
-    deliveryMethod?: StringNullableFilter<"Order"> | string | null
-    additionalNotes?: StringNullableFilter<"Order"> | string | null
     status?: StringFilter<"Order"> | string
     customerId?: StringFilter<"Order"> | string
     userId?: StringNullableFilter<"Order"> | string | null
@@ -27560,26 +27342,12 @@ export namespace Prisma {
     id?: SortOrder
     orderNumber?: SortOrder
     usdToTryRateAtOrder?: SortOrderInput | SortOrder
-    moneyTransferCommission?: SortOrderInput | SortOrder
-    otherCommissions?: SortOrderInput | SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
-    paymentMethod?: SortOrder
-    pay?: SortOrderInput | SortOrder
     receiverName?: SortOrderInput | SortOrder
     receiverPhone?: SortOrder
-    country?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    invoiceImage?: SortOrderInput | SortOrder
-    municipality?: SortOrderInput | SortOrder
     fullAddress?: SortOrderInput | SortOrder
-    deliveryNotes?: SortOrderInput | SortOrder
-    googleMapsLink?: SortOrderInput | SortOrder
-    amount?: SortOrderInput | SortOrder
-    amountBank?: SortOrderInput | SortOrder
-    deliveryMethod?: SortOrderInput | SortOrder
-    additionalNotes?: SortOrderInput | SortOrder
     status?: SortOrder
     customerId?: SortOrder
     userId?: SortOrderInput | SortOrder
@@ -27599,26 +27367,12 @@ export namespace Prisma {
     OR?: OrderWhereInput[]
     NOT?: OrderWhereInput | OrderWhereInput[]
     usdToTryRateAtOrder?: FloatNullableFilter<"Order"> | number | null
-    moneyTransferCommission?: FloatNullableFilter<"Order"> | number | null
-    otherCommissions?: FloatNullableFilter<"Order"> | number | null
     totalAmount?: FloatFilter<"Order"> | number
     discount?: FloatFilter<"Order"> | number
     finalAmount?: FloatFilter<"Order"> | number
-    paymentMethod?: StringFilter<"Order"> | string
-    pay?: StringNullableFilter<"Order"> | string | null
     receiverName?: StringNullableFilter<"Order"> | string | null
     receiverPhone?: StringNullableListFilter<"Order">
-    country?: StringNullableFilter<"Order"> | string | null
-    city?: StringNullableFilter<"Order"> | string | null
-    invoiceImage?: StringNullableFilter<"Order"> | string | null
-    municipality?: StringNullableFilter<"Order"> | string | null
     fullAddress?: StringNullableFilter<"Order"> | string | null
-    deliveryNotes?: StringNullableFilter<"Order"> | string | null
-    googleMapsLink?: StringNullableFilter<"Order"> | string | null
-    amount?: StringNullableFilter<"Order"> | string | null
-    amountBank?: StringNullableFilter<"Order"> | string | null
-    deliveryMethod?: StringNullableFilter<"Order"> | string | null
-    additionalNotes?: StringNullableFilter<"Order"> | string | null
     status?: StringFilter<"Order"> | string
     customerId?: StringFilter<"Order"> | string
     userId?: StringNullableFilter<"Order"> | string | null
@@ -27635,26 +27389,12 @@ export namespace Prisma {
     id?: SortOrder
     orderNumber?: SortOrder
     usdToTryRateAtOrder?: SortOrderInput | SortOrder
-    moneyTransferCommission?: SortOrderInput | SortOrder
-    otherCommissions?: SortOrderInput | SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
-    paymentMethod?: SortOrder
-    pay?: SortOrderInput | SortOrder
     receiverName?: SortOrderInput | SortOrder
     receiverPhone?: SortOrder
-    country?: SortOrderInput | SortOrder
-    city?: SortOrderInput | SortOrder
-    invoiceImage?: SortOrderInput | SortOrder
-    municipality?: SortOrderInput | SortOrder
     fullAddress?: SortOrderInput | SortOrder
-    deliveryNotes?: SortOrderInput | SortOrder
-    googleMapsLink?: SortOrderInput | SortOrder
-    amount?: SortOrderInput | SortOrder
-    amountBank?: SortOrderInput | SortOrder
-    deliveryMethod?: SortOrderInput | SortOrder
-    additionalNotes?: SortOrderInput | SortOrder
     status?: SortOrder
     customerId?: SortOrder
     userId?: SortOrderInput | SortOrder
@@ -27675,26 +27415,12 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Order"> | number
     orderNumber?: StringWithAggregatesFilter<"Order"> | string
     usdToTryRateAtOrder?: FloatNullableWithAggregatesFilter<"Order"> | number | null
-    moneyTransferCommission?: FloatNullableWithAggregatesFilter<"Order"> | number | null
-    otherCommissions?: FloatNullableWithAggregatesFilter<"Order"> | number | null
     totalAmount?: FloatWithAggregatesFilter<"Order"> | number
     discount?: FloatWithAggregatesFilter<"Order"> | number
     finalAmount?: FloatWithAggregatesFilter<"Order"> | number
-    paymentMethod?: StringWithAggregatesFilter<"Order"> | string
-    pay?: StringNullableWithAggregatesFilter<"Order"> | string | null
     receiverName?: StringNullableWithAggregatesFilter<"Order"> | string | null
     receiverPhone?: StringNullableListFilter<"Order">
-    country?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    city?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    invoiceImage?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    municipality?: StringNullableWithAggregatesFilter<"Order"> | string | null
     fullAddress?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    deliveryNotes?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    googleMapsLink?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    amount?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    amountBank?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    deliveryMethod?: StringNullableWithAggregatesFilter<"Order"> | string | null
-    additionalNotes?: StringNullableWithAggregatesFilter<"Order"> | string | null
     status?: StringWithAggregatesFilter<"Order"> | string
     customerId?: StringWithAggregatesFilter<"Order"> | string
     userId?: StringNullableWithAggregatesFilter<"Order"> | string | null
@@ -29527,26 +29253,12 @@ export namespace Prisma {
   export type OrderCreateInput = {
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
@@ -29561,26 +29273,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     userId?: string | null
@@ -29594,26 +29292,12 @@ export namespace Prisma {
   export type OrderUpdateInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29628,26 +29312,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29662,26 +29332,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     userId?: string | null
@@ -29693,26 +29349,12 @@ export namespace Prisma {
   export type OrderUpdateManyMutationInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29723,26 +29365,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31548,26 +31176,12 @@ export namespace Prisma {
     id?: SortOrder
     orderNumber?: SortOrder
     usdToTryRateAtOrder?: SortOrder
-    moneyTransferCommission?: SortOrder
-    otherCommissions?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
-    paymentMethod?: SortOrder
-    pay?: SortOrder
     receiverName?: SortOrder
     receiverPhone?: SortOrder
-    country?: SortOrder
-    city?: SortOrder
-    invoiceImage?: SortOrder
-    municipality?: SortOrder
     fullAddress?: SortOrder
-    deliveryNotes?: SortOrder
-    googleMapsLink?: SortOrder
-    amount?: SortOrder
-    amountBank?: SortOrder
-    deliveryMethod?: SortOrder
-    additionalNotes?: SortOrder
     status?: SortOrder
     customerId?: SortOrder
     userId?: SortOrder
@@ -31579,8 +31193,6 @@ export namespace Prisma {
   export type OrderAvgOrderByAggregateInput = {
     id?: SortOrder
     usdToTryRateAtOrder?: SortOrder
-    moneyTransferCommission?: SortOrder
-    otherCommissions?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
@@ -31590,25 +31202,11 @@ export namespace Prisma {
     id?: SortOrder
     orderNumber?: SortOrder
     usdToTryRateAtOrder?: SortOrder
-    moneyTransferCommission?: SortOrder
-    otherCommissions?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
-    paymentMethod?: SortOrder
-    pay?: SortOrder
     receiverName?: SortOrder
-    country?: SortOrder
-    city?: SortOrder
-    invoiceImage?: SortOrder
-    municipality?: SortOrder
     fullAddress?: SortOrder
-    deliveryNotes?: SortOrder
-    googleMapsLink?: SortOrder
-    amount?: SortOrder
-    amountBank?: SortOrder
-    deliveryMethod?: SortOrder
-    additionalNotes?: SortOrder
     status?: SortOrder
     customerId?: SortOrder
     userId?: SortOrder
@@ -31621,25 +31219,11 @@ export namespace Prisma {
     id?: SortOrder
     orderNumber?: SortOrder
     usdToTryRateAtOrder?: SortOrder
-    moneyTransferCommission?: SortOrder
-    otherCommissions?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
-    paymentMethod?: SortOrder
-    pay?: SortOrder
     receiverName?: SortOrder
-    country?: SortOrder
-    city?: SortOrder
-    invoiceImage?: SortOrder
-    municipality?: SortOrder
     fullAddress?: SortOrder
-    deliveryNotes?: SortOrder
-    googleMapsLink?: SortOrder
-    amount?: SortOrder
-    amountBank?: SortOrder
-    deliveryMethod?: SortOrder
-    additionalNotes?: SortOrder
     status?: SortOrder
     customerId?: SortOrder
     userId?: SortOrder
@@ -31651,8 +31235,6 @@ export namespace Prisma {
   export type OrderSumOrderByAggregateInput = {
     id?: SortOrder
     usdToTryRateAtOrder?: SortOrder
-    moneyTransferCommission?: SortOrder
-    otherCommissions?: SortOrder
     totalAmount?: SortOrder
     discount?: SortOrder
     finalAmount?: SortOrder
@@ -33936,26 +33518,12 @@ export namespace Prisma {
   export type OrderCreateWithoutUserInput = {
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
@@ -33969,26 +33537,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     manualCreatedAt?: Date | string | null
@@ -34297,26 +33851,12 @@ export namespace Prisma {
     id?: IntFilter<"Order"> | number
     orderNumber?: StringFilter<"Order"> | string
     usdToTryRateAtOrder?: FloatNullableFilter<"Order"> | number | null
-    moneyTransferCommission?: FloatNullableFilter<"Order"> | number | null
-    otherCommissions?: FloatNullableFilter<"Order"> | number | null
     totalAmount?: FloatFilter<"Order"> | number
     discount?: FloatFilter<"Order"> | number
     finalAmount?: FloatFilter<"Order"> | number
-    paymentMethod?: StringFilter<"Order"> | string
-    pay?: StringNullableFilter<"Order"> | string | null
     receiverName?: StringNullableFilter<"Order"> | string | null
     receiverPhone?: StringNullableListFilter<"Order">
-    country?: StringNullableFilter<"Order"> | string | null
-    city?: StringNullableFilter<"Order"> | string | null
-    invoiceImage?: StringNullableFilter<"Order"> | string | null
-    municipality?: StringNullableFilter<"Order"> | string | null
     fullAddress?: StringNullableFilter<"Order"> | string | null
-    deliveryNotes?: StringNullableFilter<"Order"> | string | null
-    googleMapsLink?: StringNullableFilter<"Order"> | string | null
-    amount?: StringNullableFilter<"Order"> | string | null
-    amountBank?: StringNullableFilter<"Order"> | string | null
-    deliveryMethod?: StringNullableFilter<"Order"> | string | null
-    additionalNotes?: StringNullableFilter<"Order"> | string | null
     status?: StringFilter<"Order"> | string
     customerId?: StringFilter<"Order"> | string
     userId?: StringNullableFilter<"Order"> | string | null
@@ -35731,26 +35271,12 @@ export namespace Prisma {
   export type OrderCreateWithoutCustomerInput = {
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
@@ -35764,26 +35290,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     userId?: string | null
     manualCreatedAt?: Date | string | null
@@ -36082,26 +35594,12 @@ export namespace Prisma {
   export type OrderCreateWithoutItemsInput = {
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
@@ -36115,26 +35613,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     userId?: string | null
@@ -36240,26 +35724,12 @@ export namespace Prisma {
   export type OrderUpdateWithoutItemsInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36273,26 +35743,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37024,26 +36480,12 @@ export namespace Prisma {
   export type OrderCreateWithoutCommissionsInput = {
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     manualCreatedAt?: Date | string | null
     createdAt?: Date | string
@@ -37057,26 +36499,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     userId?: string | null
@@ -37140,26 +36568,12 @@ export namespace Prisma {
   export type OrderUpdateWithoutCommissionsInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37173,26 +36587,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37332,26 +36732,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     customerId: string
     manualCreatedAt?: Date | string | null
@@ -37459,26 +36845,12 @@ export namespace Prisma {
   export type OrderUpdateWithoutUserInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37492,26 +36864,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37525,26 +36883,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38148,26 +37492,12 @@ export namespace Prisma {
     id?: number
     orderNumber: string
     usdToTryRateAtOrder?: number | null
-    moneyTransferCommission?: number | null
-    otherCommissions?: number | null
     totalAmount: number
     discount?: number
     finalAmount: number
-    paymentMethod: string
-    pay?: string | null
     receiverName?: string | null
     receiverPhone?: OrderCreatereceiverPhoneInput | string[]
-    country?: string | null
-    city?: string | null
-    invoiceImage?: string | null
-    municipality?: string | null
     fullAddress?: string | null
-    deliveryNotes?: string | null
-    googleMapsLink?: string | null
-    amount?: string | null
-    amountBank?: string | null
-    deliveryMethod?: string | null
-    additionalNotes?: string | null
     status?: string
     userId?: string | null
     manualCreatedAt?: Date | string | null
@@ -38178,26 +37508,12 @@ export namespace Prisma {
   export type OrderUpdateWithoutCustomerInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38211,26 +37527,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38244,26 +37546,12 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderNumber?: StringFieldUpdateOperationsInput | string
     usdToTryRateAtOrder?: NullableFloatFieldUpdateOperationsInput | number | null
-    moneyTransferCommission?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherCommissions?: NullableFloatFieldUpdateOperationsInput | number | null
     totalAmount?: FloatFieldUpdateOperationsInput | number
     discount?: FloatFieldUpdateOperationsInput | number
     finalAmount?: FloatFieldUpdateOperationsInput | number
-    paymentMethod?: StringFieldUpdateOperationsInput | string
-    pay?: NullableStringFieldUpdateOperationsInput | string | null
     receiverName?: NullableStringFieldUpdateOperationsInput | string | null
     receiverPhone?: OrderUpdatereceiverPhoneInput | string[]
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceImage?: NullableStringFieldUpdateOperationsInput | string | null
-    municipality?: NullableStringFieldUpdateOperationsInput | string | null
     fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
-    googleMapsLink?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableStringFieldUpdateOperationsInput | string | null
-    amountBank?: NullableStringFieldUpdateOperationsInput | string | null
-    deliveryMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    additionalNotes?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     manualCreatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

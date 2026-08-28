@@ -6,9 +6,6 @@ import { useReactToPrint } from 'react-to-print';
 import { formatPhoneForDisplay } from '@/lib/utils';
 import { useSiteCurrency, formatSiteCurrency } from '@/lib/currency';
 import {
-  getOrderShippingPrice,
-  getOrderShippingCommissions,
-  getOrderTotalShippingExpenses,
   getOrderDisplayDate,
 } from '@/orders/orderHelpers';
 
@@ -21,12 +18,6 @@ export default function ViewOrder({
 }) {
   const componentRef = React.useRef<HTMLDivElement>(null);
   const { settings } = useSiteCurrency();
-  const rawGoogleMapsLink = String(data?.googleMapsLink || '').trim();
-  const normalizedGoogleMapsLink = rawGoogleMapsLink
-    ? /^https?:\/\//i.test(rawGoogleMapsLink)
-      ? rawGoogleMapsLink
-      : `https://${rawGoogleMapsLink}`
-    : '';
 
   const getEffectivePrice = (price: number, discount: number) => {
     return Math.max(0, Number(price || 0) - Number(discount || 0));
@@ -41,12 +32,7 @@ export default function ViewOrder({
   const totalDiscount = Number(data.discount) || 0;
   const finalAmount = Number(data.finalAmount) || 0;
   const subtotal = finalAmount + totalDiscount;
-  const shippingPrice = getOrderShippingPrice(data);
-  const { moneyTransferCommission, otherCommissions } = getOrderShippingCommissions(data);
-  const totalShippingExpenses = getOrderTotalShippingExpenses(data);
   const invoiceGrandTotal = Number(finalAmount);
-  const deliveryNotes = String(data?.deliveryNotes || '').trim();
-  const additionalNotes = String(data?.additionalNotes || '').trim();
 
   const getProductName = (item: any) => {
     if (item?.product?.name) {
@@ -107,7 +93,6 @@ export default function ViewOrder({
           <div className="grid grid-cols-1 gap-6 md:gap-8 mb-8 md:mb-12">
             <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-[2rem] border border-blue-100/50">
               <p className="text-xl font-black text-slate-900 dark:text-white">{data.customer?.name}</p>
-              <p className="text-sm font-bold text-slate-500 mt-2">طريقة الدفع: {data.paymentMethod}</p>
             </div>
 
             <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] border border-slate-100">
@@ -115,9 +100,6 @@ export default function ViewOrder({
               <p className="text-lg font-black text-slate-800 dark:text-white">المستلم: {data.receiverName || 'غير محدد'}</p>
 
               <div className="text-sm font-bold text-slate-500 mt-2 space-y-1">
-                <p>البلد: {data.country} </p>
-                <p>المحافظة:{data.city ? ` - ${data.city}` : 'لم يسجل'}</p>
-                <p>المنطقة: {data.municipality ? ` - ${data.municipality}` : 'لم يسجل'}</p>
                 <p>العنوان: {data.fullAddress || 'لم يسجل'}</p>
                 <p>
                   رقم التواصل:{' '}
@@ -127,22 +109,6 @@ export default function ViewOrder({
                       : formatPhoneForDisplay(data?.receiverPhone) || 'لم يسجل'}
                   </span>
                 </p>
-                <div className="pt-2">
-                  <span className="text-slate-600 dark:text-slate-300">رابط الخريطة: </span>
-                  {normalizedGoogleMapsLink ? (
-                    <a
-                      target="_blank"
-                      href={normalizedGoogleMapsLink}
-                      rel="noreferrer"
-                      className="font-black text-blue-600 underline underline-offset-4 hover:text-blue-700"
-                      dir="ltr"
-                    >
-                      فتح الموقع على الخريطة
-                    </a>
-                  ) : (
-                    <span>لم يسجل</span>
-                  )}
-                </div>
               </div>
             </div>
           </div>
@@ -195,45 +161,12 @@ export default function ViewOrder({
                 </div>
               )}
 
-              {data.paymentMethod === 'مختلطة' && (
-                <div className="border-t border-b border-dashed border-slate-200 py-3 space-y-2">
-                  <div className="flex justify-between px-4 md:px-6 text-blue-600 font-bold text-sm">
-                    <span>القيمة المستلمة (حوالة):</span>
-                    <span>{formatSiteCurrency(Number(data.amount), settings)}</span>
-                  </div>
-                  <div className="flex justify-between px-4 md:px-6 text-purple-600 font-bold text-sm">
-                    <span>القيمة المتبقية (عند الباب):</span>
-                    <span>{formatSiteCurrency(Number(data.amountBank), settings)}</span>
-                  </div>
-                </div>
-              )}
-
               <div className="flex justify-between items-center p-4 md:p-6 bg-blue-600 rounded-[2rem] text-white shadow-xl">
                 <span className="text-lg md:text-xl font-black">الإجمالي النهائي</span>
                 <div className="text-right">
                   <span className="text-2xl md:text-3xl font-black italic tracking-tighter">{formatSiteCurrency(invoiceGrandTotal, settings)}</span>
                 </div>
               </div>
-              <div className="flex justify-between px-4 md:px-6 text-slate-700 dark:text-slate-200 font-bold text-sm">
-                <span>طريقة الدفع:</span>
-                <span>{data.paymentMethod}</span>
-              </div>
-
-              {(deliveryNotes || additionalNotes) && (
-                <div className="mt-3 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-2 text-sm">
-                  <p className="font-black text-slate-700 dark:text-slate-200">الملاحظات</p>
-                  {deliveryNotes && (
-                    <p className="font-bold text-slate-600 dark:text-slate-300">
-                      ملاحظات التوصيل: <span className="font-medium">{deliveryNotes}</span>
-                    </p>
-                  )}
-                  {additionalNotes && (
-                    <p className="font-bold text-slate-600 dark:text-slate-300">
-                      ملاحظات إضافية: <span className="font-medium">{additionalNotes}</span>
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>

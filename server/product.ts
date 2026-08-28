@@ -237,11 +237,6 @@ export async function getAdPagesDashboardAnalytics() {
                 productId: {
                     in: adProducts.map((product) => product.id),
                 },
-                order: {
-                    additionalNotes: {
-                        contains: 'source:ad',
-                    },
-                },
             },
             select: {
                 productId: true,

@@ -38,7 +38,7 @@ export const useOrderFilters = (orders: any[], user?: User) => {
         (order.customer?.name && order.customer.name.toLowerCase().includes(query)) ||
         (order.user?.username && order.user.username.toLowerCase().includes(query)) ||
         (order.orderNumber && String(order.orderNumber).includes(query)) ||
-        (order.city && order.city.toLowerCase().includes(query));
+        (order.fullAddress && order.fullAddress.toLowerCase().includes(query));
 
       if (!matchesText) return false;
 

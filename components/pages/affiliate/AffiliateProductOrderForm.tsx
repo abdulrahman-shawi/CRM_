@@ -17,14 +17,8 @@ type ProductLike = {
 const createEmptyForm = () => ({
   customerName: '',
   phone: '',
-  receiverName: '',
-  country: '',
-  city: '',
-  municipality: '',
   fullAddress: '',
-  deliveryNotes: '',
   quantity: 1,
-  paymentMethod: 'عند الاستلام',
 });
 
 export default function AffiliateProductOrderForm({
@@ -84,13 +78,13 @@ export default function AffiliateProductOrderForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!form.customerName.trim() || !form.phone.trim() || !form.receiverName.trim()) {
-      toast.error('يرجى تعبئة الاسم ورقم الهاتف واسم المستلم');
+    if (!form.customerName.trim() || !form.phone.trim()) {
+      toast.error('يرجى تعبئة الاسم ورقم الهاتف');
       return;
     }
 
-    if (!form.city.trim() || !form.municipality.trim() || !form.fullAddress.trim()) {
-      toast.error('يرجى تعبئة بيانات العنوان كاملة');
+    if (!form.fullAddress.trim()) {
+      toast.error('يرجى تعبئة العنوان الكامل');
       return;
     }
 
@@ -107,13 +101,7 @@ export default function AffiliateProductOrderForm({
           trafficSource,
           customerName: form.customerName,
           phone: form.phone,
-          receiverName: form.receiverName,
-          country: form.country,
-          city: form.city,
-          municipality: form.municipality,
           fullAddress: form.fullAddress,
-          deliveryNotes: form.deliveryNotes,
-          paymentMethod: form.paymentMethod,
         }),
       });
 
@@ -192,35 +180,14 @@ export default function AffiliateProductOrderForm({
           <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
         </label>
         <label className="space-y-2 text-sm font-bold text-slate-700">
-          <span>اسم المستلم</span>
-          <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.receiverName} onChange={(e) => updateField('receiverName', e.target.value)} />
-        </label>
-        <label className="space-y-2 text-sm font-bold text-slate-700">
           <span>الكمية</span>
           <input type="number" min={1} className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.quantity} onChange={(e) => updateField('quantity', Number(e.target.value || 1))} />
-        </label>
-        <label className="space-y-2 text-sm font-bold text-slate-700">
-          <span>الدولة</span>
-          <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.country} onChange={(e) => updateField('country', e.target.value)} />
-        </label>
-        <label className="space-y-2 text-sm font-bold text-slate-700">
-          <span>المدينة</span>
-          <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
-        </label>
-        <label className="space-y-2 text-sm font-bold text-slate-700">
-          <span>المنطقة / البلدية</span>
-          <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.municipality} onChange={(e) => updateField('municipality', e.target.value)} />
         </label>
       </div>
 
       <label className="mt-4 block space-y-2 text-sm font-bold text-slate-700">
         <span>العنوان الكامل</span>
         <textarea className="min-h-[110px] w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.fullAddress} onChange={(e) => updateField('fullAddress', e.target.value)} />
-      </label>
-
-      <label className="mt-4 block space-y-2 text-sm font-bold text-slate-700">
-        <span>ملاحظات التوصيل</span>
-        <textarea className="min-h-[90px] w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400" value={form.deliveryNotes} onChange={(e) => updateField('deliveryNotes', e.target.value)} />
       </label>
 
       <button

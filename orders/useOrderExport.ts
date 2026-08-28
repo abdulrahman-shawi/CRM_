@@ -17,23 +17,6 @@ const getOrderShippingPrice = (orderLike: any) => {
   return Number((orderLike?.shippingPrice ?? orderLike?.shipping?.price) || 0);
 };
 
-const getOrderShippingCommissions = (orderLike: any) => {
-  const moneyTransferCommission = Number(orderLike?.moneyTransferCommission || 0);
-  const otherCommissions = Number(orderLike?.otherCommissions || 0);
-  return {
-    moneyTransferCommission,
-    otherCommissions,
-  };
-};
-
-const getOrderTotalShippingExpenses = (orderLike: any) => {
-  const shippingPrice = getOrderShippingPrice(orderLike);
-  const { moneyTransferCommission, otherCommissions } = getOrderShippingCommissions(orderLike);
-  return shippingPrice + moneyTransferCommission + otherCommissions;
-};
-
-const getOrderDeliveryMethod = (orderLike: any) => String(orderLike?.deliveryMethod || "").trim() || "غير محدد";
-
 export const useOrderExport = () => {
   const [isExporting, setIsExporting] = React.useState(false);
 
@@ -70,26 +53,14 @@ export const useOrderExport = () => {
           "المبلغ الإجمالي": order.totalAmount,
           "الخصم": order.discount,
           "المبلغ النهائي": order.finalAmount,
-          "طريقة الدفع": order.paymentMethod,
           "المنتجات المشتراة": itemsSummary,
           "اسم المستلم": order.receiverName || "نفس العميل",
           "هاتف المستلم": order.receiverPhone ? (Array.isArray(order.receiverPhone) ? order.receiverPhone.join(' - ') : order.receiverPhone) : "لم يسجل",
-          "الدولة": order.country,
-          "المدينة": order.city,
-          "البلدية": order.municipality,
           "العنوان الكامل": order.fullAddress,
-          "بلد المخزون": order?.warehouse?.location || order?.country || "",
-          "رابط الخريطة": order.googleMapsLink,
-          "طريقة التوصيل": getOrderDeliveryMethod(order),
           "شركة الشحن": getOrderShippingName(order),
           "سعر الشحن": getOrderShippingPrice(order),
-          "عمولة تحويل الأموال": Number(order.moneyTransferCommission || 0),
-          "عمولات أخرى": Number(order.otherCommissions || 0),
-          "إجمالي مصاريف الشحن": getOrderTotalShippingExpenses(order),
-          "المجموع الكلي مع الشحن": Number(order.finalAmount || 0) + getOrderTotalShippingExpenses(order),
           "المنتجات (JSON)": itemsStructured,
           "كود التتبع": order.trackingCode,
-          "ملاحظات التوصيل": order.deliveryNotes,
           "بواسطة الموظف": order.user?.username || "Admin",
         };
       });

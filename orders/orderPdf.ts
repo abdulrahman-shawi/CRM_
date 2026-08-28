@@ -4,12 +4,7 @@ import toast from 'react-hot-toast';
 import { formatPhoneForDisplay } from '@/lib/utils';
 import {
   getOrderCurrencySymbol,
-  getOrderDeliveryMethod,
   getOrderDisplayDate,
-  getOrderShippingCommissions,
-  getOrderShippingName,
-  getOrderShippingPrice,
-  getOrderTotalShippingExpenses,
 } from '@/orders/orderHelpers';
 
 export const buildOrderPdfFile = async (data: any) => {
@@ -19,23 +14,11 @@ export const buildOrderPdfFile = async (data: any) => {
     ? new Date(getOrderDisplayDate(data)).toLocaleDateString('en-US')
     : '-';
   const customerName = data?.customer?.name || 'غير محدد';
-  const paymentMethodText = data?.paymentMethod || '-';
-  const deliveryMethodText = getOrderDeliveryMethod(data);
-  const shippingName = getOrderShippingName(data);
-  const shippingPrice = getOrderShippingPrice(data);
-  const { moneyTransferCommission, otherCommissions } = getOrderShippingCommissions(data);
-  const shippingTotalExpenses = getOrderTotalShippingExpenses(data);
   const receiverName = data?.receiverName || 'غير محدد';
   const receiverPhone = Array.isArray(data?.receiverPhone)
     ? data.receiverPhone.filter(Boolean).map((phone: string) => formatPhoneForDisplay(phone)).join(' - ') || 'لم يسجل'
     : formatPhoneForDisplay(data?.receiverPhone) || 'لم يسجل';
-  const country = data?.country || '-';
-  const city = data?.city || 'لم يسجل';
-  const municipality = data?.municipality || 'لم يسجل';
   const fullAddress = data?.fullAddress || 'لم يسجل';
-  const mapLink = data?.googleMapsLink || '';
-  const deliveryNotes = String(data?.deliveryNotes || '').trim();
-  const additionalNotes = String(data?.additionalNotes || '').trim();
   const items = Array.isArray(data?.items) ? data.items : [];
 
   const formatMoney = (value: any) => Number(value || 0).toLocaleString('en-US');
@@ -43,8 +26,6 @@ export const buildOrderPdfFile = async (data: any) => {
   const finalAmount = Number(data?.finalAmount || 0);
   const invoiceGrandTotal = finalAmount;
   const subtotal = finalAmount + totalDiscount;
-  const amountBank = Number(data?.amountBank || 0);
-  const amount = Number(data?.amount || 0);
 
   const logoUrl = `${window.location.origin}/skynova-light.png`;
 
@@ -103,18 +84,13 @@ export const buildOrderPdfFile = async (data: any) => {
             <div style="display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:18px;">
                 <div style="background:#eff6ff;border:1px solid #dbeafe;border-radius:18px;padding:16px;">
                     <div style="font-size:18px;font-weight:900;color:#0f172a;">${customerName}</div>
-                    <div style="font-size:12px;font-weight:700;color:#64748b;margin-top:6px;">طريقة الدفع: ${paymentMethodText}</div>
                 </div>
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
                     <div style="font-size:12px;font-weight:900;color:#94a3b8;letter-spacing:1px;">تفاصيل العنوان والتوصيل</div>
                     <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:6px;">المستلم: ${receiverName}</div>
                     <div style="font-size:12px;font-weight:700;color:#64748b;margin-top:6px;line-height:1.7;">
-                        <div>البلد: ${country}</div>
-                        <div>المحافظة: ${city}</div>
-                        <div>المنطقة: ${municipality}</div>
                         <div>العنوان: ${fullAddress}</div>
                         <div>رقم التواصل: <span dir="ltr">${receiverPhone}</span></div>
-                        ${mapLink ? `<div>رابط الخريطة: ${mapLink}</div>` : ''}
                     </div>
                 </div>
             </div>
@@ -137,17 +113,6 @@ export const buildOrderPdfFile = async (data: any) => {
                 <div style="flex:1;font-size:11px;font-weight:700;color:#94a3b8;">
                     * هذه الفاتورة صدرت إلكترونياً وهي وثيقة رسمية.<br />
                     * شكراً لتعاملك معنا.
-                ${
-                  deliveryNotes || additionalNotes
-                  ? `
-                <div style="margin-top:10px;padding:10px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#334155;">
-                  <div style="font-size:12px;font-weight:900;color:#0f172a;margin-bottom:4px;">الملاحظات</div>
-                  ${deliveryNotes ? `<div style="font-size:11px;font-weight:700;">ملاحظات التوصيل: ${deliveryNotes}</div>` : ''}
-                  ${additionalNotes ? `<div style="font-size:11px;font-weight:700;">ملاحظات إضافية: ${additionalNotes}</div>` : ''}
-                </div>
-                `
-                  : ''
-                }
                 </div>
                 <div style="width:280px;display:flex;flex-direction:column;gap:8px;">
                     <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#64748b;">
@@ -164,29 +129,9 @@ export const buildOrderPdfFile = async (data: any) => {
                     `
                         : ''
                     }
-                    ${
-                      paymentMethodText === 'مختلطة'
-                        ? `
-                    <div style="border-top:1px dashed #e2e8f0;border-bottom:1px dashed #e2e8f0;padding:8px 0;display:flex;flex-direction:column;gap:6px;">
-                        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#2563eb;">
-                            <span>القيمة المستلمة (حوالة):</span>
-                            <span>${formatMoney(amount)} ${currencySymbol}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#7c3aed;">
-                            <span>القيمة المتبقية (عند الباب):</span>
-                            <span>${formatMoney(amountBank)} ${currencySymbol}</span>
-                        </div>
-                    </div>
-                    `
-                        : ''
-                    }
                     <div style="display:flex;justify-content:space-between;align-items:center;background:#2563eb;color:#ffffff;border-radius:18px;padding:14px 16px;box-shadow:0 12px 24px rgba(37,99,235,0.2);">
                         <span style="font-size:14px;font-weight:900;">الإجمالي النهائي</span>
                         <span style="font-size:22px;font-weight:900;">${formatMoney(invoiceGrandTotal)} <span style="font-size:12px;">${currencySymbol}</span></span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#475569;">
-                        <span>طريقة الدفع:</span>
-                        <span> ${paymentMethodText}</span>
                     </div>
                 </div>
             </div>

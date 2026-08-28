@@ -16,17 +16,9 @@ interface OrderFormData {
   customerId: string;
   receiverName: string;
   receiverPhone: (string | undefined)[];
-  country: string;
-  city: string;
-  municipality: string;
   fullAddress: string;
-  paymentMethod: string;
-  amount: string;
   overallDiscount: number;
   status: string;
-  deliveryNotes: string;
-  additionalNotes: string;
-  googleMapsLink: string;
 }
 
 export const useOrderForm = (userId?: string) => {
@@ -37,21 +29,11 @@ export const useOrderForm = (userId?: string) => {
 
   // بيانات العميل والمبالغ
   const [customerId, setCustomerId] = React.useState("");
-  const [paymentMethod, setPaymentMethod] = React.useState("عند الاستلام");
-  const [amount, setAmount] = React.useState("");
 
   // بيانات المستلم والعنوان
   const [receiverName, setReceiverName] = React.useState("");
   const [receiverPhone, setReceiverPhone] = React.useState<(string | undefined)[]>([""]); 
-  const [country, setCountry] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [municipality, setMunicipality] = React.useState("");
   const [fullAddress, setFullAddress] = React.useState("");
-
-  // تفاصيل الشحن والملاحظات
-  const [googleMapsLink, setGoogleMapsLink] = React.useState("");
-  const [deliveryNotes, setDeliveryNotes] = React.useState("");
-  const [additionalNotes, setAdditionalNotes] = React.useState("");
 
   // حالة الطلب والتعديل
   const [status, setStatus] = React.useState("طلب جديد");
@@ -70,7 +52,6 @@ export const useOrderForm = (userId?: string) => {
   // حساب الإجماليات
   const subTotal = items.reduce((sum, i) => sum + i.total, 0);
   const grandTotal = subTotal - overallDiscount;
-  const remainingAmount = Math.max(0, Number(grandTotal) - Number(amount || 0));
 
   // التحقق من صحة النموذج
   const validateForm = (): boolean => {
@@ -94,30 +75,6 @@ export const useOrderForm = (userId?: string) => {
       return false;
     }
 
-    if (!country || !String(country).trim() || !city || !String(city).trim()) {
-      toast.error("يرجى اختيار الدولة والمدينة");
-      return false;
-    }
-
-    if (paymentMethod === "مختلطة") {
-      const amountValue = Number(amount);
-
-      if (!amount) {
-        toast.error("يرجى إدخال قيمة الحوالة");
-        return false;
-      }
-
-      if (amountValue < 0) {
-        toast.error("قيمة الحوالة يجب أن تكون رقمًا موجبًا");
-        return false;
-      }
-
-      if (amountValue > Number(grandTotal)) {
-        toast.error("قيمة الحوالة لا يمكن أن تتجاوز الإجمالي النهائي");
-        return false;
-      }
-    }
-
     return true;
   };
 
@@ -134,16 +91,7 @@ export const useOrderForm = (userId?: string) => {
       status,
       receiverName,
       receiverPhone,
-      country,
-      city,
-      municipality,
       fullAddress,
-      googleMapsLink,
-      deliveryNotes,
-      paymentMethod,
-      amount: paymentMethod === "مختلطة" ? amount : "",
-      amountBank: paymentMethod === "مختلطة" ? String(remainingAmount) : "",
-      additionalNotes,
       grandTotal: Number(grandTotal),
       overallDiscount: Number(overallDiscount),
       subTotal: Number(subTotal)
@@ -189,19 +137,10 @@ export const useOrderForm = (userId?: string) => {
     setCustomerId("");
     setCustomerSearchQuery("");
     setShowCustomerDropdown(false);
-    setPaymentMethod("عند الاستلام");
-    setAmount("");
 
     setReceiverName("");
     setReceiverPhone([""]);
-    setCountry("");
-    setCity("");
-    setMunicipality("");
     setFullAddress("");
-
-    setGoogleMapsLink("");
-    setDeliveryNotes("");
-    setAdditionalNotes("");
   };
 
   // تحميل بيانات الطلب للتعديل
@@ -239,19 +178,10 @@ export const useOrderForm = (userId?: string) => {
     setCustomerId(String(data?.customerId || ""));
     setCustomerSearchQuery(data?.customer?.name || "");
     setStatus(data?.status || "طلب جديد");
-    setPaymentMethod(data?.paymentMethod || "عند الاستلام");
-    setAmount(String(data?.amount ?? ""));
 
     setReceiverName(data?.receiverName || "");
     setReceiverPhone(Array.isArray(data?.receiverPhone) ? data.receiverPhone : [data?.receiverPhone || ""]);
-    setCountry(data?.country || "");
-    setCity(data?.city || "");
-    setMunicipality(data?.municipality || "");
     setFullAddress(data?.fullAddress || "");
-
-    setGoogleMapsLink(data?.googleMapsLink || "");
-    setDeliveryNotes(data?.deliveryNotes || "");
-    setAdditionalNotes(data?.additionalNotes || "");
     setOverallDiscount(Number(data?.discount ?? 0));
   };
 
@@ -265,30 +195,14 @@ export const useOrderForm = (userId?: string) => {
     setReceiverName,
     receiverPhone,
     setReceiverPhone,
-    country,
-    setCountry,
-    city,
-    setCity,
-    municipality,
-    setMunicipality,
     fullAddress,
     setFullAddress,
-    paymentMethod,
-    setPaymentMethod,
-    amount,
-    setAmount,
     status,
     setStatus,
     editId,
     setEditId,
     overallDiscount,
     setOverallDiscount,
-    deliveryNotes,
-    setDeliveryNotes,
-    additionalNotes,
-    setAdditionalNotes,
-    googleMapsLink,
-    setGoogleMapsLink,
     isSubmitting,
     customerSearchQuery,
     setCustomerSearchQuery,
@@ -302,7 +216,6 @@ export const useOrderForm = (userId?: string) => {
     // الحسابات
     subTotal,
     grandTotal,
-    remainingAmount,
 
     // الدوال
     handleSubmit,

@@ -71,8 +71,6 @@ export async function POST(request: NextRequest) {
     const customerResult = await createPublicCustomerForAffiliateOrder({
       name: customerName,
       phone,
-      country: body?.country,
-      city: body?.city,
     });
 
     if (!customerResult.success || !customerResult.data) {
@@ -112,17 +110,7 @@ export async function POST(request: NextRequest) {
         status: 'طلب جديد',
         receiverName: String(body?.receiverName || customerName).trim(),
         receiverPhone: [phone],
-        country: String(body?.country || '').trim(),
-        city: String(body?.city || '').trim(),
-        municipality: String(body?.municipality || '').trim(),
         fullAddress: String(body?.fullAddress || '').trim(),
-        googleMapsLink: '',
-        deliveryMethod: 'توصيل',
-        amount: '',
-        amountBank: grandTotal,
-        deliveryNotes: String(body?.deliveryNotes || '').trim(),
-        paymentMethod: String(body?.paymentMethod || 'عند الاستلام').trim() || 'عند الاستلام',
-        additionalNotes: 'public-order|source:shop',
         grandTotal,
         overallDiscount: 0,
         subTotal,

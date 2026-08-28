@@ -18,44 +18,17 @@ export const getOrderShippingPrice = (orderLike: any) => {
   return Number((orderLike?.shippingPrice ?? orderLike?.shipping?.price) || 0);
 };
 
-export const getOrderShippingCommissions = (orderLike: any) => {
-  const moneyTransferCommission = Number(orderLike?.moneyTransferCommission || 0);
-  const otherCommissions = Number(orderLike?.otherCommissions || 0);
-  return {
-    moneyTransferCommission,
-    otherCommissions,
-  };
-};
-
 export const getOrderTotalShippingExpenses = (orderLike: any) => {
-  const shippingPrice = getOrderShippingPrice(orderLike);
-  const { moneyTransferCommission, otherCommissions } = getOrderShippingCommissions(orderLike);
-  return shippingPrice + moneyTransferCommission + otherCommissions;
+  return getOrderShippingPrice(orderLike);
 };
 
 export const getOrderAmountToCollect = (orderLike: any) => {
-  const paymentMethod = String(orderLike?.paymentMethod || "").trim();
-  const finalAmount = Number(orderLike?.finalAmount || 0);
-  const receivedAmount = Number(orderLike?.amount || 0);
-  const remainingAmount = Number(orderLike?.amountBank || (finalAmount - receivedAmount) || 0);
-
-  if (paymentMethod === "تحويل بنكي") {
-    return 0;
-  }
-
-  if (paymentMethod === "مختلطة") {
-    return Math.max(0, remainingAmount);
-  }
-
-  return Math.max(0, finalAmount);
+  return Math.max(0, Number(orderLike?.finalAmount || 0));
 };
 
 export const getOrderNetAmountAfterShipping = (orderLike: any) => {
   return getOrderAmountToCollect(orderLike) - getOrderTotalShippingExpenses(orderLike);
 };
-
-export const getOrderDeliveryMethod = (orderLike: any) => 
-  String(orderLike?.deliveryMethod || "").trim() || "غير محدد";
 
 export const getOrderDisplayDate = (orderLike: any) => 
   orderLike?.manualCreatedAt || orderLike?.createdAt;

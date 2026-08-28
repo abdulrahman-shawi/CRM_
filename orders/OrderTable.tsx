@@ -97,14 +97,6 @@ export const OrderTable: React.FC<OrderTableProps> = ({
           ),
         },
         {
-          header: "المدينة",
-          accessor: (e: any) => (
-            <span className="font-bold text-gray-600 dark:text-gray-300">
-              {e.city || "-"}
-            </span>
-          ),
-        },
-        {
           header: "حالة الطلب",
           accessor: (c: any) => {
             const currentColor = statusColors[c.status] || "bg-slate-50 text-slate-500 border-slate-200";

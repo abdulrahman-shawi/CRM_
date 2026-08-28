@@ -12,23 +12,13 @@ import Price from '@/components/store/Price';
 interface CheckoutFormState {
   customerName: string;
   phone: string;
-  receiverName: string;
-  country: string;
-  city: string;
-  municipality: string;
   fullAddress: string;
-  deliveryNotes: string;
 }
 
 const EMPTY_FORM: CheckoutFormState = {
   customerName: '',
   phone: '',
-  receiverName: '',
-  country: '',
-  city: '',
-  municipality: '',
   fullAddress: '',
-  deliveryNotes: '',
 };
 
 const INPUT_CLASS =
@@ -74,12 +64,7 @@ export default function CheckoutView() {
         body: JSON.stringify({
           customerName: form.customerName.trim(),
           phone: form.phone.trim(),
-          receiverName: form.receiverName.trim() || undefined,
-          country: form.country.trim() || undefined,
-          city: form.city.trim() || undefined,
-          municipality: form.municipality.trim() || undefined,
           fullAddress: form.fullAddress.trim() || undefined,
-          deliveryNotes: form.deliveryNotes.trim() || undefined,
           items: items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
@@ -157,46 +142,6 @@ export default function CheckoutView() {
                 className={INPUT_CLASS}
               />
             </label>
-
-            <label className="space-y-1.5 text-sm font-semibold text-gray-700">
-              <span>اسم المستلم</span>
-              <input
-                type="text"
-                value={form.receiverName}
-                onChange={(event) => updateField('receiverName', event.target.value)}
-                className={INPUT_CLASS}
-              />
-            </label>
-
-            <label className="space-y-1.5 text-sm font-semibold text-gray-700">
-              <span>الدولة</span>
-              <input
-                type="text"
-                value={form.country}
-                onChange={(event) => updateField('country', event.target.value)}
-                className={INPUT_CLASS}
-              />
-            </label>
-
-            <label className="space-y-1.5 text-sm font-semibold text-gray-700">
-              <span>المدينة</span>
-              <input
-                type="text"
-                value={form.city}
-                onChange={(event) => updateField('city', event.target.value)}
-                className={INPUT_CLASS}
-              />
-            </label>
-
-            <label className="space-y-1.5 text-sm font-semibold text-gray-700">
-              <span>البلدية</span>
-              <input
-                type="text"
-                value={form.municipality}
-                onChange={(event) => updateField('municipality', event.target.value)}
-                className={INPUT_CLASS}
-              />
-            </label>
           </div>
 
           <label className="mt-4 block space-y-1.5 text-sm font-semibold text-gray-700">
@@ -205,15 +150,6 @@ export default function CheckoutView() {
               value={form.fullAddress}
               onChange={(event) => updateField('fullAddress', event.target.value)}
               className={`${INPUT_CLASS} min-h-24`}
-            />
-          </label>
-
-          <label className="mt-4 block space-y-1.5 text-sm font-semibold text-gray-700">
-            <span>ملاحظات التوصيل</span>
-            <textarea
-              value={form.deliveryNotes}
-              onChange={(event) => updateField('deliveryNotes', event.target.value)}
-              className={`${INPUT_CLASS} min-h-20`}
             />
           </label>
 
